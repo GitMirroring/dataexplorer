@@ -1874,6 +1874,7 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 					CTabItem mdlTabItem = HoTTAdapter.this.getMdlTabItem();
 					if (mdlTabItem != null) {
 						DataExplorer.getInstance().registerCustomTabItem(mdlTabItem);
+						mdlTabItem.getControl().setBackground(Settings.getInstance().getGraphicsSurroundingBackground());
 					}
 				}
 			}

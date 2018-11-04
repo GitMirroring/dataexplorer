@@ -172,6 +172,7 @@ public class DataExplorer extends Composite {
 	CTabFolder										displayTab;
 	Settings											settings;
 	Menu													menu;
+	Composite											kFiller;
 	MenuBar												menuBar;
 	CoolBar												menuCoolBar;
 	int[]													order;
@@ -309,11 +310,9 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 			this.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL, false, false));
 			this.setBackground(this.COLOR_BACKGROUND);
 
-			GridLayout thisLayout = new GridLayout(1, true);
+			GridLayout thisLayout = new GridLayout(2, false);
 			thisLayout.marginWidth = 0;
 			thisLayout.marginHeight = 0;
-			thisLayout.numColumns = 1;
-			thisLayout.makeColumnsEqualWidth = true;
 			thisLayout.horizontalSpacing = 0;
 			thisLayout.verticalSpacing = 0;
 			this.setLayout(thisLayout);
@@ -327,15 +326,29 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 				this.menuCoolBar = new CoolBar(this, SWT.FLAT);
 				this.menuCoolBar.setBackground(this.COLOR_BACKGROUND);
 				GridData menuCoolBarLData = new GridData();
-				menuCoolBarLData.horizontalAlignment = GridData.FILL;
 				menuCoolBarLData.verticalAlignment = GridData.BEGINNING;
 				menuCoolBarLData.grabExcessHorizontalSpace = true;
+				menuCoolBarLData.horizontalAlignment = GridData.FILL;
 				this.menuCoolBar.setLayoutData(menuCoolBarLData);
 				// this.menuCoolBar.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 				this.menuToolBar = new MenuToolBar(this, this.menuCoolBar);
 				this.menuToolBar.create();
 				// restore cool bar items position and wrap
 				this.menuCoolBar.setItemLayout(this.settings.getCoolBarOrder(DataExplorer.getInstance().getMenuToolBar().getCoolBarSizes()), this.settings.getCoolBarWraps(), this.settings.getCoolBarSizes(DataExplorer.getInstance().getMenuToolBar().getCoolBarSizes()));
+				this.menuCoolBar.pack();
+			}
+			{
+				this.kFiller = new Composite(this, SWT.NONE);
+				GridData composite1LData = new GridData();
+				composite1LData.verticalAlignment = GridData.BEGINNING;
+				composite1LData.widthHint = (GDE.IS_LINUX ? SWTResourceManager.getImage("gde/resource/KontronikLinux.png") : SWTResourceManager.getImage("gde/resource/Kontronik.png")).getBounds().width;
+				composite1LData.grabExcessVerticalSpace = true;
+				composite1LData.heightHint = (GDE.IS_LINUX ? SWTResourceManager.getImage("gde/resource/KontronikLinux.png") : SWTResourceManager.getImage("gde/resource/Kontronik.png")).getBounds().height;
+				composite1LData.horizontalIndent = 1;
+				composite1LData.horizontalSpan = 1;
+				composite1LData.horizontalAlignment = GridData.END;
+				this.kFiller.setLayoutData(composite1LData);
+				this.kFiller.setBackgroundImage(GDE.IS_LINUX ? SWTResourceManager.getImage("gde/resource/KontronikLinux.png") : SWTResourceManager.getImage("gde/resource/Kontronik.png"));
 			}
 			{ // begin main tab display
 				this.displayTab = new CTabFolder(this, SWT.FLAT);
@@ -346,6 +359,7 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 				tabCompositeLData.horizontalAlignment = GridData.FILL;
 				tabCompositeLData.grabExcessHorizontalSpace = true;
 				tabCompositeLData.grabExcessVerticalSpace = true;
+				tabCompositeLData.horizontalSpan = 2;
 				this.displayTab.setLayoutData(tabCompositeLData);
 				this.displayTab.setSimple(false);
 				{
@@ -360,10 +374,15 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 				statusCompositeLData.grabExcessHorizontalSpace = true;
 				statusCompositeLData.horizontalAlignment = GridData.FILL;
 				statusCompositeLData.verticalAlignment = GridData.END;
+				statusCompositeLData.horizontalSpan = 2;
 				this.statusComposite.setLayoutData(statusCompositeLData);
 				this.statusBar = new StatusBar(this.statusComposite);
 				this.statusBar.create();
 				log.info(() -> "Statusbar created");
+				Point menuCoolBarSize = DataExplorer.this.menuCoolBar.getSize();
+				Point shellSize = new Point(GDE.shell.getClientArea().width, GDE.shell.getClientArea().height);
+				Point statusBarSize = DataExplorer.this.statusComposite.getSize();
+				DataExplorer.this.displayTab.setBounds(0, menuCoolBarSize.y, shellSize.x, shellSize.y - menuCoolBarSize.y - statusBarSize.y-2);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -491,14 +510,8 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 				}
 			});
 
-			if (!this.settings.isUpdateChecked()) {
-				GDE.display.asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						check4update();
-					}
-				});
-			}
+			//Kontronik update check removed
+
 			this.enableWritingTmpFiles(this.settings.getUsageWritingTmpFiles());
 			log.logp(Level.TIME, DataExplorer.$CLASS_NAME, $METHOD_NAME, "total init time = " + StringHelper.getFormatedTime("ss:SSS", (new Date().getTime() - GDE.StartTime))); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -660,15 +673,22 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 					if (log.isLoggable(Level.FINEST)) log.logp(Level.FINEST, $CLASS_NAME, $METHOD_NAME, "menuCoolBar.controlResized, event=" + evt); //$NON-NLS-1$
 					// menuCoolBar.controlResized signals collBar item moved
 					if (DataExplorer.this.displayTab != null && getSize().y != 0) {
+
+//					if (log.isLoggable(Level.FINE)) {
+//					log.logp(Level.FINE, $CLASS_NAME, "controlResized", "kFillerSize.size = " + DataExplorer.this.kFiller.getSize()); //$NON-NLS-1$
+//					log.logp(Level.FINE, $CLASS_NAME, "controlResized", "menuCoolBar.size = " + DataExplorer.this.menuCoolBar.getSize()); //$NON-NLS-1$
+//					log.logp(Level.FINE, $CLASS_NAME, "controlResized", "shellClient.size = " + new Point(getClientArea().width, getClientArea().height)); //$NON-NLS-1$
+//					log.logp(Level.FINE, $CLASS_NAME, "controlResized", "statusBar.size = " + DataExplorer.this.statusComposite.getSize()); //$NON-NLS-1$
+//					log.logp(Level.FINE, $CLASS_NAME, "controlResized", "displayTab.bounds = " + DataExplorer.this.displayTab.getBounds()); //$NON-NLS-1$
+//				}
 						Point menuCoolBarSize = DataExplorer.this.menuCoolBar.getSize();
-						if (log.isLoggable(Level.FINE)) log.logp(Level.FINE, $CLASS_NAME, $METHOD_NAME, "menuCoolBar.size = " + menuCoolBarSize); //$NON-NLS-1$
-						Point shellSize = new Point(getClientArea().width, getClientArea().height);
-						if (log.isLoggable(Level.FINE)) log.logp(Level.FINE, $CLASS_NAME, $METHOD_NAME, "shellClient.size = " + shellSize); //$NON-NLS-1$
+				    Point shellSize = new Point(GDE.shell.getClientArea().width, GDE.shell.getClientArea().height);
 						Point statusBarSize = DataExplorer.this.statusComposite.getSize();
 						if (log.isLoggable(Level.FINE)) log.logp(Level.FINE, $CLASS_NAME, $METHOD_NAME, "statusBar.size = " + statusBarSize); //$NON-NLS-1$
 						DataExplorer.this.displayTab.setBounds(0, menuCoolBarSize.y, shellSize.x, shellSize.y - menuCoolBarSize.y - statusBarSize.y);
 						if (log.isLoggable(Level.FINE))
 							log.logp(Level.FINE, $CLASS_NAME, $METHOD_NAME, "displayTab.bounds = " + DataExplorer.this.displayTab.getBounds()); //$NON-NLS-1$
+				    DataExplorer.this.displayTab.setBounds(0, menuCoolBarSize.y, shellSize.x, shellSize.y - menuCoolBarSize.y - statusBarSize.y-2);
 					}
 				}
 			});
@@ -3262,7 +3282,7 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 			this.COLOR_FOREGROUND	= SWTResourceManager.getColor(SWT.COLOR_BLACK);
 			break;
 		case Settings.COLOR_SCHEMA_DARK:
-			this.COLOR_BACKGROUND	= SWTResourceManager.getColor(80, 80, 80);
+			this.COLOR_BACKGROUND	= SWTResourceManager.getColor(76, 76, 76);
 			this.COLOR_FOREGROUND	= SWTResourceManager.getColor(SWT.COLOR_WHITE);
 			break;
 		}

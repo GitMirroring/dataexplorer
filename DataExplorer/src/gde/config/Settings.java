@@ -1794,7 +1794,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getGraphicsCurveAreaBackground() {
-		return getColor(Settings.GRAPHICS_AREA_BACKGROUND, "250,249,211"); // COLOR_CANVAS_YELLOW //$NON-NLS-1$
+		return getColor("dummy_area_background", "238,238,238"); //Kontronik gray background //$NON-NLS-1$
 	}
 
 	/**
@@ -1817,7 +1817,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getCompareCurveAreaBackground() {
-		return getColor(Settings.COMPARE_AREA_BACKGROUND, "250,249,211"); // COLOR_CANVAS_YELLOW //$NON-NLS-1$
+		return getColor("dummy_area_background", "238,238,238"); //Kontronik gray background //$NON-NLS-1$
 	}
 
 	/**
@@ -1840,7 +1840,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getUtilityCurveAreaBackground() {
-		return getColor(Settings.UTILITY_AREA_BACKGROUND, "250,249,211"); // COLOR_CANVAS_YELLOW //$NON-NLS-1$
+		return getColor("dummy_area_background", "238,238,238"); //Kontronik gray background //$NON-NLS-1$
 	}
 
 	/**
@@ -1863,7 +1863,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getGraphicsSurroundingBackground() {
-		return getColor(Settings.GRAPHICS_SURROUND_BACKGRD, "250,249,230"); // COLOR_VERY_LIGHT_YELLOW //$NON-NLS-1$
+		return getColor("dummy_surround_backgrd", "244,244,244"); //Kontronik surrounding background color //$NON-NLS-1$
 	}
 
 	/**
@@ -1886,7 +1886,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getCompareSurroundingBackground() {
-		return getColor(Settings.COMPARE_SURROUND_BACKGRD, "250,249,230"); // COLOR_VERY_LIGHT_YELLOW //$NON-NLS-1$
+		return getColor("dummy_surround_backgrd", "244,244,244"); //Kontronik surrounding background color //$NON-NLS-1$
 	}
 
 	/**
@@ -1909,7 +1909,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getUtilitySurroundingBackground() {
-		return getColor(Settings.UTILITY_SURROUND_BACKGRD, "250,249,230"); // COLOR_VERY_LIGHT_YELLOW //$NON-NLS-1$
+		return getColor("dummy_surround_backgrd", "244,244,244"); //Kontronik surrounding background color //$NON-NLS-1$
 	}
 
 	/**
@@ -2001,7 +2001,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getStatisticsSurroundingAreaBackground() {
-		return getColor(Settings.STATISTICS_SURROUND_BACKGRD, "250,249,230"); // COLOR_VERY_LIGHT_YELLOW //$NON-NLS-1$
+		return getColor("dummy_surround_backgrd", "244,244,244"); //Kontronik surrounding background color //$NON-NLS-1$
 	}
 
 	/**
@@ -2024,7 +2024,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getStatisticsInnerAreaBackground() {
-		return getColor(Settings.STATISTICS_INNER_BACKGROUND, "255,255,255"); // COLOR_WHITE //$NON-NLS-1$
+		return getColor("dummy_inner_background", "238,238,238"); //Kontronik gray background //$NON-NLS-1$
 	}
 
 	/**
@@ -2047,7 +2047,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getAnalogSurroundingAreaBackground() {
-		return getColor(Settings.ANALOG_SURROUND_BACKGRD, "250,249,230"); // COLOR_VERY_LIGHT_YELLOW //$NON-NLS-1$
+		return getColor("dummy_surround_backgrd", "244,244,244"); //Kontronik surrounding background color //$NON-NLS-1$
 	}
 
 	/**
@@ -2070,7 +2070,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getAnalogInnerAreaBackground() {
-		return getColor(Settings.ANALOG_INNER_BACKGROUND, "250,249,211"); // COLOR_CANVAS_YELLOW //$NON-NLS-1$
+		return getColor("dummy_inner_background", "238,238,238"); //Kontronik gray background //$NON-NLS-1$
 	}
 
 	/**
@@ -2093,7 +2093,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getDigitalSurroundingAreaBackground() {
-		return getColor(Settings.DIGITAL_SURROUND_BACKGRD, "250,249,230"); // COLOR_VERY_LIGHT_YELLOW //$NON-NLS-1$
+		return getColor("dummy_surround_backgrd", "244,244,244"); //Kontronik surrounding background color //$NON-NLS-1$
 	}
 
 	/**
@@ -2116,7 +2116,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getDigitalInnerAreaBackground() {
-		return getColor(Settings.DIGITAL_INNER_BACKGROUND, "250,249,211"); // COLOR_CANVAS_YELLOW //$NON-NLS-1$
+		return getColor("dummy_inner_background", "238,238,238"); //Kontronik gray background //$NON-NLS-1$
 	}
 
 	/**
@@ -2139,7 +2139,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getCellVoltageSurroundingAreaBackground() {
-		return getColor(Settings.CELL_VOLTAGE_SURROUND_BACKGRD, "250,249,230"); // COLOR_VERY_LIGHT_YELLOW //$NON-NLS-1$
+		return getColor("dummy_surround_backgrd", "244,244,244"); //Kontronik surrounding background color //$NON-NLS-1$
 	}
 
 	/**
@@ -2162,7 +2162,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getCellVoltageInnerAreaBackground() {
-		return getColor(Settings.CELL_VOLTAGE_INNER_BACKGROUND, "250,249,211"); // COLOR_CANVAS_YELLOW //$NON-NLS-1$
+		return getColor("dummy_inner_background", "238,238,238"); //Kontronik gray background //$NON-NLS-1$
 	}
 
 	/**
@@ -2185,7 +2185,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getFileCommentSurroundingAreaBackground() {
-		return getColor(Settings.FILE_COMMENT_SURROUND_BACKGRD, "250,249,230"); // COLOR_VERY_LIGHT_YELLOW //$NON-NLS-1$
+		return getColor("dummy_surround_backgrd", "244,244,244"); //Kontronik surrounding background color //$NON-NLS-1$
 	}
 
 	/**
@@ -2208,7 +2208,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getFileCommentInnerAreaBackground() {
-		return getColor(Settings.FILE_COMMENT_INNER_BACKGROUND, "255,255,255"); // COLOR_WHITE //$NON-NLS-1$
+		return getColor("dummy_inner_background", "238,238,238"); //Kontronik gray background //$NON-NLS-1$
 	}
 
 	/**
@@ -2231,7 +2231,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getObjectDescriptionSurroundingAreaBackground() {
-		return getColor(Settings.OBJECT_DESC_SURROUND_BACKGRD, "250,249,230"); // COLOR_VERY_LIGHT_YELLOW //$NON-NLS-1$
+		return getColor("dummy_surround_backgrd", "244,244,244"); //Kontronik surrounding background color //$NON-NLS-1$
 	}
 
 	/**
@@ -2254,7 +2254,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getObjectDescriptionInnerAreaBackground() {
-		return getColor(Settings.OBJECT_DESC_INNER_BACKGROUND, "255,255,255"); // COLOR_WHITE //$NON-NLS-1$
+		return getColor("dummy_inner_background", "238,238,238"); //Kontronik gray background //$NON-NLS-1$
 	}
 
 	/**
@@ -3144,7 +3144,7 @@ public final class Settings extends Properties {
 	 * get color skin schema
 	 */
 	public String getSkinColorSchema() {
-		return this.getProperty(Settings.SKIN_COLOR_SCHEMA, Settings.COLOR_SCHEMA_SYSTEM);
+		return this.getProperty("dummy_color_schema", Settings.COLOR_SCHEMA_DARK);
 	}
 
 	/**
