@@ -78,7 +78,7 @@ public class StatusBar {
 			}
 		});
 	}
-
+	
 	public void create() {
 		{
 			this.connectionComposite = new Composite(this.statusComposite, SWT.NONE);
