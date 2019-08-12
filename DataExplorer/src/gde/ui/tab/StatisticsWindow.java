@@ -294,13 +294,13 @@ public class StatisticsWindow extends CTabItem {
 					this.tabelItemText.add(sb.toString());
 
 					for (String recordName : displayableRecords) {
-						if (log.isLoggable(Level.FINE)) log.log(Level.FINE, "updating record = " + recordName);
 						Record record = activeRecordSet.get(recordName);
 						IDevice device = activeRecordSet.getDevice();
 						StatisticsType measurementStatistics = device.getMeasurementStatistic(activeChannel.getNumber(), activeRecordSet.get(recordName).getOrdinal());
 						if (measurementStatistics != null) {
 							sb = new StringBuilder();
 							int triggerRefOrdinal = getTriggerReferenceOrdinal(activeRecordSet, measurementStatistics);
+							if (log.isLoggable(Level.FINE)) log.log(Level.FINE, String.format("updating record = %s ref ordinal = %d", recordName, triggerRefOrdinal));
 							boolean isTriggerLevel = measurementStatistics.getTrigger() != null;
 							sb.append(record.getName()).append(DELIMITER);
 							sb.append("[").append(record.getUnit()).append("]").append(DELIMITER); //$NON-NLS-1$ //$NON-NLS-2$

@@ -3,8 +3,10 @@ Development history / change log, please read from bottom up
 Version 3.3.9 - xx yyy 2019
 Generic changes/fixes
 	* update measurement properties XML containing [] by mistake
+	* correct average calculation using trigger ranges
 	
 Device specific changes/fixes
+	* HottAdapter* - correct trigger description text in XML
 
 Version 3.3.8 - 04 Aug 2019
 Generic changes/fixes

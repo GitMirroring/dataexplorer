@@ -2275,7 +2275,7 @@ public class Record extends AbstractRecord implements IRecord {
 			StringBuilder sb = new StringBuilder();
 			if (this.triggerRanges != null) {
 				for (TriggerRange range : this.triggerRanges) {
-					long startValue = this.get(range.in);
+					long startValue = this.getUnit().contains("Ah") ? this.get(range.in) : 0;
 					for (int i = range.in; i < range.out; i++) {
 						sum += this.get(i) - startValue;
 						if (log.isLoggable(Level.FINER)) sb.append(this.realGet(i) / 1000.0).append(", "); //$NON-NLS-1$
