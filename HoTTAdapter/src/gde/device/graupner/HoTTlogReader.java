@@ -409,13 +409,22 @@ public class HoTTlogReader extends HoTTbinReader {
 		//Ph(D)[4], Evt1(H)[5], Evt2(D)[6], Fch(D)[7], TXdBm(-D)[8], RXdBm(-D)[9], RfRcvRatio(D)[10], TrnRcvRatio(D)[11]
 		//STATUS : Ph(D)[4], Evt1(H)[5], Evt2(D)[6], Fch(D)[7], TXdBm(-D)[8], RXdBm(-D)[9], RfRcvRatio(D)[10], TrnRcvRatio(D)[11]
 		//S.INFOR : DEV(D)[22], CH(D)[23], SID(H)[24], WARN(H)[25]
-		values[19] = (_buf[5] & 0x01) * 100000; 	//power off
-		values[20] = (_buf[5] & 0x02) * 50000;		//batt low
-		values[21] = (_buf[5] & 0x04) * 25000;		//reset
-		if (_buf[25] > 0 && _buf[25] < 27)
-			values[22] = (_buf[25] & 0x7F) * 1000;		//warning
-		else
-			values[22] = 0;
+		//remove evaluation of transmitter event and warning to avoid end user confusion
+		//values[19] = (_buf[5] & 0x01) * 100000; 	//power off
+		//values[20] = (_buf[1] & 0x01) * 50000;			//batt low
+		//values[21] = (_buf[5] & 0x04) * 25000;		//reset
+		//if (_buf[25] > 0) {
+		//	values[22] = (_buf[25] & 0x7F) * 1000;		//warning
+		//}
+		//else
+		//	values[22] = 0;
+		
+//		StringBuilder sb = new StringBuilder();
+//		sb.append(StringHelper.getFormatedTime("HH:mm:ss:SSS", HoTTlogReader.timeStep_ms - GDE.ONE_HOUR_MS)).append(GDE.STRING_BLANK);			
+//		for (int i = 0; i < _buf.length; i++) {
+//			sb.append(StringHelper.printBinary(_buf[i], false)).append(GDE.STRING_BLANK);			
+//		}
+//		log.log(Level.OFF, sb.toString());			
 	}
 
 	/**
