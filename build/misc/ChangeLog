@@ -4,6 +4,7 @@ Version 3.3.9 - xx yyy 2019
 Generic changes/fixes
 	* update measurement properties XML containing [] by mistake
 	* correct average calculation using trigger ranges
+	* fix makensis languages.nsh encoding
 	
 Device specific changes/fixes
 	* HottAdapter* - correct trigger description text in XML
