@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <DeviceProperties xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:noNamespaceSchemaLocation="DeviceProperties_V37.xsd">
+	xsi:noNamespaceSchemaLocation="DeviceProperties_V38.xsd">
 	<Device>
 		<name implementation="gde.device.graupner.UltraDuoPlus60">UltraDuoPlus60</name>
 		<manufacturer>Graupner</manufacturer>

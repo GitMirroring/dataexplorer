@@ -33,6 +33,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;attribute name="sigma" use="required" type="{http://www.w3.org/2001/XMLSchema}boolean" />
  *       &lt;attribute name="triggerRefOrdinal" type="{http://www.w3.org/2001/XMLSchema}integer" />
  *       &lt;attribute name="sumByTriggerRefOrdinal" type="{http://www.w3.org/2001/XMLSchema}integer" />
+ *       &lt;attribute name="integrateByTrigger" type="{http://www.w3.org/2001/XMLSchema}boolean" />
  *       &lt;attribute name="sumTriggerText" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="countByTrigger" type="{http://www.w3.org/2001/XMLSchema}boolean" />
  *       &lt;attribute name="countTriggerText" type="{http://www.w3.org/2001/XMLSchema}string" />
@@ -64,6 +65,8 @@ public class StatisticsType implements Cloneable {
 	protected Integer									triggerRefOrdinal;
 	@XmlAttribute
 	protected Integer									sumByTriggerRefOrdinal;
+	@XmlAttribute
+	protected Boolean									integrateByTrigger;
 	@XmlAttribute
 	protected String									sumTriggerText;
 	@XmlAttribute
@@ -97,6 +100,7 @@ public class StatisticsType implements Cloneable {
 		this.avg = statistics.avg;
 		this.sigma = statistics.sigma;
 		this.triggerRefOrdinal = statistics.triggerRefOrdinal;
+		this.integrateByTrigger = statistics.integrateByTrigger;
 		this.sumByTriggerRefOrdinal = statistics.sumByTriggerRefOrdinal;
 		this.sumTriggerText = statistics.sumTriggerText;
 		this.countByTrigger = statistics.countByTrigger;
@@ -262,6 +266,21 @@ public class StatisticsType implements Cloneable {
 	 */
 	public void setSumByTriggerRefOrdinal(Integer value) {
 		this.sumByTriggerRefOrdinal = value;
+	}
+
+	/**
+	 * get the value of the integrateByTrigger property.
+	 */
+	public boolean isIntegrateByTrigger() {
+		return this.integrateByTrigger == null ? false : this.integrateByTrigger;
+	}
+
+	/**
+	 * set the value of the integrateByTrigger property.
+	 * 
+	 */
+	public void setIntegrateByTrigger(boolean value) {
+		this.integrateByTrigger = value;
 	}
 
 	/**

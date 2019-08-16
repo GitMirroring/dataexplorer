@@ -2185,6 +2185,35 @@ public class Record extends AbstractRecord implements IRecord {
 	}
 
 	/**
+	 * calculate integrated value by trigger time
+	 * @param referencedMeasurementOrdinal
+	 * @return integrated value according trigger specification of referenced measurement
+	 */
+	public double getIntegratedValue(int referencedMeasurementOrdinal) {
+		synchronized (this.parent) {
+			if (this.triggerRanges == null) {
+				this.triggerRanges = this.parent.get(referencedMeasurementOrdinal).getTriggerRanges();
+			}
+			double integratedValueTriggered = 0;
+			StringBuilder sb = new StringBuilder();
+			if (log.isLoggable(Level.FINER)) sb.append("\n"); //$NON-NLS-1$
+			if (this.triggerRanges != null) {
+				for (TriggerRange range : this.triggerRanges) {
+					for (int i = range.in; i < range.out; i++) {
+						double power_W = this.device.translateValue(this, this.get(i)/1000.0);
+						double time_min = (this.getTime_ms(i) - this.getTime_ms(i-1)) / 1000.0 / 60.0;
+						integratedValueTriggered += power_W * time_min; //W*min
+						if (log.isLoggable(Level.FINER)) sb.append(String.format("%6.2f W * %3.1f ms = %6.2f Wmin", power_W, (this.getTime_ms(i) - this.getTime_ms(i-1)), integratedValueTriggered)).append(", "); //$NON-NLS-1$
+					}
+					if (log.isLoggable(Level.FINER)) sb.append("\n"); //$NON-NLS-1$
+				}
+				if (log.isLoggable(Level.FINER)) log.log(Level.FINER, sb.toString());
+			}
+			return integratedValueTriggered;
+		}
+	}
+	
+	/**
 	 * @return the avgValue
 	 */
 	public int getAvgValue() {
@@ -2207,7 +2236,7 @@ public class Record extends AbstractRecord implements IRecord {
 	}
 
 	/**
-	 * get/calcualte avg value by referenced triggered other measurement.
+	 * get/calculate avg value by referenced triggered other measurement.
 	 * does not support null measurement values.
 	 * @param referencedMeasurementOrdinal
 	 * @return average value according trigger specification of referenced measurement
@@ -2273,6 +2302,7 @@ public class Record extends AbstractRecord implements IRecord {
 			long sum = 0;
 			int numPoints = 0;
 			StringBuilder sb = new StringBuilder();
+			if (log.isLoggable(Level.FINER)) sb.append("\n"); //$NON-NLS-1$
 			if (this.triggerRanges != null) {
 				for (TriggerRange range : this.triggerRanges) {
 					long startValue = this.getUnit().contains("Ah") ? this.get(range.in) : 0;
@@ -2419,7 +2449,7 @@ public class Record extends AbstractRecord implements IRecord {
 	}
 
 	/**
-	 * get/calcualte sum of time by configured trigger
+	 * get/calculate sum of time by configured trigger
 	 * @return sum value according trigger range specification of referenced measurement
 	 */
 	public String getTimeSumTriggeredRange() {

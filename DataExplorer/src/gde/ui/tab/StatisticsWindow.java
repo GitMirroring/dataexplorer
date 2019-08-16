@@ -395,6 +395,12 @@ public class StatisticsWindow extends CTabItem {
 							// append global comment
 							if (measurementStatistics.getComment() != null && measurementStatistics.getComment().length() > 1)
 								sb.append("(").append(xmlResource.getReplacement(measurementStatistics.getComment())).append(") "); //$NON-NLS-1$ //$NON-NLS-2$
+							
+							//evaluate integrated value by trigger range
+							if (triggerRefOrdinal >= 0 && measurementStatistics.isIntegrateByTrigger()) {
+								DecimalFormat cdf = new DecimalFormat("0.00"); //$NON-NLS-1$
+								sb.append(String.format(Messages.getString(MessageIds.GDE_MSGT0958), cdf.format(record.getIntegratedValue(triggerRefOrdinal)), record.getUnit()+"min"));
+							}
 
 							// append trigger + comment
 							if (measurementStatistics.getTrigger() != null && measurementStatistics.getSumTriggerTimeText() != null && measurementStatistics.getSumTriggerTimeText().length() > 1) {
