@@ -82,6 +82,7 @@ public class StatisticsTypeTabItem extends CTabItem implements Cloneable {
 	Button												countByTriggerButton;
 	Text													triggerRefOrdinalText, sumTriggerText;
 	Button												isRatioRefOrdinalButton;
+	Button												isIntegrateByTriggerButton;
 	Text													triggerCommentText;
 	CCombo												minTimeSecCombo;
 	Label													minTimeSecLabel;
@@ -100,7 +101,7 @@ public class StatisticsTypeTabItem extends CTabItem implements Cloneable {
 
 	Boolean												statisticsMin, statisticsMax, statisticsAvg, statisticsSigma;
 	String												triggerComment, sumTriggerComment, sumTriggerTimeComment, countByTriggerComment, ratioComment, triggerRefOrdinalComment;
-	Boolean												isGreater, isSumTriggerTime, isCountByTrigger, isRatioRefOrdinal;
+	Boolean												isGreater, isSumTriggerTime, isCountByTrigger, isRatioRefOrdinal, isIntegrateByTrigger;
 	Integer												triggerLevel, minTimeSec, ratioRefOrdinal;
 	Integer												triggerRefOrdinal, sumByTriggerRefOrdinal;																																																											// must be equal !!!
 	boolean												isSomeTriggerDefined					= false;
@@ -162,6 +163,8 @@ public class StatisticsTypeTabItem extends CTabItem implements Cloneable {
 		this.isRatioRefOrdinal = copyFrom.isRatioRefOrdinal;
 		this.ratioRefOrdinal = copyFrom.ratioRefOrdinal;
 		this.ratioComment = copyFrom.ratioComment;
+		
+		this.isIntegrateByTrigger = copyFrom.isIntegrateByTrigger;
 
 		this.deviceConfig = copyFrom.deviceConfig;
 		this.channelConfigNumber = copyFrom.channelConfigNumber;
@@ -239,6 +242,7 @@ public class StatisticsTypeTabItem extends CTabItem implements Cloneable {
 		this.isRatioRefOrdinalButton.setEnabled(isTriggerDefined && this.triggerType == null);
 		this.ratioRefOrdinalCombo.setEnabled(isTriggerDefined && this.triggerType == null);
 		this.ratioText.setEnabled(isTriggerDefined && this.triggerType == null);
+		this.isIntegrateByTriggerButton.setEnabled(isTriggerDefined && this.triggerType == null);
 
 		if (this.statisticsType != null) {
 			if (isTriggerDefined) {
@@ -301,6 +305,13 @@ public class StatisticsTypeTabItem extends CTabItem implements Cloneable {
 					this.isRatioRefOrdinalButton.setSelection(this.isRatioRefOrdinal = false);
 					this.ratioRefOrdinalCombo.setEnabled(false);
 					this.ratioText.setEnabled(false);
+				}
+
+				if ((this.isIntegrateByTrigger = this.statisticsType.isIntegrateByTrigger()) != null) {
+					this.isIntegrateByTriggerButton.setSelection(this.isIntegrateByTrigger);
+				}
+				else {
+					this.isIntegrateByTriggerButton.setSelection(false);
 				}
 			}
 			else { // no measurement defines a trigger, as reult no measurement can reference to it
@@ -947,8 +958,38 @@ public class StatisticsTypeTabItem extends CTabItem implements Cloneable {
 					}
 				});
 			}
+			{
+				this.isIntegrateByTriggerButton = new Button(this.statisticsComposite, SWT.CHECK | SWT.LEFT);
+				this.isIntegrateByTriggerButton.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+				this.isIntegrateByTriggerButton.setText(Messages.getString(MessageIds.GDE_MSGT0959));
+				this.isIntegrateByTriggerButton.setBounds(125, 180, 118, 20);
+				this.isIntegrateByTriggerButton.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0575));
+				this.isIntegrateByTriggerButton.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent evt) {
+						log.log(java.util.logging.Level.FINEST, "isIntegrateByTriggerButton.widgetSelected, event=" + evt); //$NON-NLS-1$
+						StatisticsTypeTabItem.this.isRatioRefOrdinal = StatisticsTypeTabItem.this.isRatioRefOrdinalButton.getSelection();
+						StatisticsTypeTabItem.this.ratioRefOrdinalCombo.setEnabled(StatisticsTypeTabItem.this.isRatioRefOrdinal);
+						StatisticsTypeTabItem.this.ratioText.setEnabled(StatisticsTypeTabItem.this.isRatioRefOrdinal);
+						if (StatisticsTypeTabItem.this.statisticsType != null && !StatisticsTypeTabItem.this.isRatioRefOrdinal) {
+							StatisticsTypeTabItem.this.statisticsType.setRatioRefOrdinal(StatisticsTypeTabItem.this.ratioRefOrdinalCombo.getSelectionIndex());
+							StatisticsTypeTabItem.this.ratioText.setText(StatisticsTypeTabItem.this.ratioText.getText());
+							StatisticsTypeTabItem.this.deviceConfig.setChangePropery(true);
+							StatisticsTypeTabItem.this.propsEditor.enableSaveButton(true);
+						}
+						else {
+							if (StatisticsTypeTabItem.this.statisticsType != null) {
+								StatisticsTypeTabItem.this.statisticsType.setRatioRefOrdinal(null);
+							}
+							StatisticsTypeTabItem.this.ratioText.setText(GDE.STRING_EMPTY);
+							StatisticsTypeTabItem.this.deviceConfig.setChangePropery(true);
+							StatisticsTypeTabItem.this.propsEditor.enableSaveButton(true);
+						}
+					}
+				});
+			}
 			this.scrolledComposite.setContent(this.statisticsComposite);
-			this.statisticsComposite.setSize(700, 185);
+			this.statisticsComposite.setSize(700, 205);
 			this.statisticsComposite.layout();
 
 			initialize();
@@ -1054,6 +1095,8 @@ public class StatisticsTypeTabItem extends CTabItem implements Cloneable {
 		StatisticsTypeTabItem.this.isRatioRefOrdinalButton.setSelection(StatisticsTypeTabItem.this.ratioRefOrdinal != null);
 		StatisticsTypeTabItem.this.ratioRefOrdinalCombo.select(StatisticsTypeTabItem.this.ratioRefOrdinal == null ? 0 : StatisticsTypeTabItem.this.ratioRefOrdinal);
 		StatisticsTypeTabItem.this.ratioText.setText(StatisticsTypeTabItem.this.ratioComment == null ? GDE.STRING_EMPTY : StatisticsTypeTabItem.this.ratioComment);
+		StatisticsTypeTabItem.this.isIntegrateByTriggerButton.setSelection(StatisticsTypeTabItem.this.isIntegrateByTrigger != null ? StatisticsTypeTabItem.this.isIntegrateByTrigger : false);
+		StatisticsTypeTabItem.this.isIntegrateByTriggerButton.setEnabled(StatisticsTypeTabItem.this.triggerRefOrdinal != null);
 
 		//StatisticsTypeTabItem.this.enableContextMenu(true);
 	}

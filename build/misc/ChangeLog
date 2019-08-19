@@ -6,6 +6,7 @@ Generic changes/fixes
 	* correct average calculation using trigger ranges
 	* fix makensis languages.nsh encoding
 	* add capability to integrate values by trigger (require XSD update)
+	* update device properties editor to support capability to integrate values by trigger
 	
 Device specific changes/fixes
 	* HottAdapter* - correct trigger description text in XML
