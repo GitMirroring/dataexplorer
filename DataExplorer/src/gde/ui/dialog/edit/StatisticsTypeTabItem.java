@@ -965,7 +965,7 @@ public class StatisticsTypeTabItem extends CTabItem implements Cloneable {
 				this.isIntegrateByTriggerButton.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 				this.isIntegrateByTriggerButton.setText(Messages.getString(MessageIds.GDE_MSGT0959));
 				this.isIntegrateByTriggerButton.setBounds(125, 180, 118, 20);
-				this.isIntegrateByTriggerButton.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0560));
+				this.isIntegrateByTriggerButton.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0960));
 				this.isIntegrateByTriggerButton.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent evt) {
