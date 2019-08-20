@@ -279,7 +279,7 @@ public class StatisticsType implements Cloneable {
 	 * set the value of the integrateByTrigger property.
 	 * 
 	 */
-	public void setIntegrateByTrigger(boolean value) {
+	public void setIntegrateByTrigger(Boolean value) {
 		this.integrateByTrigger = value;
 	}
 

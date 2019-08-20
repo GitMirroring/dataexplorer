@@ -545,6 +545,7 @@ public class StatisticsTypeTabItem extends CTabItem implements Cloneable {
 								StatisticsTypeTabItem.this.isRatioRefOrdinalButton.setEnabled(false);
 								StatisticsTypeTabItem.this.ratioRefOrdinalCombo.setEnabled(false);
 								StatisticsTypeTabItem.this.ratioText.setEnabled(false);
+								StatisticsTypeTabItem.this.isIntegrateByTriggerButton.setEnabled(false);
 							}
 							else {
 								StatisticsTypeTabItem.this.statisticsType.removeTrigger();
@@ -578,6 +579,7 @@ public class StatisticsTypeTabItem extends CTabItem implements Cloneable {
 								StatisticsTypeTabItem.this.isRatioRefOrdinalButton.setEnabled(true);
 								StatisticsTypeTabItem.this.ratioRefOrdinalCombo.setEnabled(true);
 								StatisticsTypeTabItem.this.ratioText.setEnabled(true);
+								StatisticsTypeTabItem.this.isIntegrateByTriggerButton.setEnabled(true);
 
 								StatisticsTypeTabItem.this.statisticsComposite.redraw();
 							}
@@ -963,28 +965,22 @@ public class StatisticsTypeTabItem extends CTabItem implements Cloneable {
 				this.isIntegrateByTriggerButton.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 				this.isIntegrateByTriggerButton.setText(Messages.getString(MessageIds.GDE_MSGT0959));
 				this.isIntegrateByTriggerButton.setBounds(125, 180, 118, 20);
-				this.isIntegrateByTriggerButton.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0575));
+				this.isIntegrateByTriggerButton.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0560));
 				this.isIntegrateByTriggerButton.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent evt) {
 						log.log(java.util.logging.Level.FINEST, "isIntegrateByTriggerButton.widgetSelected, event=" + evt); //$NON-NLS-1$
-						StatisticsTypeTabItem.this.isRatioRefOrdinal = StatisticsTypeTabItem.this.isRatioRefOrdinalButton.getSelection();
-						StatisticsTypeTabItem.this.ratioRefOrdinalCombo.setEnabled(StatisticsTypeTabItem.this.isRatioRefOrdinal);
-						StatisticsTypeTabItem.this.ratioText.setEnabled(StatisticsTypeTabItem.this.isRatioRefOrdinal);
-						if (StatisticsTypeTabItem.this.statisticsType != null && !StatisticsTypeTabItem.this.isRatioRefOrdinal) {
-							StatisticsTypeTabItem.this.statisticsType.setRatioRefOrdinal(StatisticsTypeTabItem.this.ratioRefOrdinalCombo.getSelectionIndex());
-							StatisticsTypeTabItem.this.ratioText.setText(StatisticsTypeTabItem.this.ratioText.getText());
-							StatisticsTypeTabItem.this.deviceConfig.setChangePropery(true);
-							StatisticsTypeTabItem.this.propsEditor.enableSaveButton(true);
+						StatisticsTypeTabItem.this.isIntegrateByTrigger = StatisticsTypeTabItem.this.isIntegrateByTriggerButton.getSelection();
+						if (StatisticsTypeTabItem.this.statisticsType != null && StatisticsTypeTabItem.this.isIntegrateByTrigger) {
+							StatisticsTypeTabItem.this.statisticsType.setIntegrateByTrigger(StatisticsTypeTabItem.this.isIntegrateByTrigger);
 						}
 						else {
 							if (StatisticsTypeTabItem.this.statisticsType != null) {
-								StatisticsTypeTabItem.this.statisticsType.setRatioRefOrdinal(null);
+								StatisticsTypeTabItem.this.statisticsType.setIntegrateByTrigger(null);
 							}
-							StatisticsTypeTabItem.this.ratioText.setText(GDE.STRING_EMPTY);
-							StatisticsTypeTabItem.this.deviceConfig.setChangePropery(true);
-							StatisticsTypeTabItem.this.propsEditor.enableSaveButton(true);
 						}
+						StatisticsTypeTabItem.this.deviceConfig.setChangePropery(true);
+						StatisticsTypeTabItem.this.propsEditor.enableSaveButton(true);
 					}
 				});
 			}
@@ -1040,18 +1036,20 @@ public class StatisticsTypeTabItem extends CTabItem implements Cloneable {
 			StatisticsTypeTabItem.this.triggerRefOrdinal = StatisticsTypeTabItem.this.getTriggerReferenceOrdinal();
 			if (StatisticsTypeTabItem.this.statisticsType != null) {
 				StatisticsTypeTabItem.this.statisticsType.setTriggerRefOrdinal(StatisticsTypeTabItem.this.triggerRefOrdinal);
-				StatisticsTypeTabItem.this.deviceConfig.setChangePropery(true);
-				StatisticsTypeTabItem.this.propsEditor.enableSaveButton(true);
 			}
+			StatisticsTypeTabItem.this.isIntegrateByTriggerButton.setEnabled(true);
 		}
 		else {
 			//StatisticsTypeTabItem.this.triggerRefOrdinalCombo.setEnabled(false);
 			if (StatisticsTypeTabItem.this.statisticsType != null) {
-				StatisticsTypeTabItem.this.deviceConfig.setChangePropery(true);
-				StatisticsTypeTabItem.this.propsEditor.enableSaveButton(true);
 				StatisticsTypeTabItem.this.statisticsType.setTriggerRefOrdinal(StatisticsTypeTabItem.this.triggerRefOrdinal = null);
+				StatisticsTypeTabItem.this.isIntegrateByTriggerButton.setSelection(false);
+				StatisticsTypeTabItem.this.isIntegrateByTriggerButton.setEnabled(false);
+				StatisticsTypeTabItem.this.statisticsType.setIntegrateByTrigger(null);
 			}
 		}
+		StatisticsTypeTabItem.this.deviceConfig.setChangePropery(true);
+		StatisticsTypeTabItem.this.propsEditor.enableSaveButton(true);
 	}
 
 	/**
