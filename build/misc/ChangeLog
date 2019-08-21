@@ -12,6 +12,7 @@ Generic changes/fixes
 Device specific changes/fixes
 	* HottAdapter* - correct trigger description text in XML
 	* HoTTAdapter* - *.log remove evaluation of transmitter event and warning to avoid end user confusion
+	* HottAdapter2 - fix channel zoom problem
 
 Version 3.3.8 - 04 Aug 2019
 Generic changes/fixes

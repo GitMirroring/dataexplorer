@@ -818,7 +818,7 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 			double minuten = (value - grad * 1.0) * 60.0;
 			newValue = (grad + minuten / 100.0) * 1000.0;
 		}
-		else if (record.getAbstractParent().getChannelConfigNumber() == 6 && (record.getOrdinal() >= 73 && record.getOrdinal() <= 88)) {
+		else if (record.getAbstractParent().getChannelConfigNumber() == 4 && (record.getOrdinal() >= 73 && record.getOrdinal() <= 88)) {
 			if (this.pickerParameters.isChannelPercentEnabled) {
 				if (!record.getUnit().equals("%")) record.setUnit("%");
 				factor = 0.250;
