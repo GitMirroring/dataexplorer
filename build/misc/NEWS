@@ -1,33 +1,29 @@
-GNU DataExplorer - News - comes with version 3.3.8 - 04 Aug 2019
+GNU DataExplorer - News - comes with version 3.3.9 - 24 Aug 2019
 
 Generic changes/fixes
-	* catch possible IndexOutOfBoundsException while updating cell voltage window
-	* 32 bit Linux lack of updates and seams still better compatible with GTK-2, use export SWT_GTK3=0 force using GTK-2 libs
-	* update XSD to version 37, add additional keys
+	* update measurement properties XML containing [] by mistake
+	* correct average calculation using trigger ranges
+	* fix makensis languages.nsh encoding
+	* add capability to integrate values by trigger (require XSD update)
+	* update device properties editor to support capability to integrate values by trigger
+	* update online/offline documentation
 	
 Device specific changes/fixes
-	* HoTTAdapter2 - fix power calculation while importing *.log EAM
-	* HoTTAdapter2 - fix missing ESC parsing while configuration channels selected
-	* HoTTAdapter* - fix/enable again capability to analyze log files written in SD-Format with 64 byte blocks  
-	* HoTTAdapter2 - enable selection of altitude/climb values source sensor
-	* HoTTAdapter2 - update history analysis to sensor selection
-	* CellLog8S - fix cell voltage display, correct index
-	* iCharger* - fix index temperature intern/extern for serial connected once only
+	* HottAdapter* - correct trigger description text in XML
+	* HoTTAdapter* - *.log remove evaluation of transmitter event and warning to avoid end user confusion
 
 	
 	
 Generelle Änderungen/Verbesserungen
-    * Erweiterte Fehlerbehandlung im Zellenspannungen Fenster
-    * 32 Bit Linux fehlen GTK-Updates, es erscheint hier besser bei GTK-2 zu bleiben, "export SWT_GTK3=0" erzwingt die Verwendung der GTK-2 Bibliotheken
-    * XSD-Update nach Version 37, weitere Schlüsselwerte hinzugefügt
+ 	* KOrrektur einiger Geräte XML-Dateien, diese enthielten [] was bei Java 12 zu Fehlern führt
+	* Korrektur bei der Berechnung des Mittelwertes bezogen auf Trigger-Bereiche
+	* Korrektur makensis languages.nsh Encoding
+	* Integration von Werten über Trigger-Bereiche hinzu gefügt (erfordert XSD update)
+	* Update Geräte-Eigenschaften-Editor für die Unterstützung der Integration über Trigger-Bereiche
+	* Update online/offline Dokumentation
 
 Gerätespezifische Änderungen/Verbesserungen
-    * HoTTAdapter2 - Korrektur der Leistungsberechnung beim Import von EAM *.log Dateien
-    * HoTTAdapter2 - Korrektur fehlender Werte vom ESC wenn Kanäle ausgewählt
-    * HoTTAdapter* - Korrektur/Wiederbelebung der Datenanalyse vom SD-Logformat mit 64 Byte Blöcken
-    * HoTTAdapter2 - Ermögliche die Auswahl eines Sensors für die Höhen/Steigen Auswertung
-    * HoTTAdapter2 - Update Historienanalyse in Bezug auf Sensorselektion
-    * CellLog8S - Korrigierte Zellenspannungen Anzeige
-    * iCharger* - Korrigierter Index zur Temperatur intern/extern für seriell angebundene Geräte
+	* HottAdapter* - Korrektur der Trigger-Beschreibung in der XML
+	* HoTTAdapter* - Entferntung der Auswertung von Ereignissen und Warnungen in *.log Dateien
 
 	
