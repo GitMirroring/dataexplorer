@@ -1605,7 +1605,7 @@ public class GraphicsComposite extends Composite {
 	 */
 	private void calculateMeasurementStatusMessage(IDevice actualDevice, Record record, int indexPosMeasure) {
 		this.application.setStatusMessage(Messages.getString(MessageIds.GDE_MSGT0256, new Object[] { record.getName(),
-				record.getDecimalFormat().format(actualDevice.translateValue(record, record.realGet(indexPosMeasure)) / 1000.0),
+				record.getDecimalFormat().format(actualDevice.translateValue(record, record.realGet(indexPosMeasure) / 1000.0)),
 				record.getUnit(), record.getHorizontalDisplayPointAsFormattedTimeWithUnit(this.xPosMeasure) }));
 	}
 
@@ -1636,13 +1636,13 @@ public class GraphicsComposite extends Composite {
 		Record speed = record.getParent().get(record.getDevice().getAtlitudeTripSpeedOrdinals()[2]);
 		
 		double altitudeDelta = altitude.realGet(indexPosDelta) - altitude.realGet(indexPosMeasure);
-		String altDelta_m = altitude.getDecimalFormat().format(actualDevice.translateValue(altitude, altitudeDelta) / 1000.0);
+		String altDelta_m = altitude.getDecimalFormat().format(actualDevice.translateValue(altitude, altitudeDelta / 1000.0));
 		
-		double tripDelta = tripLength.realGet(indexPosDelta) - tripLength.realGet(indexPosMeasure);
+		double tripDelta = tripLength.realGet(indexPosDelta) - tripLength.realGet(indexPosMeasure); // km * 1000m/km = m
 		String tripDelta_m = tripLength.getDecimalFormat().format(actualDevice.translateValue(tripLength, tripDelta));
 		
-		String ratioTripAltitude = String.format("%4.2f", Math.abs(actualDevice.translateValue(tripLength, tripDelta) / actualDevice.translateValue(altitude, altitudeDelta)) * 1000.0);
-		String speedAvg = speed.getDecimalFormat().format(actualDevice.translateValue(speed, speed.getAvgValue(indexPosMeasure, indexPosDelta)) / 1000.0 );
+		String ratioTripAltitude = String.format("%4.2f", Math.abs(actualDevice.translateValue(tripLength, tripDelta) / actualDevice.translateValue(altitude, altitudeDelta / 1000.0))); // m/m
+		String speedAvg_kmh = speed.getDecimalFormat().format(actualDevice.translateValue(speed, speed.getAvgValue(indexPosMeasure, indexPosDelta) / 1000.0)); //km/h
 
 		this.application.setStatusMessage(Messages.getString(MessageIds.GDE_MSGT0187,
 				//GDE_MSGT0187=\  \u2206h/\u2206t = {1} {2}/{3} ===> {4} {5}/sec - \u2206s/\u2206h = {6} {7} ===> {8} bei ~{9} {10}
@@ -1650,7 +1650,7 @@ public class GraphicsComposite extends Composite {
 						altDelta_m, record.getUnit(),
 						TimeLine.getFomatedTimeWithUnit(record.getHorizontalDisplayPointTime_ms(this.xPosDelta) - record.getHorizontalDisplayPointTime_ms(this.xPosMeasure)),
 						record.getSlopeValue(new Point(this.xPosDelta - this.xPosMeasure, this.yPosMeasure - this.yPosDelta)), record.getUnit(),
-						tripDelta_m, altDelta_m, ratioTripAltitude,  speedAvg, speed.getUnit()}));
+						tripDelta_m, altDelta_m, ratioTripAltitude,  speedAvg_kmh, speed.getUnit()}));
 	}
 
 	/**
@@ -2028,7 +2028,7 @@ public class GraphicsComposite extends Composite {
 			}
 			sb.append("| ").append(GDE.LINE_SEPARATOR).append(String.format("%16s  ", formattedTimeWithUnit.substring(0, formattedTimeWithUnit.indexOf(GDE.CHAR_LEFT_BRACKET) - 1)));
 			for (Record record : records) {
-				sb.append(String.format("|%7s   ", record.getDecimalFormat().format(actualDevice.translateValue(record, record.realGet(indexPosMeasure)) / 1000.0)));
+				sb.append(String.format("|%7s   ", record.getDecimalFormat().format(actualDevice.translateValue(record, record.realGet(indexPosMeasure) / 1000.0))));
 			}
 			return sb.append("|").toString();
 		}
