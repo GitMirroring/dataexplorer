@@ -1,6 +1,6 @@
 Development history / change log, please read from bottom up
 
-Version 3.3.9 - xx yyy 2019
+Version 3.3.9 - 25 Aug 2019
 Generic changes/fixes
 	* update measurement properties XML containing [] by mistake
 	* correct average calculation using trigger ranges

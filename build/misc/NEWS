@@ -9,13 +9,13 @@ Generic changes/fixes
 	* update online/offline documentation
 	
 Device specific changes/fixes
-	* HottAdapter* - correct trigger description text in XML
+	* HoTTAdapter* - correct trigger description text in XML
 	* HoTTAdapter* - *.log remove evaluation of transmitter event and warning to avoid end user confusion
-	* HottAdapter2 - fix channel zoom problem
+	* HoTTAdapter2 - fix channel zoom problem
 		
 	
 Generelle Änderungen/Verbesserungen
- 	* KOrrektur einiger Geräte XML-Dateien, diese enthielten [] was bei Java 12 zu Fehlern führt
+ 	* Korrektur einiger Geräte XML-Dateien, diese enthielten [] was bei Java 12 zu Fehlern führt
 	* Korrektur bei der Berechnung des Mittelwertes bezogen auf Trigger-Bereiche
 	* Korrektur makensis languages.nsh Encoding
 	* Integration von Werten über Trigger-Bereiche hinzu gefügt (erfordert XSD update)
@@ -23,8 +23,8 @@ Generelle Änderungen/Verbesserungen
 	* Update online/offline Dokumentation
 
 Gerätespezifische Änderungen/Verbesserungen
-	* HottAdapter* - Korrektur der Trigger-Beschreibung in der XML
+	* HoTTAdapter* - Korrektur der Trigger-Beschreibung in der XML
 	* HoTTAdapter* - Entferntung der Auswertung von Ereignissen und Warnungen in *.log Dateien
-	* HottAdapter2 - fix channel zoom problem
+	* HoTTAdapter2 - Korrektur Kanäle Zoom-Problem
 	
 	
