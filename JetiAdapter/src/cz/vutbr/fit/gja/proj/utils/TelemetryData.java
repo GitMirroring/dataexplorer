@@ -32,8 +32,10 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.Vector;
@@ -859,9 +861,14 @@ public class TelemetryData {
 					}
 				}
 
-				String arr[] = strLine.replace("|", ";").split(";"); //$NON-NLS-1$
-				if (arr != null && arr.length > 0) {
-					parseLineParams(arr);
+				List<String> array = new ArrayList<String>();
+				array.addAll(Arrays.asList(strLine.replace("|", ";").split(";")));
+				if (array != null && array.size() > 0) {
+					if (array.size() == 4) { //only sensors/variables may have 4 entries in array while missing a unit 
+						log.log(Level.WARNING, String.format("Sensor variable missing unit! - %s", array));
+						array.add(GDE.STRING_EMPTY);
+					}
+					parseLineParams(array.toArray(new String[5]));
 				}
 			}
 			//Close the input stream
@@ -930,7 +937,7 @@ public class TelemetryData {
 				label = param;
 				//Insert a new sensor and exit the queue
 				if (timestamp == 0 && paramId == 0) {
-					if (TelemetryData.log.isLoggable(Level.FINE)) TelemetryData.log.log(Level.FINE, "adding sensor " + label);
+					if (TelemetryData.log.isLoggable(Level.INFO)) TelemetryData.log.log(Level.INFO, "adding sensor " + label);
 					TelemetrySensor sensor = new TelemetrySensor(deviceId, label);
 					this.data.add(sensor);
 					return;
@@ -943,7 +950,7 @@ public class TelemetryData {
 				TelemetryVar var = new TelemetryVar(paramId, label, unit);
 				TelemetrySensor s = this.getSensor(deviceId);
 				if (s != null) {
-					if (TelemetryData.log.isLoggable(Level.FINE)) TelemetryData.log.log(Level.FINE, String.format("add variable %s[%s]", var.name, unit));
+					if (TelemetryData.log.isLoggable(Level.INFO)) TelemetryData.log.log(Level.INFO, String.format("%d add variable %s[%s] ID=%d", deviceId, var.name, unit, paramId));
 					s.addVariable(var);
 				}
 				//no function
@@ -1013,7 +1020,7 @@ public class TelemetryData {
 				else
 					intval = (int) val;
 				if (TelemetryData.log.isLoggable(Level.FINE))
-					TelemetryData.log.log(Level.FINE, "deviceId = " + deviceId + ", paramId = " + paramId + ", untit = " + unit + ", dataType = " + dataType + ", state = " + state + ", decimals = " + decimals);
+					log.log(Level.FINE, String.format("TelemetryData: deviceId=%d, paramId=%d, untit='%s', dataType=%d, state=%d, decimals=%d, value=%d, timeStamp=%d", deviceId, paramId, unit, dataType, state, decimals, intval, timestamp));
 				TelemetryItem item = new TelemetryItem(dataType, decimals, intval, timestamp);
 				TelemetrySensor sen = this.getSensor(deviceId);
 				if (sen != null) {

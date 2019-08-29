@@ -1,5 +1,11 @@
 Development history / change log, please read from bottom up
 
+Version 3.4.0 - xx yyy 2019
+Generic changes/fixes
+
+Device specific changes/fixes
+	* JetiAdapter - fix backward compatibility skipping sensor parameter without unit, result as missing measurement
+
 Version 3.3.9 - 25 Aug 2019
 Generic changes/fixes
 	* update measurement properties XML containing [] by mistake
