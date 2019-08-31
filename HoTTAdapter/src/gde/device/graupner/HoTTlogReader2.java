@@ -371,6 +371,45 @@ public class HoTTlogReader2 extends HoTTlogReader {
 					HoTTlogReader2.points[j+73] = valuesESC[j+1];
 				}
 		}
+		
+		//add altitude and climb values from selected sensor
+		//log.log(Level.OFF, String.format("pickerParameters.altitudeClimbSensorSelection = %s", pickerParameters.altitudeClimbSensorSelection));
+		switch (Sensor.VALUES[HoTTbinReader.pickerParameters.altitudeClimbSensorSelection]) {
+		case VARIO:
+			//8=Height, 9=Climb 1, 10=Climb 3, 11=Climb 10
+			if (isVarioData)
+				for (int j = 0; j < 4; j++) {
+					HoTTlogReader2.points[j+10] = valuesVario[j+1];
+				}
+			break;
+		case GPS:
+			//8=Height, 9=Climb 1, 10=Climb 3
+			if (isGPSData)
+				for (int j = 0; j < 3; j++) { //0=altitude 1=climb1 2=climb3
+					HoTTlogReader2.points[j+10] = valuesGPS[j+3];
+				}
+			HoTTlogReader2.points[11] = 0;
+			break;
+		case GAM:
+			//8=Height, 9=Climb 1, 10=Climb 3
+			if (isGeneralData)
+				for (int j = 0; j < 3; j++) {
+					HoTTlogReader2.points[j+10] = valuesGAM[j+13];
+				}
+			HoTTlogReader2.points[11] = 0;
+			break;
+		case EAM:
+			//8=Height, 9=Climb 1, 10=Climb 3
+			if (isElectricData)
+				for (int j = 0; j < 3; j++) { //0=altitude 1=climb1 2=climb3
+					HoTTlogReader2.points[j+10] = valuesEAM[j+20];
+				}
+			HoTTlogReader2.points[11] = 0;
+			break;
+		default:
+			break;
+		}
+		
 		HoTTlogReader2.recordSet.addPoints(HoTTlogReader2.points, HoTTbinReader.timeStep_ms);
 		HoTTlogReader2.isJustMigrated = true;
 	}

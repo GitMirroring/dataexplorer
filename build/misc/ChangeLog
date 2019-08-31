@@ -5,6 +5,8 @@ Generic changes/fixes
 
 Device specific changes/fixes
 	* JetiAdapter - fix backward compatibility skipping sensor parameter without unit, result as missing measurement
+	* HoTTAdapterD - correct indexing parse EAM *.log
+	* HoTTAdapter2/D - enable selection of altitude/climb values source sensor *.log
 
 Version 3.3.9 - 25 Aug 2019
 Generic changes/fixes
