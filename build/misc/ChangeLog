@@ -8,6 +8,7 @@ Device specific changes/fixes
 	* HoTTAdapterD - correct indexing parse EAM *.log
 	* HoTTAdapter2/D - enable selection of altitude/climb values source sensor *.log
 	* PolaronACDC - fix data capturing channel 2
+	* Open-Tx - enable log time step > 1000 msec 
 
 Version 3.3.9 - 25 Aug 2019
 Generic changes/fixes

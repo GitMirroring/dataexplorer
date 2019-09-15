@@ -306,16 +306,19 @@ public class CSVReaderWriter {
 					long timeStamp = calendar.getTimeInMillis() + millis;
 
 					if (lastTimeStamp < timeStamp) {
-						if (timeStamp - lastTimeStamp > 1000) {
-							if (lastTimeStamp > 0)
-								log.log(Level.WARNING,  String.format("time differenze = %d msec, actual number record entries = %d (<100 remove)", (timeStamp - lastTimeStamp),  (recordSet.get(0).size())));
-							if (recordSet.get(0).size() > 100) {
+						if (timeStamp - lastTimeStamp > 5000) {
+							if (recordSet.get(0).size() > 10) {
+								if (lastTimeStamp > 0)
+									log.log(Level.WARNING,  String.format("time differenze = %d msec, actual number record entries = %d", (timeStamp - lastTimeStamp),  (recordSet.get(0).size())));
 								recordSet.setSaved(true);
 								activeChannel.put(recordSetName, recordSet);
 								activeChannel.setActiveRecordSet(recordSetName);
 								activeChannel.applyTemplate(recordSetName, true);
 								device.updateVisibilityStatus(recordSet, true);
 								//if (GDE.isWithUi()) activeChannel.switchRecordSet(recordSetName);
+							}
+							else {
+								log.log(Level.WARNING,  String.format("time differenze = %d msec, actual number record entries = %d (< 10 -> remove)", (timeStamp - lastTimeStamp),  (recordSet.get(0).size())));
 							}
 
 							recordSet = createRecordSet(recordSetNameExtend, device, activeChannel, tmpRecordNames, tmpRecordUnits, tmpRecordSymbols);
@@ -403,7 +406,8 @@ public class CSVReaderWriter {
 
 				}
 
-				if (GDE.isWithUi()) activeChannel.switchRecordSet(createdRecordSets.firstElement()); //recordSetName);
+				if (GDE.isWithUi() && createdRecordSets.size() > 0) 
+					activeChannel.switchRecordSet(createdRecordSets.firstElement()); //recordSetName);
 
 				reader.close();
 				reader = null;
