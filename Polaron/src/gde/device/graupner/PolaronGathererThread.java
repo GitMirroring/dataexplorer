@@ -159,6 +159,7 @@ public class PolaronGathererThread extends Thread {
 									if (PolaronGathererThread.log.isLoggable(Level.FINE))log.logp(Level.FINE, PolaronGathererThread.$CLASS_NAME, $METHOD_NAME, StringHelper.convert2CharString(buffer));
 									break;
 
+								case PolaronACDC:
 								case PolaronEx1400:
 									System.arraycopy(dataBuffer, 0, buffer, 0, 11);//header, application, product code
 									System.arraycopy(dataBuffer, 129, buffer, 11, 130);

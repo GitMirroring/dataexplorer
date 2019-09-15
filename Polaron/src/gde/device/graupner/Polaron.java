@@ -87,39 +87,42 @@ public abstract class Polaron extends DeviceConfiguration implements IDevice {
 		super(deviceProperties);
 		// initializing the resource bundle for this device
 		Messages.setDeviceResourceBundle("gde.device.graupner.polaron.messages", Settings.getInstance().getLocale(), this.getClass().getClassLoader()); //$NON-NLS-1$
-		this.PROCESSING_MODE = new String[] { Messages.getString(MessageIds.GDE_MSGT3100), //no operation
-				Messages.getString(MessageIds.GDE_MSGT3101), //charge
-				Messages.getString(MessageIds.GDE_MSGT3102), //discharge
-				Messages.getString(MessageIds.GDE_MSGT3103), //pause
-				Messages.getString(MessageIds.GDE_MSGT3100), //no operation
-				Messages.getString(MessageIds.GDE_MSGT3105), //Auto-Balancing
-				Messages.getString(MessageIds.GDE_MSGT3106), //Error
-				Messages.getString(MessageIds.GDE_MSGT3107), //Balancing
-				Messages.getString(MessageIds.GDE_MSGT3122), //storage
-				Messages.getString(MessageIds.GDE_MSGT3109) };//Motor
-		this.CHARGE_TYPE = new String[] { Messages.getString(MessageIds.GDE_MSGT3110), //NiXx Automatic
-				Messages.getString(MessageIds.GDE_MSGT3111), //LiXy Automatic
-				Messages.getString(MessageIds.GDE_MSGT3112), //Normal
-				Messages.getString(MessageIds.GDE_MSGT3113), //Linear
-				Messages.getString(MessageIds.GDE_MSGT3118), //charge CV-CC
-				Messages.getString(MessageIds.GDE_MSGT3120), //N-Storage
-				Messages.getString(MessageIds.GDE_MSGT3119), //CV-LINK
-				Messages.getString(MessageIds.GDE_MSGT3116), //reflex
-				Messages.getString(MessageIds.GDE_MSGT3121), //CV-Fast
-				Messages.getString(MessageIds.GDE_MSGT3117), //re-peak
-				Messages.getString(MessageIds.GDE_MSGT3118), //CV-CC
-				Messages.getString(MessageIds.GDE_MSGT3119), //CV-LINK
-				Messages.getString(MessageIds.GDE_MSGT3120), //N-Storage
-				Messages.getString(MessageIds.GDE_MSGT3122) };//QLagern
-		this.DISCHARGE_TYPE = new String[] { Messages.getString(MessageIds.GDE_MSGT3110), //NiXx Automatic
-				Messages.getString(MessageIds.GDE_MSGT3111), //LiXy Automatic
-				Messages.getString(MessageIds.GDE_MSGT3112), //Normal
-				Messages.getString(MessageIds.GDE_MSGT3113), //Linear
-				Messages.getString(MessageIds.GDE_MSGT3124), //LINK
-				Messages.getString(MessageIds.GDE_MSGT3118), //CV-CC
-				Messages.getString(MessageIds.GDE_MSGT3124), //LINK
-				Messages.getString(MessageIds.GDE_MSGT3120), //N-Storage
-				Messages.getString(MessageIds.GDE_MSGT3122) };//Q-Storage
+		this.PROCESSING_MODE = new String[] { 
+				Messages.getString(MessageIds.GDE_MSGT3100), //0 no operation
+				Messages.getString(MessageIds.GDE_MSGT3101), //1 charge
+				Messages.getString(MessageIds.GDE_MSGT3102), //2 discharge
+				Messages.getString(MessageIds.GDE_MSGT3103), //3 pause
+				Messages.getString(MessageIds.GDE_MSGT3100), //4 no operation
+				Messages.getString(MessageIds.GDE_MSGT3105), //5 Auto-Balancing
+				Messages.getString(MessageIds.GDE_MSGT3106), //6 Error
+				Messages.getString(MessageIds.GDE_MSGT3107), //7 Balancing
+				Messages.getString(MessageIds.GDE_MSGT3122), //8 storage
+				Messages.getString(MessageIds.GDE_MSGT3109) };//9 Motor
+		this.CHARGE_TYPE = new String[] { 
+				Messages.getString(MessageIds.GDE_MSGT3110), //0 NiXx Automatic
+				Messages.getString(MessageIds.GDE_MSGT3111), //1 LiXy Automatic
+				Messages.getString(MessageIds.GDE_MSGT3112), //2 Normal
+				Messages.getString(MessageIds.GDE_MSGT3113), //3 Linear
+				Messages.getString(MessageIds.GDE_MSGT3118), //4 charge CV-CC
+				Messages.getString(MessageIds.GDE_MSGT3120), //5 N-Storage
+				Messages.getString(MessageIds.GDE_MSGT3119), //6 CV-LINK
+				Messages.getString(MessageIds.GDE_MSGT3116), //7 reflex
+				Messages.getString(MessageIds.GDE_MSGT3121), //8 CV-Fast
+				Messages.getString(MessageIds.GDE_MSGT3117), //9 re-peak
+				Messages.getString(MessageIds.GDE_MSGT3118), //10 CV-CC
+				Messages.getString(MessageIds.GDE_MSGT3119), //11 CV-LINK
+				Messages.getString(MessageIds.GDE_MSGT3120), //12 N-Storage
+				Messages.getString(MessageIds.GDE_MSGT3122) };//13 QLagern
+		this.DISCHARGE_TYPE = new String[] { 
+				Messages.getString(MessageIds.GDE_MSGT3110), //0 NiXx Automatic
+				Messages.getString(MessageIds.GDE_MSGT3111), //1 LiXy Automatic
+				Messages.getString(MessageIds.GDE_MSGT3112), //2 Normal
+				Messages.getString(MessageIds.GDE_MSGT3113), //3 Linear
+				Messages.getString(MessageIds.GDE_MSGT3124), //4 LINK
+				Messages.getString(MessageIds.GDE_MSGT3118), //5 CV-CC
+				Messages.getString(MessageIds.GDE_MSGT3124), //6 LINK
+				Messages.getString(MessageIds.GDE_MSGT3120), //7 N-Storage
+				Messages.getString(MessageIds.GDE_MSGT3122) };//8 Q-Storage
 
 		this.application = DataExplorer.getInstance();
 		this.serialPort = new PolaronSerialPort(this, this.application);
@@ -135,39 +138,42 @@ public abstract class Polaron extends DeviceConfiguration implements IDevice {
 		super(deviceConfig);
 		// initializing the resource bundle for this device
 		Messages.setDeviceResourceBundle("gde.device.graupner.polaron.messages", Settings.getInstance().getLocale(), this.getClass().getClassLoader()); //$NON-NLS-1$
-		this.PROCESSING_MODE = new String[] { Messages.getString(MessageIds.GDE_MSGT3100), //no operation
-				Messages.getString(MessageIds.GDE_MSGT3101), //charge
-				Messages.getString(MessageIds.GDE_MSGT3102), //discharge
-				Messages.getString(MessageIds.GDE_MSGT3103), //pause
-				Messages.getString(MessageIds.GDE_MSGT3100), //no operation
-				Messages.getString(MessageIds.GDE_MSGT3105), //Auto-Balancing
-				Messages.getString(MessageIds.GDE_MSGT3106), //Error
-				Messages.getString(MessageIds.GDE_MSGT3107), //Balancing
-				Messages.getString(MessageIds.GDE_MSGT3122), //storage
-				Messages.getString(MessageIds.GDE_MSGT3109) };//Motor
-		this.CHARGE_TYPE = new String[] { Messages.getString(MessageIds.GDE_MSGT3110), //NiXx Automatic
-				Messages.getString(MessageIds.GDE_MSGT3111), //LiXy Automatic
-				Messages.getString(MessageIds.GDE_MSGT3112), //Normal
-				Messages.getString(MessageIds.GDE_MSGT3113), //Linear
-				Messages.getString(MessageIds.GDE_MSGT3118), //charge CV-CC
-				Messages.getString(MessageIds.GDE_MSGT3120), //N-Storage
-				Messages.getString(MessageIds.GDE_MSGT3119), //CV-LINK
-				Messages.getString(MessageIds.GDE_MSGT3116), //reflex
-				Messages.getString(MessageIds.GDE_MSGT3121), //CV-Fast
-				Messages.getString(MessageIds.GDE_MSGT3117), //re-peak
-				Messages.getString(MessageIds.GDE_MSGT3118), //CV-CC
-				Messages.getString(MessageIds.GDE_MSGT3119), //CV-LINK
-				Messages.getString(MessageIds.GDE_MSGT3120), //N-Storage
-				Messages.getString(MessageIds.GDE_MSGT3122) };//QLagern
-		this.DISCHARGE_TYPE = new String[] { Messages.getString(MessageIds.GDE_MSGT3110), //NiXx Automatic
-				Messages.getString(MessageIds.GDE_MSGT3111), //LiXy Automatic
-				Messages.getString(MessageIds.GDE_MSGT3112), //Normal
-				Messages.getString(MessageIds.GDE_MSGT3113), //Linear
-				Messages.getString(MessageIds.GDE_MSGT3124), //LINK
-				Messages.getString(MessageIds.GDE_MSGT3118), //CV-CC
-				Messages.getString(MessageIds.GDE_MSGT3124), //LINK
-				Messages.getString(MessageIds.GDE_MSGT3120), //N-Storage
-				Messages.getString(MessageIds.GDE_MSGT3122) };//Q-Storage
+		this.PROCESSING_MODE = new String[] { 
+				Messages.getString(MessageIds.GDE_MSGT3100), //0 no operation
+				Messages.getString(MessageIds.GDE_MSGT3101), //1 charge
+				Messages.getString(MessageIds.GDE_MSGT3102), //2 discharge
+				Messages.getString(MessageIds.GDE_MSGT3103), //3 pause
+				Messages.getString(MessageIds.GDE_MSGT3100), //4 no operation
+				Messages.getString(MessageIds.GDE_MSGT3105), //5 Auto-Balancing
+				Messages.getString(MessageIds.GDE_MSGT3106), //6 Error
+				Messages.getString(MessageIds.GDE_MSGT3107), //7 Balancing
+				Messages.getString(MessageIds.GDE_MSGT3122), //8 storage
+				Messages.getString(MessageIds.GDE_MSGT3109) };//9 Motor
+		this.CHARGE_TYPE = new String[] { 
+				Messages.getString(MessageIds.GDE_MSGT3110), //0 NiXx Automatic
+				Messages.getString(MessageIds.GDE_MSGT3111), //1 LiXy Automatic
+				Messages.getString(MessageIds.GDE_MSGT3112), //2 Normal
+				Messages.getString(MessageIds.GDE_MSGT3113), //3 Linear
+				Messages.getString(MessageIds.GDE_MSGT3118), //4 charge CV-CC
+				Messages.getString(MessageIds.GDE_MSGT3120), //5 N-Storage
+				Messages.getString(MessageIds.GDE_MSGT3119), //6 CV-LINK
+				Messages.getString(MessageIds.GDE_MSGT3116), //7 reflex
+				Messages.getString(MessageIds.GDE_MSGT3121), //8 CV-Fast
+				Messages.getString(MessageIds.GDE_MSGT3117), //9 re-peak
+				Messages.getString(MessageIds.GDE_MSGT3118), //10 CV-CC
+				Messages.getString(MessageIds.GDE_MSGT3119), //11 CV-LINK
+				Messages.getString(MessageIds.GDE_MSGT3120), //12 N-Storage
+				Messages.getString(MessageIds.GDE_MSGT3122) };//13 QLagern
+		this.DISCHARGE_TYPE = new String[] { 
+				Messages.getString(MessageIds.GDE_MSGT3110), //0 NiXx Automatic
+				Messages.getString(MessageIds.GDE_MSGT3111), //1 LiXy Automatic
+				Messages.getString(MessageIds.GDE_MSGT3112), //2 Normal
+				Messages.getString(MessageIds.GDE_MSGT3113), //3 Linear
+				Messages.getString(MessageIds.GDE_MSGT3124), //4 LINK
+				Messages.getString(MessageIds.GDE_MSGT3118), //5 CV-CC
+				Messages.getString(MessageIds.GDE_MSGT3124), //6 LINK
+				Messages.getString(MessageIds.GDE_MSGT3120), //7 N-Storage
+				Messages.getString(MessageIds.GDE_MSGT3122) };//8 Q-Storage
 
 		this.application = DataExplorer.getInstance();
 		this.serialPort = new PolaronSerialPort(this, this.application);
@@ -796,7 +802,8 @@ public abstract class Polaron extends DeviceConfiguration implements IDevice {
 		int processingType2 = DataParser.parse2Short(dataBuffer, 129);
 		int numCells = DataParser.parse2Short(dataBuffer, 43);
 		return (processingMode1 == 7 && processingMode2 == 0 && numCells > 7)
-				|| (processingMode1 == processingMode2 && processingType1 == processingType2 && ((processingMode1 == 1 && processingType1 == 6) || (processingMode1 == 2 && processingType2 == 4)));
+				|| (processingMode1 == processingMode2 && processingType1 == processingType2 && ((processingMode1 == 1 && (processingType1 == 6 || processingType1 == 11)) || (processingMode1 == 2 && (processingType1 == 4 || processingType1 == 6))));
+				//																																											charge										CV-LINK                CV-LINK                  discharge							    LINK 											LINK
 	}
 
 	/**
