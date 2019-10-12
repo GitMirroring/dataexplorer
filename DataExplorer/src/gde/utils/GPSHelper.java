@@ -156,7 +156,7 @@ public class GPSHelper {
 
 					double powDeltaHeight = Math.pow((recordAlitude.get(i - 1) - recordAlitude.get(i)) / 1000.0, 2);
 					double powOrthodrome = Math.pow((zeta * (40041000.0 / 360.0)), 2);
-					double deltaTrip = Math.sqrt(powOrthodrome + powDeltaHeight);
+					double deltaTrip = Math.sqrt(powOrthodrome + powDeltaHeight) * 0.942;
 					recordTripLength.add((int) (lastTripLength + deltaTrip));//[km}];
 
 					powDeltaHeight = Math.pow((recordAlitude.get(i) - startAltitude) / 1000.0, 2); // alternatively the relative altitude could be used here
@@ -285,7 +285,7 @@ public class GPSHelper {
 
 						double powDeltaHeight = Math.pow((recordAlitude.get(i - 1) - recordAlitude.get(i)) / 1000.0, 2);
 						double powOrthodrome = Math.pow((zeta * (40041000.0 / 360.0)), 2);
-						double deltaTrip = Math.sqrt(powOrthodrome + powDeltaHeight);
+						double deltaTrip = Math.sqrt(powOrthodrome + powDeltaHeight) * 0.942;
 						recordTripLength.add((int) (lastTripLength + deltaTrip));//[km}];
 
 						//powDeltaHeight = Math.pow((recordAlitude.get(i) - startAltitude) / 1000.0, 2); // alternatively the relative altitude could be used here
