@@ -1,4 +1,4 @@
-﻿******** DataExplorer README ***********  11 Mar 2019 WB
+﻿******** DataExplorer README ***********  15 Oct 2019 WB
 
 The GNU DataExplorer is free software, please see http://www.gnu.org/philosophy/free-sw.html. It is also available at no
 cost, but without any warranty. Since the implementation is based on Java using the free available libraries RXTXcomm and SWT
@@ -17,6 +17,9 @@ Hint: It is planned to use the DataExplorer on different operating systems and s
 (conversion ISO-8859-1 to UTF-8 and vice versa). File links are different on the supported operating systems. Object related data files don't get duplicated,
 they get referenced using file links. Before you move data files to a different operating system, remove the object related file links and re-create afterwards.
 Please use the preferences dialog with the miscellaneous tab with the related buttons.
+To create DataExplorer.exe a java wrapper,launch4j, get used. If there are startup errors it meight be helpful to lauch the application
+using "DataExplorer.exe --l4j-debug". This will generate a launch4j.log with meaningful informations.
+
 
 For questions or suggestions for improvement feel free to contact me using the e-mail address at the download page http://www.nongnu.org/dataexplorer/download.html.
 						 

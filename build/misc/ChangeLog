@@ -2,6 +2,7 @@ Development history / change log, please read from bottom up
 
 Version 3.4.0 - xx yyy 2019
 Generic changes/fixes
+	* update launch4j Windows executable wrapper supporting java PATH entries in addition to registry
 
 Device specific changes/fixes
 	* JetiAdapter - fix backward compatibility skipping sensor parameter without unit, result as missing measurement

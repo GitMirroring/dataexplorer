@@ -1,4 +1,4 @@
-******** DataExplorer README ***********  11 Mar 2019 WB
+******** DataExplorer README ***********  15 Okt 2019 WB
 
 Der GNU DataExplorer ist freie Software, siehe http://www.gnu.org/philosophy/free-sw.html. Sie wird kostenfrei und ohne Spende 
 zur Verfügung gestellt. Es gibt aber auch keinerlei Gewährleistung. Durch die Implementierung in Java auf der Basis von der freien Bibliotheken 
@@ -39,6 +39,8 @@ auch Anwendungkonfiguration und Tracelogdaten abgelegt.
 Hinweis: Erscheint nach der Ausführung von DataExplorer.exe folgende oder ähnliche Fehlermeldung 
 "The java class could not be loaded. java.lang.UnsupportedClassVersionError: (gde/GDE) bad major Version"
 ist die installierte Java Version (java -version) zu alt und muss gegen eine aktuelle Version 1.8.+ , bis Java 11 ausgetauscht werden.
+Zum Erzeugen der DataExplorer.exe wird ein Java-Wrapper, launch4j, benutzt. Gibt es Fehler beim Start der Anwendung könnte es helfen 
+die Anwendung über "DataExplorer.exe --l4j-debug" zu starten. Hierbei wird ein launch4j.log geschrieben, das wertvolle Informationen zeigt.
 
 Je nach verwendeter Windows Version und Patchlevel kann es nötig sein das System mit dem 
 "Microsoft Visual C++ 2008 Redistributable Package" von www.microsoft.com/downloads nachzurüsten (Desktopicon, Objektlink).
