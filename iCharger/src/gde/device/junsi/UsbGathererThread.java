@@ -264,7 +264,14 @@ public class UsbGathererThread extends Thread {
 			result[0] = recordSet;
 			result[1] = processRecordSetKey;
 			return result;
-		} else if (isReduceChargeDischarge && dataBuffer[7] == 4) { //skip Mode: 4=PAUSE
+		} 
+		else if (dataBuffer[7] == (byte)0x82) { //error message 
+			stopDataGatheringThread(true, new Exception(Messages.getString(MessageIds.GDE_MSGE2600)));
+			result[0] = recordSet;
+			result[1] = processRecordSetKey;
+			return result;
+		}
+		else if (isReduceChargeDischarge && dataBuffer[7] == 4) { //skip Mode: 4=PAUSE
 			result[0] = recordSet;
 			result[1] = processRecordSetKey;
 			return result;
@@ -388,12 +395,9 @@ public class UsbGathererThread extends Thread {
 			if (enableEndMessage) this.application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGT2603));
 		}
 		else {
-			if (throwable != null) {
-				cleanup(Messages.getString(gde.messages.MessageIds.GDE_MSGE0022, new Object[] { throwable.getClass().getSimpleName(), throwable.getMessage() }));
-			}
-			else {
-				if (enableEndMessage) cleanup(Messages.getString(gde.messages.MessageIds.GDE_MSGE0026) + Messages.getString(MessageIds.GDE_MSGT2602));
-			}
+			if (enableEndMessage && throwable != null) cleanup(throwable.getMessage());
+			else if (throwable != null) cleanup(Messages.getString(gde.messages.MessageIds.GDE_MSGE0022, new Object[] { throwable.getClass().getSimpleName(), throwable.getMessage() }));
+			else if (enableEndMessage) cleanup(Messages.getString(gde.messages.MessageIds.GDE_MSGE0026) + Messages.getString(MessageIds.GDE_MSGT2602));
 		}
 	}
 
