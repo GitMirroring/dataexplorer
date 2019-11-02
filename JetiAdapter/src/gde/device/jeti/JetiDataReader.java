@@ -48,7 +48,7 @@ import gde.io.CSVSerialDataReaderWriter;
 import gde.messages.MessageIds;
 import gde.messages.Messages;
 import gde.ui.DataExplorer;
-
+import gde.utils.TimeLine;
 import cz.vutbr.fit.gja.proj.utils.TelemetryData;
 import cz.vutbr.fit.gja.proj.utils.TelemetryData.TelemetrySensor;
 
@@ -115,7 +115,8 @@ public class JetiDataReader {
 				int dataBlockSize = device.getDataBlockSize(InputTypes.FILE_IO); // measurements size must not match data block size, there are some measurements which are result of calculation
 				JetiDataReader.log.log(java.util.logging.Level.FINE, "measurementSize = " + measurementSize + "; dataBlockSize = " + dataBlockSize); //$NON-NLS-1$ //$NON-NLS-2$
 				if (measurementSize < Math.abs(dataBlockSize)) throw new DevicePropertiesInconsistenceException(Messages.getString(MessageIds.GDE_MSGE0041, new String[] { filePath }));
-
+				StringBuilder reverseChannelStatistics = new StringBuilder();
+				
 				TelemetryData data = new TelemetryData();
 				if (data.loadData(filePath)) {
 					TreeSet<TelemetrySensor> recordSetData = data.getData();
@@ -126,6 +127,7 @@ public class JetiDataReader {
 					int maxHit = 0, numValues = 0;
 					Map<Integer, Integer> valuesMap = new HashMap<Integer, Integer>();
 					for (TelemetrySensor telemetrySensor : recordSetData) {
+						boolean isTimeStepEvaluated = false;
 						//System.out.println(telemetrySensor.getName() + " - ");
 						for (TelemetryData.TelemetryVar dataVar : telemetrySensor.getVariables()) {
 							//System.out.println(dataVar.getName());
@@ -133,6 +135,14 @@ public class JetiDataReader {
 								if (valuesMap.containsKey(dataVar.getItems().size()) && dataVar.getItems().size() > 1) {
 									valuesMap.put(dataVar.getItems().size(), valuesMap.get(dataVar.getItems().size()) + 1);
 									maxHit = Math.max(maxHit, valuesMap.get(dataVar.getItems().size()));
+									if (!isTimeStepEvaluated && dataVar.getTimeSteps().size() > 0) {
+										if (telemetrySensor.getName().length() <= 5 )
+											reverseChannelStatistics.append(String.format(Locale.getDefault(), "%s\t\tmin %.3fsec avg %.3fsec max %.3fsec at %s", telemetrySensor.getName(), dataVar.getTimeSteps().getMinValue()/1000., dataVar.getTimeSteps().getAvgValue()/1000., dataVar.getTimeSteps().getMaxValue()/1000., TimeLine.getFomatedTimeWithUnit(dataVar.getTimeSteps().getMaxValueTimeStamp()))).append(GDE.CHAR_NEW_LINE);
+										else 
+											reverseChannelStatistics.append(String.format(Locale.getDefault(), "%s\tmin %.3fsec avg %.3fsec max %.3fsec at %s", telemetrySensor.getName(), dataVar.getTimeSteps().getMinValue()/1000., dataVar.getTimeSteps().getAvgValue()/1000., dataVar.getTimeSteps().getMaxValue()/1000., TimeLine.getFomatedTimeWithUnit(dataVar.getTimeSteps().getMaxValueTimeStamp()))).append(GDE.CHAR_NEW_LINE);
+										//JetiDataReader.log.log(java.util.logging.Level.OFF, String.format(Locale.getDefault(), "%10s: min %.3fsec avg %.3fsec max %.3fsec at %s", telemetrySensor.getName(), dataVar.getTimeSteps().getMinValue()/1000., dataVar.getTimeSteps().getAvgValue()/1000., dataVar.getTimeSteps().getMaxValue()/1000., TimeLine.getFomatedTimeWithUnit(dataVar.getTimeSteps().getMaxValueTimeStamp())));
+										isTimeStepEvaluated = true;
+									}
 								}
 								else
 									valuesMap.put(dataVar.getItems().size(), 1);
@@ -264,7 +274,7 @@ public class JetiDataReader {
 						for (TelemetrySensor telemetrySensor : recordSetData) {
 							if (telemetrySensor.getId() != 0) {
 								for (TelemetryData.TelemetryVar dataVar : telemetrySensor.getVariables()) {
-									//System.out.print(String.format("%s ", dataVar.getName()));
+									//TODO System.out.print(String.format("%s ", dataVar.getName()));
 									points[index++] = (int) (dataVar.getDoubleAt(time_ms / 1000) * (dataVar.getType() == TelemetryData.T_GPS ? 1000000 : 1000));
 									//System.out.print(String.format("%3.2f ", (points[index-1]/1000.0)));
 								}
@@ -302,11 +312,18 @@ public class JetiDataReader {
 						activeChannel.get(recordSetName).setRecordSetDescription(
 								device.getName() + GDE.STRING_MESSAGE_CONCAT + Messages.getString(MessageIds.GDE_MSGT0129) + new SimpleDateFormat("yyyy-MM-dd, HH:mm:ss").format(new Date())); //$NON-NLS-1$
 					}
+					if (reverseChannelStatistics.length() > 3)//remove new line char
+						reverseChannelStatistics.deleteCharAt(reverseChannelStatistics.length()-1);
 					//write filename after import to record description
 					activeChannel.get(recordSetName).descriptionAppendFilename(filePath.substring(filePath.lastIndexOf(GDE.CHAR_FILE_SEPARATOR_UNIX) + 1));
-					activeChannel.get(recordSetName).setRecordSetDescription(Messages.getString(gde.device.jeti.MessageIds.GDE_MSGT2914,
-							new String[]{activeChannel.get(recordSetName).getRecordSetDescription(), data.getModelName(),
-							String.format(Locale.getDefault(), "min=%.3f sec; max=%.3f sec; avg=%.3f sec; sigma=%.3f sec", data.getMinTimeStep()/1000.0, data.getMaxTimeStep()/1000.0, data.getAvgTimeStep()/1000.0, data.getSigmaTimeStep()/1000.0)}));
+					if (data.getModelName().length() > 2)
+						activeChannel.get(recordSetName).setRecordSetDescription(Messages.getString(gde.device.jeti.MessageIds.GDE_MSGT2914,
+								new String[]{activeChannel.get(recordSetName).getRecordSetDescription(), data.getModelName()}));
+					for (String statistics : reverseChannelStatistics.toString().split(GDE.STRING_NEW_LINE)) {
+						activeChannel.get(recordSetName).setRecordSetDescription(activeChannel.get(recordSetName).getRecordSetDescription() 
+								+ Messages.getString(gde.device.jeti.MessageIds.GDE_MSGT2915, new String[]{GDE.STRING_NEW_LINE, statistics}));
+					}
+							
 					activeChannel.get(recordSetName).checkAllDisplayable(); // raw import needs calculation of passive records
 					activeChannel.get(recordSetName).updateVisibleAndDisplayableRecordsForTable();
 					if (GDE.isWithUi()) activeChannel.switchRecordSet(recordSetName);

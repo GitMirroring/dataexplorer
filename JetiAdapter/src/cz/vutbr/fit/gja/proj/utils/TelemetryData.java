@@ -99,11 +99,13 @@ public class TelemetryData {
 	public static class TimeVector extends Vector<Long> {
 		private static final long	serialVersionUID	= 4860628311229067111L;
 
+		long											firstTimeStamp		= 0;
 		long											lastTimeStamp			= 0;
 		long											minValue					= Long.MAX_VALUE;
 		long											maxValue					= Long.MIN_VALUE;
 		long											avgValue					= Long.MIN_VALUE;			// average value (avg = sum(xi)/n)
 		long											sigmaValue				= Long.MIN_VALUE;			// sigma value of time steps
+		long											maxTimeStamp			= 0;
 
 		public TimeVector() {
 			super();
@@ -120,16 +122,26 @@ public class TelemetryData {
 						this.minValue = this.maxValue = delta;
 					}
 					else {
-						if (delta > this.maxValue)			this.maxValue = delta;
+						if (delta > this.maxValue)			{this.maxValue = delta; maxTimeStamp = this.lastTimeStamp-this.firstTimeStamp;}
 						else if (delta < this.minValue) this.minValue = delta;
 					}
 					isAdded = super.add(delta);
+				}
+				else {
+					this.firstTimeStamp = timeStamp;
 				}
 				this.lastTimeStamp = timeStamp;
 			}
 			return isAdded;
 		}
 
+		/**
+		 * @return timeStamp max value occurrence
+		 */
+		public long getMaxValueTimeStamp() {
+			return this.maxTimeStamp;
+		}
+		
 		/**
 		 * @return the avgValue
 		 */
@@ -294,6 +306,8 @@ public class TelemetryData {
 		ArrayList<TelemetryItem>	data;
 		/** maximum and minimum values */
 		double										maxValue	= 0.0, minValue = 0.0;
+		/** time steps ms where data added **/
+		TimeVector timeSteps;
 
 		/**
 		 * constructor telemetry variable
@@ -306,6 +320,7 @@ public class TelemetryData {
 			this.name = _name;
 			this.unit = _unit;
 			this.data = new ArrayList<TelemetryItem>();
+			this.timeSteps = new TimeVector();
 		}
 
 		/**
@@ -317,6 +332,7 @@ public class TelemetryData {
 			this.name = e.name;
 			this.unit = e.unit;
 			this.data = new ArrayList<TelemetryItem>(e.data);
+			this.timeSteps = new TimeVector();
 		}
 
 		/**
@@ -326,7 +342,10 @@ public class TelemetryData {
 		 */
 		public void addItem(final TelemetryItem i, final boolean skip) {
 			this.data.add(new TelemetryItem(i));
-			if (!skip) TelemetryData.timeSteps.add(i.getTimestamp());
+			if (!skip) {
+				this.timeSteps.add(i.getTimestamp());
+				TelemetryData.timeSteps.add(i.getTimestamp());
+			}
 		}
 
 		/**
@@ -337,9 +356,19 @@ public class TelemetryData {
 		 */
 		public void addItem(final int index, final TelemetryItem i, final boolean skip) {
 			this.data.add(index, new TelemetryItem(i));
-			if (!skip) TelemetryData.timeSteps.add(i.getTimestamp());
+			if (!skip) {
+				this.timeSteps.add(i.getTimestamp());
+				TelemetryData.timeSteps.add(i.getTimestamp());
+			}
 		}
 
+		/**
+		 * @return timeSteps of telemetry item
+		 */
+		public TimeVector getTimeSteps() {
+			return this.timeSteps;
+		}
+		
 		/**
 		 * @return unit of telemetry item
 		 */
