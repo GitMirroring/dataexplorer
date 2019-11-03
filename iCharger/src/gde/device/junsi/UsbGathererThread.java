@@ -31,6 +31,7 @@ import gde.exception.TimeOutException;
 import gde.log.Level;
 import gde.messages.Messages;
 import gde.ui.DataExplorer;
+import gde.utils.StringHelper;
 import gde.utils.WaitTimer;
 
 import java.util.Arrays;
@@ -256,8 +257,8 @@ public class UsbGathererThread extends Thread {
 		Object[] result = new Object[2];
 		boolean isReduceChargeDischarge = this.settings.isReduceChargeDischarge();
 		boolean isContinuousRecordSet = this.settings.isContinuousRecordSet();
-		
-		if (dataBuffer[7] == (byte)0x80) { //LOG_EX_IR = 0x80 only integrate Ri values
+ 
+		if ((dataBuffer[7] & 0xFF) == 0x80) { //LOG_EX_IR = 0x80 only integrate Ri values
 			if (UsbGathererThread.log.isLoggable(Level.FINE)) 
 				UsbGathererThread.log.log(Level.FINE, String.format("channel:%d integrate Ri values", number));
 			this.device.convertDataBytes(points, dataBuffer);
@@ -265,8 +266,8 @@ public class UsbGathererThread extends Thread {
 			result[1] = processRecordSetKey;
 			return result;
 		} 
-		else if (dataBuffer[7] == (byte)0x82) { //error message 
-			stopDataGatheringThread(true, new Exception(Messages.getString(MessageIds.GDE_MSGE2600)));
+		else if ((dataBuffer[7] & 0xFF) > 0x80) { //other iCharger special states like cell capacity 0x82
+			log.log(Level.WARNING, "iCharger special message - " + StringHelper.byte2Hex2CharString(dataBuffer, dataBuffer.length));
 			result[0] = recordSet;
 			result[1] = processRecordSetKey;
 			return result;

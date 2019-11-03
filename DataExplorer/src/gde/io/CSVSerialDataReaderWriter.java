@@ -216,11 +216,11 @@ public class CSVSerialDataReaderWriter {
 						}
 
 						//enable adding iCharger Ri values
-						boolean isJunsiChargerRiState = (device.getName().startsWith("iCharger") && data.getState() == 128);
-						recordSetNameExtend = isJunsiChargerRiState  
+						boolean isJunsiChargerSpecialState = (device.getName().startsWith("iCharger") && data.getState() >= 128);
+						recordSetNameExtend = isJunsiChargerSpecialState  
 								? recordSetNameExtend 
 								: device.getRecordSetStateNameReplacement(data.getState());
-						if (recordNameExtend.length() > 0 && !isJunsiChargerRiState) {
+						if (recordNameExtend.length() > 0 && !isJunsiChargerSpecialState) {
 							recordSetNameExtend = recordSetNameExtend + GDE.STRING_BLANK + GDE.STRING_LEFT_BRACKET + recordNameExtend + GDE.STRING_RIGHT_BRACKET;
 						}
 						channelRecordSet = activeChannel.get(device.recordSetNumberFollowChannel() && activeChannel.getType() == ChannelTypes.TYPE_CONFIG ? activeChannel.getLastActiveRecordSetName() : recordSetName);
