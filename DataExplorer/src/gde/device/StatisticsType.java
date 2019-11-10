@@ -66,6 +66,8 @@ public class StatisticsType implements Cloneable {
 	@XmlAttribute
 	protected Integer									sumByTriggerRefOrdinal;
 	@XmlAttribute
+	protected Integer									sumBySecondaryTriggerRefOrdinal;
+	@XmlAttribute
 	protected Boolean									integrateByTrigger;
 	@XmlAttribute
 	protected String									sumTriggerText;
@@ -266,6 +268,30 @@ public class StatisticsType implements Cloneable {
 	 */
 	public void setSumByTriggerRefOrdinal(Integer value) {
 		this.sumByTriggerRefOrdinal = value;
+	}
+
+	/**
+	 * Gets the value of the sumByTriggerRefOrdinal property.
+	 * 
+	 * @return
+	 *     possible object is
+	 *     {@link Integer }
+	 *     
+	 */
+	public Integer getSumBySecondaryTriggerRefOrdinal() {
+		return this.sumBySecondaryTriggerRefOrdinal;
+	}
+
+	/**
+	 * Sets the value of the sumByTriggerRefOrdinal property.
+	 * 
+	 * @param value
+	 *     allowed object is
+	 *     {@link Integer }
+	 *     
+	 */
+	public void setSumBySecondaryTriggerRefOrdinal(Integer value) {
+		this.sumBySecondaryTriggerRefOrdinal = value;
 	}
 
 	/**

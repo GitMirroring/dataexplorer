@@ -363,10 +363,13 @@ public class StatisticsWindow extends CTabItem {
 									if (isTriggerLevel)
 										sb.append(String.format("%.1f", device.translateDeltaValue(record, record.getSumTriggeredRange() / 1000.)));
 									else {
-										if (measurementStatistics.getSumByTriggerRefOrdinal() != null) {
-											sb.append(String.format("%.1f", device.translateDeltaValue(record, record.getSumTriggeredRange(measurementStatistics.getSumByTriggerRefOrdinal().intValue()) / 1000.)));
-											sb.append(" [").append(record.getUnit()).append("]; "); //$NON-NLS-1$ //$NON-NLS-2$
+										if (measurementStatistics.getSumBySecondaryTriggerRefOrdinal() != null) {
+											sb.append(String.format("%.1f", device.translateDeltaValue(record, record.getSumTriggeredRange(measurementStatistics.getSumByTriggerRefOrdinal().intValue(), measurementStatistics.getSumBySecondaryTriggerRefOrdinal().intValue()) / 1000.)));
 										}
+										else {
+											sb.append(String.format("%.1f", device.translateDeltaValue(record, record.getSumTriggeredRange(measurementStatistics.getSumByTriggerRefOrdinal().intValue()) / 1000.)));
+										}
+										sb.append(" [").append(record.getUnit()).append("]; "); //$NON-NLS-1$ //$NON-NLS-2$
 									}
 								}
 
@@ -382,7 +385,7 @@ public class StatisticsWindow extends CTabItem {
 											if (summarizedValueReferenced > 0. && summarizedValue > 0.) {
 												double ratio = (summarizedValueReferenced / 1000.0) / summarizedValue;
 												sb.append(String.format("%.2f", (ratio < 1.0 ? ratio * 1000 : ratio)));
-												sb.append(" [").append(ratio < 1.0 ? "m" : "").append(referencedRecord.getUnit()).append("/").append(record.getUnit()).append("]; "); //$NON-NLS-1$ //$NON-NLS-2$											
+												sb.append(" [").append(referencedRecord.getUnit()).append("/").append(record.getUnit()).append("]; "); //$NON-NLS-1$ //$NON-NLS-2$											
 											}
 											else {
 												sb.append("0 [").append(referencedRecord.getUnit()).append("/").append(record.getUnit()).append("]; "); //$NON-NLS-1$ //$NON-NLS-2$

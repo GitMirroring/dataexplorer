@@ -22,6 +22,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
@@ -2222,7 +2223,7 @@ public class Record extends AbstractRecord implements IRecord {
 	}
 
 	/**
-	 * get/calcualte avg value by configuraed trigger
+	 * get/calculate avg value by configured trigger
 	 * @return average value according trigger specification
 	 */
 	public int getAvgValueTriggered() {
@@ -2407,6 +2408,43 @@ public class Record extends AbstractRecord implements IRecord {
 	public synchronized int getSumTriggeredRange() {
 		if (this.triggerRanges == null) {
 			this.evaluateMinMax();
+		}
+		return this.calculateSum();
+	}
+
+	/**
+	 * get/calculate sum of values by configured trigger
+	 * @param referencedMeasurementOrdinal
+	 * @return sum value according trigger range specification of referenced measurement
+	 */
+	public synchronized int getSumTriggeredRange(int referencedMeasurementOrdinal, int referencedSecondaryMeasurementOrdinal) {
+		if (this.triggerRanges == null) {
+			Vector<TriggerRange> primaryTriggerRanges = this.parent.get(referencedMeasurementOrdinal).getTriggerRanges();
+			if (primaryTriggerRanges != null) {
+				Vector<TriggerRange> secondaryTriggerRanges = this.parent.get(referencedSecondaryMeasurementOrdinal).getTriggerRanges();
+				this.triggerRanges = new Vector<TriggerRange>();
+				//use primary trigger ranges as master
+				Iterator<TriggerRange> primaryIterator = primaryTriggerRanges.iterator();
+				TriggerRange primaryRange, secondaryRange;
+				while (primaryIterator.hasNext()) {
+					Iterator<TriggerRange> secondaryIterator = secondaryTriggerRanges.iterator();
+					boolean isMatchRanges = false;
+
+					primaryRange = (TriggerRange) primaryIterator.next();
+
+					while (!isMatchRanges && secondaryIterator.hasNext()) {
+						secondaryRange = (TriggerRange) secondaryIterator.next();
+						if (secondaryRange.in > primaryRange.in && secondaryRange.in < primaryRange.out && secondaryRange.out > primaryRange.out 
+								&& secondaryRange.out < (primaryRange.out + (primaryRange.out - primaryRange.in))) {
+							this.triggerRanges.add(new TriggerRange(primaryRange.in, secondaryRange.out));
+							isMatchRanges = true;
+						}
+					}
+					if (!isMatchRanges) 
+						this.triggerRanges.add(primaryRange);
+				}
+				//this.triggerRanges = this.parent.get(referencedMeasurementOrdinal).getTriggerRanges();
+			}
 		}
 		return this.calculateSum();
 	}

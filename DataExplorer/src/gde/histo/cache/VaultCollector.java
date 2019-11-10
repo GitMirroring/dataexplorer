@@ -357,8 +357,9 @@ public final class VaultCollector {
 		}
 
 		Integer refOrdinal = measurementStatistics.getSumByTriggerRefOrdinal();
+		Integer refSecondaryOrdinal = measurementStatistics.getSumBySecondaryTriggerRefOrdinal();
 		if (refOrdinal != null) {
-			int referencedSumTriggeredRange = record.getSumTriggeredRange(refOrdinal);
+			int referencedSumTriggeredRange = refSecondaryOrdinal != null ? record.getSumTriggeredRange(refOrdinal, refSecondaryOrdinal) : record.getSumTriggeredRange(refOrdinal);
 			double summarizedValue = device.translateDeltaValue(record, referencedSumTriggeredRange / 1000.);
 			log.finer(() -> String.format("%s -> summarizedValue = %d", record.getName(), (int) summarizedValue));
 			if (measurementStatistics.getSumTriggerText() != null && measurementStatistics.getSumTriggerText().length() > 1 && summarizedValue > 0.) {
