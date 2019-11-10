@@ -1,6 +1,6 @@
 Development history / change log, please read from bottom up
 
-Version 3.4.0 - xx yyy 2019
+Version 3.4.0 - 10 Nov 2019
 Generic changes/fixes
 	* update launch4j Windows executable wrapper supporting java PATH entries in addition to registry
 	* enable secondary trigger to extend primary trigger range -> require XSD upgrade
