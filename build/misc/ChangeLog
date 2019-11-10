@@ -13,7 +13,7 @@ Device specific changes/fixes
 	* HoTTAdapter2 - enable secondary trigger range for GAM and ESC
 	* PolaronACDC - fix data capturing channel 2
 	* Open-Tx - enable log time step > 1000 msec 
-	* iCharger* - enable additional special states used for internal data evaluation
+	* iChargerUSB* - enable additional special states used for internal data evaluation
 
 Version 3.3.9 - 25 Aug 2019
 Generic changes/fixes

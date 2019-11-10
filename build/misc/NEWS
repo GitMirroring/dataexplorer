@@ -1,30 +1,30 @@
-GNU DataExplorer - News - comes with version 3.3.9 - 24 Aug 2019
+GNU DataExplorer - News - comes with version 3.4.0 - 10 Nov 2019
 
 Generic changes/fixes
-	* update measurement properties XML containing [] by mistake
-	* correct average calculation using trigger ranges
-	* fix makensis languages.nsh encoding
-	* add capability to integrate values by trigger (require XSD update)
-	* update device properties editor to support capability to integrate values by trigger
-	* update online/offline documentation
-	
+	* update launch4j Windows executable wrapper supporting java PATH entries in addition to registry
+	* enable secondary trigger to extend primary trigger range -> require XSD (XML schema definition) upgrade
+
 Device specific changes/fixes
-	* HoTTAdapter* - correct trigger description text in XML
-	* HoTTAdapter* - *.log remove evaluation of transmitter event and warning to avoid end user confusion
-	* HoTTAdapter2 - fix channel zoom problem
+	* JetiAdapter - fix backward compatibility skipping sensor parameter without unit, result as missing measurement
+	* JetiAdapter - enhance Tx->Rx statistics
+	* HoTTAdapter2/D - enable selection of altitude/climb values source sensor *.log
+	* HoTTAdapter2 - enable secondary trigger range for GAM and ESC
+	* PolaronACDC - fix data capturing channel 2
+	* Open-Tx - enable log time step > 1000 msec 
+	* iChargerUSB* - enable additional special states used for internal data evaluation
 		
 	
 Generelle Änderungen/Verbesserungen
- 	* Korrektur einiger Geräte XML-Dateien, diese enthielten [] was bei Java 12 zu Fehlern führt
-	* Korrektur bei der Berechnung des Mittelwertes bezogen auf Trigger-Bereiche
-	* Korrektur makensis languages.nsh Encoding
-	* Integration von Werten über Trigger-Bereiche hinzu gefügt (erfordert XSD update)
-	* Update Geräte-Eigenschaften-Editor für die Unterstützung der Integration über Trigger-Bereiche
-	* Update online/offline Dokumentation
+	* Aktualisierung des launch4j Windows Java-Starter-Anwendung, unterstützt nun Java Pfad Einträge zusätzlich zur Registry
+	* Ein sekundärer Trigger zur Erweiterung des primären Triggers ist jetzt erlaubt -> erfordert Aktualisierung des XSD (Geräte XML Schema)
 
 Gerätespezifische Änderungen/Verbesserungen
-	* HoTTAdapter* - Korrektur der Trigger-Beschreibung in der XML
-	* HoTTAdapter* - Entferntung der Auswertung von Ereignissen und Warnungen in *.log Dateien
-	* HoTTAdapter2 - Korrektur Kanäle Zoom-Problem
+	* JetiAdapter - Rückwärtskompatibilität Sensorwerte ohne Einheit verbessert
+	* JetiAdapter - Verbesserte Tx->Rx Statistik
+	* HoTTAdapter2 - Auswahl Sensor für Höhen und Steigwerte ermöglicht für *.log
+	* HoTTAdapter2 - Sekundärer Trigger für ESC und GAM eingeführt
+	* PolaronACDC - Korrektur Datenaufnahme Kanal 2
+	* Open-Tx - Zeitschritte > 1000 msec ermöglicht, hier wurde kein zusammenhängendes Log erkannt 
+	* iChargerUSB* - Tolerierung spezieller Datenübermittlung für internen Gebrauch eingeführt
 	
 	
