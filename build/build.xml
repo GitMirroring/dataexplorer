@@ -1008,6 +1008,7 @@
 				<include name="DataFilesTestSamples/**" />
 				-->
 				<include name="**/lib/HoTTMdlViewer.jar" />
+				<exclude name="jSerialComm/**" />
 				<exclude name="*Decoder/**" />
 				<exclude name="*Config/**" />
 				<exclude name="HoTT-**/src/**" />
