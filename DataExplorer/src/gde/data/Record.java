@@ -2426,7 +2426,7 @@ public class Record extends AbstractRecord implements IRecord {
 				//use primary trigger ranges as master
 				Iterator<TriggerRange> primaryIterator = primaryTriggerRanges.iterator();
 				TriggerRange primaryRange, secondaryRange;
-				while (primaryIterator.hasNext()) {
+				while (primaryIterator.hasNext() && secondaryTriggerRanges != null) {
 					Iterator<TriggerRange> secondaryIterator = secondaryTriggerRanges.iterator();
 					boolean isMatchRanges = false;
 
