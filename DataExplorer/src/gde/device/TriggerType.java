@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;attribute name="isGreater" use="required" type="{http://www.w3.org/2001/XMLSchema}boolean" />
  *       &lt;attribute name="minTimeSec" use="required" type="{http://www.w3.org/2001/XMLSchema}integer" />
  *       &lt;attribute name="comment" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="isSecondary" type="{http://www.w3.org/2001/XMLSchema}booelan" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -46,6 +47,8 @@ public class TriggerType {
     protected Integer minTimeSec;
     @XmlAttribute
     protected String comment;
+    @XmlAttribute
+    protected boolean isSecondary;
 
     /**
      * Gets the value of the level property.
@@ -134,5 +137,29 @@ public class TriggerType {
     public void setComment(String value) {
         this.comment = value;
     }
+
+  	/**
+  	 * Gets the value of the isSecondary property.
+  	 * 
+  	 * @return
+  	 *     possible object is
+  	 *     {@link Boolean }
+  	 *     
+  	 */
+  	public boolean isSecondary() {
+  		return this.isSecondary;
+  	}
+
+  	/**
+  	 * Sets the value of the isSecondary property.
+  	 * 
+  	 * @param value
+  	 *     allowed object is
+  	 *     {@link Boolean }
+  	 *     
+  	 */
+  	public void setSecondary(boolean value) {
+  		this.isSecondary = value;
+  	}
 
 }

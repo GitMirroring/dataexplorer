@@ -408,7 +408,8 @@ public class StatisticsWindow extends CTabItem {
 							// append trigger + comment
 							if (measurementStatistics.getTrigger() != null && measurementStatistics.getSumTriggerTimeText() != null && measurementStatistics.getSumTriggerTimeText().length() > 1) {
 								sb.append("(").append(String.format(xmlResource.getReplacement(measurementStatistics.getTrigger().getComment()), measurementStatistics.getTrigger().getLevel()/1000.0, measurementStatistics.getTrigger().getMinTimeSec())).append(") "); //$NON-NLS-1$ //$NON-NLS-2$
-								this.tabelItemText.set(0, this.tabelItemText.get(0) + (activeRecordSet.isTimeStepConstant() ? ", " : GDE.STRING_EMPTY) + xmlResource.getReplacement(xmlResource.getReplacement(measurementStatistics.getSumTriggerTimeText())) + " = " + record.getTimeSumTriggeredRange());
+								if (!measurementStatistics.getTrigger().isSecondary())
+									this.tabelItemText.set(0, this.tabelItemText.get(0) + (activeRecordSet.isTimeStepConstant() ? ", " : GDE.STRING_EMPTY) + xmlResource.getReplacement(xmlResource.getReplacement(measurementStatistics.getSumTriggerTimeText())) + " = " + record.getTimeSumTriggeredRange());
 							}
 
 							GC displayGC = new GC(this.dataTable.getDisplay());
@@ -498,7 +499,7 @@ public class StatisticsWindow extends CTabItem {
 
 		// set items (rows) of data table
 		TableItem row;
-		if (!this.isWindows) this.dataTable.setItemCount(this.dataTable.getItemCount() + 1); // add spacer between header and table enties only
+		if (!this.isWindows) this.dataTable.setItemCount(this.dataTable.getItemCount() + 1); // add spacer between header and table entries only
 		for (String itemsText : this.tabelItemText) {
 			if (this.isWindows) this.dataTable.setItemCount(this.dataTable.getItemCount() + 1); // add spacer line for windows
 			row = new TableItem(this.dataTable, SWT.NONE);

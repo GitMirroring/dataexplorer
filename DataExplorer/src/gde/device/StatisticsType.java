@@ -491,6 +491,7 @@ public class StatisticsType implements Cloneable {
 		if (sumByTriggerRefOrdinal != null) sb.append(String.format(" sumByTriggerRefOrdinal=%d", this.sumByTriggerRefOrdinal));
 		if (sumTriggerText != null) sb.append(String.format(" sumTriggerText=%s", this.sumTriggerText.replace(GDE.CHAR_BLANK, GDE.CHAR_UNDER_BAR)));
 		if (countByTrigger != null) sb.append(String.format(" countByTrigger=%b", this.countByTrigger));
+		if (integrateByTrigger != null) sb.append(String.format(" integrateByTrigger=%b", this.integrateByTrigger));
 		if (countTriggerText != null) sb.append(String.format(" countTriggerText=%s", this.countTriggerText.replace(GDE.CHAR_BLANK, GDE.CHAR_UNDER_BAR)));
 		if (comment != null) sb.append(String.format(" comment=%s", this.comment.replace(GDE.CHAR_BLANK, GDE.CHAR_UNDER_BAR)));
 		if (sumTriggerTimeText != null) sb.append(String.format(" sumTriggerTimeText=%s", this.sumTriggerTimeText.replace(GDE.CHAR_BLANK, GDE.CHAR_UNDER_BAR)));

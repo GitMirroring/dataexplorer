@@ -4,13 +4,15 @@ Version 3.4.0 - 10 Nov 2019
 Generic changes/fixes
 	* update launch4j Windows executable wrapper supporting java PATH entries in addition to registry
 	* enable secondary trigger to extend primary trigger range -> require XSD upgrade
+	* add additional comment placeholder for motor capacity for cases with sumByTriggerReferenceOrdinal.
 
 Device specific changes/fixes
 	* JetiAdapter - fix backward compatibility skipping sensor parameter without unit, result as missing measurement
 	* JetiAdapter - enhance Tx->Rx statistics
+	* GPS-Logger2 - enable secondary trigger definition for combinations with UL2 data (UniLog2 or UniSensE)
 	* HoTTAdapterD - correct indexing parse EAM *.log
 	* HoTTAdapter2/D - enable selection of altitude/climb values source sensor *.log
-	* HoTTAdapter2 - enable secondary trigger range for GAM and ESC
+	* HoTTAdapter2 - enable secondary trigger range for GAM and ESC as example
 	* PolaronACDC - fix data capturing channel 2
 	* Open-Tx - enable log time step > 1000 msec 
 	* iChargerUSB* - enable additional special states used for internal data evaluation

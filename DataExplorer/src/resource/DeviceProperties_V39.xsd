@@ -796,6 +796,11 @@
 				<xs:documentation>trigger related comment</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
+		<xs:attribute name="isSecondary" type="xs:boolean">
+			<xs:annotation>
+				<xs:documentation>mark the trigger as secondary, is only used to extend a primary trigger</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
 	</xs:complexType>
 	<xs:complexType name="StateType">
 		<xs:sequence>
