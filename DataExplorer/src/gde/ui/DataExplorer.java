@@ -674,7 +674,6 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 					// menuCoolBar.controlResized signals collBar item moved
 					if (DataExplorer.this.displayTab != null && getSize().y != 0) {
 				    Point shellSize = new Point(GDE.shell.getClientArea().width, GDE.shell.getClientArea().height);
-						DataExplorer.this.menuCoolBar.pack();
 						Point menuCoolBarSize = DataExplorer.this.menuCoolBar.getSize();
 						Point kFillerSize = DataExplorer.this.kFiller.getSize();
 						DataExplorer.this.menuCoolBar.setSize(shellSize.x - kFillerSize.x - 1, menuCoolBarSize.y);
@@ -694,6 +693,7 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 					if (log.isLoggable(Level.FINEST)) log.logp(Level.FINEST, $CLASS_NAME, "controlRezised", "menuCoolBar.controlResized, event=" + evt); //$NON-NLS-1$
 					// menuCoolBar.controlResized signals collBar item moved
 					if (DataExplorer.this.displayTab != null && getSize().y != 0) {
+						DataExplorer.this.menuCoolBar.pack();
 						Point menuCoolBarSize = DataExplorer.this.menuCoolBar.getSize();
 				    Point shellSize = new Point(GDE.shell.getClientArea().width, GDE.shell.getClientArea().height);
 						Point statusBarSize = DataExplorer.this.statusComposite.getSize();
