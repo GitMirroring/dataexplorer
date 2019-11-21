@@ -483,7 +483,7 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 				@Override
 				public void controlMoved(ControlEvent controlevent) {
 					if (log.isLoggable(Level.FINEST))
-						log.logp(Level.FINEST, $CLASS_NAME, "controlResized", GDE.shell.getLocation().toString() + "event = " + controlevent); //$NON-NLS-1$ //$NON-NLS-2$
+						log.logp(Level.FINEST, $CLASS_NAME, "controlMoved", GDE.shell.getLocation().toString() + "event = " + controlevent); //$NON-NLS-1$ //$NON-NLS-2$
 					if (!GDE.shell.getMaximized()) DataExplorer.application.settings.setWindow(GDE.shell.getLocation(), GDE.shell.getSize());
 				}
 			});
@@ -673,21 +673,32 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 					if (log.isLoggable(Level.FINEST)) log.logp(Level.FINEST, $CLASS_NAME, $METHOD_NAME, "menuCoolBar.controlResized, event=" + evt); //$NON-NLS-1$
 					// menuCoolBar.controlResized signals collBar item moved
 					if (DataExplorer.this.displayTab != null && getSize().y != 0) {
-
-//					if (log.isLoggable(Level.FINE)) {
-//					log.logp(Level.FINE, $CLASS_NAME, "controlResized", "kFillerSize.size = " + DataExplorer.this.kFiller.getSize()); //$NON-NLS-1$
-//					log.logp(Level.FINE, $CLASS_NAME, "controlResized", "menuCoolBar.size = " + DataExplorer.this.menuCoolBar.getSize()); //$NON-NLS-1$
-//					log.logp(Level.FINE, $CLASS_NAME, "controlResized", "shellClient.size = " + new Point(getClientArea().width, getClientArea().height)); //$NON-NLS-1$
-//					log.logp(Level.FINE, $CLASS_NAME, "controlResized", "statusBar.size = " + DataExplorer.this.statusComposite.getSize()); //$NON-NLS-1$
-//					log.logp(Level.FINE, $CLASS_NAME, "controlResized", "displayTab.bounds = " + DataExplorer.this.displayTab.getBounds()); //$NON-NLS-1$
-//				}
+				    Point shellSize = new Point(GDE.shell.getClientArea().width, GDE.shell.getClientArea().height);
+						DataExplorer.this.menuCoolBar.pack();
+						Point menuCoolBarSize = DataExplorer.this.menuCoolBar.getSize();
+						Point kFillerSize = DataExplorer.this.kFiller.getSize();
+						DataExplorer.this.menuCoolBar.setSize(shellSize.x - kFillerSize.x - 1, menuCoolBarSize.y);
+						Point statusBarSize = DataExplorer.this.statusComposite.getSize();
+						if (log.isLoggable(Level.FINE)) {
+							log.logp(Level.FINE, $CLASS_NAME, "menuCoolBar.controlResized", "statusBar.size = " + statusBarSize); //$NON-NLS-1$
+							log.logp(Level.FINE, $CLASS_NAME, "menuCoolBar.controlResized", "menuCoolBarSize = " + menuCoolBarSize); //$NON-NLS-1$
+							log.logp(Level.FINE, $CLASS_NAME, "menuCoolBar.controlResized", "kFillerSize.size = " + kFillerSize); //$NON-NLS-1$
+						}
+						DataExplorer.this.displayTab.setBounds(0, menuCoolBarSize.y, shellSize.x, shellSize.y - menuCoolBarSize.y - statusBarSize.y-2);
+					}
+				}
+			});
+			this.displayTab.addControlListener(new ControlAdapter() {
+				@Override
+				public void controlResized(ControlEvent evt) {
+					if (log.isLoggable(Level.FINEST)) log.logp(Level.FINEST, $CLASS_NAME, "controlRezised", "menuCoolBar.controlResized, event=" + evt); //$NON-NLS-1$
+					// menuCoolBar.controlResized signals collBar item moved
+					if (DataExplorer.this.displayTab != null && getSize().y != 0) {
 						Point menuCoolBarSize = DataExplorer.this.menuCoolBar.getSize();
 				    Point shellSize = new Point(GDE.shell.getClientArea().width, GDE.shell.getClientArea().height);
 						Point statusBarSize = DataExplorer.this.statusComposite.getSize();
-						if (log.isLoggable(Level.FINE)) log.logp(Level.FINE, $CLASS_NAME, $METHOD_NAME, "statusBar.size = " + statusBarSize); //$NON-NLS-1$
-						DataExplorer.this.displayTab.setBounds(0, menuCoolBarSize.y, shellSize.x, shellSize.y - menuCoolBarSize.y - statusBarSize.y);
 						if (log.isLoggable(Level.FINE))
-							log.logp(Level.FINE, $CLASS_NAME, $METHOD_NAME, "displayTab.bounds = " + DataExplorer.this.displayTab.getBounds()); //$NON-NLS-1$
+							log.logp(Level.FINE, $CLASS_NAME, "displayTab.controlRezised", "displayTab.bounds = " + DataExplorer.this.displayTab.getBounds()); //$NON-NLS-1$
 				    DataExplorer.this.displayTab.setBounds(0, menuCoolBarSize.y, shellSize.x, shellSize.y - menuCoolBarSize.y - statusBarSize.y-2);
 					}
 				}
@@ -719,10 +730,10 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 						}
 					}
 					if (log.isLoggable(Level.FINE) && DataExplorer.this.displayTab != null && DataExplorer.this.menuCoolBar != null && DataExplorer.this.statusComposite != null && getSize().y != 0) {
-						log.logp(Level.FINE, $CLASS_NAME, $METHOD_NAME, "menuCoolBar.size = " + DataExplorer.this.menuCoolBar.getSize()); //$NON-NLS-1$
-						log.logp(Level.FINE, $CLASS_NAME, $METHOD_NAME, "shellClient.size = " + new Point(getClientArea().width, getClientArea().height)); //$NON-NLS-1$
-						log.logp(Level.FINE, $CLASS_NAME, $METHOD_NAME, "statusBar.size = " + DataExplorer.this.statusComposite.getSize()); //$NON-NLS-1$
-						log.logp(Level.FINE, $CLASS_NAME, $METHOD_NAME, "displayTab.bounds = " + DataExplorer.this.displayTab.getBounds()); //$NON-NLS-1$
+						log.logp(Level.FINE, $CLASS_NAME, "paintControl", "menuCoolBar.size = " + DataExplorer.this.menuCoolBar.getSize()); //$NON-NLS-1$
+						log.logp(Level.FINE, $CLASS_NAME, "paintControl", "shellClient.size = " + new Point(getClientArea().width, getClientArea().height)); //$NON-NLS-1$
+						log.logp(Level.FINE, $CLASS_NAME, "paintControl", "statusBar.size = " + DataExplorer.this.statusComposite.getSize()); //$NON-NLS-1$
+						log.logp(Level.FINE, $CLASS_NAME, "paintControl", "displayTab.bounds = " + DataExplorer.this.displayTab.getBounds()); //$NON-NLS-1$
 					}
 				}
 			});
