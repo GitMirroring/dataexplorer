@@ -1,5 +1,5 @@
 /**************************************************************************************
-  	This file is part of GNU DataExplorer.
+  		This file is part of GNU DataExplorer.
 
     GNU DataExplorer is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -72,9 +72,9 @@ public class NMEAParser implements IDataParser {
 	protected boolean											isOffsetSet								= false;
 	protected int													initialPressure						= 0;
 	protected double											rho												= 0;
-	protected ValueCollector							vcAirSpeed40;
-	protected ValueCollector							vcAirSpeedDp1;
-	protected ValueCollector							vcAirSpeed70;
+	protected ValueCollector							vcAirSpeed40							= new ValueCollector();
+	protected ValueCollector							vcAirSpeedDp1							= new ValueCollector();
+	protected ValueCollector							vcAirSpeed70							= new ValueCollector();
 	
 	protected int													recordSetNumberOffset			= 0;
 	protected int													timeResetCounter					= 0;
@@ -120,11 +120,6 @@ public class NMEAParser implements IDataParser {
 		this.deviceName = this.device.getName();
 		this.channelConfigNumber = useChannelConfigNumber;
 		this.timeOffsetUTC = useTimeOffsetUTC;
-		if (this.device.getName().endsWith("Logger3")) {
-			vcAirSpeed40 = new ValueCollector();
-			vcAirSpeedDp1 = new ValueCollector();
-			vcAirSpeed70 = new ValueCollector();			
-		}
 	}
 	
 	/**
@@ -1316,7 +1311,7 @@ public class NMEAParser implements IDataParser {
 		//this.values[20] = noise level;
 		//this.values[21] = Impulse;
 		
-		if (strValues.length > 6) { //GPS-Logger3
+		if (strValues.length > 6 && device.getName().endsWith("Logger3")) { //GPS-Logger3
 			//this.values[22] = Airspeed [km/h];
 			//this.values[23] = static Airpressure [hPa];
 			//this.values[24] = Airpressure TEK [hPa];
