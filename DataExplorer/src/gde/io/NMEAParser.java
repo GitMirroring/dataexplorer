@@ -501,7 +501,7 @@ public class NMEAParser implements IDataParser {
 				this.correctDstOffset(calendar);
 			}
 			int indexAfterDot = strValueTime.indexOf(GDE.CHAR_DOT) + 1;
-			long timeStamp = calendar.getTimeInMillis() + (indexAfterDot > 0  && strValueTime.length() >= indexAfterDot + 2 ? Integer.parseInt(strValueTime.substring(indexAfterDot, indexAfterDot + 2)) * 10 : 0);
+			long timeStamp = calendar.getTimeInMillis() + (indexAfterDot > 0  && strValueTime.length() >= indexAfterDot + 2 ? Long.parseLong(strValueTime.substring(indexAfterDot, indexAfterDot + 2)) * 10 : 0);
 			if (log.isLoggable(Level.FINER))
 				log.log(Level.FINER, "RMC " + Integer.parseInt(strValueTime.substring(indexAfterDot, indexAfterDot + 2)) * 10); //$NON-NLS-1$);
 
@@ -1036,7 +1036,7 @@ public class NMEAParser implements IDataParser {
 				this.correctDstOffset(calendar);
 			}
 			int indexAfterDot = strValueTime.indexOf(GDE.CHAR_DOT) + 1;
-			long timeStamp = calendar.getTimeInMillis() + (indexAfterDot > 0  && strValueTime.length() >= indexAfterDot + 2 ? Integer.parseInt(strValueTime.substring(indexAfterDot, indexAfterDot + 2)) * 10 : 0);
+			long timeStamp = calendar.getTimeInMillis() + (indexAfterDot > 0  && strValueTime.length() >= indexAfterDot + 2 ? Long.parseLong(strValueTime.substring(indexAfterDot, indexAfterDot + 2)) * 10 : 0);
 			if (log.isLoggable(Level.FINER))
 				log.log(Level.FINER, "GLL " + Integer.parseInt(strValueTime.substring(indexAfterDot, indexAfterDot + 2)) * 10); //$NON-NLS-1$);
 			
@@ -1122,7 +1122,7 @@ public class NMEAParser implements IDataParser {
 			this.correctDstOffset(calendar);
 		}
 		int indexAfterDot = strValueTime.indexOf(GDE.CHAR_DOT) + 1;
-		long timeStamp = calendar.getTimeInMillis() + (indexAfterDot > 0  && strValueTime.length() >= indexAfterDot + 2 ? Integer.parseInt(strValueTime.substring(indexAfterDot, indexAfterDot + 2)) * 10 : 0);
+		long timeStamp = calendar.getTimeInMillis() + (indexAfterDot > 0  && strValueTime.length() >= indexAfterDot + 2 ? Long.parseLong(strValueTime.substring(indexAfterDot, indexAfterDot + 2)) * 10 : 0);
 		if (log.isLoggable(Level.FINER))
 			log.log(Level.FINER, "ZDA " + Integer.parseInt(strValueTime.substring(indexAfterDot, indexAfterDot + 2)) * 10); //$NON-NLS-1$);
 		
@@ -1592,7 +1592,7 @@ public class NMEAParser implements IDataParser {
 				this.correctDstOffset(calendar);
 			}
 			int indexAfterDot = strValueTime[2].indexOf(GDE.CHAR_DOT) + 1;
-			long timeStamp = calendar.getTimeInMillis() + (indexAfterDot > 0  && strValueTime[2].length() >= indexAfterDot + 2 ? Integer.parseInt(strValueTime[2].substring(indexAfterDot, indexAfterDot + 2)) * 10 : 0);
+			long timeStamp = calendar.getTimeInMillis() + (indexAfterDot > 0  && strValueTime[2].length() >= indexAfterDot + 2 ? Long.parseLong(strValueTime[2].substring(indexAfterDot, indexAfterDot + 2)) * 10 : 0);
 			if (log.isLoggable(Level.FINER))
 				log.log(Level.FINER, "UNILOG2 " + Integer.parseInt(strValueTime[2].substring(indexAfterDot, indexAfterDot + 2)) * 10); //$NON-NLS-1$);
 			if (this.lastTimeStamp < timeStamp) {
