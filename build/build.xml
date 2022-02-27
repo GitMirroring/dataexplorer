@@ -150,11 +150,21 @@
 		<property name="output.raspbian32.program.devices" location="${output.raspbian32}/DataExplorer/devices" />
 		<property name="output.raspbian32.java.ext" location="${output.raspbian32}/DataExplorer/java/ext" />
 
+		<property name="output.raspbian64" location="${output.dir}/Raspbian_64" />
+		<property name="output.raspbian64.program" location="${output.raspbian64}/DataExplorer" />
+		<property name="output.raspbian64.program.devices" location="${output.raspbian64}/DataExplorer/devices" />
+		<property name="output.raspbian64.java.ext" location="${output.raspbian64}/DataExplorer/java/ext" />
+
 		<!-- create output directory structure -->
 		<mkdir dir="${output.raspbian32}" />
 		<mkdir dir="${output.raspbian32.program}" />
 		<mkdir dir="${output.raspbian32.program.devices}" />
 		<mkdir dir="${output.raspbian32.java.ext}" />
+		
+		<mkdir dir="${output.raspbian64}" />
+		<mkdir dir="${output.raspbian64.program}" />
+		<mkdir dir="${output.raspbian64.program.devices}" />
+		<mkdir dir="${output.raspbian64.java.ext}" />
 	</target>
 
 	<target name="init-linux">
@@ -733,6 +743,24 @@
 			</fileset>
 		</copy>
 
+		<copy file="build/misc/DataExplorer64" tofile="${output.raspbian64.program}/DataExplorer" />
+		<copy todir="${output.raspbian64.program}" flatten="yes">
+			<fileset file="DataExplorer/build/*.jar" />
+			<fileset file="build/misc/DataExplorer-mime.xml" />
+			<fileset file="build/misc/DevicePropertiesEditor.xpm" />
+			<fileset file="build/misc/DataExplorer.xpm" />
+			<fileset file="build/misc/DataExplorerSplash.png" />
+			<fileset file="build/misc/DataExplorer.desktop" />
+			<fileset file="build/misc/DevicePropertiesEditor" />
+			<fileset file="build/misc/DevicePropertiesEditor.desktop" />
+			<!-- fileset file="RXTXcomm/src/arm64/librxtxSerial.so" / -->
+		</copy>
+		<copy todir="${output.raspbian64.program.devices}" flatten="yes">
+			<fileset dir="${basedir}">
+				<patternset refid="DE_PLUGIN_JARS" />
+			</fileset>
+		</copy>
+
 		<!-- java extenssions -->
 		<copy todir="${output.raspbian32.java.ext}" flatten="yes">
 			<fileset file="build/lib/RXTXcomm.jar" />
@@ -758,8 +786,36 @@
 			<fileset file="build/lib/Raspbian/32/libusb4java.jar" />
 		</copy>
 		
+		<copy todir="${output.raspbian64.java.ext}" flatten="yes">
+			<fileset file="build/lib/RXTXcomm.jar" />
+			<fileset file="build/lib/jSerialComm.jar" />
+			<fileset file="build/lib/Raspbian/64/swt.jar" />
+			<fileset file="build/misc/*.LICENSE" />
+			<fileset file="build/misc/*.README" />
+			<fileset file="${basedir}/HoTTMdlViewer/lib/HoTTMdlViewer.jar" />
+			<fileset file="build/lib/gson.jar" />
+			<fileset file="build/lib/juniversalchardet.jar" />
+			<fileset file="build/lib/jaxb-api.jar" />
+			<fileset file="build/lib/jaxb-core.jar" />
+			<fileset file="build/lib/jaxb-runtime.jar" />
+			<fileset file="build/lib/istack-commons-runtime.jar" />
+			<fileset file="build/lib/activation.jar" />
+			<fileset file="build/lib/usb4java.jar" />
+			<fileset file="build/lib/usb-api.jar" />
+			<fileset file="build/lib/usb4java-javax.jar" />
+			<fileset file="build/lib/commons-lang3.jar" />
+			<fileset file="build/lib/tlmreader.jar" />
+			<fileset file="build/lib/jtouchbar.jar" />
+			<fileset file="build/lib/jtouchbar-swt.jar" />
+			<fileset file="build/lib/Raspbian/64/libusb4java.jar" />
+		</copy>
+		
 		<!-- launcher scripts, README -->
 		<copy todir="${output.raspbian32}/DataExplorer" flatten="yes">
+			<fileset file="build/misc/README.*" />
+		</copy>
+		
+		<copy todir="${output.raspbian64}/DataExplorer" flatten="yes">
 			<fileset file="build/misc/README.*" />
 		</copy>
 	</target>
@@ -981,6 +1037,25 @@
 				<include name="*/DevicePropertiesEditor.desktop" />
 			</tarfileset>
 			<tarfileset dir="${output.raspbian32}" casesensitive="true" mode="644">
+				<include name="**" />
+				<exclude name="*/DataExplorer" />
+				<exclude name="*/DevicePropertiesEditor" />
+				<exclude name="*/DataExplorer.desktop" />
+				<exclude name="*/DevicePropertiesEditor.desktop" />
+			</tarfileset>
+		</tar>		
+	
+		<echo message="tar Raspbian Linux 64 bit files" />
+		<tar destfile="${build.target.dir}/dataexplorer-${version.num}-bin_RaspbianLinux_ARM_64.tar.gz" compression="gzip">
+			<tarfileset dir="${output.raspbian64}" casesensitive="true" mode="755">
+				<include name="*/DataExplorer" />
+				<include name="*/DevicePropertiesEditor" />
+			</tarfileset>
+			<tarfileset dir="${output.raspbian64}" casesensitive="true" mode="766">
+				<include name="*/DataExplorer.desktop" />
+				<include name="*/DevicePropertiesEditor.desktop" />
+			</tarfileset>
+			<tarfileset dir="${output.raspbian64}" casesensitive="true" mode="644">
 				<include name="**" />
 				<exclude name="*/DataExplorer" />
 				<exclude name="*/DevicePropertiesEditor" />
