@@ -354,7 +354,7 @@ public class UniLogDialog extends DeviceDialog {
 							int index = Channels.getInstance().getActiveChannelNumber();
 							index = index < 1 || index > UniLogDialog.this.deviceConfigTabFolder.getChildren().length - 2 ? 1 : index;
 							UniLogDialog.this.deviceConfigTabFolder.setSelection(index);
-							((UniLogConfigTab)UniLogDialog.this.deviceConfigTabFolder.getChildren()[index]).initialize();
+							(UniLogDialog.this.deviceConfigTabFolder.getChildren()[index]).update();
 						}
 						UniLogDialog.this.lastActiveRecordSet = UniLogDialog.this.application.getActiveRecordSet();
 					}
