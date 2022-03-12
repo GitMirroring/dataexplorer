@@ -242,6 +242,8 @@ public class Record extends AbstractRecord implements IRecord {
 		DEFAULT("default"), // all normal measurement values which do not require special handling
 		GPS_LATITUDE("GPS latitude"), // GPS geo-coordinate require at least 6 decimal digits [°]
 		GPS_LONGITUDE("GPS longitude"), // GPS geo-coordinate require at least 6 decimal digits [°]
+    GPS_LATITUDE_DEGREE("GPS latitude degree"), //GPS geo-coordinate require at least 6 decimal digits
+    GPS_LONGITUDE_DEGREE("GPS longitude degree"), //GPS geo-coordinate require at least 6 decimal digits
 		GPS_ALTITUDE("GPS altitude"), // GPS or absolute altitude required in some case for GPS related calculations like speed, distance, ...
 		GPS_AZIMUTH("GPS azimuth"), // GPS azimuth, to be used for live display and positioning of icon if used
 		GPS_TIME("GPS time"), // GPS time, to be used as time stamp or start time if available
@@ -267,7 +269,7 @@ public class Record extends AbstractRecord implements IRecord {
 					return c;
 				}
 			}
-			throw new IllegalArgumentException(v);
+			return DEFAULT;
 		}
 
 		public static List<Record.DataType> getAsList() {

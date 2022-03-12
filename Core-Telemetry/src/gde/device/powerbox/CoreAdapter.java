@@ -265,7 +265,8 @@ public class CoreAdapter extends DeviceConfiguration implements IDevice {
 	 */
 	@Override
 	public boolean isGPSCoordinates(Record record) {
-		return record.getDataType() == DataType.GPS_LATITUDE || record.getDataType() == DataType.GPS_LONGITUDE;
+		return record.getDataType() == DataType.GPS_LATITUDE || record.getDataType() == DataType.GPS_LONGITUDE
+				|| record.getDataType() == DataType.GPS_LATITUDE_DEGREE || record.getDataType() == DataType.GPS_LONGITUDE_DEGREE;
 	}
 
 	/**
@@ -281,6 +282,8 @@ public class CoreAdapter extends DeviceConfiguration implements IDevice {
 				switch (record.getDataType()) {
 				case GPS_LATITUDE:
 				case GPS_LONGITUDE:
+				case GPS_LATITUDE_DEGREE:
+				case GPS_LONGITUDE_DEGREE:
 					dataTableRow[index + 1] = String.format("%.6f", (record.get(rowIndex) / 1000000.0));
 					break;
 
@@ -313,6 +316,8 @@ public class CoreAdapter extends DeviceConfiguration implements IDevice {
 		switch (record.getDataType()) {
 		case GPS_LATITUDE:
 		case GPS_LONGITUDE:
+		case GPS_LATITUDE_DEGREE:
+		case GPS_LONGITUDE_DEGREE:
 			newValue = value / 1000.0;
 			break;
 
@@ -356,6 +361,8 @@ public class CoreAdapter extends DeviceConfiguration implements IDevice {
 		switch (record.getDataType()) {
 		case GPS_LATITUDE:
 		case GPS_LONGITUDE:
+		case GPS_LATITUDE_DEGREE:
+		case GPS_LONGITUDE_DEGREE:
 			newValue = value * 1000.0;
 			break;
 
@@ -560,9 +567,14 @@ public class CoreAdapter extends DeviceConfiguration implements IDevice {
 		if (activeChannel != null) {
 			RecordSet activeRecordSet = activeChannel.getActiveRecordSet();
 			if (activeRecordSet != null && activeRecordSet.containsGPSdata()) {
+				int ordinalLongitude = activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_LONGITUDE);
+				ordinalLongitude = ordinalLongitude == -1 ? activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_LONGITUDE_DEGREE) : ordinalLongitude;
+				int ordinalLatitude = activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_LATITUDE);
+				ordinalLatitude = ordinalLatitude == -1 ? activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_LATITUDE_DEGREE) : ordinalLongitude;
+
 				new FileHandler().exportFileKMZ(Messages.getString(MessageIds.GDE_MSGT2953), 
-						activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_LONGITUDE),
-						activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_LATITUDE), 
+						ordinalLongitude,
+						ordinalLatitude, 
 						activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_ALTITUDE), 
 						activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_SPEED), 
 						activeRecordSet.findRecordOrdinalByUnit(new String[] {"m/s"}),					//climb
@@ -588,7 +600,8 @@ public class CoreAdapter extends DeviceConfiguration implements IDevice {
 				//GPGGA	0=latitude 1=longitude  2=altitudeAbs 
 				containsGPSdata = activeRecordSet.containsGPSdata();
 				if (!containsGPSdata) {
-					containsGPSdata = (activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_LONGITUDE) >= 0) && (activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_LATITUDE) >= 0);
+					containsGPSdata = (activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_LONGITUDE) >= 0) && (activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_LATITUDE) >= 0)
+							|| (activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_LONGITUDE_DEGREE) >= 0) && (activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_LATITUDE_DEGREE) >= 0);
 				}
 			}
 		}
@@ -607,9 +620,14 @@ public class CoreAdapter extends DeviceConfiguration implements IDevice {
 			RecordSet activeRecordSet = activeChannel.getActiveRecordSet();
 			if (activeRecordSet != null && fileEndingType.contains(GDE.FILE_ENDING_KMZ) && this.isActualRecordSetWithGpsData()) {
 				final int additionalMeasurementOrdinal = this.getGPS2KMZMeasurementOrdinal();
+				int ordinalLongitude = activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_LONGITUDE);
+				ordinalLongitude = ordinalLongitude == -1 ? activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_LONGITUDE_DEGREE) : ordinalLongitude;
+				int ordinalLatitude = activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_LATITUDE);
+				ordinalLatitude = ordinalLatitude == -1 ? activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_LATITUDE_DEGREE) : ordinalLongitude;
+
 				exportFileName = new FileHandler().exportFileKMZ(
-						activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_LONGITUDE), 
-						activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_LATITUDE),
+						ordinalLongitude, 
+						ordinalLatitude,
 						activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_ALTITUDE), 
 						additionalMeasurementOrdinal, 
 						activeRecordSet.findRecordOrdinalByUnit(new String[] {"m/s"}),					//climb
@@ -676,7 +694,7 @@ public class CoreAdapter extends DeviceConfiguration implements IDevice {
 		//check file contained record properties which are not contained in actual configuration
 		String[] recordNames = recordSet.getRecordNames();
 		Vector<String> cleanedRecordNames = new Vector<String>();
-		if ((recordNames.length - fileRecordsProperties.length) > 0) {
+		if (recordNames.length != fileRecordsProperties.length) {
 			for (String recordProps : fileRecordsProperties) {
 				cleanedRecordNames.add(StringHelper.splitString(recordProps, Record.DELIMITER, Record.propertyKeys).get(Record.propertyKeys[0]));
 			}

@@ -3,6 +3,7 @@ Development history / change log, please read from bottom up
 Version 3.5.5 - xx yyy 2022
 Generic changes/fixes
 	* add Raspbian 64 bit build as compressed ARM tarball
+	* synchronize record data types with Android version
 		
 Device specific changes/fixes
 	* GPS-Logger3 - reuse ValueCollector to calculate average values at dedicated AirSpeed and TEC pressure

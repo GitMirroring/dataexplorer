@@ -380,6 +380,8 @@ public class OpenTxAdapter extends DeviceConfiguration implements IDevice {
 		switch (record.getDataType()) {
 		case GPS_LATITUDE:
 		case GPS_LONGITUDE:
+		case GPS_LATITUDE_DEGREE:
+		case GPS_LONGITUDE_DEGREE:
 			if (record.getUnit().equals("°"))
 				newValue = value / 1000.0;
 			else { //[° ']
@@ -428,6 +430,8 @@ public class OpenTxAdapter extends DeviceConfiguration implements IDevice {
 		switch (record.getDataType()) {
 		case GPS_LATITUDE:
 		case GPS_LONGITUDE:
+		case GPS_LATITUDE_DEGREE:
+		case GPS_LONGITUDE_DEGREE:
 			if (record.getUnit().equals("°"))
 				newValue = value * 1000.0;
 			else { //[° ']
@@ -587,7 +591,8 @@ public class OpenTxAdapter extends DeviceConfiguration implements IDevice {
 			if (activeRecordSet != null) {
 				for (int i = 0; i < activeRecordSet.size(); i++) {
 					Record record = activeRecordSet.get(i);
-					if (record.getDataType().equals(Record.DataType.GPS_LATITUDE) || record.getDataType().equals(Record.DataType.GPS_LONGITUDE)) {
+					if (record.getDataType().equals(Record.DataType.GPS_LATITUDE) || record.getDataType().equals(Record.DataType.GPS_LONGITUDE) 
+							|| record.getDataType().equals(Record.DataType.GPS_LATITUDE_DEGREE) || record.getDataType().equals(Record.DataType.GPS_LONGITUDE_DEGREE)) {
 						containsGPSdata = record.hasReasonableData();
 						break;
 					}
@@ -621,7 +626,12 @@ public class OpenTxAdapter extends DeviceConfiguration implements IDevice {
 			RecordSet activeRecordSet = activeChannel.getActiveRecordSet();
 			if (activeRecordSet != null && fileEndingType.contains(GDE.FILE_ENDING_KMZ)) {
 				final int additionalMeasurementOrdinal = this.getGPS2KMZMeasurementOrdinal();
-				exportFileName = new FileHandler().exportFileKMZ(findRecordByType(activeRecordSet, Record.DataType.GPS_LONGITUDE), findRecordByType(activeRecordSet, Record.DataType.GPS_LATITUDE),
+				int ordinalLongitude = findRecordByType(activeRecordSet, Record.DataType.GPS_LONGITUDE);
+				ordinalLongitude = ordinalLongitude == -1 ? findRecordByType(activeRecordSet, Record.DataType.GPS_LONGITUDE_DEGREE) : ordinalLongitude;
+				int ordinalLatitude = findRecordByType(activeRecordSet, Record.DataType.GPS_LATITUDE);
+				ordinalLatitude = ordinalLatitude == -1 ? findRecordByType(activeRecordSet, Record.DataType.GPS_LATITUDE_DEGREE) : ordinalLongitude;
+
+				exportFileName = new FileHandler().exportFileKMZ(ordinalLongitude, ordinalLatitude,
 						findRecordByType(activeRecordSet, Record.DataType.GPS_ALTITUDE), additionalMeasurementOrdinal, findRecordByUnit(activeRecordSet, "m/s"), findRecordByUnit(activeRecordSet, "km"), -1, true,
 						isExportTmpDir);
 			}
@@ -651,7 +661,8 @@ public class OpenTxAdapter extends DeviceConfiguration implements IDevice {
 	 */
 	@Override
 	public boolean isGPSCoordinates(Record record) {
-		return record.getDataType() == DataType.GPS_LATITUDE || record.getDataType() == DataType.GPS_LONGITUDE;
+		return record.getDataType() == DataType.GPS_LATITUDE || record.getDataType() == DataType.GPS_LONGITUDE
+				|| record.getDataType() == DataType.GPS_LATITUDE_DEGREE || record.getDataType() == DataType.GPS_LONGITUDE_DEGREE;
 	}
 
 	/**
@@ -660,8 +671,12 @@ public class OpenTxAdapter extends DeviceConfiguration implements IDevice {
 	 */
 	public void export2KMZ3D(int type) {
 		RecordSet activeRecordSet = application.getActiveRecordSet();
-		new FileHandler().exportFileKMZ(Messages.getString(MessageIds.GDE_MSGT3310), findRecordByType(activeRecordSet, Record.DataType.GPS_LONGITUDE),
-				findRecordByType(activeRecordSet, Record.DataType.GPS_LATITUDE), findRecordByType(activeRecordSet, Record.DataType.GPS_ALTITUDE), findRecordByUnit(activeRecordSet, "km/h"),
+		int ordinalLongitude = findRecordByType(activeRecordSet, Record.DataType.GPS_LONGITUDE);
+		ordinalLongitude = ordinalLongitude == -1 ? findRecordByType(activeRecordSet, Record.DataType.GPS_LONGITUDE_DEGREE) : ordinalLongitude;
+		int ordinalLatitude = findRecordByType(activeRecordSet, Record.DataType.GPS_LATITUDE);
+		ordinalLatitude = ordinalLatitude == -1 ? findRecordByType(activeRecordSet, Record.DataType.GPS_LATITUDE_DEGREE) : ordinalLongitude;
+		new FileHandler().exportFileKMZ(Messages.getString(MessageIds.GDE_MSGT3310), ordinalLongitude, ordinalLatitude, 
+				findRecordByType(activeRecordSet, Record.DataType.GPS_ALTITUDE), findRecordByUnit(activeRecordSet, "km/h"),
 				findRecordByUnit(activeRecordSet, "m/s"), findRecordByUnit(activeRecordSet, "km"), -1, type == DeviceConfiguration.HEIGHT_RELATIVE, type == DeviceConfiguration.HEIGHT_CLAMPTOGROUND);
 	}
 

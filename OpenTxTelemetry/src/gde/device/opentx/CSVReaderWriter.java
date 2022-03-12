@@ -234,7 +234,7 @@ public class CSVReaderWriter {
 			if (activeChannel != null) {
 				GDE.getUiNotification().setStatusMessage(Messages.getString(MessageIds.GDE_MSGT0134) + filePath);
 				GDE.getUiNotification().setProgress(0);
-				int time_ms = 0;
+				long time_ms = 0;
 
 				// check for device name and channel or configuration in first line
 				if (!CSVReaderWriter.application.getActiveDevice().getName().equals(fileHeader.get(GDE.DEVICE_NAME))) {
@@ -322,9 +322,9 @@ public class CSVReaderWriter {
 
 					if (lastTimeStamp < timeStamp) {
 						if (timeStamp - lastTimeStamp > 5000) {
-							if (recordSet.get(0).size() > 10) {
+							if (recordSet.get(0).size() > 100) {
 								if (lastTimeStamp > 0)
-									log.log(Level.WARNING,  String.format("time differenze = %d msec, actual number record entries = %d", (timeStamp - lastTimeStamp),  (recordSet.get(0).size())));
+									log.log(Level.WARNING,  String.format("time differenze = %s msec, actual number record entries = %d", CSVReaderWriter.getFormatedTimeDiff(startTimeStamp, lastTimeStamp),  (recordSet.get(0).size())));
 								recordSet.setSaved(true);
 								activeChannel.put(recordSetName, recordSet);
 								activeChannel.setActiveRecordSet(recordSetName);
@@ -333,7 +333,7 @@ public class CSVReaderWriter {
 								//if (GDE.isWithUi()) activeChannel.switchRecordSet(recordSetName);
 							}
 							else {
-								log.log(Level.WARNING,  String.format("time differenze = %d msec, actual number record entries = %d (< 10 -> remove)", (timeStamp - lastTimeStamp),  (recordSet.get(0).size())));
+								log.log(Level.WARNING,  String.format("time differenze = %d msec, actual number record entries = %d (< 100 -> remove)", (timeStamp - lastTimeStamp),  (recordSet.get(0).size())));
 							}
 
 							recordSet = createRecordSet(recordSetNameExtend, device, activeChannel, tmpRecordNames, tmpRecordUnits, tmpRecordSymbols);
@@ -343,7 +343,7 @@ public class CSVReaderWriter {
 								createdRecordSets.add(recordSetName);
 						}
 
-						time_ms = (int) (lastTimeStamp == 0 ? 0 : time_ms + (timeStamp - lastTimeStamp));
+						time_ms = lastTimeStamp == 0 ? 0 : time_ms + (timeStamp - lastTimeStamp);
 						lastTimeStamp = timeStamp;
 						if (startTimeStamp == 0) {
 							startTimeStamp = timeStamp;
@@ -380,58 +380,58 @@ public class CSVReaderWriter {
 
 					List<String> skipIndexList = fileHeader.get(GDE.CSV_DATA_IGNORE_INDEX) != null ? StringHelper.stringToList(fileHeader.get(GDE.CSV_DATA_IGNORE_INDEX), separator) : new ArrayList<String>();
 					for (int i = 0, j = 0; i < updateRecordNames.length; i++, j++) { // only iterate over record names found in file
-						while (skipIndexList.size() > 0 && j + 2 == Integer.valueOf(skipIndexList.get(0))) {
+						while (skipIndexList.size() > 0 && j + 2 == Integer.parseInt(skipIndexList.get(0))) {
 							skipIndexList = skipIndexList.subList(1, skipIndexList.size());
 							++j;
 						}
-						try {
-							data = dataStr[j + 2].trim().replace(GDE.STRING_BLANK, GDE.STRING_EMPTY);
-							//log.log(Level.OFF, String.format("%s i=%d j=%d %s", recordSet.get(i).getName(), i, j, data));
-						}
-						catch (Exception e) {
-							data = "0";
-							CSVReaderWriter.log.log(Level.WARNING, String.format("Check line = %s", line));
-						}
-
-						switch (recordSet.get(i).getDataType()) {
-						case GPS_LONGITUDE:
-						case GPS_LATITUDE:
-							if (data.contains(GDE.STRING_MINUS))
-								points[i] = 0;
-							else { //normalize GPS coordinate to enable %9.6f
-								data = data.replace("E", GDE.STRING_EMPTY).replace('W', GDE.CHAR_DASH).replace("N", GDE.STRING_EMPTY).replace('S', GDE.CHAR_DASH)
-								.replace(GDE.STRING_COLON, GDE.STRING_EMPTY);
-								if (recordSet.get(i).getUnit().endsWith("'"))
-									data = data.replace(GDE.STRING_DOT, GDE.STRING_EMPTY);
-								else {
-									if (data.length() != 0)
-										data = String.format(Locale.ENGLISH, "%.6f", Double.parseDouble(data)).replace(GDE.STRING_DOT, GDE.STRING_EMPTY);
-									else
-										data = "0.0";
+						if ((j+2) < dataStr.length) {
+							try {
+								data = dataStr[j + 2].trim().replace(GDE.STRING_BLANK, GDE.STRING_EMPTY);
+								//log.log(Level.OFF, String.format("%s i=%d j=%d %s", recordSet.get(i).getName(), i, j, data));
+							}
+							catch (Exception e) {
+								data = "0";
+								CSVReaderWriter.log.log(Level.WARNING, String.format("Check line = %s position %d", line, j));
+							}
+							switch (recordSet.get(i).getDataType()) {
+							case GPS_LONGITUDE:
+							case GPS_LATITUDE:
+								if (data.contains(GDE.STRING_MINUS))
+									points[i] = 0;
+								else { //normalize GPS coordinate to enable %9.6f
+									data = data.replace("E", GDE.STRING_EMPTY).replace('W', GDE.CHAR_DASH).replace("N", GDE.STRING_EMPTY).replace('S', GDE.CHAR_DASH).replace(GDE.STRING_COLON, GDE.STRING_EMPTY);
+									if (recordSet.get(i).getUnit().endsWith("'"))
+										data = data.replace(GDE.STRING_DOT, GDE.STRING_EMPTY);
+									else {
+										if (data.length() != 0)
+											data = String.format(Locale.ENGLISH, "%.6f", Double.parseDouble(data)).replace(GDE.STRING_DOT, GDE.STRING_EMPTY);
+										else
+											data = "0.0";
+									}
+									try {
+										points[i] = Double.valueOf(data).intValue();
+									}
+									catch (NumberFormatException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
 								}
+								break;
+
+							default:
 								try {
-									points[i] = Double.valueOf(data).intValue();
+									double value = Double.valueOf(data);
+									if (value <= Integer.MIN_VALUE / 1000 || value >= Integer.MAX_VALUE / 1000)
+										log.log(Level.WARNING, String.format("Check line %d, found misterious value %s", lineNumber, data));
+									else
+										points[i] = (int) (value * 1000.0);
+
 								}
 								catch (NumberFormatException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
+									points[i] = 0;
 								}
+								break;
 							}
-							break;
-
-						default:
-							try {
-								double value = Double.valueOf(data);
-								if (value <= Integer.MIN_VALUE/1000 || value >= Integer.MAX_VALUE/1000)
-									log.log(Level.WARNING, String.format("Check line %d, found misterious value %s", lineNumber, data));
-								else
-									points[i] = (int) (value * 1000.0);
-								
-							}
-							catch (NumberFormatException e) {
-								points[i] = 0;
-							}
-							break;
 						}
 					}
 					recordSet.addPoints(points, time_ms);
@@ -605,5 +605,16 @@ public class CSVReaderWriter {
 		}
 
 	}
+	
+  public static String getFormatedTimeDiff(long startTime_ms, long endTime_ms) {
+    long difference = (endTime_ms - startTime_ms) / 1000L;
+    long hours = difference / 3600;
+    difference %= 3600;
+    long minutes = difference / 60;
+    difference %= 60;
+    long seconds = difference;
+
+    return String.format(Locale.ENGLISH, "%02d:%02d:%02d", hours, minutes, seconds);
+}
 
 }
