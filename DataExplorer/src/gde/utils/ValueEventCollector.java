@@ -68,6 +68,10 @@ public class ValueEventCollector extends TreeMap<Integer, ValueCollector> {
 					maxCount = get(key).getCount();
 					maxCountKey = key;
 					//log.log(Level.OFF, "pressureOffsetCount = " + maxCount);
+				} else if (get(key).getCount() == maxCount) {
+					if (get(maxCountKey).getAvgOffset() > get(key).getAvgOffset()) {
+						maxCountKey = key;
+					}
 				}
 			}
 			if (get(maxCountKey) != null) {

@@ -284,7 +284,7 @@ public class NMEAReaderWriter {
 				//write filename after import to record description
 				activeChannel.get(recordSetName).descriptionAppendFilename(filePath.substring(filePath.lastIndexOf(GDE.CHAR_FILE_SEPARATOR_UNIX)+1));
 				if (data.airPressures.getMaxEntryCount() > 0) {
-					log.log(Level.FINE, data.airPressures.listValues());
+					log.log(Level.INFO, data.airPressures.listValues());
 					StringBuilder sb = new StringBuilder();
 						sb.append(String.format("\n%s - offset = %.3f (%2d); count = %4d, %4d, %4d; avgAirSpeed = %3.1f, %3.1f, %3.1f; avgPressure ∆TEK = %3.2f, %3.2f, %3.2f",
 								filePath.substring(filePath.lastIndexOf(GDE.FILE_SEPARATOR) + 1), data.airPressures.getAvgDiffMaxCount() / 1000., data.airPressures.getMaxEntryCount(),

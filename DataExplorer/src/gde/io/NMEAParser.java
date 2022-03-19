@@ -1315,7 +1315,7 @@ public class NMEAParser implements IDataParser {
 			//this.values[22] = Airspeed [km/h];
 			//this.values[23] = static Airpressure [hPa];
 			//this.values[24] = Airpressure TEK [hPa];
-			if (!isOffsetSet && this.values[22] >= 0 && this.values[22] <= 1000
+			if (!isOffsetSet && this.values[22] >= 0 //&& this.values[22] <= 1000
 					&& (initialPressure == 0 || (this.values[23] <= initialPressure + 20 && this.values[23] >= initialPressure - 20))) {
 				airPressures.addValuePair(this.values[23], this.values[24]);
 
