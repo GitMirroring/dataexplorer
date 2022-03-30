@@ -169,8 +169,8 @@ public class HoTTlogReader2 extends HoTTlogReader {
 					if (channelNumber == 4) {
 						parseChannel(HoTTbinReader.buf, valuesChannel, numberLogChannels);
 						//in 0=FreCh, 1=Tx, 2=Rx, 3=Ch 1, 4=Ch 2 .. 18=Ch 16 19=PowerOff 20=BattLow 21=Reset 22=Warning
-						//out 82=Ch 1, 83=Ch 2, 84=Ch 3 .. 97=Ch 16, 98=PowerOff, 99=BatterieLow, 100=Reset, 101=reserve
-						System.arraycopy(valuesChannel, 3, HoTTlogReader2.points, 82, 20); //copy channel data and events, warning
+						//out 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=PowerOff, 104=BatterieLow, 105=Reset, 106=reserve
+						System.arraycopy(valuesChannel, 3, HoTTlogReader2.points, 87, 20); //copy channel data and events, warning
 					}
 
 					switch ((byte) (HoTTbinReader.buf[26] & 0xFF)) { //actual sensor

@@ -10,6 +10,7 @@ Device specific changes/fixes
 	* GPS-Logger3 - update ValueCollector to find avg with equal entry count, remove AirSpeed constrain 
 	* OpenTx-Telemetry - add warning trace log while skipping record set due to less log entries 
 	* Unilog - fix class cast exception
+	* HoTTAdapter2* - fix *.log parsing channel data
 
 Version 3.5.4 - 14 Feb 2022
 Generic changes/fixes
