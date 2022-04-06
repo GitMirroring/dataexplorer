@@ -180,7 +180,7 @@ public class UltraDuoPlusDialog extends DeviceDialog {
 	int[]											channelValues2						= new int[UltramatSerialPort.SIZE_CHANNEL_2_SETUP];
 	ParameterConfigControl[]	channelParameters					= new ParameterConfigControl[UltramatSerialPort.SIZE_CHANNEL_1_SETUP + UltramatSerialPort.SIZE_CHANNEL_2_SETUP];
 
-	static int								numberMemories						= 60;
+	static int								numberMemories						= 40;
 	String[]									memoryNames								= new String[UltraDuoPlusDialog.numberMemories];
 	int[]											memoryValues							= new int[UltramatSerialPort.SIZE_MEMORY_SETUP];
 	int[]											memoryStepValues					= new int[UltramatSerialPort.SIZE_MEMORY_STEP_CHARGE_SETUP];
@@ -325,6 +325,10 @@ public class UltraDuoPlusDialog extends DeviceDialog {
 		this.channels = Channels.getInstance();
 		this.settings = Settings.getInstance();
 		switch (this.device.getDeviceTypeIdentifier()) {
+		case UltraDuoPlus40:
+			UltraDuoPlusDialog.numberMemories = 40;
+			this.channelNumbers = new String[] { "1" }; //$NON-NLS-1$
+			break;
 		case UltraDuoPlus45:
 			UltraDuoPlusDialog.numberMemories = 45;
 			this.channelNumbers = new String[] { "1" }; //$NON-NLS-1$
@@ -511,6 +515,7 @@ public class UltraDuoPlusDialog extends DeviceDialog {
 									//set the date to sync with PC time
 									String[] date = StringHelper.getDateAndTime("yy:MM:dd:hh:mm").split(GDE.STRING_COLON); //$NON-NLS-1$
 									switch (UltraDuoPlusDialog.this.device.getDeviceTypeIdentifier()) {
+									case UltraDuoPlus40:
 									case UltraDuoPlus45:
 										UltraDuoPlusDialog.this.channelValues1[13] = Integer.parseInt(date[2]);
 										UltraDuoPlusDialog.this.channelValues1[14] = Integer.parseInt(date[1]);
@@ -654,7 +659,7 @@ public class UltraDuoPlusDialog extends DeviceDialog {
 									this.baseDeviceSetupGroup.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLUE));
 
 									//new ParameterHeaderControl(this.baseDeviceSetupComposite, Messages.getString(MessageIds.GDE_MSGT2247), 175, Messages.getString(MessageIds.GDE_MSGT2248), 50, Messages.getString(MessageIds.GDE_MSGT2249), 175, 20);
-									if (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45) {
+									if (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus40 && this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45 ) {
 										this.channelParameters[4] = new ParameterConfigControl(this.baseDeviceSetupGroup, this.channelValues1, 4, Messages.getString(MessageIds.GDE_MSGT2293), 175,
 												"°C - °F", 175, UltraDuoPlusDialog.temperatureDegreeType, 50, 150); //$NON-NLS-1$
 										this.channelParameters[5] = new ParameterConfigControl(this.baseDeviceSetupGroup, this.channelValues1, 5, Messages.getString(MessageIds.GDE_MSGT2294), 175,
@@ -705,7 +710,7 @@ public class UltraDuoPlusDialog extends DeviceDialog {
 									//this.channelParameters[13] = new ParameterConfigControl(this.baseDeviceSetupComposite, this.channelValues1, 13, "%02d", Messages.getString(MessageIds.GDE_MSGT2302), 175,	"0 ~ 12", 175, false, 50, 150, 0, 12); //$NON-NLS-1$
 									//this.channelParameters[14] = new ParameterConfigControl(this.baseDeviceSetupComposite, this.channelValues1, 14, "%02d", Messages.getString(MessageIds.GDE_MSGT2301), 175,	"0 ~ 59", 175, false, 50, 150, 0, 59); //$NON-NLS-1$
 								}
-								if (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45) { //no configurable outlet channel 2
+								if (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus40 && this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45) { //no configurable outlet channel 2
 									{
 										this.baseDeviceSetupGroup1 = new Group(this.deviceComposite, SWT.NONE);
 										GridData group2LData = new GridData();
@@ -1016,7 +1021,7 @@ public class UltraDuoPlusDialog extends DeviceDialog {
 												this.memoryParameters[11] = new ParameterConfigControl(this.chargeGroup, this.memoryValues, 11, GDE.STRING_EMPTY, Messages.getString(MessageIds.GDE_MSGT2265), 175,
 														Messages.getString(MessageIds.GDE_MSGT2310), 220, true, 50, 150, 10, 165);
 												this.memoryParameters[10] = (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45
-														|| this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus40 ? this.channelValues1[4] == 0 : this.channelValues1[0] == 0)//°C
+														&& this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus40 ? this.channelValues1[4] == 0 : this.channelValues1[0] == 0)//°C
 												? new ParameterConfigControl(this.chargeGroup, this.memoryValues, 10, GDE.STRING_EMPTY, Messages.getString(MessageIds.GDE_MSGT2264), 175,
 														"10 ~ 80°C", 220, false, 50, 150, 10, 80) //$NON-NLS-1$
 														: new ParameterConfigControl(this.chargeGroup, this.memoryValues, 10, GDE.STRING_EMPTY, Messages.getString(MessageIds.GDE_MSGT2264), 175,
@@ -1082,7 +1087,7 @@ public class UltraDuoPlusDialog extends DeviceDialog {
 														"2500 ~ 4200 mV", 220, true, 50, 150, 2500, 4200, -2500, false); //$NON-NLS-1$
 												this.memoryParameters[20] = new ParameterConfigControl(this.dischargeGroup, this.memoryValues, 20, GDE.STRING_EMPTY, Messages.getString(MessageIds.GDE_MSGT2271), 175,
 														Messages.getString(MessageIds.GDE_MSGT2311), 220, false, 50, 150, 10, 105, -10, false);
-												this.memoryParameters[19] = (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45 ? this.channelValues1[4] == 0 : this.channelValues1[0] == 0)//°C
+												this.memoryParameters[19] = (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus40 && this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45 ? this.channelValues1[4] == 0 : this.channelValues1[0] == 0)//°C
 												? new ParameterConfigControl(this.dischargeGroup, this.memoryValues, 19, GDE.STRING_EMPTY, Messages.getString(MessageIds.GDE_MSGT2270), 175,
 														"10 ~ 80°C", 220, false, 50, 150, 10, 80) //$NON-NLS-1$
 														: new ParameterConfigControl(this.dischargeGroup, this.memoryValues, 19, GDE.STRING_EMPTY, Messages.getString(MessageIds.GDE_MSGT2270), 175,
@@ -1839,13 +1844,13 @@ public class UltraDuoPlusDialog extends DeviceDialog {
 				channelData1.setValue(this.serialPort.readChannelData(1));
 				this.ultraDuoPlusSetup.setChannelData1(channelData1);
 			}
-			if (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45 && (this.ultraDuoPlusSetup.getChannelData2() == null || !this.ultraDuoPlusSetup.getChannelData2().isSynced())) {
+			if (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus40 && this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45 && (this.ultraDuoPlusSetup.getChannelData2() == null || !this.ultraDuoPlusSetup.getChannelData2().isSynced())) {
 				ChannelData2 channelData2 = new ObjectFactory().createUltraDuoPlusTypeChannelData2();
 				channelData2.setValue(this.serialPort.readChannelData(2));
 				this.ultraDuoPlusSetup.setChannelData2(channelData2);
 			}
 			this.device.convert2IntArray(this.channelValues1, this.ultraDuoPlusSetup.channelData1.getValue());
-			if (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45) { //no configurable outlet channel 2
+			if (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus40 && this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45) { //no configurable outlet channel 2
 				this.device.convert2IntArray(this.channelValues2, this.ultraDuoPlusSetup.channelData2.getValue());
 			}
 			if (UltraDuoPlusDialog.log.isLoggable(Level.FINEST)) {
@@ -1854,13 +1859,13 @@ public class UltraDuoPlusDialog extends DeviceDialog {
 					sb.append(this.channelValues1[i]).append(GDE.STRING_LEFT_BRACKET).append(i).append(GDE.STRING_RIGHT_BRACKET_COMMA);
 				}
 				sb.append(" : ");//$NON-NLS-1$
-				for (int i = 0; this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45 && i < UltramatSerialPort.SIZE_CHANNEL_2_SETUP; i++) {
+				for (int i = 0; this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus40 && this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45 && i < UltramatSerialPort.SIZE_CHANNEL_2_SETUP; i++) {
 					sb.append(this.channelValues2[i]).append(GDE.STRING_LEFT_BRACKET).append(i).append(GDE.STRING_RIGHT_BRACKET_COMMA);
 				}
 				UltraDuoPlusDialog.log.finest(() -> sb.toString());
 			}
 
-			if (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45) {
+			if (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus40 && this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45) {
 				UltraDuoPlusDialog.log.finest(() -> "add handler"); //$NON-NLS-1$
 				//don't need a change listener handler for baseDeviceSetupGroup and baseDeviceSetupGroup1, it will always written to sync date and time
 				this.baseDeviceSetupGroup2.addListener(SWT.Selection, new Listener() {
@@ -2002,7 +2007,9 @@ public class UltraDuoPlusDialog extends DeviceDialog {
 			//update memory parameter table to reflect not edit able parameters for selected cell type
 			switch (this.memoryValues[0]) {
 			case 0: //NiCd
-				this.memoryParameters[1].updateValueRange("1 ~ 18", 1, 18, 0); //$NON-NLS-1$
+				if (this.device.getDeviceTypeIdentifier() == GraupnerDeviceType.UltraDuoPlus40 || this.device.getDeviceTypeIdentifier() == GraupnerDeviceType.UltraDuoPlus45) 
+					this.memoryParameters[1].updateValueRange("1 ~ 30", 1, 14, 0);
+				else this.memoryParameters[1].updateValueRange("1 ~ 18", 1, 18, 0); //$NON-NLS-1$
 				this.memoryParameters[2].updateValueRange("100 ~ 9900 mAh", 100, 9900, -100); //$NON-NLS-1$
 				this.memoryParameters[9] = this.memoryParameters[9] == null ? new ParameterConfigControl(this.chargeGroup, this.memoryValues, 9, GDE.STRING_EMPTY, Messages.getString(MessageIds.GDE_MSGT2279),
 						175, Messages.getString(MessageIds.GDE_MSGT2312), 220, false, 50, 150, 0, 550) : this.memoryParameters[9];
@@ -2031,7 +2038,9 @@ public class UltraDuoPlusDialog extends DeviceDialog {
 				this.cycleGroup.setVisible(true);
 				break;
 			case 1: //NiMh
-				this.memoryParameters[1].updateValueRange("1 ~ 18", 1, 18, 0);
+				if (this.device.getDeviceTypeIdentifier() == GraupnerDeviceType.UltraDuoPlus40 || this.device.getDeviceTypeIdentifier() == GraupnerDeviceType.UltraDuoPlus45) 
+					this.memoryParameters[1].updateValueRange("1 ~ 30", 1, 14, 0);
+				else this.memoryParameters[1].updateValueRange("1 ~ 18", 1, 18, 0);
 				this.memoryParameters[2].updateValueRange("100 ~ 9900 mAh", 100, 9900, -100); //$NON-NLS-1$
 				this.memoryParameters[9] = this.memoryParameters[9] == null ? new ParameterConfigControl(this.chargeGroup, this.memoryValues, 9, GDE.STRING_EMPTY, Messages.getString(MessageIds.GDE_MSGT2279),
 						175, Messages.getString(MessageIds.GDE_MSGT2312), 220, false, 50, 150, 0, 550) : this.memoryParameters[9];
@@ -2060,7 +2069,9 @@ public class UltraDuoPlusDialog extends DeviceDialog {
 				this.cycleGroup.setVisible(true);
 				break;
 			case 2: //LiIo
-				this.memoryParameters[1].updateValueRange("1 ~ 7", 1, 7, 0);
+				if (this.device.getDeviceTypeIdentifier() == GraupnerDeviceType.UltraDuoPlus40 || this.device.getDeviceTypeIdentifier() == GraupnerDeviceType.UltraDuoPlus45) 
+					this.memoryParameters[1].updateValueRange("1 ~ 14", 1, 14, 0);
+				else this.memoryParameters[1].updateValueRange("1 ~ 7", 1, 7, 0);
 				this.memoryParameters[2].updateValueRange("100 ~ 65000 mAh", 100, 65000, -100); //$NON-NLS-1$
 				this.memoryParameters[7] = this.memoryParameters[7] != null ? this.memoryParameters[7].dispose() : null;
 				this.memoryParameters[8] = this.memoryParameters[8] != null ? this.memoryParameters[8].dispose() : null;
@@ -2086,7 +2097,9 @@ public class UltraDuoPlusDialog extends DeviceDialog {
 				this.cycleGroup.setVisible(true);
 				break;
 			case 3: //LiPo
-				this.memoryParameters[1].updateValueRange("1 ~ 7", 1, 7, 0);
+				if (this.device.getDeviceTypeIdentifier() == GraupnerDeviceType.UltraDuoPlus40 || this.device.getDeviceTypeIdentifier() == GraupnerDeviceType.UltraDuoPlus45) 
+					this.memoryParameters[1].updateValueRange("1 ~ 14", 1, 14, 0);
+				else this.memoryParameters[1].updateValueRange("1 ~ 7", 1, 7, 0);
 				this.memoryParameters[2].updateValueRange("100 ~ 65000 mAh", 100, 65000, -100); //$NON-NLS-1$
 				this.memoryParameters[7] = this.memoryParameters[7] != null ? this.memoryParameters[7].dispose() : null;
 				this.memoryParameters[8] = this.memoryParameters[8] != null ? this.memoryParameters[8].dispose() : null;
@@ -2112,7 +2125,9 @@ public class UltraDuoPlusDialog extends DeviceDialog {
 				this.cycleGroup.setVisible(true);
 				break;
 			case 4: //LiFe
-				this.memoryParameters[1].updateValueRange("1 ~ 7", 1, 7, 0);
+				if (this.device.getDeviceTypeIdentifier() == GraupnerDeviceType.UltraDuoPlus40 || this.device.getDeviceTypeIdentifier() == GraupnerDeviceType.UltraDuoPlus45) 
+					this.memoryParameters[1].updateValueRange("1 ~ 14", 1, 14, 0);
+				else this.memoryParameters[1].updateValueRange("1 ~ 7", 1, 7, 0);
 				this.memoryParameters[2].updateValueRange("100 ~ 65000 mAh", 100, 65000, -100); //$NON-NLS-1$
 				this.memoryParameters[7] = this.memoryParameters[7] != null ? this.memoryParameters[7].dispose() : null;
 				this.memoryParameters[8] = this.memoryParameters[8] != null ? this.memoryParameters[8].dispose() : null;
@@ -2226,7 +2241,7 @@ public class UltraDuoPlusDialog extends DeviceDialog {
 			switch (this.memoryValues[0]) {
 			case 0: //NiCd
 				this.memoryValues[11] = 120;//chargeMaxCapacity
-				this.memoryValues[10] = (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45 ? this.channelValues1[4] == 0 : this.channelValues1[0] == 0) ? 50 : (9 / 5) * 50 + 32; //chargeOffTemperature
+				this.memoryValues[10] = (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus40 && this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45 ? this.channelValues1[4] == 0 : this.channelValues1[0] == 0) ? 50 : (9 / 5) * 50 + 32; //chargeOffTemperature
 				this.memoryValues[12] = Double.valueOf(90 * (1.0 * this.memoryValues[2] / this.memoryValues[6])).intValue(); //chargeSafetyTimer
 				this.memoryValues[9] = updateIndex == 0 ? 550 : this.memoryValues[9]; //this.memoryValues[2] / 10; //trickleCurrent
 				this.memoryValues[7] = 7; //deltaPeak mV
@@ -2235,7 +2250,7 @@ public class UltraDuoPlusDialog extends DeviceDialog {
 				this.memoryValues[15] = 3; //rePaekDelay min
 				this.memoryValues[16] = 1; //flatLimitCheck
 				this.memoryValues[18] = 900;//dischargeVoltage/cell
-				this.memoryValues[19] = (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45 ? this.channelValues1[4] == 0 : this.channelValues1[0] == 0) ? 65 : (9 / 5) * 65 + 32; //dischargeOffTemperature
+				this.memoryValues[19] = (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus40 && this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45 ? this.channelValues1[4] == 0 : this.channelValues1[0] == 0) ? 65 : (9 / 5) * 65 + 32; //dischargeOffTemperature
 				this.memoryValues[21] = 1200;//NiMhMatchVoltage
 				break;
 			case 1: //NiMh
@@ -2247,7 +2262,7 @@ public class UltraDuoPlusDialog extends DeviceDialog {
 					this.chargeGroup.notifyListeners(SWT.Selection, new Event());
 				}
 				this.memoryValues[11] = 120; //chargeMaxCapacity
-				this.memoryValues[10] = (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45 ? this.channelValues1[4] == 0 : this.channelValues1[0] == 0) ? 50 : (9 / 5) * 50 + 32; //chargeOffTemperature
+				this.memoryValues[10] = (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus40 && this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45 ? this.channelValues1[4] == 0 : this.channelValues1[0] == 0) ? 50 : (9 / 5) * 50 + 32; //chargeOffTemperature
 				this.memoryValues[12] = Double.valueOf(90 * (1.0 * this.memoryValues[2] / this.memoryValues[6])).intValue(); //chargeSafetyTimer
 				this.memoryValues[9] = updateIndex == 0 ? 0 : this.memoryValues[9]; //this.memoryValues[2] / 10; //trickleCurrent
 				this.memoryValues[7] = 5; //deltaPeak mV
@@ -2256,48 +2271,48 @@ public class UltraDuoPlusDialog extends DeviceDialog {
 				this.memoryValues[15] = 3; //rePaekDelay min
 				this.memoryValues[16] = 1; //flatLimitCheck
 				this.memoryValues[18] = 1000; //dischargeVoltage/cell
-				this.memoryValues[19] = (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45 ? this.channelValues1[4] == 0 : this.channelValues1[0] == 0) ? 65 : (9 / 5) * 65 + 32; //dischargeOffTemperature
+				this.memoryValues[19] = (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus40 && this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45 ? this.channelValues1[4] == 0 : this.channelValues1[0] == 0) ? 65 : (9 / 5) * 65 + 32; //dischargeOffTemperature
 				this.memoryValues[21] = 1200; //NiMhMatchVoltage
 				break;
 			case 2: //LiIo
 				this.memoryValues[11] = 105; //chargeMaxCapacity
-				this.memoryValues[10] = (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45 ? this.channelValues1[4] == 0 : this.channelValues1[0] == 0) ? 45 : (9 / 5) * 45 + 32; //chargeOffTemperature
+				this.memoryValues[10] = (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus40 && this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45 ? this.channelValues1[4] == 0 : this.channelValues1[0] == 0) ? 45 : (9 / 5) * 45 + 32; //chargeOffTemperature
 				this.memoryValues[12] = Double.valueOf(120 * (1.0 * this.memoryValues[2] / this.memoryValues[6])).intValue(); //chargeSafetyTimer
 				this.memoryValues[9] = 0; //trickleCurrent
 				this.memoryValues[14] = 4100; //chargeVoltage/cell
 				this.memoryValues[26] = 3800; //storeVoltage/cell
 				this.memoryValues[18] = 3000; //dischargeVoltage/cell
-				this.memoryValues[19] = (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45 ? this.channelValues1[4] == 0 : this.channelValues1[0] == 0) ? 55 : (9 / 5) * 55 + 32; //dischargeOffTemperature
+				this.memoryValues[19] = (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus40 && this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45 ? this.channelValues1[4] == 0 : this.channelValues1[0] == 0) ? 55 : (9 / 5) * 55 + 32; //dischargeOffTemperature
 				break;
 			case 3: //LiPo
 				this.memoryValues[11] = 105; //chargeMaxCapacity
-				this.memoryValues[10] = (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45 ? this.channelValues1[4] == 0 : this.channelValues1[0] == 0) ? 45 : (9 / 5) * 45 + 32; //chargeOffTemperature
+				this.memoryValues[10] = (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus40 && this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45 ? this.channelValues1[4] == 0 : this.channelValues1[0] == 0) ? 45 : (9 / 5) * 45 + 32; //chargeOffTemperature
 				this.memoryValues[12] = Double.valueOf(120 * (1.0 * this.memoryValues[2] / this.memoryValues[6])).intValue(); //chargeSafetyTimer
 				this.memoryValues[9] = 0; //trickleCurrent
 				this.memoryValues[14] = 4200; //chargeVoltage/cell
 				this.memoryValues[26] = 3900; //storeVoltage/cell
 				this.memoryValues[18] = 3100; //dischargeVoltage/cell
-				this.memoryValues[19] = (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45 ? this.channelValues1[4] == 0 : this.channelValues1[0] == 0) ? 55 : (9 / 5) * 55 + 32; //dischargeOffTemperature
+				this.memoryValues[19] = (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus40 && this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45 ? this.channelValues1[4] == 0 : this.channelValues1[0] == 0) ? 55 : (9 / 5) * 55 + 32; //dischargeOffTemperature
 				break;
 			case 4: //LiFe
 				this.memoryValues[11] = 105; //chargeMaxCapacity
-				this.memoryValues[10] = (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45 ? this.channelValues1[4] == 0 : this.channelValues1[0] == 0) ? 45 : (9 / 5) * 45 + 32; //chargeOffTemperature
+				this.memoryValues[10] = (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus40 && this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45 ? this.channelValues1[4] == 0 : this.channelValues1[0] == 0) ? 45 : (9 / 5) * 45 + 32; //chargeOffTemperature
 				this.memoryValues[12] = Double.valueOf(120 * (1.0 * this.memoryValues[2] / this.memoryValues[6])).intValue(); //chargeSafetyTimer
 				this.memoryValues[9] = 0; //trickleCurrent
 				this.memoryValues[14] = 3600; //chargeVoltage/cell
 				this.memoryValues[26] = 3500; //storeVoltage/cell
 				this.memoryValues[18] = 2500; //dischargeVoltage/cell
-				this.memoryValues[19] = (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45 ? this.channelValues1[4] == 0 : this.channelValues1[0] == 0) ? 55 : (9 / 5) * 55 + 32; //dischargeOffTemperature
+				this.memoryValues[19] = (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus40 && this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45 ? this.channelValues1[4] == 0 : this.channelValues1[0] == 0) ? 55 : (9 / 5) * 55 + 32; //dischargeOffTemperature
 				break;
 			case 5: //PB
 				this.memoryValues[6] = this.memoryValues[2] / 10; //charge current 0.1 C
 				this.memoryValues[11] = 105; //chargeMaxCapacity
-				this.memoryValues[10] = (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45 ? this.channelValues1[4] == 0 : this.channelValues1[0] == 0) ? 50 : (9 / 5) * 50 + 32; //chargeOffTemperature
+				this.memoryValues[10] = (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus40 && this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45 ? this.channelValues1[4] == 0 : this.channelValues1[0] == 0) ? 50 : (9 / 5) * 50 + 32; //chargeOffTemperature
 				this.memoryValues[12] = 905; //chargeSafetyTimer
 				this.memoryValues[9] = this.memoryValues[2] / 10; //trickleCurrent
 				this.memoryValues[14] = 2300; //chargeVoltage/cell
 				this.memoryValues[18] = 1800; //dischargeVoltage/cell
-				this.memoryValues[19] = (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45 ? this.channelValues1[4] == 0 : this.channelValues1[0] == 0) ? 55 : (9 / 5) * 55 + 32; //dischargeOffTemperature
+				this.memoryValues[19] = (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus40 && this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45 ? this.channelValues1[4] == 0 : this.channelValues1[0] == 0) ? 55 : (9 / 5) * 55 + 32; //dischargeOffTemperature
 				break;
 			}
 		}
@@ -2353,7 +2368,7 @@ public class UltraDuoPlusDialog extends DeviceDialog {
 				this.ultraDuoPlusSetup.changed = null;
 				//remove synchronized flag
 				this.ultraDuoPlusSetup.getChannelData1().synced = null;
-				if (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45) {
+				if (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus40 && this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45) {
 					this.ultraDuoPlusSetup.getChannelData2().synced = null;
 				}
 				Iterator<MemoryType> iterator = this.ultraDuoPlusSetup.getMemory().iterator();
@@ -2455,7 +2470,7 @@ public class UltraDuoPlusDialog extends DeviceDialog {
 				}
 			}
 		}
-		if (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45 && !this.ultraDuoPlusSetup.getChannelData2().getValue().equals(tmpUltraDuoPlusSetup.getChannelData2().getValue())) {
+		if (this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus40 && this.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45 && !this.ultraDuoPlusSetup.getChannelData2().getValue().equals(tmpUltraDuoPlusSetup.getChannelData2().getValue())) {
 			this.ultraDuoPlusSetup.getChannelData2().setValue(tmpUltraDuoPlusSetup.getChannelData2().getValue());
 			this.ultraDuoPlusSetup.getChannelData2().setChanged(true);
 			this.device.convert2IntArray(this.channelValues2, this.ultraDuoPlusSetup.channelData2.getValue());

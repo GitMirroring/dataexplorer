@@ -107,7 +107,7 @@ public class UltraDuoPlusSychronizer extends Thread {
 				channelData1.setValue(this.serialPort.readChannelData(1));
 				this.ultraDuoPlusSetup.setChannelData1(channelData1);
 			}
-			if (this.dialog != null && this.dialog.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45
+			if (this.dialog != null && this.dialog.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus40 && this.dialog.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45
 					&& (this.ultraDuoPlusSetup.getChannelData2() == null || !this.ultraDuoPlusSetup.getChannelData2().isSynced())) {
 				ChannelData2 channelData2 = new ObjectFactory().createUltraDuoPlusTypeChannelData2();
 				channelData2.setValue(this.serialPort.readChannelData(2));
@@ -226,7 +226,7 @@ public class UltraDuoPlusSychronizer extends Thread {
 			this.serialPort.writeConfigData(UltramatSerialPort.WRITE_CHANNEL_SETUP, this.ultraDuoPlusSetup.getChannelData1().getValue().getBytes(), 1);
 			this.ultraDuoPlusSetup.getChannelData1().changed = null;
 
-			if (this.dialog != null && this.dialog.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45 && (this.ultraDuoPlusSetup.getChannelData2().isChanged())) {
+			if (this.dialog != null && this.dialog.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus40 &&  this.dialog.device.getDeviceTypeIdentifier() != GraupnerDeviceType.UltraDuoPlus45 && (this.ultraDuoPlusSetup.getChannelData2().isChanged())) {
 				this.serialPort.writeConfigData(UltramatSerialPort.WRITE_CHANNEL_SETUP, this.ultraDuoPlusSetup.getChannelData2().getValue().getBytes(), 2);
 				this.ultraDuoPlusSetup.getChannelData2().changed = null;
 			}

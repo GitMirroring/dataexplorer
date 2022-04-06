@@ -12,6 +12,8 @@ Device specific changes/fixes
 	* OpenTx-Telemetry - add warning trace log while skipping record set due to less log entries 
 	* Unilog - fix class cast exception
 	* HoTTAdapter2* - fix *.log parsing channel data
+	* Graupner UDP40 - fix reading program memories
+	* Graupner UDP40/45 - fix cell count
 
 Version 3.5.4 - 14 Feb 2022
 Generic changes/fixes

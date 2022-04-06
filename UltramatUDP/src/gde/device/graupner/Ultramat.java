@@ -386,6 +386,7 @@ public abstract class Ultramat extends DeviceConfiguration implements IDevice {
 
 						//load cached memory configurations to enable memory name to object key match
 						switch (this.getDeviceTypeIdentifier()) {
+						case UltraDuoPlus40:
 						case UltraDuoPlus45:
 						case UltraDuoPlus50:
 						case UltraDuoPlus60:
