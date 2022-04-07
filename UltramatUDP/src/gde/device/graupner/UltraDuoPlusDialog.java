@@ -1222,7 +1222,7 @@ public class UltraDuoPlusDialog extends DeviceDialog {
 
 												long justNowPlus2Hours = new Date().getTime() + 7200000L;
 												long justNowMinus2Year = new Date().getTime() - 63072000000L;
-												boolean isDateChanged = false;
+												//boolean isDateChanged = false;
 												Vector<byte[]> cyclesData = new Vector<byte[]>();
 												TreeMap<Long, int[]> sortCyclesData = new TreeMap<Long, int[]>();
 												if (Boolean.parseBoolean(System.getProperty("GDE_IS_SIMULATION"))) { //$NON-NLS-1$
@@ -1267,12 +1267,12 @@ public class UltraDuoPlusDialog extends DeviceDialog {
 													cyclesData = UltraDuoPlusDialog.this.serialPort.readMemoryCycleData(UltraDuoPlusDialog.this.memorySelectionIndexData);
 												}
 
-												if (UltraDuoPlusDialog.log.isLoggable(Level.FINE)) {
+												if (UltraDuoPlusDialog.log.isLoggable(Level.INFO)) {
 													StringBuilder sb = new StringBuilder();
 													for (byte[] cycleData : cyclesData) {
-														sb.append(new String(cycleData));
+														sb.append(new String(cycleData) + GDE.STRING_NEW_LINE);
 													}
-													UltraDuoPlusDialog.log.log(Level.FINE, sb.toString());
+													UltraDuoPlusDialog.log.log(Level.INFO, sb.toString());
 												}
 												UltraDuoPlusDialog.this.dataTable.removeAll();
 
@@ -1316,38 +1316,12 @@ public class UltraDuoPlusDialog extends DeviceDialog {
 														UltraDuoPlusDialog.log.log(Level.FINE, StringHelper.getFormatedTime("yyyy-MM-dd, HH:mm:ss", timeStamp) + sb.toString()); //$NON-NLS-1$
 													}
 
-													//if time stamp is not between just now - 1 year and just now + 2 hrs  and contains data ask if the date should be corrected
 													long dataSum = 0;
 													for (int point : points) {
 														dataSum += point;
 													}
-													if (dataSum > 0 && (timeStamp < justNowMinus2Year || timeStamp > justNowPlus2Hours)) {
-														UltraDuoPlusDialog.log.log(Level.FINER, "time stamp out of range ! " + StringHelper.getFormatedTime("yyyy-MM-dd, HH:mm:ss", timeStamp)); //$NON-NLS-1$ //$NON-NLS-2$
-														int[] newTimeStamp = new ChangeDateDialog(UltraDuoPlusDialog.this.dialogShell, SWT.NONE, new int[] { hour, minute, 2000 + year, month, day, points[2], points[3] }).open();
-														if (newTimeStamp.length > 0) { //change requested
-															UltraDuoPlusDialog.log.log(Level.FINE, "date change requested !"); //$NON-NLS-1$
-															isDateChanged = true;
-															newTimeStamp[0] = newTimeStamp[0] < 0 ? 0 : newTimeStamp[0] > 24 ? 24 : newTimeStamp[0]; //hour
-															newTimeStamp[1] = newTimeStamp[1] < 0 ? 0 : newTimeStamp[1] > 60 ? 60 : newTimeStamp[1]; //minute
-															newTimeStamp[2] = newTimeStamp[2] <= 2000 ? 0 : newTimeStamp[2] - 2000; //year
-															newTimeStamp[3] = newTimeStamp[3] < 1 ? 1 : newTimeStamp[3] > 12 ? 12 : newTimeStamp[3]; //month
-															newTimeStamp[4] = newTimeStamp[4] < 1 ? 1 : newTimeStamp[4] > 30 ? 30 : newTimeStamp[4]; //day
-															for (int i = 0, k = 0; i < newTimeStamp.length; i++, k += 4) {
-																byte[] bytes = String.format("%04X", newTimeStamp[i]).getBytes(); //$NON-NLS-1$
-																for (int j = 0; j < bytes.length; j++) {
-																	cycleData[j + k] = bytes[j];
-																}
-															}
-															hour = Integer.parseInt(String.format(DeviceCommPort.FORMAT_4_CHAR, cycleData[0], cycleData[1], cycleData[2], cycleData[3]), 16);
-															minute = Integer.parseInt(String.format(DeviceCommPort.FORMAT_4_CHAR, cycleData[4], cycleData[5], cycleData[6], cycleData[7]), 16);
-															year = Integer.parseInt(String.format(DeviceCommPort.FORMAT_4_CHAR, cycleData[8], cycleData[9], cycleData[10], cycleData[11]), 16);
-															month = Integer.parseInt(String.format(DeviceCommPort.FORMAT_4_CHAR, cycleData[12], cycleData[13], cycleData[14], cycleData[15]), 16);
-															day = Integer.parseInt(String.format(DeviceCommPort.FORMAT_4_CHAR, cycleData[16], cycleData[17], cycleData[18], cycleData[19]), 16);
-															timeStamp = new GregorianCalendar(2000 + year, month - 1, day, hour, minute, 0).getTimeInMillis();
-														}
-													}
-													//add selected entries to the sorted map, this is what gets displayed in the utility record
-													if (dataSum > 0 && timeStamp > justNowMinus2Year && timeStamp < justNowPlus2Hours) {
+													//add entries to the sorted map, this is what gets displayed in the utility record
+													if (dataSum > 0) {
 														sortCyclesData.put(timeStamp, points.clone());
 													}
 												}
@@ -1364,13 +1338,6 @@ public class UltraDuoPlusDialog extends DeviceDialog {
 															String.format("%.1f", points[5] / 10.0), //$NON-NLS-1$
 													});
 
-												}
-
-												//check if time stamp was changed, if yes write back changed data to device
-												if (isDateChanged) {
-													UltraDuoPlusDialog.this.application.openMessageDialogAsync(UltraDuoPlusDialog.this.dialogShell, Messages.getString(MessageIds.GDE_MSGT2333));
-													//not implemented device firmware: serialPort.writeMemoryCycleData(UltraDuoPlusDialog.this.memorySelectionIndexData, cyclesData);
-													isDateChanged = false;
 												}
 
 												UltraDuoPlusDialog.log.log(Level.FINE,
