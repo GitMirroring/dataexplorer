@@ -1,38 +1,34 @@
 GNU DataExplorer - News - comes with Version 3.5.4 - 14 Feb 2022
 
 Generic changes/fixes
-	* update MacOS info.plist as well as start shell script
-	* add building md5 hash for download verification
-	* make KML/KMZ export time step adjustable
-	* remove unused IGCDLL handling
+	* add Raspbian 64 bit build as compressed ARM tarball
+	* synchronize record data types with Android version
+	* update SWT, only 64 Bit will be maintained
 		
 Device specific changes/fixes
-	* GPS-Logger2/3 - fix error for Android saved OSD files
-	* GPS-Logger3 - define AirSpeed tolerance and  static pressure to calculate offset between pressure sensors
-	* GPS-Logger3 - enhance pressure offset calculation using pressure values of equal value
-	* HoTTAdapter* - change log level of Sensor and block number to INFO
-	* HoTTAdapter2* - fix wrong GPS time synchronization, wrong record ordinal
-	* JetiAdapter - remove interpolation of values excluding GPS coordinates 
-	* JetiAdapter - find start index of GPS data to avoid interpolation which disturb GPS track visualization
-	* JetiAdapter - parse time and date and use for synchronization
-	* Core-Telemetry - make GPS coordinates homogeneous to GDE data model
+	* GPS-Logger3 - reuse ValueCollector to calculate average values at dedicated AirSpeed and TEC pressure
+	* GPS-Logger3 - update ValueCollector to find avg with equal entry count, remove AirSpeed constrain 
+	* OpenTx-Telemetry - add warning trace log while skipping record set due to less log entries 
+	* Unilog - fix class cast exception
+	* HoTTAdapter2* - fix *.log parsing channel data
+	* Graupner UDP40 - fix reading program memories
+	* Graupner UDP40/45 - fix cell count
+	* Graupner UDP - remove time criteria of battery history stored within device
 	
 Generelle Änderungen/Verbesserungen
-    * Update MacOS info.plist und das Start-Script
-    * MD5 Hash zur Download Verifikation hinzugefügt
-    * KML/KMZ Export jetzt mit konfigurierbarem Zeit-Schritt
-    * Unbenutztes IGCDLL Handling entfernt
+	* Raspbian 64 als unterstützes Betriebssystem hinzugefügt
+	* synchronisiere Datensatz Daten mit Android Version
+	* Update SWT, nur 64 Bit wird gepflegt
 
 Geräte spezifische Änderungen/Verbesserungen
-    * GPS-Logger2/3 - Fehler für ODS Dateien mit Android App gesichert behoben
-    * GPS-Logger3 - AirSpeed und statischer Druck haben nun eine Toleranz zur besseren Druck-Offset Berechnung
-    * GPS-Logger3 - Druck-Offset Berechnung, durch Verwendung gleicher Werte, verbessert
-    * HoTTAdapter* - Ausgabe von Blocknummer und Sensor ID mit Trace-Log Level INFO möglich
-    * HoTTAdapter2* - Fehler in GPS-Zeit-Synchronisation korrigiert
-    * JetiAdapter - Generelle Werte Interpolation bis auf die GPS-Koordinaten entfernt
-    * JetiAdapter - Suche nach Start-Index der GPS-Koordinaten als Start der Interpolation verbessert
-    * JetiAdapter - Synchronisation mit GPS Zeit und Datum, falls vorhanden
-    * Core-Telemetry - GPS Koordinaten harmonisiert mit dem GDE Datenmodell
+	* GPS-Logger3 - ValueCollector wird jetzt auch zur Berechnung des Mittelwertes AirSpeed and TEC Druck genutzt
+	* GPS-Logger3 - Update ValueCollector zur Findung vom Mittelwert bei mehrfach gleicher Messwertanzahl, entferne AirSpeed Bedingung 
+	* OpenTx-Telemetry - Warnung beim Überspringen eines Datensatzes mit zu wenig Einträgen 
+	* Unilog - Class Cast Fehler korrigiert
+	* HoTTAdapter2* - Parsen von Kanaldaten in *.log korrigiert 
+	* Graupner UDP40 - Lesen von Programmspeichern korrigiert
+	* Graupner UDP40/45 - Zellenanzahl korrigiert
+	* Graupner UDP - Zeitkriterium beim Auslesen der GEräte Historiendaten entfernt
 
 	
 	
