@@ -880,13 +880,14 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 				// 87=VoltageM, 88=CurrentM, 89=CapacityM, 90=PowerM, 91=RevolutionM, 92=TemperatureM 1, 93=TemperatureM 2 94=Voltage_min, 95=Current_max,
 				// 96=Revolution_max, 97=Temperature1_max, 98=Temperature2_max 99=Event M
 
-				// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=PowerOff, 104=BatterieLow, 105=Reset, 106=reserve
+				// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=PowerOff, 104=BatterieLow, 105=Reset, 106=warning
 				// 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max,
 				// 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
+				boolean isChannelData = recordSet.getChannelConfigNumber() == 4;
 				if (ordinal >= 0 && ordinal <= 5) {
 					dataTableRow[index + 1] = String.format("%.0f", (record.realGet(rowIndex) / 1000.0)); //$NON-NLS-1$
 				}
-				else if ((ordinal == 99 || ordinal == 119) && record.getUnit().equals(GDE.STRING_EMPTY)) { //ESC Warning
+				else if (isChannelData && ordinal == 106 && record.getUnit().equals(GDE.STRING_EMPTY)) { //Warning
 					dataTableRow[index + 1] = record.realGet(rowIndex) == 0
 							? GDE.STRING_EMPTY
 									: String.format("'%c'", ((record.realGet(rowIndex) / 1000)+64));
