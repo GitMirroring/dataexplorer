@@ -2503,6 +2503,8 @@ public class Record extends AbstractRecord implements IRecord {
 		Vector<TriggerRange> primaryTriggerRanges = this.parent.get(referencedMeasurementOrdinal).getTriggerRanges();
 		if (primaryTriggerRanges != null && !this.parent.get(referencedMeasurementOrdinal).isTriggerRangesMerged()) {
 			Vector<TriggerRange> secondaryTriggerRanges = this.parent.get(referencedSecondaryMeasurementOrdinal).getTriggerRanges();
+			if (secondaryTriggerRanges == null)
+				secondaryTriggerRanges = new Vector<TriggerRange>();
 			if (log.isLoggable(Level.INFO)) {
 				StringBuilder sb = new StringBuilder().append(String.format("build trigger ranges for %s(%d)\n", this.name, this.ordinal));
 				sb.append(String.format("primaryTriggerRanges for %s\n", this.parent.get(referencedMeasurementOrdinal).name));
