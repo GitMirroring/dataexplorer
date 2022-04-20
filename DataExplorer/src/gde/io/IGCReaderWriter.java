@@ -212,9 +212,20 @@ public class IGCReaderWriter {
 					++lineNumber;
 				}
 				//calculate the start time stamp using the first B record
-				int year = Integer.parseInt(date.substring(4, 6)) + 2000;
-				int month = Integer.parseInt(date.substring(2, 4));
-				int day = Integer.parseInt(date.substring(0, 2));
+				int year;
+				int month;
+				int day;
+				if (date.contains(":")) {
+					int startIndex = date.indexOf(":"+1);
+					year = Integer.parseInt(date.substring(startIndex+5, startIndex+7)) + 2000;
+					month = Integer.parseInt(date.substring(startIndex+3, startIndex+5));
+					day = Integer.parseInt(date.substring(startIndex+1, startIndex+3));
+				}
+				else {
+					year = Integer.parseInt(date.substring(4, 6)) + 2000;
+					month = Integer.parseInt(date.substring(2, 4));
+					day = Integer.parseInt(date.substring(0, 2));
+				}
 				time = line.substring(1, 7); //16 02 40
 				hour = Integer.parseInt(time.substring(0, 2));
 				minute = Integer.parseInt(time.substring(2, 4));
