@@ -127,6 +127,7 @@ public class IGCReaderWriter {
 		String recordSetNameExtend = device.getRecordSetStemNameReplacement();
 		long timeStamp = -1, actualTimeStamp = -1, startTimeStamp = -1;
 		StringBuilder header = new StringBuilder();
+		StringBuilder error = new StringBuilder();
 		StringBuilder albatrossTask = new StringBuilder();
 		StringBuilder gpsTriangleRelated = new StringBuilder();
 		String date = "000000", time; //16 02 40
@@ -135,7 +136,6 @@ public class IGCReaderWriter {
 		int lastLatitude = 0, lastLongitude = 0, lastAltBaro = 0, lastAltGPS = 0;
 		int values[] = new int[device.getNumberOfMeasurements(1)-2]; //climb and speed will be calculated
 		File inputFile = new File(filePath);
-		boolean isGsentence = false;
 		String dllID = "XXX";
 		IgcExtension timeStepExtension = null;
 		Vector<IgcExtension> extensions = new Vector<IgcExtension>();
@@ -189,6 +189,12 @@ public class IGCReaderWriter {
 								albatrossTask.append(GDE.STRING_MESSAGE_CONCAT).append(line.substring(1));
 							gpsTriangleRelated.append(GDE.LINE_SEPARATOR).append(line);
 						}
+						else if (line.startsWith("LSTAT")) { //Albatrross Statistics
+							log.log(Level.OFF, line);
+						}
+						else if (line.startsWith("E")) { //Albatrross arm, turnpoint
+							log.log(Level.OFF, line);
+						}
 						else if (line.startsWith("A")) { // first line contains manufacturer identifier
 							dllID = line.substring(1, 4);
 							log.log(Level.FINE, "IGCDLL iddentifier = " + dllID);
@@ -198,7 +204,7 @@ public class IGCReaderWriter {
 								final int numExtensions = Integer.parseInt(line.substring(1, 3));
 								for (int i = 0; i < numExtensions; i++) {
 									IgcExtension extension = new IgcExtension(Integer.parseInt(line.substring(7 * i + 3, 7 * i + 5))-1, Integer.parseInt(line.substring(7 * i + 5, 7 * i + 7)), line.substring(7 * i + 7, 7 * i + 10));
-									if (extension.getThreeLetterCode().equals("TDS"))
+									if (extension.getThreeLetterCode().equals("TDS") || extension.getThreeLetterCode().equals("SUS") )
 										timeStepExtension = extension;
 									else
 										extensions.add(extension);
@@ -242,7 +248,8 @@ public class IGCReaderWriter {
 					++lineNumber;
 					if (line.length() >= 35 && line.startsWith(device.getDataBlockLeader())) {
 						time = line.substring(1, 7); //16 02 40
-						if (hour > Integer.parseInt(time.substring(0, 2))) ++day; // switch to next day if 12 -> 0 0r 23 -> 0
+						if (hour == 23 && hour > Integer.parseInt(time.substring(0, 2))) 
+							++day; // switch to next day if 12 -> 0 0r 23 -> 0
 						hour = Integer.parseInt(time.substring(0, 2));
 						minute = Integer.parseInt(time.substring(2, 4));
 						second = Integer.parseInt(time.substring(4, 6));
@@ -314,13 +321,20 @@ public class IGCReaderWriter {
 							//I04 36 38 FXA 39 40 SIU 4143TDS 4446ENL
 							//1234567 89012345 678901234 5 67890 12345 678 90 123 456
 							//B114643 4752040N 01109779E A 00522 00555 035 09 227 225
-							if (timeStamp > 0 && actualTimeStamp - timeStamp > 1000)
-								log.log(Level.WARNING, String.format(Locale.getDefault(), "High time\t deviation at line %d %s %2d", lineNumber, line.substring(1, 7), actualTimeStamp - timeStamp));
+							if (timeStamp > 0 && actualTimeStamp - timeStamp > 1000) {
+								log.log(Level.WARNING, String.format(Locale.getDefault(), "High time\t deviation at line %d %s %2d", lineNumber-1, line.substring(1, 7), actualTimeStamp - timeStamp));
+								if (timeStamp > 0 && actualTimeStamp - timeStamp > 200000) {
+									log.log(Level.SEVERE, String.format(Locale.getDefault(), "High time\t deviation at line %d %s", lineNumber - 1, line));
+									error.append(String.format(Locale.getDefault(), "High time deviation %dms at line %d %s", actualTimeStamp - timeStamp, lineNumber - 1, line)).append(GDE.LINE_SEPARATOR);
+									continue;
+								}
+							}
+
 							try {
 								latitude = Integer.valueOf(line.substring(7, 14));
 								latitude = line.substring(14, 15).equalsIgnoreCase("N") ? latitude : -1 * latitude; //$NON-NLS-1$
-								if (lastLatitude != 0 && Math.abs(lastLatitude - latitude) > 6)
-									log.log(Level.WARNING, String.format(Locale.getDefault(), "High latitude\t deviation at line %d %s %2d", lineNumber, line.substring(1, 7), latitude - lastLatitude));
+								if (lastLatitude != 0 && Math.abs(lastLatitude - latitude) > 20)
+									log.log(Level.WARNING, String.format(Locale.getDefault(), "High latitude\t deviation at line %d %s %2d", lineNumber-1, line.substring(1, 7), latitude - lastLatitude));
 								lastLatitude = latitude;
 							}
 							catch (Exception e) {
@@ -329,8 +343,8 @@ public class IGCReaderWriter {
 							try {
 								longitude = Integer.valueOf(line.substring(15, 23));
 								longitude = line.substring(23, 24).equalsIgnoreCase("E") ? longitude : -1 * longitude; //$NON-NLS-1$
-								if (lastLongitude != 0 && Math.abs(lastLongitude - longitude) > 7)
-									log.log(Level.WARNING, String.format(Locale.getDefault(), "High longitude\t deviation at line %d %s %2d", lineNumber, line.substring(1, 7), longitude - lastLongitude));
+								if (lastLongitude != 0 && Math.abs(lastLongitude - longitude) > 25)
+									log.log(Level.WARNING, String.format(Locale.getDefault(), "High longitude\t deviation at line %d %s %2d", lineNumber-1, line.substring(1, 7), longitude - lastLongitude));
 								lastLongitude = longitude;
 							}
 							catch (Exception e) {
@@ -338,8 +352,8 @@ public class IGCReaderWriter {
 							}
 							try {
 								altBaro = Integer.valueOf(line.substring(25, 30));
-								if (lastAltBaro != 0 && Math.abs(lastAltBaro - altBaro) > 5)
-									log.log(Level.WARNING, String.format(Locale.getDefault(), "High altBaro\t deviation at line %d %s %2d", lineNumber, line.substring(1, 7), altBaro - lastAltBaro));
+								if (lastAltBaro != 0 && Math.abs(lastAltBaro - altBaro) > 30)
+									log.log(Level.WARNING, String.format(Locale.getDefault(), "High altBaro\t deviation at line %d %s %2d", lineNumber-1, line.substring(1, 7), altBaro - lastAltBaro));
 								lastAltBaro = altBaro;
 							}
 							catch (Exception e) {
@@ -347,8 +361,8 @@ public class IGCReaderWriter {
 							}
 							try {
 								altGPS = Integer.valueOf(line.substring(31, 35));
-								if (lastAltGPS != 0 && Math.abs(lastAltGPS - altGPS) > 5)
-									log.log(Level.WARNING, String.format(Locale.getDefault(), "High altGPS\t deviation at line %d %s %2d", lineNumber, line.substring(1, 7), altGPS - lastAltGPS));
+								if (lastAltGPS != 0 && Math.abs(lastAltGPS - altGPS) > 30)
+									log.log(Level.WARNING, String.format(Locale.getDefault(), "High altGPS\t deviation at line %d %s %2d", lineNumber-1, line.substring(1, 7), altGPS - lastAltGPS));
 								lastAltGPS = altGPS;
 							}
 							catch (Exception e) {
@@ -364,15 +378,27 @@ public class IGCReaderWriter {
 							}
 
 							recordSet.addNoneCalculationRecordsPoints(values, actualTimeStamp - startTimeStamp);
+							timeStamp = actualTimeStamp;
 						}
-						timeStamp = actualTimeStamp;
+						else 
+							if (actualTimeStamp - timeStamp != 0 && Math.abs(actualTimeStamp - timeStamp) > 1000) {
+								log.log(Level.SEVERE, String.format(Locale.getDefault(), "High time\t deviation at line %d %s", lineNumber - 1, line));
+								error.append(String.format(Locale.getDefault(), "High time deviation %dms at line %d %s", actualTimeStamp - timeStamp, lineNumber - 1, line)).append(GDE.LINE_SEPARATOR);
+							}
 					}
 					else if (line.startsWith("F")) {
 						//skip F RECORD - SATELLITE CONSTELLATION.
 						log.log(Level.FINE, "F RECORD - SATELLITE CONSTELLATION = " + line);
 					}
+					else if (line.startsWith("E")) {
+						//skip E RECORD - Albatross enties
+						log.log(Level.FINE, "E RECORD - Albatross enty = " + line);
+					}
+					else if (line.startsWith("L")) {
+						//skip L RECORD - Albatross stats
+						log.log(Level.FINE, "L RECORD - Albatross stat = " + line);
+					}
 					else if (line.startsWith("G")) {
-						isGsentence = true;
 						log.log(Level.FINE, "line number " + lineNumber + " contains security code and is voted as last line! " + lastLine); //$NON-NLS-1$ //$NON-NLS-2$
 						break;
 					}
@@ -393,6 +419,10 @@ public class IGCReaderWriter {
 				reader.close();
 				reader = null;
 			}
+			
+			if (error.length() > 10)
+				recordSet.setRecordSetDescription(recordSet.getRecordSetDescription() + GDE.LINE_SEPARATOR + error.toString());
+
 		}
 		catch (FileNotFoundException e) {
 			log.log(java.util.logging.Level.WARNING, e.getMessage(), e);

@@ -6,7 +6,8 @@ Generic changes/fixes
 		
 Device specific changes/fixes
 	* HoTTAdapter2* - fix visualization of warning in configuration channels, sync with HoTTAdapter*
-	* IGCAdapter - add changes to support Swift IGC format
+	* IGCAdapter - support Swift IGC format
+	* IGCAdapter - find high deviations in time 
 
 Version 3.5.5 - 07 Apr 2022
 Generic changes/fixes
