@@ -168,51 +168,49 @@ public class IGCReaderWriter {
 				reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "ISO-8859-1")); //$NON-NLS-1$
 
 				//skip all lines which describe the hardware, pilot and plane, save as header
-				while ((line = reader.readLine()) == null || !line.startsWith(device.getDataBlockLeader())) {
-					if (line != null) {
-						log.log(Level.FINE, line);
-						if (line.startsWith("HFDTE")) { //160701	UTC date of flight, here 16th July 2001
-							date = line.substring(5).trim();
-						}
-						//do not care about UTC time offset, the OLE/IGC server will do instead
-						//else if (line.startsWith("HFTZNTIMEZONE")) {
-						//	timeOffsetUTC = (int) Double.parseDouble(line.substring(14).trim());
-						//}
-						else if (line.startsWith("H")) {
-							header.append(line).append(GDE.LINE_SEPARATOR);
-						}
-						else if (line.startsWith("LTSK:T:")) { //Albatross task definition
-							albatrossTask.append(line.substring(7));
-						}
-						else if (line.startsWith("C")) {
-							if (line.startsWith("WP", 18)) 
-								albatrossTask.append(GDE.STRING_MESSAGE_CONCAT).append(line.substring(1));
-							gpsTriangleRelated.append(GDE.LINE_SEPARATOR).append(line);
-						}
-						else if (line.startsWith("LSTAT")) { //Albatrross Statistics
-							log.log(Level.OFF, line);
-						}
-						else if (line.startsWith("E")) { //Albatrross arm, turnpoint
-							log.log(Level.OFF, line);
-						}
-						else if (line.startsWith("A")) { // first line contains manufacturer identifier
-							dllID = line.substring(1, 4);
-							log.log(Level.FINE, "IGCDLL iddentifier = " + dllID);
-						}
-						else if (line.startsWith("I")) { // extension specification record
-							try {
-								final int numExtensions = Integer.parseInt(line.substring(1, 3));
-								for (int i = 0; i < numExtensions; i++) {
-									IgcExtension extension = new IgcExtension(Integer.parseInt(line.substring(7 * i + 3, 7 * i + 5))-1, Integer.parseInt(line.substring(7 * i + 5, 7 * i + 7)), line.substring(7 * i + 7, 7 * i + 10));
-									if (extension.getThreeLetterCode().equals("TDS") || extension.getThreeLetterCode().equals("SUS") )
-										timeStepExtension = extension;
-									else
-										extensions.add(extension);
-								}
+				while ((line = reader.readLine()) != null && !line.startsWith(device.getDataBlockLeader())) {
+					log.log(Level.FINE, line);
+					if (line.startsWith("HFDTE")) { //160701	UTC date of flight, here 16th July 2001
+						date = line.substring(5).trim();
+					}
+					//do not care about UTC time offset, the OLE/IGC server will do instead
+					//else if (line.startsWith("HFTZNTIMEZONE")) {
+					//	timeOffsetUTC = (int) Double.parseDouble(line.substring(14).trim());
+					//}
+					else if (line.startsWith("H")) {
+						header.append(line).append(GDE.LINE_SEPARATOR);
+					}
+					else if (line.startsWith("LTSK:T:")) { //Albatross task definition
+						albatrossTask.append(line.substring(7));
+					}
+					else if (line.startsWith("C")) {
+						if (line.startsWith("WP", 18)) 
+							albatrossTask.append(GDE.STRING_MESSAGE_CONCAT).append(line.substring(1));
+						gpsTriangleRelated.append(GDE.LINE_SEPARATOR).append(line);
+					}
+					else if (line.startsWith("LSTAT")) { //Albatrross Statistics
+						log.log(Level.OFF, line);
+					}
+					else if (line.startsWith("E")) { //Albatrross arm, turnpoint
+						log.log(Level.OFF, line);
+					}
+					else if (line.startsWith("A")) { // first line contains manufacturer identifier
+						dllID = line.substring(1, 4);
+						log.log(Level.FINE, "IGCDLL iddentifier = " + dllID);
+					}
+					else if (line.startsWith("I")) { // extension specification record
+						try {
+							final int numExtensions = Integer.parseInt(line.substring(1, 3));
+							for (int i = 0; i < numExtensions; i++) {
+								IgcExtension extension = new IgcExtension(Integer.parseInt(line.substring(7 * i + 3, 7 * i + 5))-1, Integer.parseInt(line.substring(7 * i + 5, 7 * i + 7)), line.substring(7 * i + 7, 7 * i + 10));
+								if (extension.getThreeLetterCode().equals("TDS") || extension.getThreeLetterCode().equals("SUS") )
+									timeStepExtension = extension;
+								else
+									extensions.add(extension);
 							}
-							catch (Exception e) {
-								log.log(Level.SEVERE, e.getMessage(), e);
-							}
+						}
+						catch (Exception e) {
+							log.log(Level.SEVERE, e.getMessage(), e);
 						}
 					}
 					++lineNumber;
@@ -222,7 +220,7 @@ public class IGCReaderWriter {
 				int month;
 				int day;
 				if (date.contains(":")) {
-					int startIndex = date.indexOf(":"+1);
+					int startIndex = date.indexOf(":");
 					year = Integer.parseInt(date.substring(startIndex+5, startIndex+7)) + 2000;
 					month = Integer.parseInt(date.substring(startIndex+3, startIndex+5));
 					day = Integer.parseInt(date.substring(startIndex+1, startIndex+3));
@@ -232,7 +230,20 @@ public class IGCReaderWriter {
 					month = Integer.parseInt(date.substring(2, 4));
 					day = Integer.parseInt(date.substring(0, 2));
 				}
-				time = line.substring(1, 7); //16 02 40
+				
+				if (line == null) 	{	
+					reader.close();
+					throw new DevicePropertiesInconsistenceException("Error");
+				}
+
+				time = line.substring(1, 7);//16 02 40
+				while (line != null && Integer.parseInt(time) == 0) { 
+					log.log(Level.WARNING, String.format("time entry B record zero, line %d", lineNumber));
+					line = reader.readLine();
+					++lineNumber;
+					time = line.substring(1, 7);
+					continue;
+				}
 				hour = Integer.parseInt(time.substring(0, 2));
 				minute = Integer.parseInt(time.substring(2, 4));
 				second = Integer.parseInt(time.substring(4, 6));
@@ -242,10 +253,11 @@ public class IGCReaderWriter {
 				}
 					
 
+
 				//parse B records B160240 5407121N 00249342W A 00280 00421
 				do {
 					lastLine = line = line.trim();
-					++lineNumber;
+					++lineNumber;					
 					if (line.length() >= 35 && line.startsWith(device.getDataBlockLeader())) {
 						time = line.substring(1, 7); //16 02 40
 						if (hour == 23 && hour > Integer.parseInt(time.substring(0, 2))) 
@@ -321,11 +333,13 @@ public class IGCReaderWriter {
 							//I04 36 38 FXA 39 40 SIU 4143TDS 4446ENL
 							//1234567 89012345 678901234 5 67890 12345 678 90 123 456
 							//B114643 4752040N 01109779E A 00522 00555 035 09 227 225
-							if (timeStamp > 0 && actualTimeStamp - timeStamp > 1000) {
+							if (timeStamp > 0 && actualTimeStamp - timeStamp > 1500) {
 								log.log(Level.WARNING, String.format(Locale.getDefault(), "High time\t deviation at line %d %s %2d", lineNumber-1, line.substring(1, 7), actualTimeStamp - timeStamp));
-								if (timeStamp > 0 && actualTimeStamp - timeStamp > 200000) {
+								if (timeStamp > 0 && actualTimeStamp - timeStamp > 20000) {
 									log.log(Level.SEVERE, String.format(Locale.getDefault(), "High time\t deviation at line %d %s", lineNumber - 1, line));
 									error.append(String.format(Locale.getDefault(), "High time deviation %dms at line %d %s", actualTimeStamp - timeStamp, lineNumber - 1, line)).append(GDE.LINE_SEPARATOR);
+									if (hour == 23) 
+										hour = 0;
 									continue;
 								}
 							}
@@ -421,7 +435,7 @@ public class IGCReaderWriter {
 			}
 			
 			if (error.length() > 10)
-				recordSet.setRecordSetDescription(recordSet.getRecordSetDescription() + GDE.LINE_SEPARATOR + error.toString());
+				recordSet.setRecordSetDescription(recordSet.getRecordSetDescription() + GDE.LINE_SEPARATOR + error);
 
 		}
 		catch (FileNotFoundException e) {

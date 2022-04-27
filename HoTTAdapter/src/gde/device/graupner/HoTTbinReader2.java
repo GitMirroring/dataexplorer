@@ -933,6 +933,8 @@ public class HoTTbinReader2 extends HoTTbinReader {
 	}
 
 	public static class GpsBinParser extends BinParser {
+		private int			tmpDate								= 0;
+		private int			tmpTime								= 0;
 		private int			tmpHeight							= 0;
 		private int			tmpClimb1							= 0;
 		private int			tmpClimb3							= 0;
@@ -1049,9 +1051,22 @@ public class HoTTbinReader2 extends HoTTbinReader {
 					this.points[30] = _buf4[4] * 1000; 
 					this.points[31] = 0; 
 					this.points[32] = _buf3[8] * 100; 
-					this.points[33] = _buf3[9] * 10000000 + _buf4[0] * 100000 + _buf4[1] * 1000 + _buf4[2]*10;//HH:mm:ss.SSS
-					this.points[34] = ((_buf4[5]-48) * 1000000 + (_buf4[7]-48) * 10000 + (_buf4[6]-48) * 100) * 10;//yy-MM-dd
-					this.points[35] = (DataParser.parse2Short(_buf3, 6) - 500) * 1000; //TODO remove offset 500 after correction
+					
+					if (this.points[27] > 0) {  //Sat-Fix
+						tmpTime = _buf3[9] * 10000000 + _buf4[0] * 100000 + _buf4[1] * 1000 + _buf4[2] * 10;//HH:mm:ss.SSS
+						if (tmpTime < this.points[33])
+							log.log(Level.WARNING, HoTTAdapter.getFormattedTime(tmpTime));
+						this.points[33] = tmpTime;
+
+						tmpDate = ((_buf4[5] - 48) * 1000000 + (_buf4[7] - 48) * 10000 + (_buf4[6] - 48) * 100) * 10;//yy-MM-dd
+						if (tmpDate < this.points[34])
+							log.log(Level.WARNING, String.format("Sat-Fix %d #Sats %d %s - %c %c %c", this.points[27]/1000,  this.points[26]/1000, HoTTAdapter.getFormattedTime(this.points[33]), _buf4[5]&0xff, _buf4[7]&0xff, _buf4[6]&0xff));
+						this.points[34] = tmpDate;
+
+						this.points[35] = (DataParser.parse2Short(_buf3, 6) - 500) * 1000; //TODO remove offset 500 after correction
+					}
+					else this.points[33] = this.points[34] = this.points[35] = 0;
+					
 					this.points[36] = (_buf4[3] & 0xFF) * 1000;
 					//log.log(Level.INFO, StringHelper.byte2Hex2CharString(_buf4, _buf4.length));
 				}

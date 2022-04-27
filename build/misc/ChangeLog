@@ -6,6 +6,7 @@ Generic changes/fixes
 		
 Device specific changes/fixes
 	* HoTTAdapter2* - fix visualization of warning in configuration channels, sync with HoTTAdapter*
+	* HoTTAdapter* - find date and time deviations Sparrow/Swift
 	* IGCAdapter - support Swift IGC format
 	* IGCAdapter - find high deviations in time 
 

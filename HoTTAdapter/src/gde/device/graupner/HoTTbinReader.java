@@ -1687,6 +1687,8 @@ public class HoTTbinReader {
 	}
 
 	public static class GpsBinParser extends BinParser {
+		private int			tmpDate								= 0;
+		private int			tmpTime								= 0;
 		private int			tmpHeight							= 0;
 		private int			tmpClimb1							= 0;
 		private int			tmpClimb3							= 0;
@@ -1797,9 +1799,19 @@ public class HoTTbinReader {
 					this.points[16] = _buf4[4] * 1000; 
 					this.points[17] = 0; 
 					this.points[18] = _buf3[8] * 100; 
-					this.points[19] = _buf3[9] * 10000000 + _buf4[0] * 100000 + _buf4[1] * 1000 + _buf4[2]*10;
-					this.points[20] = ((_buf4[5]-48) * 1000000 + (_buf4[7]-48) * 10000 + (_buf4[6]-48) * 100) * 10;
-					this.points[21] = (DataParser.parse2Short(_buf3, 6) - 500) * 1000; //TODO remove offset 500 after correction
+					if (this.points[13] > 0) { //Sat-Fix
+						tmpTime = _buf3[9] * 10000000 + _buf4[0] * 100000 + _buf4[1] * 1000 + _buf4[2] * 10;
+						if (tmpTime < this.points[19])
+							log.log(Level.WARNING, HoTTAdapter.getFormattedTime(tmpTime));
+						this.points[19] = tmpTime;
+						
+						tmpDate = ((_buf4[5] - 48) * 1000000 + (_buf4[7] - 48) * 10000 + (_buf4[6] - 48) * 100) * 10;
+						if (tmpDate < 0)
+							log.log(Level.WARNING, String.format("Sat-Fix %d #Sats %d %s - %c %c %c", this.points[13]/1000,  this.points[12]/1000, HoTTAdapter.getFormattedTime(this.points[19]), _buf4[5]&0xff, _buf4[7]&0xff, _buf4[6]&0xff));
+						this.points[20] = tmpDate;
+
+						this.points[21] = (DataParser.parse2Short(_buf3, 6) - 500) * 1000; //TODO remove offset 500 after correction
+					}
 					this.points[22] = (_buf4[3] & 0xFF) * 1000;
 				}
 				else if ((_buf4[9] & 0xFF) == 0 || (_buf4[9] & 0xFF) == 1) { //Graupner GPS need workaround to distinguish between different Graupner GPS version #0
