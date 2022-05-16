@@ -50,6 +50,7 @@ import gde.device.DataTypes;
 import gde.device.DeviceConfiguration;
 import gde.device.IDevice;
 import gde.device.MeasurementPropertyTypes;
+import gde.device.StatisticsType;
 import gde.device.graupner.hott.MessageIds;
 import gde.exception.DataInconsitsentException;
 import gde.exception.DataTypeException;
@@ -1435,6 +1436,8 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 		//3.3.1 extend this measurements: 9=EventRx, 14=EventVario, 21=NumSatellites 22=GPS-Fix 23=EventGPS, 41=Speed G, 42=LowestCellVoltage, 43=LowestCellNumber, 44=Pressure, 45=Event G, 70=MotorTime 71=Speed 72=Event E, 85/105=Event M
 		//3.4.6 extend this.measurements: 24=HomeDirection 25=Roll 26=Pitch 27=Yaw 28=GyroX 29=GyroY 30=GyroZ 31=Vibration 32=Version
 		//3.5.0 extend this.measurements: 15=misc Vario_1 16=misc Vario_2 17=misc Vario_3 18=misc Vario_4 19=misc Vario_5
+		//3.6.0 extend this measurements: 100=misc ESC_1 to 115=misc ESC_15 - 120=misc ESC_1 to 135=misc ESC_15
+
 
 		// 0=RX-TX-VPacks, 1=RXSQ, 2=Strength, 3=VPacks, 4=Tx, 5=Rx, 6=VoltageRx, 7=TemperatureRx 8=VoltageRxMin 9=EventRx
 		// 10=Altitude, 11=Climb 1, 12=Climb 3, 13=Climb 10 14=EventVario 15=misc Vario_1 16=misc Vario_2 17=misc Vario_3 18=misc Vario_4 19=misc Vario_5
@@ -1447,10 +1450,14 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 		// 79=Voltage E1, 80=Voltage E2, 81=Temperature E1, 82=Temperature E2 83=Revolution E 84=MotorTime 85=Speed 86=Event E
 		// 87=VoltageM, 88=CurrentM, 89=CapacityM, 90=PowerM, 91=RevolutionM, 92=TemperatureM 1, 93=TemperatureM 2 94=Voltage_min, 95=Current_max,
 		// 96=Revolution_max, 97=Temperature1_max, 98=Temperature2_max 99=Event M
+		// 100=Speed 101=Speed_max 102=PWM 103=Throttle 104=VoltageBEC 105=VoltageBEC_max 106=CurrentBEC 107=TemperatureBEC 108=TemperatureCap 
+		// 109=Timing(empty) 110=Temperature_aux 111=Gear 112=YGEGenExt 113=MotStatEscNr 114=misc ESC_15 115=VersionESC
 
 		// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=PowerOff, 104=BatterieLow, 105=Reset, 106=reserve
 		// 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max,
 		// 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
+		// 120=Speed 121=Speed_max 122=PWM 123=Throttle 124=VoltageBEC 125=VoltageBEC_max 125=CurrentBEC 127=TemperatureBEC 128=TemperatureCap 
+		// 129=Timing(empty) 130=Temperature_aux 131=Gear 132=YGEGenExt 133=MotStatEscNr 134=misc ESC_15 135=VersionESC
 
 		StringBuilder sb = new StringBuilder().append(GDE.LINE_SEPARATOR);
 
@@ -1522,7 +1529,23 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 					case 96: //Revolution_max
 					case 97: //Temperature1_max
 					case 98: //Temperature2_max
-					case 99: //Event M
+					case 99: //Event M		
+					case 100: //misc ESC_1
+					case 101: //misc ESC_2
+					case 102: //misc ESC_3
+					case 103: //misc ESC_4
+					case 104: //misc ESC_5
+					case 105: //misc ESC_6
+					case 106: //misc ESC_7
+					case 107: //misc ESC_8
+					case 108: //misc ESC_9
+					case 109: //misc ESC_10
+					case 110: //misc ESC_11
+					case 111: //misc ESC_12
+					case 112: //misc ESC_13
+					case 113: //misc ESC_14
+					case 114: //misc ESC_15
+					case 115: //Version ESC
 						sb.append(String.format("added measurement set to isCalculation=true -> %s\n", recordKeys[i]));
 						recordSet.get(i).setActive(null);
 						break;
@@ -1584,6 +1607,22 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 					case 97: //Temperature1_max
 					case 98: //Temperature2_max
 					case 99: //Event M
+					case 100: //misc ESC_1
+					case 101: //misc ESC_2
+					case 102: //misc ESC_3
+					case 103: //misc ESC_4
+					case 104: //misc ESC_5
+					case 105: //misc ESC_6
+					case 106: //misc ESC_7
+					case 107: //misc ESC_8
+					case 108: //misc ESC_9
+					case 109: //misc ESC_10
+					case 110: //misc ESC_11
+					case 111: //misc ESC_12
+					case 112: //misc ESC_13
+					case 113: //misc ESC_14
+					case 114: //misc ESC_15
+					case 115: //Version ESC
 						sb.append(String.format("added measurement set to isCalculation=true -> %s\n", recordKeys[i]));
 						recordSet.get(i).setActive(null);
 						break;
@@ -1649,6 +1688,22 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 					case 117: //Temperature1_max
 					case 118: //Temperature2_max
 					case 119: //Event M
+					case 120: //misc ESC_1
+					case 121: //misc ESC_2
+					case 122: //misc ESC_3
+					case 123: //misc ESC_4
+					case 124: //misc ESC_5
+					case 125: //misc ESC_6
+					case 126: //misc ESC_7
+					case 127: //misc ESC_8
+					case 128: //misc ESC_9
+					case 129: //misc ESC_10
+					case 130: //misc ESC_11
+					case 131: //misc ESC_12
+					case 132: //misc ESC_13
+					case 133: //misc ESC_14
+					case 134: //misc ESC_15
+					case 135: //VersionESC
 						sb.append(String.format("added measurement set to isCalculation=true -> %s\n", recordKeys[i]));
 						recordSet.get(i).setActive(null);
 						break;
@@ -1704,6 +1759,22 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 					case 97: //Temperature1_max
 					case 98: //Temperature2_max
 					case 99: //Event M
+					case 100: //misc ESC_1
+					case 101: //misc ESC_2
+					case 102: //misc ESC_3
+					case 103: //misc ESC_4
+					case 104: //misc ESC_5
+					case 105: //misc ESC_6
+					case 106: //misc ESC_7
+					case 107: //misc ESC_8
+					case 108: //misc ESC_9
+					case 109: //misc ESC_10
+					case 110: //misc ESC_11
+					case 111: //misc ESC_12
+					case 112: //misc ESC_13
+					case 113: //misc ESC_14
+					case 114: //misc ESC_15
+					case 115: //Version ESC
 						sb.append(String.format("added measurement set to isCalculation=true -> %s\n", recordKeys[i]));
 						recordSet.get(i).setActive(null);
 						break;
@@ -1759,6 +1830,22 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 					case 117: //Temperature1_max
 					case 118: //Temperature2_max
 					case 119: //Event M
+					case 120: //misc ESC_1
+					case 121: //misc ESC_2
+					case 122: //misc ESC_3
+					case 123: //misc ESC_4
+					case 124: //misc ESC_5
+					case 125: //misc ESC_6
+					case 126: //misc ESC_7
+					case 127: //misc ESC_8
+					case 128: //misc ESC_9
+					case 129: //misc ESC_10
+					case 130: //misc ESC_11
+					case 131: //misc ESC_12
+					case 132: //misc ESC_13
+					case 133: //misc ESC_14
+					case 134: //misc ESC_15
+					case 135: //VersionESC
 						sb.append(String.format("added measurement set to isCalculation=true -> %s\n", recordKeys[i]));
 						recordSet.get(i).setActive(null);
 						break;
@@ -1813,6 +1900,22 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 					case 97: //Temperature1_max
 					case 98: //Temperature2_max
 					case 99: //Event M
+					case 100: //misc ESC_1
+					case 101: //misc ESC_2
+					case 102: //misc ESC_3
+					case 103: //misc ESC_4
+					case 104: //misc ESC_5
+					case 105: //misc ESC_6
+					case 106: //misc ESC_7
+					case 107: //misc ESC_8
+					case 108: //misc ESC_9
+					case 109: //misc ESC_10
+					case 110: //misc ESC_11
+					case 111: //misc ESC_12
+					case 112: //misc ESC_13
+					case 113: //misc ESC_14
+					case 114: //misc ESC_15
+					case 115: //Version ESC
 						sb.append(String.format("added measurement set to isCalculation=true -> %s\n", recordKeys[i]));
 						recordSet.get(i).setActive(null);
 						break;
@@ -1880,6 +1983,22 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 						case 117: //Temperature1_max
 						case 118: //Temperature2_max
 						case 119: //Event M
+						case 120: //misc ESC_1
+						case 121: //misc ESC_2
+						case 122: //misc ESC_3
+						case 123: //misc ESC_4
+						case 124: //misc ESC_5
+						case 125: //misc ESC_6
+						case 126: //misc ESC_7
+						case 127: //misc ESC_8
+						case 128: //misc ESC_9
+						case 129: //misc ESC_10
+						case 130: //misc ESC_11
+						case 131: //misc ESC_12
+						case 132: //misc ESC_13
+						case 133: //misc ESC_14
+						case 134: //misc ESC_15
+						case 135: //VersionESC
 							sb.append(String.format("added measurement set to isCalculation=true -> %s\n", recordKeys[i]));
 							recordSet.get(i).setActive(null);
 							break;
@@ -1928,6 +2047,22 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 						case 35: //GyroZ
 						case 36: //Vibration
 						case 37: //Version
+						case 100: //misc ESC_1
+						case 101: //misc ESC_2
+						case 102: //misc ESC_3
+						case 103: //misc ESC_4
+						case 104: //misc ESC_5
+						case 105: //misc ESC_6
+						case 106: //misc ESC_7
+						case 107: //misc ESC_8
+						case 108: //misc ESC_9
+						case 109: //misc ESC_10
+						case 110: //misc ESC_11
+						case 111: //misc ESC_12
+						case 112: //misc ESC_13
+						case 113: //misc ESC_14
+						case 114: //misc ESC_15
+						case 115: //Version ESC
 							sb.append(String.format("added measurement set to isCalculation=true -> %s\n", recordKeys[i]));
 							recordSet.get(i).setActive(null);
 							break;
@@ -1978,6 +2113,22 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 					case 85: //Speed E
 					case 86: //Event E
 					case 99: //Event M
+					case 100: //misc ESC_1
+					case 101: //misc ESC_2
+					case 102: //misc ESC_3
+					case 103: //misc ESC_4
+					case 104: //misc ESC_5
+					case 105: //misc ESC_6
+					case 106: //misc ESC_7
+					case 107: //misc ESC_8
+					case 108: //misc ESC_9
+					case 109: //misc ESC_10
+					case 110: //misc ESC_11
+					case 111: //misc ESC_12
+					case 112: //misc ESC_13
+					case 113: //misc ESC_14
+					case 114: //misc ESC_15
+					case 115: //Version ESC
 						sb.append(String.format("added measurement set to isCalculation=true -> %s\n", recordKeys[i]));
 						recordSet.get(i).setActive(null);
 						break;
@@ -2026,6 +2177,22 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 					case 85:  //Speed E
 					case 86:  //Event E
 					case 119: //Event M
+					case 120: //misc ESC_1
+					case 121: //misc ESC_2
+					case 122: //misc ESC_3
+					case 123: //misc ESC_4
+					case 124: //misc ESC_5
+					case 125: //misc ESC_6
+					case 126: //misc ESC_7
+					case 127: //misc ESC_8
+					case 128: //misc ESC_9
+					case 129: //misc ESC_10
+					case 130: //misc ESC_11
+					case 131: //misc ESC_12
+					case 132: //misc ESC_13
+					case 133: //misc ESC_14
+					case 134: //misc ESC_15
+					case 135: //VersionESC
 						sb.append(String.format("added measurement set to isCalculation=true -> %s\n", recordKeys[i]));
 						recordSet.get(i).setActive(null);
 						break;
@@ -2043,6 +2210,55 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 				break;
 
 			case 106:	//3.3.1 - 3.4.6 Channels
+				for (int i = 0, j = 0; i < recordKeys.length; i++) {
+					// 3.4.6 extended with 24=HomeDirection 25=Roll 26=Pitch 27=Yaw 28=GyroX 29=GyroY 30=GyroZ 31=Vibration 32=Version	
+					switch (i) { //list of added measurements
+					case 15: //misc Vario_1
+					case 16: //misc Vario_2
+					case 17: //misc Vario_3
+					case 18: //misc Vario_4
+					case 19: //misc Vario_5
+					case 29: //HomeDirection
+					case 30: //Roll
+					case 31: //Pitch
+					case 32: //Yaw
+					case 33: //GyroX
+					case 34: //GyroY
+					case 35: //GyroZ
+					case 36: //Vibration
+					case 37: //Version
+					case 120: //misc ESC_1
+					case 121: //misc ESC_2
+					case 122: //misc ESC_3
+					case 123: //misc ESC_4
+					case 124: //misc ESC_5
+					case 125: //misc ESC_6
+					case 126: //misc ESC_7
+					case 127: //misc ESC_8
+					case 128: //misc ESC_9
+					case 129: //misc ESC_10
+					case 130: //misc ESC_11
+					case 131: //misc ESC_12
+					case 132: //misc ESC_13
+					case 133: //misc ESC_14
+					case 134: //misc ESC_15
+					case 135: //VersionESC
+						sb.append(String.format("added measurement set to isCalculation=true -> %s\n", recordKeys[i]));
+						recordSet.get(i).setActive(null);
+						break;
+					default:
+						HashMap<String, String> recordProps = StringHelper.splitString(fileRecordsProperties[j], Record.DELIMITER, Record.propertyKeys);
+						sb.append(String.format("%19s match %19s isAvtive = %s\n", recordKeys[i], recordProps.get(Record.NAME), recordProps.get(Record.IS_ACTIVE)));
+						cleanedRecordNames.add(recordKeys[i]);
+						noneCalculationRecordNames.add(recordProps.get(Record.NAME));
+						if (fileRecordsProperties[j].contains("_isActive=false"))
+							recordSet.get(i).setActive(false);
+						++j;
+						break;
+					}
+				}
+				break;
+				
 			case 91:	//3.3.1 - 3.4.6 Lab-Time
 				for (int i = 0, j = 0; i < recordKeys.length; i++) {
 					// 3.4.6 extended with 24=HomeDirection 25=Roll 26=Pitch 27=Yaw 28=GyroX 29=GyroY 30=GyroZ 31=Vibration 32=Version	
@@ -2061,6 +2277,22 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 					case 35: //GyroZ
 					case 36: //Vibration
 					case 37: //Version
+					case 100: //misc ESC_1
+					case 101: //misc ESC_2
+					case 102: //misc ESC_3
+					case 103: //misc ESC_4
+					case 104: //misc ESC_5
+					case 105: //misc ESC_6
+					case 106: //misc ESC_7
+					case 107: //misc ESC_8
+					case 108: //misc ESC_9
+					case 109: //misc ESC_10
+					case 110: //misc ESC_11
+					case 111: //misc ESC_12
+					case 112: //misc ESC_13
+					case 113: //misc ESC_14
+					case 114: //misc ESC_15
+					case 115: //Version ESC
 						sb.append(String.format("added measurement set to isCalculation=true -> %s\n", recordKeys[i]));
 						recordSet.get(i).setActive(null);
 						break;
@@ -2078,6 +2310,46 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 				break;
 				
 			case 95:	//3.4.6 no channels
+				for (int i = 0, j = 0; i < recordKeys.length; i++) {
+					// 3.5.0 extend with 15=misc Vario_1 16=misc Vario_2 17=misc Vario_3 18=misc Vario_4 19=misc Vario_5
+					switch (i) { //list of added measurements
+					case 15: //misc Vario_1
+					case 16: //misc Vario_2
+					case 17: //misc Vario_3
+					case 18: //misc Vario_4
+					case 19: //misc Vario_5
+					case 100: //misc ESC_1
+					case 101: //misc ESC_2
+					case 102: //misc ESC_3
+					case 103: //misc ESC_4
+					case 104: //misc ESC_5
+					case 105: //misc ESC_6
+					case 106: //misc ESC_7
+					case 107: //misc ESC_8
+					case 108: //misc ESC_9
+					case 109: //misc ESC_10
+					case 110: //misc ESC_11
+					case 111: //misc ESC_12
+					case 112: //misc ESC_13
+					case 113: //misc ESC_14
+					case 114: //misc ESC_15
+					case 115: //Version ESC
+						sb.append(String.format("added measurement set to isCalculation=true -> %s\n", recordKeys[i]));
+						recordSet.get(i).setActive(null);
+						break;
+					default:
+						HashMap<String, String> recordProps = StringHelper.splitString(fileRecordsProperties[j], Record.DELIMITER, Record.propertyKeys);
+						sb.append(String.format("%19s match %19s isAvtive = %s\n", recordKeys[i], recordProps.get(Record.NAME), recordProps.get(Record.IS_ACTIVE)));
+						cleanedRecordNames.add(recordKeys[i]);
+						noneCalculationRecordNames.add(recordProps.get(Record.NAME));
+						if (fileRecordsProperties[j].contains("_isActive=false"))
+							recordSet.get(i).setActive(false);
+						++j;
+						break;
+					}
+				}
+				break;
+			
 			case 115:	//3.4.6 with channels
 				for (int i = 0, j = 0; i < recordKeys.length; i++) {
 					// 3.5.0 extend with 15=misc Vario_1 16=misc Vario_2 17=misc Vario_3 18=misc Vario_4 19=misc Vario_5
@@ -2087,6 +2359,22 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 					case 17: //misc Vario_3
 					case 18: //misc Vario_4
 					case 19: //misc Vario_5
+					case 120: //misc ESC_1
+					case 121: //misc ESC_2
+					case 122: //misc ESC_3
+					case 123: //misc ESC_4
+					case 124: //misc ESC_5
+					case 125: //misc ESC_6
+					case 126: //misc ESC_7
+					case 127: //misc ESC_8
+					case 128: //misc ESC_9
+					case 129: //misc ESC_10
+					case 130: //misc ESC_11
+					case 131: //misc ESC_12
+					case 132: //misc ESC_13
+					case 133: //misc ESC_14
+					case 134: //misc ESC_15
+					case 135: //VersionESC
 						sb.append(String.format("added measurement set to isCalculation=true -> %s\n", recordKeys[i]));
 						recordSet.get(i).setActive(null);
 						break;
@@ -2104,7 +2392,78 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 				break;
 				
 			case 100:	//3.4.6 no channels
+				for (int i = 0, j = 0; i < recordKeys.length; i++) {
+					//3.6.0 extend this measurements: 100=misc ESC_1 ... 114=misc ESC_15 115=VersionESC
+					switch (i) { //list of added measurements
+					case 100: //misc ESC_1
+					case 101: //misc ESC_2
+					case 102: //misc ESC_3
+					case 103: //misc ESC_4
+					case 104: //misc ESC_5
+					case 105: //misc ESC_6
+					case 106: //misc ESC_7
+					case 107: //misc ESC_8
+					case 108: //misc ESC_9
+					case 109: //misc ESC_10
+					case 110: //misc ESC_11
+					case 111: //misc ESC_12
+					case 112: //misc ESC_13
+					case 113: //misc ESC_14
+					case 114: //misc ESC_15
+					case 115: //Version ESC
+						sb.append(String.format("added measurement set to isCalculation=true -> %s\n", recordKeys[i]));
+						recordSet.get(i).setActive(null);
+						break;
+					default:
+						HashMap<String, String> recordProps = StringHelper.splitString(fileRecordsProperties[j], Record.DELIMITER, Record.propertyKeys);
+						sb.append(String.format("%19s match %19s isAvtive = %s\n", recordKeys[i], recordProps.get(Record.NAME), recordProps.get(Record.IS_ACTIVE)));
+						cleanedRecordNames.add(recordKeys[i]);
+						noneCalculationRecordNames.add(recordProps.get(Record.NAME));
+						if (fileRecordsProperties[j].contains("_isActive=false"))
+							recordSet.get(i).setActive(false);
+						++j;
+						break;
+					}
+				}
+				break;
 			case 120:	//3.4.6 with channels
+				for (int i = 0, j = 0; i < recordKeys.length; i++) {
+					//3.6.0 extend this measurements: 120=misc ESC_1 ... 134=misc ESC_15 135=VersionESC
+					switch (i) { //list of added measurements
+					case 120: //misc ESC_1
+					case 121: //misc ESC_2
+					case 122: //misc ESC_3
+					case 123: //misc ESC_4
+					case 124: //misc ESC_5
+					case 125: //misc ESC_6
+					case 126: //misc ESC_7
+					case 127: //misc ESC_8
+					case 128: //misc ESC_9
+					case 129: //misc ESC_10
+					case 130: //misc ESC_11
+					case 131: //misc ESC_12
+					case 132: //misc ESC_13
+					case 133: //misc ESC_14
+					case 134: //misc ESC_15
+					case 135: //VersionESC
+						sb.append(String.format("added measurement set to isCalculation=true -> %s\n", recordKeys[i]));
+						recordSet.get(i).setActive(null);
+						break;
+					default:
+						HashMap<String, String> recordProps = StringHelper.splitString(fileRecordsProperties[j], Record.DELIMITER, Record.propertyKeys);
+						sb.append(String.format("%19s match %19s isAvtive = %s\n", recordKeys[i], recordProps.get(Record.NAME), recordProps.get(Record.IS_ACTIVE)));
+						cleanedRecordNames.add(recordKeys[i]);
+						noneCalculationRecordNames.add(recordProps.get(Record.NAME));
+						if (fileRecordsProperties[j].contains("_isActive=false"))
+							recordSet.get(i).setActive(false);
+						++j;
+						break;
+					}
+				}
+				break;
+				
+			case 116:	//3.6.0 no channels
+			case 136:	//3.6.0 with channels
 			default:
 				cleanedRecordNames.addAll(Arrays.asList(recordKeys));
 				for (int i = 0; i < fileRecordsProperties.length; i++) {
@@ -2138,7 +2497,7 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 			//fileRecordsProperties = fileRecordsPropertiesVector.toArray(new String[1]); //can't be used since it will no be propagated
 		}
 
-		if ((recordKeys.length < 100 || (recordKeys.length < 120 && recordSet.getChannelConfigNumber() == 4)) && noneCalculationRecordNames.size() < fileRecordsPropertiesVector.size()) {
+		if ((recordKeys.length < 116 || (recordKeys.length < 136 && recordSet.getChannelConfigNumber() == 4)) && noneCalculationRecordNames.size() < fileRecordsPropertiesVector.size()) {
 			sb.append(String.format("recordKeys.length = %d\n", recordKeys.length));
 			sb.append(String.format("noneCalculationRecords.length = %d\n", noneCalculationRecordNames.size()));
 			sb.append(String.format("fileRecordsProperties.length = %d\n", fileRecordsProperties.length));
@@ -2244,6 +2603,49 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 				}
 			}
 		}
+
+		if (recordSet.getChannelConfigNumber() == 4) {
+			//3.6.0 extend this measurements: 120=misc ESC_1 ... 134=misc ESC_15 135=VersionESC
+			for (int i = 120; i < 135; ++i) {
+				Record record = recordSet.get(i);
+				if (record != null && !record.getName().startsWith("vari")) {//misc will be replaced with variable in OSD
+					if (fileRecordsProperties[i].contains("factor_DOUBLE=")) {
+						int startIndex = fileRecordsProperties[i].indexOf("factor_DOUBLE=") + "factor_DOUBLE=".length();
+						int endIndex = fileRecordsProperties[i].indexOf(Record.DELIMITER, startIndex);
+						if (log.isLoggable(Level.FINE)) log.log(Level.FINE, record.getName() + " set - factor_DOUBLE " + fileRecordsProperties[i].substring(startIndex, endIndex));
+						record.setFactor(Double.parseDouble(fileRecordsProperties[i].substring(startIndex, endIndex)));	
+					}
+					if (fileRecordsProperties[i].contains("scale_sync_ref_ordinal_INTEGER=")) {
+						int startIndex = fileRecordsProperties[i].indexOf("scale_sync_ref_ordinal_INTEGER=") + "scale_sync_ref_ordinal_INTEGER=".length();
+						int endIndex = fileRecordsProperties[i].indexOf(Record.DELIMITER, startIndex);
+						if (log.isLoggable(Level.FINE)) log.log(Level.FINE, record.getName() + " set - scale_sync_ref_ordinal_INTEGER " + fileRecordsProperties[i].substring(startIndex, endIndex));
+						record.createProperty(IDevice.SYNC_ORDINAL, DataTypes.INTEGER, Integer.parseInt(fileRecordsProperties[i].substring(startIndex, endIndex))); //$NON-NLS-1$
+					}
+				}
+			}
+		}
+		else {
+			//3.6.0 extend this measurements: 100=misc ESC_1 ... 114=misc ESC_15 115=VersionESC
+			for (int i = 100; i < 115; ++i) {
+				Record record = recordSet.get(i);
+				if (record != null && !record.getName().startsWith("vari")) {//misc will be replaced with variable in OSD
+					if (fileRecordsProperties[i].contains("factor_DOUBLE=")) {
+						int startIndex = fileRecordsProperties[i].indexOf("factor_DOUBLE=") + "factor_DOUBLE=".length();
+						int endIndex = fileRecordsProperties[i].indexOf(Record.DELIMITER, startIndex);
+						if (log.isLoggable(Level.FINE)) log.log(Level.FINE, record.getName() + " set - factor_DOUBLE " + fileRecordsProperties[i].substring(startIndex, endIndex));
+						record.setFactor(Double.parseDouble(fileRecordsProperties[i].substring(startIndex, endIndex)));	
+					}
+					if (fileRecordsProperties[i].contains("scale_sync_ref_ordinal_INTEGER=")) {
+						int startIndex = fileRecordsProperties[i].indexOf("scale_sync_ref_ordinal_INTEGER=") + "scale_sync_ref_ordinal_INTEGER=".length();
+						int endIndex = fileRecordsProperties[i].indexOf(Record.DELIMITER, startIndex);
+						if (log.isLoggable(Level.FINE)) log.log(Level.FINE, record.getName() + " set - scale_sync_ref_ordinal_INTEGER " + fileRecordsProperties[i].substring(startIndex, endIndex));
+						record.createProperty(IDevice.SYNC_ORDINAL, DataTypes.INTEGER, Integer.parseInt(fileRecordsProperties[i].substring(startIndex, endIndex))); //$NON-NLS-1$
+					}
+				}
+			}
+		}
+
+
 		return;
 	}
 	
@@ -2291,10 +2693,14 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 		// 79=Voltage E1, 80=Voltage E2, 81=Temperature E1, 82=Temperature E2 83=Revolution E 84=MotorTime 85=Speed 86=Event E
 		// 87=VoltageM, 88=CurrentM, 89=CapacityM, 90=PowerM, 91=RevolutionM, 92=TemperatureM 1, 93=TemperatureM 2 94=Voltage_min, 95=Current_max,
 		// 96=Revolution_max, 97=Temperature1_max, 98=Temperature2_max 99=Event M
+		// 100=Speed 101=Speed_max 102=PWM 103=Throttle 104=VoltageBEC 105=VoltageBEC_max 106=CurrentBEC 107=TemperatureBEC 108=TemperatureCap 
+		// 109=Timing(empty) 110=Temperature_aux 111=Gear 112=YGEGenExt 113=MotStatEscNr 114=misc ESC_15 115=VersionESC
 
 		// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=PowerOff, 104=BatterieLow, 105=Reset, 106=reserve
 		// 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max,
 		// 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
+		// 120=Speed 121=Speed_max 122=PWM 123=Throttle 124=VoltageBEC 125=VoltageBEC_max 125=CurrentBEC 127=TemperatureBEC 128=TemperatureCap 
+		// 129=Timing(empty) 130=Temperature_aux 131=Gear 132=YGEGenExt 133=MotStatEscNr 134=misc ESC_15 135=VersionESC
 		if (version > 100) { //SM GPS-Logger
 			// 29=HomeDirection 30=ServoPulse 31=AirSpeed 32=n/a 33=GyroX 34=GyroY 35=GyroZ 36=ENL 37=Version	
 			tmpRecordSet.get(30).setName(device.getMeasurementReplacement("servo_impulse") + " GPS");
@@ -2378,6 +2784,81 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 
 			tmpRecordSet.get(36).setName("Byte GPS_7");
 		}
+	}
 
+	/**
+	 * update the record set ESC dependent record meta data
+	 * @param version detected in byte buffer
+	 * @param device HoTTAdapter
+	 * @param tmpRecordSet the record set to be updated
+	 */
+	protected static void updateEscTypeDependent(int version, IDevice device, RecordSet tmpRecordSet) {
+		if (version == 3) {
+			// 0=RX-TX-VPacks, 1=RXSQ, 2=Strength, 3=VPacks, 4=Tx, 5=Rx, 6=VoltageRx, 7=TemperatureRx 8=VoltageRxMin 9=EventRx
+			// 10=Altitude, 11=Climb 1, 12=Climb 3, 13=Climb 10 14=EventVario 15=misc Vario_1 16=misc Vario_2 17=misc Vario_3 18=misc Vario_4 19=misc Vario_5
+			// 20=Latitude, 21=Longitude, 22=Velocity, 23=Distance, 24=Direction, 25=TripDistance 26=NumSatellites 27=GPS-Fix 28=EventGPS
+			// 29=HomeDirection 30=Roll 31=Pitch 32=Yaw 33=GyroX 34=GyroY 35=GyroZ 36=Vibration 37=Version	
+			// 38=Voltage G, 39=Current G, 40=Capacity G, 41=Power G, 42=Balance G, 43=CellVoltage G1, 44=CellVoltage G2 .... 48=CellVoltage G6,
+			// 49=Revolution G, 50=FuelLevel, 51=Voltage G1, 52=Voltage G2, 53=Temperature G1, 54=Temperature G2 55=Speed G, 56=LowestCellVoltage,
+			// 57=LowestCellNumber, 58=Pressure, 59=Event G
+			// 60=Voltage E, 61=Current E, 62=Capacity E, 63=Power E, 64=Balance E, 65=CellVoltage E1, 66=CellVoltage E2 .... 78=CellVoltage E14,
+			// 79=Voltage E1, 80=Voltage E2, 81=Temperature E1, 82=Temperature E2 83=Revolution E 84=MotorTime 85=Speed 86=Event E
+			// 87=VoltageM, 88=CurrentM, 89=CapacityM, 90=PowerM, 91=RevolutionM, 92=TemperatureM 1, 93=TemperatureM 2 94=Voltage_min, 95=Current_max,
+			// 96=Revolution_max, 97=Temperature1_max, 98=Temperature2_max 99=Event M
+			// 100=Speed 101=Speed_max 102=PWM 103=Throttle 104=VoltageBEC 105=VoltageBEC_max 106=CurrentBEC 107=TemperatureBEC 108=TemperatureCap 
+			// 109=Timing(empty) 110=Temperature_aux 111=Gear 112=YGEGenExt 113=MotStatEscNr 114=misc ESC_15 115=VersionESC
+
+			// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=PowerOff, 104=BatterieLow, 105=Reset, 106=reserve
+			// 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max,
+			// 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
+			// 120=Speed 121=Speed_max 122=PWM 123=Throttle 124=VoltageBEC 125=VoltageBEC_max 125=CurrentBEC 127=TemperatureBEC 128=TemperatureCap 
+			// 129=Timing(empty) 130=Temperature_aux 131=Gear 132=YGEGenExt 133=MotStatEscNr 134=misc ESC_15 135=VersionESC
+			int channelConfigNumber = tmpRecordSet.getChannelConfigNumber();
+			int channelOffset = channelConfigNumber == 4 ? 20 : 0;
+			tmpRecordSet.get(100 + channelOffset).setName(device.getMeasurementReplacement("speed") + " M");
+			tmpRecordSet.get(100 + channelOffset).setUnit("km/h");
+			device.getMeasurement(channelConfigNumber, 100 + channelOffset).setStatistics(StatisticsType.fromString("min=true max=true avg=true sigma=false"));
+			tmpRecordSet.get(101 + channelOffset).setName(device.getMeasurementReplacement("speed") + " M_max");
+			tmpRecordSet.get(101 + channelOffset).setUnit("km/h");
+			tmpRecordSet.get(102 + channelOffset).setName("PWM");
+			tmpRecordSet.get(102 + channelOffset).setUnit("%");
+			tmpRecordSet.get(103 + channelOffset).setName(device.getMeasurementReplacement("throttle"));
+			tmpRecordSet.get(103 + channelOffset).setUnit("%");
+			tmpRecordSet.get(104 + channelOffset).setName(device.getMeasurementReplacement("voltage_bec") + " M");
+			tmpRecordSet.get(104 + channelOffset).setUnit("V");
+			tmpRecordSet.get(104 + channelOffset).setFactor(0.1);
+			device.getMeasurement(channelConfigNumber, 104 + channelOffset).setStatistics(StatisticsType.fromString("min=true max=true avg=true sigma=false"));
+			tmpRecordSet.get(104 + channelOffset).createProperty(IDevice.SYNC_ORDINAL, DataTypes.INTEGER, 6); //$NON-NLS-1$
+			tmpRecordSet.get(105 + channelOffset).setName(device.getMeasurementReplacement("voltage_bec") + " M_min");
+			tmpRecordSet.get(105 + channelOffset).setUnit("V");
+			tmpRecordSet.get(105 + channelOffset).setFactor(0.1);
+			tmpRecordSet.get(105 + channelOffset).createProperty(IDevice.SYNC_ORDINAL, DataTypes.INTEGER, 6); //$NON-NLS-1$
+			tmpRecordSet.get(106 + channelOffset).setName(device.getMeasurementReplacement("current_bec") + " M");
+			tmpRecordSet.get(106 + channelOffset).setUnit("A");
+			tmpRecordSet.get(106 + channelOffset).setFactor(1.0);
+			device.getMeasurement(channelConfigNumber, 106 + channelOffset).setStatistics(StatisticsType.fromString("min=true max=true avg=true sigma=false"));
+			tmpRecordSet.get(107 + channelOffset).setName(device.getMeasurementReplacement("temperature_bec") + " M");
+			tmpRecordSet.get(107 + channelOffset).setUnit("°C");
+			tmpRecordSet.get(107 + channelOffset).createProperty(IDevice.SYNC_ORDINAL, DataTypes.INTEGER, 7); //$NON-NLS-1$
+			device.getMeasurement(channelConfigNumber, 107 + channelOffset).setStatistics(StatisticsType.fromString("min=true max=true avg=true sigma=false"));
+			tmpRecordSet.get(108 + channelOffset).setName(device.getMeasurementReplacement("temperature_capacitor") + " M");
+			tmpRecordSet.get(108 + channelOffset).setUnit("°C");
+			tmpRecordSet.get(108 + channelOffset).createProperty(IDevice.SYNC_ORDINAL, DataTypes.INTEGER, 7); //$NON-NLS-1$
+			device.getMeasurement(channelConfigNumber, 108 + channelOffset).setStatistics(StatisticsType.fromString("min=true max=true avg=true sigma=false"));
+			tmpRecordSet.get(109 + channelOffset).setName(device.getMeasurementReplacement("timing") + " M");
+			tmpRecordSet.get(109 + channelOffset).setUnit("°");
+			tmpRecordSet.get(110 + channelOffset).setName(device.getMeasurementReplacement("temperature") + " M_3");
+			tmpRecordSet.get(110 + channelOffset).setUnit("°C");
+			tmpRecordSet.get(110 + channelOffset).createProperty(IDevice.SYNC_ORDINAL, DataTypes.INTEGER, 7); //$NON-NLS-1$
+			device.getMeasurement(channelConfigNumber, 110 + channelOffset).setStatistics(StatisticsType.fromString("min=true max=true avg=true sigma=false"));
+			tmpRecordSet.get(111 + channelOffset).setName(device.getMeasurementReplacement("gear") + " M");
+			tmpRecordSet.get(111 + channelOffset).setUnit("");
+			tmpRecordSet.get(112 + channelOffset).setName("YGEGenExt M");
+			tmpRecordSet.get(112 + channelOffset).setUnit("");
+			tmpRecordSet.get(113 + channelOffset).setName("MotStatEscNr M");
+			tmpRecordSet.get(113 + channelOffset).setUnit("#");
+			tmpRecordSet.get(114 + channelOffset).setName(device.getMeasurementReplacement("misc") + " ESC_15");
+			tmpRecordSet.get(114 + channelOffset).setUnit("");
+		}
 	}
 }

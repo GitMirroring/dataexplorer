@@ -69,6 +69,7 @@ import gde.device.DeviceConfiguration;
 import gde.device.IDevice;
 import gde.device.MeasurementPropertyTypes;
 import gde.device.MeasurementType;
+import gde.device.StatisticsType;
 import gde.device.graupner.HoTTbinReader.BinParser;
 import gde.device.graupner.hott.MessageIds;
 import gde.device.resource.DeviceXmlResource;
@@ -2359,8 +2360,46 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 	@Override
 	public void applyMeasurementSpecialties(String[] fileRecordsProperties, RecordSet recordSet) {
 		
-		if (recordSet.getChannelConfigNumber() == 3 && recordSet.getChannelConfigName().equals("GPS")) {
-			for (int i = 19; i < 22; ++i) {
+		if (recordSet.getChannelConfigNumber() == 2 && recordSet.getChannelConfigName().equals("Vario")) {
+			for (int i = 8; i < recordSet.size()-1; ++i) {
+				Record record = recordSet.get(i);
+				if (record != null && !record.getName().startsWith("vari")) {
+					if (fileRecordsProperties[i].contains("factor_DOUBLE=")) {
+						int startIndex = fileRecordsProperties[i].indexOf("factor_DOUBLE=") + "factor_DOUBLE=".length();
+						int endIndex = fileRecordsProperties[i].indexOf(Record.DELIMITER, startIndex);
+						if (log.isLoggable(Level.FINE)) log.log(Level.FINE, record.getName() + " set - factor_DOUBLE " + fileRecordsProperties[i].substring(startIndex, endIndex));
+						record.setFactor(Double.parseDouble(fileRecordsProperties[i].substring(startIndex, endIndex)));
+					}
+					if (fileRecordsProperties[i].contains("scale_sync_ref_ordinal_INTEGER=")) {
+						int startIndex = fileRecordsProperties[i].indexOf("scale_sync_ref_ordinal_INTEGER=") + "scale_sync_ref_ordinal_INTEGER=".length();
+						int endIndex = fileRecordsProperties[i].indexOf(Record.DELIMITER, startIndex);
+						if (log.isLoggable(Level.FINE)) log.log(Level.FINE, record.getName() + " set - scale_sync_ref_ordinal_INTEGER " + fileRecordsProperties[i].substring(startIndex, endIndex));
+						record.createProperty(IDevice.SYNC_ORDINAL, DataTypes.INTEGER, Integer.parseInt(fileRecordsProperties[i].substring(startIndex, endIndex))); //$NON-NLS-1$
+					}
+				}
+			} 
+		}
+		else if (recordSet.getChannelConfigNumber() == 3 && recordSet.getChannelConfigName().equals("GPS")) {
+			for (int i = 19; i < recordSet.size()-1; ++i) {
+				Record record = recordSet.get(i);
+				if (record != null && !record.getName().startsWith("vari")) {
+					if (fileRecordsProperties[i].contains("factor_DOUBLE=")) {
+						int startIndex = fileRecordsProperties[i].indexOf("factor_DOUBLE=") + "factor_DOUBLE=".length();
+						int endIndex = fileRecordsProperties[i].indexOf(Record.DELIMITER, startIndex);
+						if (log.isLoggable(Level.FINE)) log.log(Level.FINE, record.getName() + " set - factor_DOUBLE " + fileRecordsProperties[i].substring(startIndex, endIndex));
+						record.setFactor(Double.parseDouble(fileRecordsProperties[i].substring(startIndex, endIndex)));
+					}
+					if (fileRecordsProperties[i].contains("scale_sync_ref_ordinal_INTEGER=")) {
+						int startIndex = fileRecordsProperties[i].indexOf("scale_sync_ref_ordinal_INTEGER=") + "scale_sync_ref_ordinal_INTEGER=".length();
+						int endIndex = fileRecordsProperties[i].indexOf(Record.DELIMITER, startIndex);
+						if (log.isLoggable(Level.FINE)) log.log(Level.FINE, record.getName() + " set - scale_sync_ref_ordinal_INTEGER " + fileRecordsProperties[i].substring(startIndex, endIndex));
+						record.createProperty(IDevice.SYNC_ORDINAL, DataTypes.INTEGER, Integer.parseInt(fileRecordsProperties[i].substring(startIndex, endIndex))); //$NON-NLS-1$
+					}
+				}
+			} 
+		}
+		else if (recordSet.getChannelConfigNumber() == 7 && recordSet.getChannelConfigName().equals("ESC")) {
+			for (int i = 14; i < recordSet.size()-1; ++i) {
 				Record record = recordSet.get(i);
 				if (record != null && !record.getName().startsWith("vari")) {
 					if (fileRecordsProperties[i].contains("factor_DOUBLE=")) {
@@ -2512,4 +2551,61 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 		}
 		return startTimeStamp_ms;
 	}
+
+	/**
+	 * update the record set ESC dependent record meta data
+	 * @param version detected in byte buffer
+	 * @param device HoTTAdapter
+	 * @param tmpRecordSet the record set to be updated
+	 */
+	protected static void updateEscTypeDependent(int version, IDevice device, RecordSet tmpRecordSet) {
+		if (version == 3) {
+			// 14=Speed 15=Speed_max 16=PWM 17=Throttle 18=VoltageBEC 19=VoltageBEC_max 20=CurrentBEC 21=TemperatureBEC 22=TemperatureBEC_max 
+			// 23=Timing(empty) 24=Temperature_aux 25=Gear 26=YGEGenExt 27=MotStatEscNr 28=misc_ESC_15 29=VersionESC
+			tmpRecordSet.get(14).setName(device.getMeasurementReplacement("speed"));
+			tmpRecordSet.get(14).setUnit("km/h");
+			device.getMeasurement(7, 14).setStatistics(StatisticsType.fromString("min=true max=true avg=true sigma=false"));
+			tmpRecordSet.get(15).setName(device.getMeasurementReplacement("speed") + " max");
+			tmpRecordSet.get(15).setUnit("km/h");
+			tmpRecordSet.get(16).setName("PWM");
+			tmpRecordSet.get(16).setUnit("%");
+			tmpRecordSet.get(17).setName(device.getMeasurementReplacement("throttle"));
+			tmpRecordSet.get(17).setUnit("%");
+			tmpRecordSet.get(18).setName(device.getMeasurementReplacement("voltage_bec"));
+			tmpRecordSet.get(18).setUnit("V");
+			tmpRecordSet.get(18).setFactor(0.1);
+			device.getMeasurement(7, 18).setStatistics(StatisticsType.fromString("min=true max=true avg=true sigma=false"));
+			tmpRecordSet.get(19).setName(device.getMeasurementReplacement("voltage_bec") + " min");
+			tmpRecordSet.get(19).setUnit("V");
+			tmpRecordSet.get(19).setFactor(0.1);
+			tmpRecordSet.get(19).createProperty(IDevice.SYNC_ORDINAL, DataTypes.INTEGER, 18); //$NON-NLS-1$
+			tmpRecordSet.get(20).setName(device.getMeasurementReplacement("current_bec"));
+			tmpRecordSet.get(20).setUnit("A");
+			tmpRecordSet.get(20).setFactor(1.0);
+			device.getMeasurement(7, 20).setStatistics(StatisticsType.fromString("min=true max=true avg=true sigma=false"));
+			tmpRecordSet.get(21).setName(device.getMeasurementReplacement("temperature_bec"));
+			tmpRecordSet.get(21).setUnit("°C");
+			tmpRecordSet.get(21).createProperty(IDevice.SYNC_ORDINAL, DataTypes.INTEGER, 6); //$NON-NLS-1$
+			device.getMeasurement(7, 21).setStatistics(StatisticsType.fromString("min=true max=true avg=true sigma=false"));
+			tmpRecordSet.get(22).setName(device.getMeasurementReplacement("temperature_capacitor"));
+			tmpRecordSet.get(22).setUnit("°C");
+			device.getMeasurement(7, 22).setStatistics(StatisticsType.fromString("min=true max=true avg=true sigma=false"));
+			tmpRecordSet.get(22).createProperty(IDevice.SYNC_ORDINAL, DataTypes.INTEGER, 6); //$NON-NLS-1$
+			tmpRecordSet.get(23).setName(device.getMeasurementReplacement("timing"));
+			tmpRecordSet.get(23).setUnit("°");
+			tmpRecordSet.get(24).setName(device.getMeasurementReplacement("temperature") + " 3");
+			tmpRecordSet.get(24).setUnit("°C");
+			device.getMeasurement(7, 24).setStatistics(StatisticsType.fromString("min=true max=true avg=true sigma=false"));
+			tmpRecordSet.get(24).createProperty(IDevice.SYNC_ORDINAL, DataTypes.INTEGER, 6); //$NON-NLS-1$
+			tmpRecordSet.get(25).setName(device.getMeasurementReplacement("gear"));
+			tmpRecordSet.get(25).setUnit("");
+			tmpRecordSet.get(26).setName("YGEGenExt");
+			tmpRecordSet.get(26).setUnit("");
+			tmpRecordSet.get(27).setName("MotStatEscNr");
+			tmpRecordSet.get(27).setUnit("#");
+			tmpRecordSet.get(28).setName(device.getMeasurementReplacement("misc") + " ESC_15");
+			tmpRecordSet.get(28).setUnit("");
+		}
+	}
+	
 }

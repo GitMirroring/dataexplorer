@@ -246,8 +246,8 @@ public class HoTTbinReaderD extends HoTTbinReader {
 						case HoTTAdapter.SENSOR_TYPE_SPEED_CONTROL_19200:
 							if (HoTTbinReaderD.isSensorType[HoTTAdapter.Sensor.ESC.ordinal()]) {
 								bufCopier.copyToFreeBuffer();
-								if (bufCopier.is3BuffersFull()) {
-									parseESC(HoTTbinReader.buf0, HoTTbinReader.buf1, HoTTbinReader.buf2, HoTTbinReader.buf3, channelNumber);
+								if (bufCopier.is4BuffersFull()) {
+									parseESC(HoTTbinReader.buf0, HoTTbinReader.buf1, HoTTbinReader.buf2, HoTTbinReader.buf3, HoTTbinReader.buf4, channelNumber);
 									bufCopier.clearBuffers();
 									isSensorData = true;
 								}
@@ -542,7 +542,7 @@ public class HoTTbinReaderD extends HoTTbinReader {
 											//System.out.println("isElectricData i = " + i);
 											isReceiverData = isVarioData = isGPSData = isGeneralData = isElectricData = isMotorDriverData = false;
 										}
-										parseESC(HoTTbinReader.buf0, HoTTbinReader.buf1, HoTTbinReader.buf2, HoTTbinReader.buf3, channelNumber);
+										parseESC(HoTTbinReader.buf0, HoTTbinReader.buf1, HoTTbinReader.buf2, HoTTbinReader.buf3, HoTTbinReader.buf4, channelNumber);
 										isMotorDriverData = true;
 									}
 									break;
@@ -1170,7 +1170,7 @@ public class HoTTbinReaderD extends HoTTbinReader {
 	 * @param channelNumber
 	 * @throws DataInconsitsentException
 	 */
-	private static void parseESC(byte[] _buf0, byte[] _buf1, byte[] _buf2, byte[] _buf3, int channelNumber) throws DataInconsitsentException {
+	private static void parseESC(byte[] _buf0, byte[] _buf1, byte[] _buf2, byte[] _buf3, byte[] _buf4, int channelNumber) throws DataInconsitsentException {
 		HoTTbinReader.tmpVoltage = DataParser.parse2Short(_buf1, 3);
 		HoTTbinReader.tmpCurrent = DataParser.parse2Short(_buf2, 1);
 		HoTTbinReader.tmpCapacity = DataParser.parse2Short(_buf1, 7);

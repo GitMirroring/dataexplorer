@@ -97,6 +97,7 @@ public class HoTTbinReader2 extends HoTTbinReader {
 		boolean isSensorData = false;
 		boolean isVarioDetected = false;
 		boolean isGPSdetected = false;
+		boolean isESCdetected = false;
 		boolean[] isResetMinMax = new boolean[] {false, false, false, false, false}; //ESC, EAM, GAM, GPS, Vario
 		HoTTbinReader2.recordSet = null;
 		// 0=RX-TX-VPacks, 1=RXSQ, 2=Strength, 3=VPacks, 4=Tx, 5=Rx, 6=VoltageRx, 7=TemperatureRx 8=VoltageRxMin 9=EventRx
@@ -110,10 +111,14 @@ public class HoTTbinReader2 extends HoTTbinReader {
 		// 79=Voltage E1, 80=Voltage E2, 81=Temperature E1, 82=Temperature E2 83=Revolution E 84=MotorTime 85=Speed 86=Event E
 		// 87=VoltageM, 88=CurrentM, 89=CapacityM, 90=PowerM, 91=RevolutionM, 92=TemperatureM 1, 93=TemperatureM 2 94=Voltage_min, 95=Current_max,
 		// 96=Revolution_max, 97=Temperature1_max, 98=Temperature2_max 99=Event M
+		// 100=Speed 101=Speed_max 102=PWM 103=Throttle 104=VoltageBEC 105=VoltageBEC_max 106=CurrentBEC 107=TemperatureBEC 108=TemperatureCap 
+		// 109=Timing(empty) 110=Temperature_aux 111=Gear 112=YGEGenExt 113=MotStatEscNr 114=misc ESC_15 115=VersionESC
 
 		// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=PowerOff, 104=BatterieLow, 105=Reset, 106=reserve
 		// 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max,
 		// 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
+		// 120=Speed 121=Speed_max 122=PWM 123=Throttle 124=VoltageBEC 125=VoltageBEC_max 125=CurrentBEC 127=TemperatureBEC 128=TemperatureCap 
+		// 129=Timing(empty) 130=Temperature_aux 131=Gear 132=YGEGenExt 133=MotStatEscNr 134=misc ESC_15 135=VersionESC
 		HoTTbinReader2.points = new int[device.getNumberOfMeasurements(channelNumber)];
 		HoTTbinReader.pointsGAM = HoTTbinReader.pointsEAM = HoTTbinReader.pointsESC = HoTTbinReader.pointsVario = HoTTbinReader.pointsGPS = HoTTbinReader2.points;
 		HoTTbinReader.dataBlockSize = 64;
@@ -131,7 +136,7 @@ public class HoTTbinReader2 extends HoTTbinReader {
 		HoTTbinReader.gpsBinParser = Sensor.GPS.createBinParser2(HoTTbinReader.pickerParameters, HoTTbinReader2.points, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
 		HoTTbinReader.gamBinParser = Sensor.GAM.createBinParser2(HoTTbinReader.pickerParameters, HoTTbinReader2.points, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
 		HoTTbinReader.eamBinParser = Sensor.EAM.createBinParser2(HoTTbinReader.pickerParameters, HoTTbinReader2.points, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
-		HoTTbinReader.escBinParser = Sensor.ESC.createBinParser2(HoTTbinReader.pickerParameters, HoTTbinReader2.points, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3 });
+		HoTTbinReader.escBinParser = Sensor.ESC.createBinParser2(HoTTbinReader.pickerParameters, HoTTbinReader2.points, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
 		HoTTbinReader.isTextModusSignaled = false;
 		boolean isSdLogFormat = Boolean.parseBoolean(header.get(HoTTAdapter.SD_FORMAT));
 		long numberDatablocks = isSdLogFormat ? fileSize - HoTTbinReaderX.headerSize - HoTTbinReaderX.footerSize : fileSize / HoTTbinReader.dataBlockSize;
@@ -289,15 +294,23 @@ public class HoTTbinReader2 extends HoTTbinReader {
 						case HoTTAdapter.SENSOR_TYPE_SPEED_CONTROL_19200:
 							if (detectedSensors.contains(Sensor.ESC)) {
 								bufCopier.copyToFreeBuffer();
-								if (bufCopier.is3BuffersFull()) {
+								if (bufCopier.is4BuffersFull()) {
 									HoTTbinReader2.escBinParser.parse();
+									
+									if (!isESCdetected) {
+										HoTTAdapter2.updateEscTypeDependent((HoTTbinReader.buf4[9] & 0xFF), device, HoTTbinReader2.recordSet);
+										isESCdetected = true;								
+									}
+
 									bufCopier.clearBuffers();
 									isSensorData = true;
 									if (((EscBinParser) HoTTbinReader2.escBinParser).isChannelsChannel()) {
 										// 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max,
 										// 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
+										// 120=Speed 121=Speed_max 122=PWM 123=Throttle 124=VoltageBEC 125=VoltageBEC_max 125=CurrentBEC 127=TemperatureBEC 128=TemperatureCap 
+										// 129=Timing(empty) 130=Temperature_aux 131=Gear 132=YGEGenExt 133=MotStatEscNr 134=misc ESC_15 135=VersionESC
 										if (!isResetMinMax[0] && HoTTbinReader2.points[107] != 0) {
-											for (int j=107; j<120; ++j) {
+											for (int j=107; j<136; ++j) {
 												tmpRecordSet.get(j).setMinMax(HoTTbinReader2.points[j], HoTTbinReader2.points[j]);
 											}
 											isResetMinMax[0] = true;
@@ -305,8 +318,10 @@ public class HoTTbinReader2 extends HoTTbinReader {
 									} else {
 										// 87=VoltageM, 88=CurrentM, 89=CapacityM, 90=PowerM, 91=RevolutionM, 92=TemperatureM 1, 93=TemperatureM 2 94=Voltage_min, 95=Current_max,
 										// 96=Revolution_max, 97=Temperature1_max, 98=Temperature2_max 99=Event M
+										// 100=Speed 101=Speed_max 102=PWM 103=Throttle 104=VoltageBEC 105=VoltageBEC_max 106=CurrentBEC 107=TemperatureBEC 108=TemperatureCap 
+										// 109=Timing(empty) 110=Temperature_aux 111=Gear 112=YGEGenExt 113=MotStatEscNr 114=misc ESC_15 115=VersionESC
 										if (!isResetMinMax[0] && HoTTbinReader2.points[87] != 0) {
-											for (int j=87; j<100; ++j) {
+											for (int j=87; j<116; ++j) {
 												tmpRecordSet.get(j).setMinMax(HoTTbinReader2.points[j], HoTTbinReader2.points[j]);
 											}
 											isResetMinMax[0] = true;
@@ -400,6 +415,7 @@ public class HoTTbinReader2 extends HoTTbinReader {
 		boolean isJustMigrated = false;
 		boolean isVarioDetected = false;
 		boolean isGPSdetected = false;
+		boolean isESCdetected = false;
 		boolean[] isResetMinMax = new boolean[] {false, false, false, false, false}; //ESC, EAM, GAM, GPS, Vario
 		// 0=RX-TX-VPacks, 1=RXSQ, 2=Strength, 3=VPacks, 4=Tx, 5=Rx, 6=VoltageRx, 7=TemperatureRx 8=VoltageRxMin 9=EventRx
 		// 10=Altitude, 11=Climb 1, 12=Climb 3, 13=Climb 10 14=EventVario 15=misc Vario_1 16=misc Vario_2 17=misc Vario_3 18=misc Vario_4 19=misc Vario_5
@@ -412,10 +428,14 @@ public class HoTTbinReader2 extends HoTTbinReader {
 		// 79=Voltage E1, 80=Voltage E2, 81=Temperature E1, 82=Temperature E2 83=Revolution E 84=MotorTime 85=Speed 86=Event E
 		// 87=VoltageM, 88=CurrentM, 89=CapacityM, 90=PowerM, 91=RevolutionM, 92=TemperatureM 1, 93=TemperatureM 2 94=Voltage_min, 95=Current_max,
 		// 96=Revolution_max, 97=Temperature1_max, 98=Temperature2_max 99=Event M
+		// 100=Speed 101=Speed_max 102=PWM 103=Throttle 104=VoltageBEC 105=VoltageBEC_max 106=CurrentBEC 107=TemperatureBEC 108=TemperatureCap 
+		// 109=Timing(empty) 110=Temperature_aux 111=Gear 112=YGEGenExt 113=MotStatEscNr 114=misc ESC_15 115=VersionESC
 
 		// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=PowerOff, 104=BatterieLow, 105=Reset, 106=reserve
 		// 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max,
 		// 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
+		// 120=Speed 121=Speed_max 122=PWM 123=Throttle 124=VoltageBEC 125=VoltageBEC_max 125=CurrentBEC 127=TemperatureBEC 128=TemperatureCap 
+		// 129=Timing(empty) 130=Temperature_aux 131=Gear 132=YGEGenExt 133=MotStatEscNr 134=misc ESC_15 135=VersionESC
 		HoTTbinReader2.points = new int[device.getNumberOfMeasurements(channelNumber)];
 		HoTTbinReader.pointsGAM = new int[HoTTbinReader2.points.length];
 		HoTTbinReader.pointsEAM = new int[HoTTbinReader2.points.length];
@@ -440,7 +460,7 @@ public class HoTTbinReader2 extends HoTTbinReader {
 		HoTTbinReader.gpsBinParser = Sensor.GPS.createBinParser2(HoTTbinReader.pickerParameters, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
 		HoTTbinReader.gamBinParser = Sensor.GAM.createBinParser2(HoTTbinReader.pickerParameters, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
 		HoTTbinReader.eamBinParser = Sensor.EAM.createBinParser2(HoTTbinReader.pickerParameters, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
-		HoTTbinReader.escBinParser = Sensor.ESC.createBinParser2(HoTTbinReader.pickerParameters, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3 });
+		HoTTbinReader.escBinParser = Sensor.ESC.createBinParser2(HoTTbinReader.pickerParameters, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
 		byte actualSensor = -1, lastSensor = -1;
 		int logCountVario = 0, logCountGPS = 0, logCountGAM = 0, logCountEAM = 0, logCountESC = 0;
 		EnumSet<Sensor> migrationJobs = EnumSet.noneOf(Sensor.class);
@@ -500,7 +520,7 @@ public class HoTTbinReader2 extends HoTTbinReader {
 							actualSensor = (byte) (HoTTbinReader.buf[7] & 0xFF);
 
 						if (actualSensor != lastSensor) {
-							if (logCountVario >= 5 || logCountGPS >= 5 || logCountGAM >= 5 || logCountEAM >= 5 || logCountESC >= 4) {
+							if (logCountVario >= 5 || logCountGPS >= 5 || logCountGAM >= 5 || logCountEAM >= 5 || logCountESC >= 5) {
 								switch (lastSensor) {
 								case HoTTAdapter.SENSOR_TYPE_VARIO_115200:
 								case HoTTAdapter.SENSOR_TYPE_VARIO_19200:
@@ -576,6 +596,11 @@ public class HoTTbinReader2 extends HoTTbinReader {
 										}
 										HoTTbinReader2.escBinParser.parse();
 										migrationJobs.add(Sensor.ESC);
+										
+										if (!isESCdetected) {
+											HoTTAdapter2.updateEscTypeDependent((HoTTbinReader.buf4[9] & 0xFF), device, HoTTbinReader2.recordSet);
+											isESCdetected = true;								
+										}
 									}
 									break;
 								}
@@ -724,8 +749,10 @@ public class HoTTbinReader2 extends HoTTbinReader {
 			if (((EscBinParser) HoTTbinReader2.escBinParser).isChannelsChannel()) {
 				// 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max,
 				// 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
+				// 120=Speed 121=Speed_max 122=PWM 123=Throttle 124=VoltageBEC 125=VoltageBEC_max 125=CurrentBEC 127=TemperatureBEC 128=TemperatureCap 
+				// 129=Timing(empty) 130=Temperature_aux 131=Gear 132=YGEGenExt 133=MotStatEscNr 134=misc ESC_15 135=VersionESC
 				if (!isResetMinMax[0] && HoTTbinReader2.points[107] != 0) {
-					for (int i=107; i<120; ++i) {
+					for (int i=107; i<135; ++i) {
 						tmpRecordSet.get(i).setMinMax(HoTTbinReader2.points[i], HoTTbinReader2.points[i]);
 					}
 					isResetMinMax[0] = true;
@@ -733,8 +760,10 @@ public class HoTTbinReader2 extends HoTTbinReader {
 			} else {
 				// 87=VoltageM, 88=CurrentM, 89=CapacityM, 90=PowerM, 91=RevolutionM, 92=TemperatureM 1, 93=TemperatureM 2 94=Voltage_min, 95=Current_max,
 				// 96=Revolution_max, 97=Temperature1_max, 98=Temperature2_max 99=Event M
+				// 100=Speed 101=Speed_max 102=PWM 103=Throttle 104=VoltageBEC 105=VoltageBEC_max 106=CurrentBEC 107=TemperatureBEC 108=TemperatureCap 
+				// 109=Timing(empty) 110=Temperature_aux 111=Gear 112=YGEGenExt 113=MotStatEscNr 114=misc ESC_15 115=VersionESC
 				if (!isResetMinMax[0] && HoTTbinReader2.points[87] != 0) {
-					for (int i=87; i<100; ++i) {
+					for (int i=87; i<114; ++i) {
 						tmpRecordSet.get(i).setMinMax(HoTTbinReader2.points[i], HoTTbinReader2.points[i]);
 					}
 					isResetMinMax[0] = true;
@@ -1447,7 +1476,7 @@ public class HoTTbinReader2 extends HoTTbinReader {
 
 		protected EscBinParser(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[][] buffers) {
 			super(pickerParameters, points, timeSteps_ms, buffers, Sensor.ESC);
-			if (buffers.length != 4) throw new InvalidParameterException("buffers mismatch: " + buffers.length);
+			if (buffers.length != 5) throw new InvalidParameterException("buffers mismatch: " + buffers.length);
 			this.isChannelsChannel = this.pickerParameters.analyzer.getActiveChannel().getNumber() == HoTTAdapter2.CHANNELS_CHANNEL_NUMBER;
 		}
 
@@ -1461,6 +1490,8 @@ public class HoTTbinReader2 extends HoTTbinReader {
 			if (this.isChannelsChannel) {
 				// 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max,
 				// 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
+				// 120=Speed 121=Speed_max 122=PWM 123=Throttle 124=VoltageBEC 125=VoltageBEC_max 125=CurrentBEC 127=TemperatureBEC 128=TemperatureCap 
+				// 129=Timing(empty) 130=Temperature_aux 131=Gear 132=YGEGenExt 133=MotStatEscNr 134=misc ESC_15 135=VersionESC
 				if (isPointsValid()) {
 					this.points[107] = this.tmpVoltage * 1000;
 					this.points[108] = this.tmpCurrent * 1000;
@@ -1482,6 +1513,27 @@ public class HoTTbinReader2 extends HoTTbinReader {
 					this.points[117] = ((this._buf2[0] & 0xFF) - 20) * 1000;
 					this.points[118] = ((this._buf3[0] & 0xFF) - 20) * 1000;
 					this.points[119] = (this._buf1[1] & 0xFF) * 1000; // inverse event
+					
+					if ((_buf4[9] & 0xFF) == 3) { //Extended YGE protocol 				
+						// 120=Speed 121=Speed_max 122=PWM 123=Throttle 124=VoltageBEC 125=VoltageBEC_max 125=CurrentBEC 127=TemperatureBEC 128=TemperatureCap 
+						// 129=Timing(empty) 130=Temperature_aux 131=Gear 132=YGEGenExt 133=MotStatEscNr 134=misc ESC_15 135=VersionESC
+						this.points[120] = DataParser.parse2Short(_buf3, 1) * 1000; //Speed
+						this.points[121] = DataParser.parse2Short(_buf3, 3) * 1000; //Speed max
+						this.points[122] = (_buf3[5] & 0xFF) * 1000; 								//PWM
+						this.points[123] = (_buf3[6] & 0xFF) * 1000; 								//Throttle
+						this.points[124] = (_buf3[7] & 0xFF) * 1000; 								//BEC Voltage
+						this.points[125] = (_buf3[8] & 0xFF) * 1000; 								//BEC Voltage min
+						this.points[126] = DataParser.parse2UnsignedShort(_buf3[9], _buf4[0]) * 1000; 	//BEC Current
+						this.points[127] = ((_buf4[1] & 0xFF) - 20) * 1000; 				//BEC Temperature
+						this.points[128] = ((_buf4[2] & 0xFF) - 20) * 1000; 				//Capacity Temperature
+						this.points[129] = (_buf4[3] & 0xFF) * 1000; 								//Timing
+						this.points[130] = ((_buf4[4] & 0xFF) - 20) * 1000; 				//Aux Temperature
+						this.points[131] = DataParser.parse2Short(_buf4, 5) * 1000; //Gear
+						this.points[132] = (_buf4[7] & 0xFF) * 1000; 								//YGEGenExt
+						this.points[133] = (_buf4[8] & 0xFF) * 1000; 								//MotStatEscNr
+						this.points[133] = 0; 																			//spare
+						this.points[135] = (_buf4[9] & 0xFF) * 1000; 								//Version ESC
+					}
 					return true;
 				}
 				this.points[119] = (this._buf1[1] & 0xFF) * 1000; // inverse event
@@ -1489,6 +1541,8 @@ public class HoTTbinReader2 extends HoTTbinReader {
 			} else {
 				// 87=VoltageM, 88=CurrentM, 89=CapacityM, 90=PowerM, 91=RevolutionM, 92=TemperatureM 1, 93=TemperatureM 2 94=Voltage_min, 95=Current_max,
 				// 96=Revolution_max, 97=Temperature1_max, 98=Temperature2_max 99=Event M
+				// 100=Speed 101=Speed_max 102=PWM 103=Throttle 104=VoltageBEC 105=VoltageBEC_max 106=CurrentBEC 107=TemperatureBEC 108=TemperatureCap 
+				// 109=Timing(empty) 110=Temperature_aux 111=Gear 112=YGEGenExt 113=MotStatEscNr 114=misc ESC_15 115=VersionESC
 				if (isPointsValid()) {
 					this.points[87] = this.tmpVoltage * 1000;
 					this.points[88] = this.tmpCurrent * 1000;
@@ -1510,6 +1564,28 @@ public class HoTTbinReader2 extends HoTTbinReader {
 					this.points[97] = ((this._buf2[0] & 0xFF) - 20) * 1000;
 					this.points[98] = ((this._buf3[0] & 0xFF) - 20) * 1000;
 					this.points[99] = (this._buf1[1] & 0xFF) * 1000; // inverse event
+					
+					if ((_buf4[9] & 0xFF) == 3) { //Extended YGE protocol 				
+						// 100=Speed 101=Speed_max 102=PWM 103=Throttle 104=VoltageBEC 105=VoltageBEC_max 106=CurrentBEC 107=TemperatureBEC 108=TemperatureCap 
+						// 109=Timing(empty) 110=Temperature_aux 111=Gear 112=YGEGenExt 113=MotStatEscNr 114=VersionESC
+						this.points[100] = DataParser.parse2Short(_buf3, 1) * 1000; //Speed
+						this.points[101] = DataParser.parse2Short(_buf3, 3) * 1000; //Speed max
+						this.points[102] = (_buf3[5] & 0xFF) * 1000; 								//PWM
+						this.points[103] = (_buf3[6] & 0xFF) * 1000; 								//Throttle
+						this.points[104] = (_buf3[7] & 0xFF) * 1000; 								//BEC Voltage
+						this.points[105] = (_buf3[8] & 0xFF) * 1000; 								//BEC Voltage min
+						this.points[106] = DataParser.parse2UnsignedShort(_buf3[9], _buf4[0]) * 1000; 	//BEC Current
+						this.points[107] = ((_buf4[1] & 0xFF) - 20) * 1000; 				//BEC Temperature
+						this.points[108] = ((_buf4[2] & 0xFF) - 20) * 1000; 				//Capacity Temperature
+						this.points[109] = (_buf4[3] & 0xFF) * 1000; 								//Timing
+						this.points[110] = ((_buf4[4] & 0xFF) - 20) * 1000; 				//Aux Temperature
+						this.points[111] = DataParser.parse2Short(_buf4, 5) * 1000; //Gear
+						this.points[112] = (_buf4[7] & 0xFF) * 1000; 								//YGEGenExt
+						this.points[113] = (_buf4[8] & 0xFF) * 1000; 								//MotStatEscNr
+						this.points[114] = 0;																				//spare
+						this.points[115] = (_buf4[9] & 0xFF) * 1000; 								//Version ESC
+					}
+
 					++this.parseCount;
 					return true;
 				}
@@ -1536,12 +1612,16 @@ public class HoTTbinReader2 extends HoTTbinReader {
 			if (this.isChannelsChannel) {
 				// 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max,
 				// 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
+				// 120=Speed 121=Speed_max 122=PWM 123=Throttle 124=VoltageBEC 125=VoltageBEC_max 125=CurrentBEC 127=TemperatureBEC 128=TemperatureCap 
+				// 129=Timing(empty) 130=Temperature_aux 131=Gear 132=YGEGenExt 133=MotStatEscNr 134=VersionESC
 				for (int j = 107; j < targetPoints.length; j++) {
 					targetPoints[j] = this.points[j];
 				}
 			} else {
 				// 87=VoltageM, 88=CurrentM, 89=CapacityM, 90=PowerM, 91=RevolutionM, 92=TemperatureM 1, 93=TemperatureM 2 94=Voltage_min, 95=Current_max,
 				// 96=Revolution_max, 97=Temperature1_max, 98=Temperature2_max 99=Event M
+				// 100=Speed 101=Speed_max 102=PWM 103=Throttle 104=VoltageBEC 105=VoltageBEC_max 106=CurrentBEC 107=TemperatureBEC 108=TemperatureCap 
+				// 109=Timing(empty) 110=Temperature_aux 111=Gear 112=YGEGenExt 113=MotStatEscNr 114=VersionESC
 				for (int j = 87; j < targetPoints.length; j++) {
 					targetPoints[j] = this.points[j];
 				}

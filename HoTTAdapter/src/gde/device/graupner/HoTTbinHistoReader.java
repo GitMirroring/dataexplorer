@@ -262,7 +262,7 @@ public class HoTTbinHistoReader {
 		} else if (activeChannelNumber == Sensor.EAM.getChannelNumber()) {
 			binParser = Sensor.EAM.createBinParser(pickerParameters, points, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
 		} else if (activeChannelNumber == Sensor.ESC.getChannelNumber()) {
-			binParser = Sensor.ESC.createBinParser(pickerParameters, points, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3 });
+			binParser = Sensor.ESC.createBinParser(pickerParameters, points, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
 		} else {
 			throw new UnsupportedOperationException();
 		}
@@ -378,7 +378,7 @@ public class HoTTbinHistoReader {
 					case HoTTAdapter.SENSOR_TYPE_SPEED_CONTROL_19200:
 						if (detectedSensors.contains(Sensor.ESC)) {
 							bufCopier.copyToFreeBuffer();
-							if (bufCopier.is3BuffersFull()) {
+							if (bufCopier.is4BuffersFull()) {
 								if (binParser instanceof EscBinParser && binParser.parse()) pointsAdder.invoke();
 								isSensorData = true;
 								bufCopier.clearBuffers();
@@ -458,7 +458,7 @@ public class HoTTbinHistoReader {
 		} else if (activeChannelNumber == Sensor.EAM.getChannelNumber() && detectedSensors.contains(Sensor.EAM)) {
 			binParser = Sensor.EAM.createBinParser(pickerParameters, points, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
 		} else if (activeChannelNumber == Sensor.ESC.getChannelNumber() && detectedSensors.contains(Sensor.ESC)) {
-			binParser = Sensor.ESC.createBinParser(pickerParameters, points, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3 });
+			binParser = Sensor.ESC.createBinParser(pickerParameters, points, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
 		} else {
 			throw new UnsupportedOperationException();
 		}
@@ -515,7 +515,7 @@ public class HoTTbinHistoReader {
 
 					if (actualSensor != lastSensor) {
 						// write data just after sensor switch
-						if (logCountVario >= 5 || logCountGPS >= 5 || logCountGeneral >= 5 || logCountElectric >= 5 || logCountSpeedControl >= 4) {
+						if (logCountVario >= 5 || logCountGPS >= 5 || logCountGeneral >= 5 || logCountElectric >= 5 || logCountSpeedControl >= 5) {
 							switch (lastSensor) {
 							case HoTTAdapter.SENSOR_TYPE_VARIO_115200:
 							case HoTTAdapter.SENSOR_TYPE_VARIO_19200:

@@ -68,7 +68,7 @@ public class HoTTlogReader extends HoTTbinReader {
 		HoTTbinReader.pointsGAM = new int[26];
 		HoTTbinReader.pointsEAM = new int[31];
 		HoTTbinReader.pointsChannel = new int[23];
-		HoTTbinReader.pointsESC = new int[14];
+		HoTTbinReader.pointsESC = new int[30];
 		HoTTbinReader.timeStep_ms = 0;
 		int numberLogChannels = Integer.valueOf(fileInfoHeader.get("LOG NOB CHANNEL"));
 		HoTTbinReader.dataBlockSize = 66 + numberLogChannels * 2;
@@ -79,6 +79,7 @@ public class HoTTlogReader extends HoTTbinReader {
 		HoTTbinReader.isTextModusSignaled = false;
 		boolean isVarioDetected = false;
 		boolean isGPSdetected = false;
+		boolean isESCdetected = false;
 		int countPackageLoss = 0;
 		int logDataOffset = Integer.valueOf(fileInfoHeader.get("LOG DATA OFFSET"));
 		long numberDatablocks = (fileSize - logDataOffset) / HoTTbinReader.dataBlockSize;
@@ -288,6 +289,11 @@ public class HoTTlogReader extends HoTTbinReader {
 								// recordSetElectric initialized and ready to add data
 								parseESC(HoTTbinReader.buf, HoTTbinReader.pointsESC, HoTTbinReader.recordSetESC);
 								HoTTbinReader.recordSetESC.addPoints(HoTTbinReader.pointsESC, HoTTbinReader.timeStep_ms);
+
+								if (!isESCdetected) {
+									HoTTAdapter.updateEscTypeDependent((HoTTbinReader.buf[65] & 0xFF), device, HoTTbinReader.recordSetESC);
+									isESCdetected = true;
+								}
 								break;
 						}
 
@@ -735,9 +741,13 @@ public class HoTTlogReader extends HoTTbinReader {
 	protected static boolean parseESC(byte[] _buf, int[] values, RecordSet recordSetESC) throws DataInconsitsentException {
 		//0=RF_RXSQ, 1=Voltage, 2=Current, 3=Capacity, 4=Power, 5=Revolution, 6=Temperature1, 7=Temperature2
 		//8=Voltage_min, 9=Current_max, 10=Revolution_max, 11=Temperature1_max, 12=Temperature2_max 13=Event
+		// 14=Speed 15=Speed_max 16=PWM 17=Throttle 18=VoltageBEC 19=VoltageBEC_max 20=CurrentBEC 21=TemperatureBEC 22=TemperatureBEC_max 
+		// 23=Timing(empty) 24=Temperature_aux 25=Gear 26=YGEGenExt 27=MotStatEscNr 28=spare 29=VersionESC
 		//sensor byte: 26=sensor byte
 		//27,28=InverseBits 29,30=voltageIn 31,32=voltageIn_min 33,34=capacity 35=temperature1 36=temperature1_max 37,38=current 39,40=current_max
 		//41,42=rpm 43,44=rpm_max 45=temperature2 46=temperature2_max
+		//47,48=speed 49,50=speed_max 51=PWM 52=Throttle 53=VoltageBEC 54=VoltageBEC_max 55,56=CurrentBEC 57=TemperatureBEC 58=TemperatureBEC_max
+		//59=Timing(empty) 60=Temperature_aux 61,62=Gear 63=YGEGenExt 64=MotStatEscNr 65=misc ESC_15 66=VersionESC
 		values[0] = (_buf[16] & 0xFF) * 1000;
 		HoTTbinReader.tmpVoltage = DataParser.parse2Short(_buf, 29);
 		HoTTbinReader.tmpCurrent = DataParser.parse2Short(_buf, 37);
@@ -770,6 +780,42 @@ public class HoTTlogReader extends HoTTbinReader {
 			values[12] = ((_buf[46] & 0xFF) - 20) * 1000;
 		}
 		values[13] = ((_buf[27] & 0xFF) + ((_buf[28] & 0x7F) << 8)) * 1000; //inverse event
+		
+		if ((_buf[65] & 0xFF) == 3) { //Extended YGE protocol 				
+			//14=Speed 15=Speed_max 16=PWM 17=Throttle 18=VoltageBEC 19=VoltageBEC_max 20=CurrentBEC 21=TemperatureBEC 22=TemperatureBEC_max 
+			//23=Timing(empty) 24=Temperature_aux 25=Gear 26=YGEGenExt 27=MotStatEscNr 28=VersionESC
+			//47,48=speed 49,50=speed_max 51=PWM 52=Throttle 53=VoltageBEC 54=VoltageBEC_max 55,56=CurrentBEC 57=TemperatureBEC 58=TemperatureBEC_max
+			//59=Timing(empty) 60=Temperature_aux 61,62=Gear 63=YGEGenExt 64=MotStatEscNr 65=VersionESC
+			values[14] = DataParser.parse2Short(_buf, 47) * 1000; //Speed
+			values[15] = DataParser.parse2Short(_buf, 49) * 1000; //Speed max
+			values[16] = (_buf[51] & 0xFF) * 1000; 								//PWM
+			values[17] = (_buf[52] & 0xFF) * 1000; 								//Throttle
+			values[18] = (_buf[53] & 0xFF) * 1000; 								//BEC Voltage
+			values[19] = (_buf[54] & 0xFF) * 1000; 								//BEC Voltage min
+			
+//	  uint8_t CurBECL;      //Byte 33:
+//	  uint8_t CurBECH;      //Byte 34:
+//	  uint8_t TempBEC1;     //Byte 35:
+//	  uint8_t TempCap;      //Byte 36:
+//	  uint8_t Timing;       //Byte 37:
+//	  uint8_t AuxTemp;      //Byte 38:
+//	  uint8_t GearL;        //Byte 39:
+//	  uint8_t GearH;        //Byte 40:
+//	  uint8_t YGEGenExt;    //Byte 41:
+//	  uint8_t MotStatEscNr; //Byte 42: YGE: Motor-Status >= V1.03473
+//	  uint8_t VersionNum;   //Byte 43: YGE: Motor-Status < V1.03473, sonst 3
+			
+			values[20] = DataParser.parse2UnsignedShort(_buf, 55) * 1000; 	//BEC Current
+			values[21] = ((_buf[57] & 0xFF) - 20) * 1000; 				//BEC Temperature
+			values[22] = ((_buf[58] & 0xFF) - 20) * 1000; 				//Capacity Temperature
+			values[23] = (_buf[59] & 0xFF) * 1000; 								//Timing
+			values[24] = ((_buf[60] & 0xFF) - 20) * 1000; 				//Aux Temperature
+			values[25] = DataParser.parse2Short(_buf, 61) * 1000; //Gear
+			values[26] = (_buf[63] & 0xFF) * 1000; 								//YGEGenExt
+			values[27] = (_buf[64] & 0xFF) * 1000; 								//MotStatEscNr
+			values[28] = 0; 																			//spare
+			values[29] = (_buf[65] & 0xFF) * 1000; 								//Version ESC
+		}
 
 		//enable binary output for enhanced ESC data
 		if (log.isLoggable(Level.INFO))
