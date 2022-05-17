@@ -347,7 +347,7 @@ public class ZeroReaderWriter {
 								measurement.setUnit(tmpRecordUnits.get(i));
 								measurement.setSymbol(tmpRecordSymbols.get(i));
 								measurement.setActive(true);
-								measurement.setStatistics(StatisticsType.fromString("min=true max = true avg=true sigma=false"));
+								measurement.setStatistics(StatisticsType.fromString("min=true max=true avg=true sigma=false"));
 								if (tmpMeasurementFactors.size() > i && tmpMeasurementFactors.get(i).matches("([0-9])"))
 									measurement.setFactor(Double.parseDouble(tmpMeasurementFactors.get(i)));
 								else

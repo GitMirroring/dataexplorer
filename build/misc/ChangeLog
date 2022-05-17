@@ -1,6 +1,6 @@
 Development history / change log, please read from bottom up
 
-Version 3.5.6 - xx yyy 2022
+Version 3.6.0 - xx yyy 2022
 Generic changes/fixes
 	* fix trigger analysis while a secondary is defined but no values available
 		
@@ -8,8 +8,9 @@ Device specific changes/fixes
 	* HoTTAdapter2* - fix visualization of warning in configuration channels, sync with HoTTAdapter*
 	* HoTTAdapter* - find date and time deviations Sparrow/Swift
 	* HoTTAdapter* - add extended ESC values (YGE)
-	* IGCAdapter - support Swift IGC format
+	* IGCAdapter - add support Swift IGC format
 	* IGCAdapter - find high deviations in time 
+	* ZeroAdapter - fix StatisticsType.fromString("min=true max=true avg=true sigma=false")
 
 Version 3.5.5 - 07 Apr 2022
 Generic changes/fixes
