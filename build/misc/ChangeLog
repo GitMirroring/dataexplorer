@@ -4,6 +4,7 @@ Version 3.6.0 - xx yyy 2022
 Generic changes/fixes
 	* fix trigger analysis while a secondary is defined but no values available
 	* fix error displaying curve compare while 10 spacings on scale
+	* fix time error in curve compare displaying curves different size or different time step
 		
 Device specific changes/fixes
 	* HoTTAdapter2* - fix visualization of warning in configuration channels, sync with HoTTAdapter*

@@ -1170,7 +1170,7 @@ public class CurveSelectorContextMenu {
 											double avgTimeStep_ms = tmpRecord.getAverageTimeStep_ms();
 											int steps = (int) ((maxRecordTime_ms - tmpRecord.getCompareSetDrawLimit_ms()) / avgTimeStep_ms);
 											int value = tmpRecord.lastElement();
-											double timeStep = newRecord.getLastTime_ms();
+											double timeStep = tmpRecord.getLastTime_ms();
 											for (int i = 0; i < steps; i++) {
 												tmpRecord.add(value, timeStep += avgTimeStep_ms);
 											}
