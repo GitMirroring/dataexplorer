@@ -1083,13 +1083,13 @@ public class HoTTbinReader2 extends HoTTbinReader {
 					
 					if (this.points[27] > 0) {  //Sat-Fix
 						tmpTime = _buf3[9] * 10000000 + _buf4[0] * 100000 + _buf4[1] * 1000 + _buf4[2] * 10;//HH:mm:ss.SSS
-						if (tmpTime < this.points[33])
-							log.log(Level.WARNING, HoTTAdapter.getFormattedTime(tmpTime));
+						if (tmpTime < this.points[33]) 
+							log.log(Level.WARNING, String.format("near time: %s %s", StringHelper.getFormatedTime("HH:mm:ss.SSS", this.timeSteps_ms[TIMESTEP_INDEX] - GDE.ONE_HOUR_MS), HoTTAdapter.getFormattedTime(tmpTime)));
 						this.points[33] = tmpTime;
 
 						tmpDate = ((_buf4[5] - 48) * 1000000 + (_buf4[7] - 48) * 10000 + (_buf4[6] - 48) * 100) * 10;//yy-MM-dd
-						if (tmpDate < this.points[34])
-							log.log(Level.WARNING, String.format("Sat-Fix %d #Sats %d %s - %c %c %c", this.points[27]/1000,  this.points[26]/1000, HoTTAdapter.getFormattedTime(this.points[33]), _buf4[5]&0xff, _buf4[7]&0xff, _buf4[6]&0xff));
+						if (tmpDate < this.points[34]) 
+							log.log(Level.WARNING, String.format("near time: %s Sat-Fix %d #Sats %d %s - %c %c %c", StringHelper.getFormatedTime("HH:mm:ss.SSS", this.timeSteps_ms[TIMESTEP_INDEX] - GDE.ONE_HOUR_MS),  this.points[27]/1000,  this.points[26]/1000, HoTTAdapter.getFormattedTime(this.points[33]), _buf4[5]&0xff, _buf4[7]&0xff, _buf4[6]&0xff));
 						this.points[34] = tmpDate;
 
 						this.points[35] = (DataParser.parse2Short(_buf3, 6) - 500) * 1000; //TODO remove offset 500 after correction

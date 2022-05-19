@@ -1806,12 +1806,12 @@ public class HoTTbinReader {
 					if (this.points[13] > 0) { //Sat-Fix
 						tmpTime = _buf3[9] * 10000000 + _buf4[0] * 100000 + _buf4[1] * 1000 + _buf4[2] * 10;
 						if (tmpTime < this.points[19])
-							log.log(Level.WARNING, HoTTAdapter.getFormattedTime(tmpTime));
+							log.log(Level.WARNING, String.format("near time: %s %s", StringHelper.getFormatedTime("HH:mm:ss.SSS", this.timeSteps_ms[TIMESTEP_INDEX] - GDE.ONE_HOUR_MS), HoTTAdapter.getFormattedTime(tmpTime)));
 						this.points[19] = tmpTime;
 						
 						tmpDate = ((_buf4[5] - 48) * 1000000 + (_buf4[7] - 48) * 10000 + (_buf4[6] - 48) * 100) * 10;
 						if (tmpDate < 0)
-							log.log(Level.WARNING, String.format("Sat-Fix %d #Sats %d %s - %c %c %c", this.points[13]/1000,  this.points[12]/1000, HoTTAdapter.getFormattedTime(this.points[19]), _buf4[5]&0xff, _buf4[7]&0xff, _buf4[6]&0xff));
+							log.log(Level.WARNING, String.format("near time: %s Sat-Fix %d #Sats %d %s - %c %c %c", StringHelper.getFormatedTime("HH:mm:ss.SSS", this.timeSteps_ms[TIMESTEP_INDEX] - GDE.ONE_HOUR_MS), this.points[13]/1000,  this.points[12]/1000, HoTTAdapter.getFormattedTime(this.points[19]), _buf4[5]&0xff, _buf4[7]&0xff, _buf4[6]&0xff));
 						this.points[20] = tmpDate;
 
 						this.points[21] = (DataParser.parse2Short(_buf3, 6) - 500) * 1000; //TODO remove offset 500 after correction

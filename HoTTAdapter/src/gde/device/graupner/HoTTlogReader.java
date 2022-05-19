@@ -562,14 +562,21 @@ public class HoTTlogReader extends HoTTbinReader {
 		}
 		else if ((_buf[65] & 0xFF) == 4) { //RCE Sparrow
 			//16=servoPulse 17=fixed 18=Voltage 19=GPS hh:mm 20=GPS sss.SSS 21=MSL Altitude 22=ENL 23=Version	
-			//16=Roll 17=Pitch 18=Yaw
 			values[16] = _buf[60] * 1000;
 			values[17] = 0;
 			values[18] = _buf[54] * 100; 
 			//19=GPS hh:mm:sss.SSS 20=GPS sss.SSS 21=MSL Altitude 	
 			//55,56=GPS hh:mm 57,58=GPS sss.SSS 59,60=MSL Altitude
-			values[19] = _buf[55] * 10000000 + _buf[56] * 100000 + _buf[57] * 1000 + _buf[58]*10;//HH:mm:ss.SSS
-			values[20] = ((_buf[61]-48) * 1000000 + (_buf[63]-48) * 10000 + (_buf[62]-48) * 100) * 10;//yy-MM-dd
+			if (values[13] > 0) { //Sat-Fix
+				int tmpTime = _buf[55] * 10000000 + _buf[56] * 100000 + _buf[57] * 1000 + _buf[58]*10;//HH:mm:ss.SSS
+				if (tmpTime < values[19])
+					log.log(Level.WARNING, String.format("near time: %s %s", StringHelper.getFormatedTime("HH:mm:ss.SSS", HoTTbinReader.timeStep_ms - GDE.ONE_HOUR_MS), HoTTAdapter.getFormattedTime(tmpTime)));
+				values[19] = tmpTime;
+				int tmpDate = ((_buf[61]-48) * 1000000 + (_buf[63]-48) * 10000 + (_buf[62]-48) * 100) * 10;//yy-MM-dd
+				if (tmpDate < 0)
+					log.log(Level.WARNING, String.format("near time: %s Sat-Fix %d #Sats %d %s - %c %c %c", StringHelper.getFormatedTime("HH:mm:ss.SSS",  HoTTbinReader.timeStep_ms - GDE.ONE_HOUR_MS), values[13]/1000,  values[12]/1000, HoTTAdapter.getFormattedTime(values[19]), _buf[61]&0xff, _buf[63]&0xff, _buf[62]&0xff));
+				values[20] = tmpDate;
+			}
 			values[21] = (DataParser.parse2Short(_buf, 52) - 500) * 1000; //TODO remove offset 500 after correction
 			//22=Vibration 			
 			//61=Vibration 62-64=freeChars 65=Version
