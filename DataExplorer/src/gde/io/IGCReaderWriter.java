@@ -167,8 +167,17 @@ public class IGCReaderWriter {
 				long approximateLines = inputFile.length() / 35; //B sentence is the most used one and has 35 bytes
 				reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "ISO-8859-1")); //$NON-NLS-1$
 
-				//skip all lines which describe the hardware, pilot and plane, save as header
-				while ((line = reader.readLine()) != null && !line.startsWith(device.getDataBlockLeader())) {
+				//skip all lines before A-Record appears, max 10
+				while ((line = reader.readLine()) != null && !line.startsWith("A") && lineNumber < 10) 
+					++lineNumber;
+				if (lineNumber >= 10) {
+					reader.close();
+					log.log(Level.SEVERE, filePath + " Check IGC header");
+					throw new IOException(filePath + " Check IGC header");
+				}
+				
+				//read all lines which describe the hardware, pilot and plane, save as header
+				while ((line = reader.readLine()) != null && !line.startsWith(device.getDataBlockLeader()) && lineNumber < 50) {
 					log.log(Level.FINE, line);
 					if (line.startsWith("HFDTE")) { //160701	UTC date of flight, here 16th July 2001
 						date = line.substring(5).trim();
@@ -215,6 +224,12 @@ public class IGCReaderWriter {
 					}
 					++lineNumber;
 				}
+				if (lineNumber >= 50) {
+					reader.close();
+					log.log(Level.SEVERE, filePath + " Check IGC header");
+					throw new IOException(filePath + " Check IGC header");
+				}
+
 				//calculate the start time stamp using the first B record
 				int year;
 				int month;
