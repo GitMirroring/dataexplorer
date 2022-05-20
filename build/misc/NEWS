@@ -1,34 +1,32 @@
-GNU DataExplorer - News - comes with Version 3.5.5 - 07 Apr 2022
+GNU DataExplorer - News - comes with Version 3.6.0 - 20 May 2022
 
 Generic changes/fixes
-	* add Raspbian 64 bit build as compressed ARM tarball
-	* synchronize record data types with Android version
-	* update SWT, only 64 Bit will be maintained
+	* fix trigger analysis while a secondary is defined but no values available
+	* fix error displaying curve compare while 10 spacings on scale
+	* fix time error in curve compare displaying curves different size or different time step
 		
 Device specific changes/fixes
-	* GPS-Logger3 - reuse ValueCollector to calculate average values at dedicated AirSpeed and TEC pressure
-	* GPS-Logger3 - update ValueCollector to find avg with equal entry count, remove AirSpeed constrain 
-	* OpenTx-Telemetry - add warning trace log while skipping record set due to less log entries 
-	* Unilog - fix class cast exception
-	* HoTTAdapter2* - fix *.log parsing channel data
-	* Graupner UDP40 - fix reading program memories
-	* Graupner UDP40/45 - fix cell count
-	* Graupner UDP - remove time criteria of battery history stored within device
+	* HoTTAdapter2* - fix visualization of warning in configuration channels, sync with HoTTAdapter*
+	* HoTTAdapter* - find date and time deviations Sparrow/Swift
+	* HoTTAdapter* - add extended ESC values (YGE)
+	* IGCAdapter - add support Swift IGC format
+	* IGCAdapter - find high deviations in time 
+	* IGCAdapter - add some error handling
+	* ZeroAdapter - fix StatisticsType.fromString("min=true max=true avg=true sigma=false")
 	
 Generelle Änderungen/Verbesserungen
-	* Raspbian 64 als unterstützes Betriebssystem hinzugefügt
-	* synchronisiere Datensatz Daten mit Android Version
-	* Update SWT, nur 64 Bit wird gepflegt
+	* Trigger-Analyse für Zusatz-Trigger ohne Werte korrigiert
+	* Fehler bei Anzeige Kurvenvergleich bei eingestellter 10ner-Teilung korrigiert
+	* Zeit-Fehler in Kurvenvergleich mit unterschiedlichen Zeitlängen und Zeitschritten korrigiert
 
 Geräte spezifische Änderungen/Verbesserungen
-	* GPS-Logger3 - ValueCollector wird jetzt auch zur Berechnung des Mittelwertes AirSpeed and TEC Druck genutzt
-	* GPS-Logger3 - Update ValueCollector zur Findung vom Mittelwert bei mehrfach gleicher Messwertanzahl, entferne AirSpeed Bedingung 
-	* OpenTx-Telemetry - Warnung beim Überspringen eines Datensatzes mit zu wenig Einträgen 
-	* Unilog - Class Cast Fehler korrigiert
-	* HoTTAdapter2* - Parsen von Kanaldaten in *.log korrigiert 
-	* Graupner UDP40 - Lesen von Programmspeichern korrigiert
-	* Graupner UDP40/45 - Zellenanzahl korrigiert
-	* Graupner UDP - Zeitkriterium beim Auslesen der GEräte Historiendaten entfernt
+	* HoTTAdapter2* - Visualisierung von Warnungen synchronisiert mit HoTTAdapter*
+	* HoTTAdapter* - Ausgabe von GPS-Zeit- und GPS-Datums-Fehlern Sparrow/Swift eingebaut
+	* HoTTAdapter* - Erweiterung zusätzlicher ESC Werte eingebaut (aktuell nur von YGE)
+	* IGCAdapter - Unterstützung des Swift IGC Formats eingebaut
+	* IGCAdapter - Ausgabe hoher Abweichungen in der Zeit eingebaut 
+	* IGCAdapter - Fehlerbehandlung eingefügt
+	* ZeroAdapter - Korrektur Schreibfehler StatisticsType.fromString("min=true max=true avg=true sigma=false")
 
 	
 	

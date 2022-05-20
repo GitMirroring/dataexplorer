@@ -1,6 +1,6 @@
 Development history / change log, please read from bottom up
 
-Version 3.6.0 - xx yyy 2022
+Version 3.6.0 - 20 May 2022
 Generic changes/fixes
 	* fix trigger analysis while a secondary is defined but no values available
 	* fix error displaying curve compare while 10 spacings on scale
@@ -12,6 +12,7 @@ Device specific changes/fixes
 	* HoTTAdapter* - add extended ESC values (YGE)
 	* IGCAdapter - add support Swift IGC format
 	* IGCAdapter - find high deviations in time 
+	* IGCAdapter - add some error handling
 	* ZeroAdapter - fix StatisticsType.fromString("min=true max=true avg=true sigma=false")
 
 Version 3.5.5 - 07 Apr 2022
