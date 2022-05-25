@@ -1,5 +1,12 @@
 Development history / change log, please read from bottom up
 
+Version 3.6.1 - xx yyy 2022
+Generic changes/fixes
+	*
+Device specific changes/fixes
+	* iChargerDX* - fix missing anti spark system setting
+
+
 Version 3.6.0 - 20 May 2022
 Generic changes/fixes
 	* fix trigger analysis while a secondary is defined but no values available

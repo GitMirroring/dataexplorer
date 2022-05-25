@@ -917,6 +917,9 @@ public class ChargerDialog extends DeviceDialog {
 				case 35:	//35 duo regCapLimit
 					systemSettings.setRegCapacityLimit(systemValues[35] * 100);
 					break;
+				case 36:	//36 DX antiSparkEnable
+					systemSettings.setAntiSparkEnabl((short) systemValues[36]);
+					break;
 				default:
 					break;
 				}
@@ -1377,14 +1380,14 @@ public class ChargerDialog extends DeviceDialog {
 			this.usbPort.getData();
 		}
 		catch (Exception e1) {
-			ChargerDialog.log.log(Level.WARNING, e1.getMessage(), e1);
+			//ChargerDialog.log.log(Level.WARNING, e1.getMessage(), e1);
 		}
 		try {
 			this.usbPort.getData(); //sync logging and modbus query
 			WaitTimer.delay(100);
 		}
 		catch (Exception e) {
-			ChargerDialog.log.log(Level.WARNING, e.getMessage(), e);
+			//ChargerDialog.log.log(Level.WARNING, e.getMessage(), e);
 		}
 		this.stopLogTransmission();
 		WaitTimer.delay(100);
@@ -2260,6 +2263,7 @@ public class ChargerDialog extends DeviceDialog {
 				Messages.getString(MessageIds.GDE_MSGI2638), 175,  //$NON-NLS-1$
 				"(ingnore)0Ah - 999900Ah", 280, //$NON-NLS-1$
 				true, 50, 200, 0, 9999, 0, false);
+		
 		grpDuoRegInputPowerLimits.addListener(SWT.Selection, systemParameterChangeListener);
 
 		grpDuoInputPowerLimits.layout();
@@ -2371,6 +2375,13 @@ public class ChargerDialog extends DeviceDialog {
 				Messages.getString(MessageIds.GDE_MSGI2642, new String[] {Messages.getString(MessageIds.GDE_MSGI2645).split(",")[2]}), 175, 
 				String.format("5W - %dW", device.getDischargePowerMax()[1]), 280, //$NON-NLS-1$
 				true, 50, 200, 5, device.getDischargePowerMax()[1], -5, false);
+		if (isDx) {
+			//36 DX antiSparkEnable
+			this.systemParameters[36] = new ParameterConfigControl(this.grpChargeDischargePower, this.systemValues, 36, Messages.getString(MessageIds.GDE_MSGT2678), 
+					175, "off, on", 280, //$NON-NLS-1$
+					new String[] { "off", "on" }, 50, 200); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+
 		grpChargeDischargePower.addListener(SWT.Selection, this.systemParameterChangeListener);
 		grpChargeDischargePower.layout();
 	}

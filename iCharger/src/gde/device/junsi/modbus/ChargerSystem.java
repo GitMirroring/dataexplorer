@@ -73,7 +73,8 @@ public class ChargerSystem {
 	short								servoUserRate;
 	short								servoUserOpAngle;
 	short								servoSpeedVolt; 	//DX only
-
+	
+	short								antiSparkEnable; 	//DX only
 
 	short[]							dump;
 	
@@ -328,11 +329,13 @@ public class ChargerSystem {
 			this.servoUserCenter = DataParser.parse2Short(readSystemData[index++], readSystemData[index++]);
 			this.servoUserRate = DataParser.parse2Short(readSystemData[index++], readSystemData[index++]);
 			this.servoUserOpAngle = DataParser.parse2Short(readSystemData[index++], readSystemData[index++]);
-			if (isDx)
+			if (isDx) {
 				this.servoSpeedVolt = DataParser.parse2Short(readSystemData[index++], readSystemData[index++]);
+				this.antiSparkEnable = DataParser.parse2Short(readSystemData[index++], readSystemData[index++]);
+			}
 	
 			if (isDx) 
-				this.dump	= new short[16];
+				this.dump	= new short[15];
 			else
 				this.dump	= new short[12];
 
@@ -352,7 +355,6 @@ public class ChargerSystem {
 				this.dump[12] = DataParser.parse2Short(readSystemData[index++], readSystemData[index++]);
 				this.dump[13] = DataParser.parse2Short(readSystemData[index++], readSystemData[index++]);		
 				this.dump[14] = DataParser.parse2Short(readSystemData[index++], readSystemData[index++]);
-				this.dump[15] = DataParser.parse2Short(readSystemData[index++], readSystemData[index++]);
 			}
 		}
 	}
@@ -685,6 +687,8 @@ public class ChargerSystem {
 			if (isDx) {
 				memoryBuffer[index++] = (byte) (this.servoSpeedVolt & 0xFF);
 				memoryBuffer[index++] = (byte) (this.servoSpeedVolt >> 8);
+				memoryBuffer[index++] = (byte) (this.antiSparkEnable & 0xFF);
+				memoryBuffer[index++] = (byte) (this.antiSparkEnable >> 8);
 			}
 
 			memoryBuffer[index++] = (byte) (this.dump[0] & 0xFF);
@@ -718,8 +722,6 @@ public class ChargerSystem {
 				memoryBuffer[index++] = (byte) (this.dump[13] >> 8);
 				memoryBuffer[index++] = (byte) (this.dump[14] & 0xFF);
 				memoryBuffer[index++] = (byte) (this.dump[14] >> 8);
-				memoryBuffer[index++] = (byte) (this.dump[15] & 0xFF);
-				memoryBuffer[index++] = (byte) (this.dump[15] >> 8);
 			}
 		}
 
@@ -836,12 +838,14 @@ public class ChargerSystem {
 			sb.append(String.format("ServoUserCenter \t= %d", this.servoUserCenter)).append("\n");
 			sb.append(String.format("ServoUserRate \t\t= %d", this.servoUserRate)).append("\n");
 			sb.append(String.format("ServoUserOpAngle \t= %d", this.servoUserOpAngle)).append("\n");
-			if (isDx)
+			if (isDx) {
 				sb.append(String.format("ServoSpeedVolt \t\t= %d", this.servoSpeedVolt)).append("\n");
+				sb.append(String.format("AntiSparkEnable \t= %d", this.antiSparkEnable)).append("\n");
+			}
 	
 			if (isDx)
-				sb.append(String.format("Dump \t\t\t= [%d, %d, %d, %d ,%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d]", this.dump[0], this.dump[1], this.dump[2], this.dump[3], this.dump[4], this.dump[5], this.dump[6], this.dump[7],
-						this.dump[8], this.dump[9], this.dump[10], this.dump[11], this.dump[12], this.dump[13], this.dump[14], this.dump[15])).append("\n");
+				sb.append(String.format("Dump \t\t\t= [%d, %d, %d, %d ,%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d]", this.dump[0], this.dump[1], this.dump[2], this.dump[3], this.dump[4], this.dump[5], this.dump[6], this.dump[7],
+						this.dump[8], this.dump[9], this.dump[10], this.dump[11], this.dump[12], this.dump[13], this.dump[14])).append("\n");
 			else
 				sb.append(String.format("Dump \t\t\t= [%d, %d, %d, %d ,%d, %d, %d, %d, %d, %d, %d, %d]", this.dump[0], this.dump[1], this.dump[2], this.dump[3], this.dump[4], this.dump[5], this.dump[6], this.dump[7],
 						this.dump[8], this.dump[9], this.dump[10], this.dump[11])).append("\n");
@@ -1158,6 +1162,14 @@ public class ChargerSystem {
 		this.servoSpeedVolt = servoSpeedVolt;
 	}
 
+	public short getAntiSparkEnable() {
+		return antiSparkEnable;
+	}
+
+	public void setAntiSparkEnabl(short antiSparkEnable) {
+		this.antiSparkEnable = antiSparkEnable;
+	}
+
 	public short getModBusMode() {
 		return this.modBusMode;
 	}
@@ -1229,6 +1241,9 @@ public class ChargerSystem {
 		values[33] = this.getRegVoltLimit();
 		values[34] = this.getRegCurrentLimit();
 		values[35] = this.getRegCapacityLimit() / 100;
+		
+		//DX input anti spark
+		values[36] = this.getAntiSparkEnable();
 
 		return values;
 	}
