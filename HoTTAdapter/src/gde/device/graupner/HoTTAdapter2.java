@@ -2606,7 +2606,7 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 
 		if (recordSet.getChannelConfigNumber() == 4) {
 			//3.6.0 extend this measurements: 120=misc ESC_1 ... 134=misc ESC_15 135=VersionESC
-			for (int i = 120; i < 135; ++i) {
+			for (int i = 120; i < 135 && i < fileRecordsProperties.length; ++i) {
 				Record record = recordSet.get(i);
 				if (record != null && !record.getName().startsWith("vari")) {//misc will be replaced with variable in OSD
 					if (fileRecordsProperties[i].contains("factor_DOUBLE=")) {
@@ -2626,7 +2626,7 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 		}
 		else {
 			//3.6.0 extend this measurements: 100=misc ESC_1 ... 114=misc ESC_15 115=VersionESC
-			for (int i = 100; i < 115; ++i) {
+			for (int i = 100; i < 115 && i < fileRecordsProperties.length; ++i) {
 				Record record = recordSet.get(i);
 				if (record != null && !record.getName().startsWith("vari")) {//misc will be replaced with variable in OSD
 					if (fileRecordsProperties[i].contains("factor_DOUBLE=")) {
@@ -2820,9 +2820,9 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 			device.getMeasurement(channelConfigNumber, 100 + channelOffset).setStatistics(StatisticsType.fromString("min=true max=true avg=true sigma=false"));
 			tmpRecordSet.get(101 + channelOffset).setName(device.getMeasurementReplacement("speed") + " M_max");
 			tmpRecordSet.get(101 + channelOffset).setUnit("km/h");
-			tmpRecordSet.get(102 + channelOffset).setName("PWM");
+			tmpRecordSet.get(102 + channelOffset).setName("PWM M");
 			tmpRecordSet.get(102 + channelOffset).setUnit("%");
-			tmpRecordSet.get(103 + channelOffset).setName(device.getMeasurementReplacement("throttle"));
+			tmpRecordSet.get(103 + channelOffset).setName(device.getMeasurementReplacement("throttle") + " M");
 			tmpRecordSet.get(103 + channelOffset).setUnit("%");
 			tmpRecordSet.get(104 + channelOffset).setName(device.getMeasurementReplacement("voltage_bec") + " M");
 			tmpRecordSet.get(104 + channelOffset).setUnit("V");
