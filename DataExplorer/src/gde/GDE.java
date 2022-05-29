@@ -530,8 +530,9 @@ public class GDE {
 			GDE.seStartupProgress(100);
 			int javaVmSpecificationVersion = Integer.parseInt(((String)props.get("java.vm.specification.version")).contains(GDE.STRING_DOT) 
 					? ((String)props.get("java.vm.specification.version")).substring(2) : ((String)props.get("java.vm.specification.version")));
-			if (javaVmSpecificationVersion < 8 || javaVmSpecificationVersion > 17) 
-				application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGW0050, new Integer[] {javaVmSpecificationVersion}));
+			if (javaVmSpecificationVersion < 8 || javaVmSpecificationVersion > 17) {
+				application.openMessageDialogAsync(Messages.getString(MessageIds.GDE_MSGW0050, new Integer[] {javaVmSpecificationVersion}));
+			}
 			application.execute(inputFilePath);
 		}
 		catch (Throwable e) {
