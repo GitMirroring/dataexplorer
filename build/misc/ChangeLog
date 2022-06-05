@@ -6,7 +6,8 @@ Generic changes/fixes
 	 
 Device specific changes/fixes
 	* iChargerDX* - fix missing anti spark system setting
-	* HOTTAdapteer2* - fix error while opening OSD
+	* HoTTAdapter2* - fix error while opening OSD
+	* HoTTAdapter* - add ESC extension CS-Electronics
 
 
 Version 3.6.0 - 20 May 2022

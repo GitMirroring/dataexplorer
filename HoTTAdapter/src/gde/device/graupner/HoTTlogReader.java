@@ -799,19 +799,6 @@ public class HoTTlogReader extends HoTTbinReader {
 			values[17] = (_buf[52] & 0xFF) * 1000; 								//Throttle
 			values[18] = (_buf[53] & 0xFF) * 1000; 								//BEC Voltage
 			values[19] = (_buf[54] & 0xFF) * 1000; 								//BEC Voltage min
-			
-//	  uint8_t CurBECL;      //Byte 33:
-//	  uint8_t CurBECH;      //Byte 34:
-//	  uint8_t TempBEC1;     //Byte 35:
-//	  uint8_t TempCap;      //Byte 36:
-//	  uint8_t Timing;       //Byte 37:
-//	  uint8_t AuxTemp;      //Byte 38:
-//	  uint8_t GearL;        //Byte 39:
-//	  uint8_t GearH;        //Byte 40:
-//	  uint8_t YGEGenExt;    //Byte 41:
-//	  uint8_t MotStatEscNr; //Byte 42: YGE: Motor-Status >= V1.03473
-//	  uint8_t VersionNum;   //Byte 43: YGE: Motor-Status < V1.03473, sonst 3
-			
 			values[20] = DataParser.parse2UnsignedShort(_buf, 55) * 1000; 	//BEC Current
 			values[21] = ((_buf[57] & 0xFF) - 20) * 1000; 				//BEC Temperature
 			values[22] = ((_buf[58] & 0xFF) - 20) * 1000; 				//Capacity Temperature
@@ -822,6 +809,28 @@ public class HoTTlogReader extends HoTTbinReader {
 			values[27] = (_buf[64] & 0xFF) * 1000; 								//MotStatEscNr
 			values[28] = 0; 																			//spare
 			values[29] = (_buf[65] & 0xFF) * 1000; 								//Version ESC
+		}
+		else if ((_buf[65] & 0xFF) >= 128) { //Extended CB-Electronics
+			//14=AirSpeed 15=AirSpeed_max 16=PWM 17=Throttle 18=VoltagePump 19=VoltagePump_min 20=Flow 21=Fuel 22=Power 
+			//23=Thrust 24=TemperaturePump 25=EngineStat 26=spare 27=spare 28=spare 29=version
+			//47,48=speed 49,50=speed_max 51=PWM 52=Throttle 53=VoltageECU 54=VoltageBEC_max 55,56=CurrentBEC 57=TemperatureBEC 58=TemperatureBEC_max
+			//59=Timing(empty) 60=Temperature_aux 61,62=Gear 63=YGEGenExt 64=MotStatEscNr 65=VersionESC
+			values[14] = DataParser.parse2Short(_buf, 47) * 1000; //AirSpeed
+			values[15] = DataParser.parse2Short(_buf, 49) * 1000; //AirSpeed max
+			values[16] = (_buf[51] & 0xFF) * 1000; 								//PWM
+			values[17] = (_buf[52] & 0xFF) * 1000; 								//Throttle
+			values[18] = (_buf[53] & 0xFF) * 1000; 								//Pump Voltage
+			values[19] = (_buf[54] & 0xFF) * 1000; 								//Pump Voltage min
+			values[20] = DataParser.parse2UnsignedShort(_buf, 55) * 1000; 	//Flow
+			values[21] = DataParser.parse2UnsignedShort(_buf, 57) * 1000;		//Fuel ml
+			values[22] = DataParser.parse2UnsignedShort(_buf, 59) * 1000; 	//Power Wh
+			values[23] = DataParser.parse2UnsignedShort(_buf, 61) * 1000;   //Thrust
+			values[24] = ((_buf[63] & 0xFF) - 20) * 1000; 				//Pump Temperature
+			values[25] = (_buf[64] & 0xFF) * 1000; 								//Engine run
+			values[26] = 0; 																			//spare
+			values[27] = 0; 																			//spare
+			values[28] = 0; 																			//spare
+			values[29] = (_buf[65] & 0xFF) * 1000; 								//Version ESC			
 		}
 
 		//enable binary output for enhanced ESC data

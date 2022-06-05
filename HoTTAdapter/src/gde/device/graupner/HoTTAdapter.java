@@ -2575,13 +2575,13 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 			tmpRecordSet.get(18).setUnit("V");
 			tmpRecordSet.get(18).setFactor(0.1);
 			device.getMeasurement(7, 18).setStatistics(StatisticsType.fromString("min=true max=true avg=true sigma=false"));
-			tmpRecordSet.get(19).setName(device.getMeasurementReplacement("voltage_bec") + " min");
+			tmpRecordSet.get(19).setName(device.getMeasurementReplacement("voltage_bec_min"));
 			tmpRecordSet.get(19).setUnit("V");
 			tmpRecordSet.get(19).setFactor(0.1);
 			tmpRecordSet.get(19).createProperty(IDevice.SYNC_ORDINAL, DataTypes.INTEGER, 18); //$NON-NLS-1$
 			tmpRecordSet.get(20).setName(device.getMeasurementReplacement("current_bec"));
 			tmpRecordSet.get(20).setUnit("A");
-			tmpRecordSet.get(20).setFactor(1.0);
+			tmpRecordSet.get(20).setFactor(0.1);
 			device.getMeasurement(7, 20).setStatistics(StatisticsType.fromString("min=true max=true avg=true sigma=false"));
 			tmpRecordSet.get(21).setName(device.getMeasurementReplacement("temperature_bec"));
 			tmpRecordSet.get(21).setUnit("°C");
@@ -2603,8 +2603,57 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 			tmpRecordSet.get(26).setUnit("");
 			tmpRecordSet.get(27).setName("MotStatEscNr");
 			tmpRecordSet.get(27).setUnit("#");
-			tmpRecordSet.get(28).setName(device.getMeasurementReplacement("misc") + " ESC_15");
-			tmpRecordSet.get(28).setUnit("");
+		}
+		else if (version >= 128) {
+			//1=Voltage, 2=Current, 3=Capacity, 4=Power, 5=Revolution, 6=Temperature1, 7=Temperature2
+			//8=Voltage_min, 9=Current_max, 10=Revolution_max, 11=Temperature1_max, 12=Temperature2_max 13=Event
+			tmpRecordSet.get(1).setName(device.getMeasurementReplacement("voltage") + " ECU");
+			tmpRecordSet.get(2).setName(device.getMeasurementReplacement("current") + " ECU");
+			tmpRecordSet.get(6).setName(device.getMeasurementReplacement("temperature") + " EGT 1");
+			tmpRecordSet.get(7).setName(device.getMeasurementReplacement("temperature") + " EGT 2");
+			tmpRecordSet.get(8).setName(device.getMeasurementReplacement("voltage") + " ECU_min");
+			tmpRecordSet.get(9).setName(device.getMeasurementReplacement("current") + " ECU_max");
+			tmpRecordSet.get(11).setName(device.getMeasurementReplacement("temperature") + " EGT 1_max");
+			tmpRecordSet.get(12).setName(device.getMeasurementReplacement("temperature") + " EGT 2_max");
+			
+			//14=AirSpeed 15=AirSpeed_max 16=PWM 17=Throttle 18=VoltagePump 19=VoltagePump_min 20=Flow 21=Fuel 22=Power 
+			//23=Thrust 24=TemperaturePump 25=EngineStat 26=spare 27=spare 28=spare 29=version
+			tmpRecordSet.get(14).setName("AirSpeed");
+			tmpRecordSet.get(14).setUnit("km/h");
+			device.getMeasurement(7, 14).setStatistics(StatisticsType.fromString("min=true max=true avg=true sigma=false"));
+			tmpRecordSet.get(15).setName("AirSpeed_max");
+			tmpRecordSet.get(15).setUnit("km/h");
+			tmpRecordSet.get(16).setName("PWM");
+			tmpRecordSet.get(16).setUnit("%");
+			tmpRecordSet.get(17).setName(device.getMeasurementReplacement("throttle"));
+			tmpRecordSet.get(17).setUnit("%");
+			tmpRecordSet.get(18).setName(device.getMeasurementReplacement("voltage_pump"));
+			tmpRecordSet.get(18).setUnit("V");
+			tmpRecordSet.get(18).setFactor(0.1);
+			device.getMeasurement(7, 18).setStatistics(StatisticsType.fromString("min=true max=true avg=true sigma=false"));
+			tmpRecordSet.get(19).setName(device.getMeasurementReplacement("voltage_pump_min"));
+			tmpRecordSet.get(19).setUnit("V");
+			tmpRecordSet.get(19).setFactor(0.1);
+			tmpRecordSet.get(20).setName(device.getMeasurementReplacement("flow"));
+			tmpRecordSet.get(20).setUnit("ml/min");
+			tmpRecordSet.get(20).setFactor(0.1);
+			device.getMeasurement(7, 20).setStatistics(StatisticsType.fromString("min=true max=true avg=true sigma=false"));
+			tmpRecordSet.get(21).setName(device.getMeasurementReplacement("fuel"));
+			tmpRecordSet.get(21).setUnit("ml");
+			//tmpRecordSet.get(21).createProperty(IDevice.SYNC_ORDINAL, DataTypes.INTEGER, 6); //$NON-NLS-1$
+			device.getMeasurement(7, 21).setStatistics(StatisticsType.fromString("min=true max=true avg=true sigma=false"));
+			tmpRecordSet.get(22).setName(device.getMeasurementReplacement("power"));
+			tmpRecordSet.get(22).setUnit("W");
+			device.getMeasurement(7, 22).setStatistics(StatisticsType.fromString("min=true max=true avg=true sigma=false"));
+			//tmpRecordSet.get(22).createProperty(IDevice.SYNC_ORDINAL, DataTypes.INTEGER, 6); //$NON-NLS-1$
+			tmpRecordSet.get(23).setName(device.getMeasurementReplacement("thrust"));
+			tmpRecordSet.get(23).setUnit("N");
+			tmpRecordSet.get(24).setName(device.getMeasurementReplacement("temperature_pump"));
+			tmpRecordSet.get(24).setUnit("°C");
+			device.getMeasurement(7, 24).setStatistics(StatisticsType.fromString("min=true max=true avg=true sigma=false"));
+			//tmpRecordSet.get(24).createProperty(IDevice.SYNC_ORDINAL, DataTypes.INTEGER, 6); //$NON-NLS-1$
+			tmpRecordSet.get(25).setName(device.getMeasurementReplacement("engine"));
+			tmpRecordSet.get(25).setUnit("#");
 		}
 	}
 	

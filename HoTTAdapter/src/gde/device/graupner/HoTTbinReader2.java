@@ -1534,6 +1534,26 @@ public class HoTTbinReader2 extends HoTTbinReader {
 						this.points[133] = 0; 																			//spare
 						this.points[135] = (_buf4[9] & 0xFF) * 1000; 								//Version ESC
 					}
+					else if ((_buf4[9] & 0xFF) >= 128) { //Extended CS-Electronics
+						//120=AirSpeed 121=AirSpeed_max 122=PWM 123=Throttle 124=VoltagePump 125=VoltagePump_min 126=Flow 127=Fuel 128=Power 
+						//129=Thrust 130=TemperaturePump 131=EngineStat 132=spare 133=spare 134=spare 135=version
+						this.points[120] = DataParser.parse2Short(_buf3, 1) * 1000; 	//AirSpeed
+						this.points[121] = DataParser.parse2Short(_buf3, 3) * 1000; 	//AirSpeed max
+						this.points[122] = (_buf3[5] & 0xFF) * 1000; 									//PWM
+						this.points[123] = (_buf3[6] & 0xFF) * 1000; 									//Throttle
+						this.points[124] = (_buf3[7] & 0xFF) * 1000; 									//Pump Voltage
+						this.points[125] = (_buf3[8] & 0xFF) * 1000; 									//Pump Voltage min
+						this.points[126] = DataParser.parse2UnsignedShort(_buf3[9], _buf4[0]) * 1000;	//Flow
+						this.points[127] = DataParser.parse2UnsignedShort(_buf4, 1) * 1000;						//Fuel ml
+						this.points[128] = DataParser.parse2UnsignedShort(_buf4, 3) * 1000; 					//Power Wh
+						this.points[129] = DataParser.parse2UnsignedShort(_buf4, 5) * 1000; 					//Thrust
+						this.points[130] = ((_buf4[7] & 0xFF) - 20) * 1000; 					//Pump Temperature
+						this.points[131] = (_buf4[8] & 0xFF) * 1000; 									//Engine run
+						this.points[132] = 0; 																				//spare
+						this.points[133] = 0; 																				//spare
+						this.points[134] = 0; 																				//spare
+						this.points[135] = (_buf4[9] & 0xFF) * 1000; 									//Version ESC			
+					}
 					return true;
 				}
 				this.points[119] = (this._buf1[1] & 0xFF) * 1000; // inverse event
@@ -1584,6 +1604,26 @@ public class HoTTbinReader2 extends HoTTbinReader {
 						this.points[113] = (_buf4[8] & 0xFF) * 1000; 								//MotStatEscNr
 						this.points[114] = 0;																				//spare
 						this.points[115] = (_buf4[9] & 0xFF) * 1000; 								//Version ESC
+					}
+					else if ((_buf4[9] & 0xFF) >= 128) { //Extended CS-Electronics
+						//100=AirSpeed 101=AirSpeed_max 102=PWM 103=Throttle 104=VoltagePump 105=VoltagePump_min 106=Flow 107=Fuel 108=Power 
+						//109=Thrust 110=TemperaturePump 111=EngineStat 112=spare 113=spare 114=spare 115=version
+						this.points[100] = DataParser.parse2Short(_buf3, 1) * 1000; 	//AirSpeed
+						this.points[101] = DataParser.parse2Short(_buf3, 3) * 1000; 	//AirSpeed max
+						this.points[102] = (_buf3[5] & 0xFF) * 1000; 									//PWM
+						this.points[103] = (_buf3[6] & 0xFF) * 1000; 									//Throttle
+						this.points[104] = (_buf3[7] & 0xFF) * 1000; 									//Pump Voltage
+						this.points[105] = (_buf3[8] & 0xFF) * 1000; 									//Pump Voltage min
+						this.points[106] = DataParser.parse2UnsignedShort(_buf3[9], _buf4[0]) * 1000;	//Flow
+						this.points[107] = DataParser.parse2UnsignedShort(_buf4, 1) * 1000;						//Fuel ml
+						this.points[108] = DataParser.parse2UnsignedShort(_buf4, 3) * 1000; 					//Power Wh
+						this.points[109] = DataParser.parse2UnsignedShort(_buf4, 5) * 1000; 					//Thrust
+						this.points[110] = ((_buf4[7] & 0xFF) - 20) * 1000; 					//Pump Temperature
+						this.points[111] = (_buf4[8] & 0xFF) * 1000; 									//Engine run
+						this.points[112] = 0; 																				//spare
+						this.points[113] = 0; 																				//spare
+						this.points[114] = 0; 																				//spare
+						this.points[115] = (_buf4[9] & 0xFF) * 1000; 									//Version ESC			
 					}
 
 					++this.parseCount;
