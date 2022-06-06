@@ -8,6 +8,7 @@ Device specific changes/fixes
 	* iChargerDX* - fix missing anti spark system setting
 	* HoTTAdapter2* - fix error while opening OSD
 	* HoTTAdapter* - add ESC extension CS-Electronics
+	* iChargerUSB* - add check for unsaved data before import
 
 
 Version 3.6.0 - 20 May 2022

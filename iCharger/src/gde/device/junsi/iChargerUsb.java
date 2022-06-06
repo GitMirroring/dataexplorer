@@ -318,6 +318,9 @@ public abstract class iChargerUsb extends iCharger implements IDevice {
 	 * import device specific *.bin data files
 	 */
 	public void importDeviceData() {
+		if (!this.application.getDeviceSelectionDialog().checkDataSaved()) 
+			return;
+
 		final FileDialog fd = FileUtils.getImportDirectoryFileDialog(this, Messages.getString(MessageIds.GDE_MSGT2600));
 
 		Thread reader = new Thread("reader") { //$NON-NLS-1$
