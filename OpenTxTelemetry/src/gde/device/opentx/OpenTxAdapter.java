@@ -629,7 +629,7 @@ public class OpenTxAdapter extends DeviceConfiguration implements IDevice {
 				int ordinalLongitude = findRecordByType(activeRecordSet, Record.DataType.GPS_LONGITUDE);
 				ordinalLongitude = ordinalLongitude == -1 ? findRecordByType(activeRecordSet, Record.DataType.GPS_LONGITUDE_DEGREE) : ordinalLongitude;
 				int ordinalLatitude = findRecordByType(activeRecordSet, Record.DataType.GPS_LATITUDE);
-				ordinalLatitude = ordinalLatitude == -1 ? findRecordByType(activeRecordSet, Record.DataType.GPS_LATITUDE_DEGREE) : ordinalLongitude;
+				ordinalLatitude = ordinalLatitude == -1 ? findRecordByType(activeRecordSet, Record.DataType.GPS_LATITUDE_DEGREE) : ordinalLatitude;
 
 				exportFileName = new FileHandler().exportFileKMZ(ordinalLongitude, ordinalLatitude,
 						findRecordByType(activeRecordSet, Record.DataType.GPS_ALTITUDE), additionalMeasurementOrdinal, findRecordByUnit(activeRecordSet, "m/s"), findRecordByUnit(activeRecordSet, "km"), -1, true,

@@ -9,6 +9,7 @@ Device specific changes/fixes
 	* HoTTAdapter2* - fix error while opening OSD
 	* HoTTAdapter* - add ESC extension CS-Electronics
 	* iChargerUSB* - add check for unsaved data before import
+	* OpenTx-Telemetry - fix wrong record assignment during KMZ export 
 
 
 Version 3.6.0 - 20 May 2022
