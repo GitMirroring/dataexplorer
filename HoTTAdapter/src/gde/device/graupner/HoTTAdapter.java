@@ -2618,10 +2618,10 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 			
 			//14=AirSpeed 15=AirSpeed_max 16=PWM 17=Throttle 18=VoltagePump 19=VoltagePump_min 20=Flow 21=Fuel 22=Power 
 			//23=Thrust 24=TemperaturePump 25=EngineStat 26=spare 27=spare 28=spare 29=version
-			tmpRecordSet.get(14).setName("AirSpeed");
+			tmpRecordSet.get(14).setName(device.getMeasurementReplacement("air_speed"));
 			tmpRecordSet.get(14).setUnit("km/h");
 			device.getMeasurement(7, 14).setStatistics(StatisticsType.fromString("min=true max=true avg=true sigma=false"));
-			tmpRecordSet.get(15).setName("AirSpeed_max");
+			tmpRecordSet.get(15).setName(device.getMeasurementReplacement("air_speed") + "_max");
 			tmpRecordSet.get(15).setUnit("km/h");
 			tmpRecordSet.get(16).setName("PWM");
 			tmpRecordSet.get(16).setUnit("%");

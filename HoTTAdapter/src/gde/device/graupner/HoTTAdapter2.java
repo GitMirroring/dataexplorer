@@ -2893,10 +2893,10 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 			tmpRecordSet.get(98 + channelOffset).setName(device.getMeasurementReplacement("temperature") + " EGT 2_max");
 			
 
-			tmpRecordSet.get(100 + channelOffset).setName(device.getMeasurementReplacement("airspeed") + " M");
+			tmpRecordSet.get(100 + channelOffset).setName(device.getMeasurementReplacement("air_speed") + " M");
 			tmpRecordSet.get(100 + channelOffset).setUnit("km/h");
 			device.getMeasurement(channelConfigNumber, 100 + channelOffset).setStatistics(StatisticsType.fromString("min=true max=true avg=true sigma=false"));
-			tmpRecordSet.get(101 + channelOffset).setName(device.getMeasurementReplacement("airspeed") + " M_max");
+			tmpRecordSet.get(101 + channelOffset).setName(device.getMeasurementReplacement("air_speed") + " M_max");
 			tmpRecordSet.get(101 + channelOffset).setUnit("km/h");
 			tmpRecordSet.get(102 + channelOffset).setName("PWM M");
 			tmpRecordSet.get(102 + channelOffset).setUnit("%");

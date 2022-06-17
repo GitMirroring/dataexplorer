@@ -1485,7 +1485,7 @@ public class HoTTbinReader2 extends HoTTbinReader {
 			this.tmpVoltage = DataParser.parse2Short(this._buf1, 3);
 			this.tmpCurrent = DataParser.parse2Short(this._buf2, 1);
 			this.tmpCapacity = DataParser.parse2Short(this._buf1, 7);
-			this.tmpRevolution = DataParser.parse2Short(this._buf2, 5);
+			this.tmpRevolution = DataParser.parse2UnsignedShort(this._buf2, 5);
 			this.tmpTemperatureFet = (this._buf1[9] & 0xFF) - 20;
 			if (this.isChannelsChannel) {
 				// 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max,

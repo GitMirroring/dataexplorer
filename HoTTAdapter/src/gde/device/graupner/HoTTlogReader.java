@@ -759,7 +759,7 @@ public class HoTTlogReader extends HoTTbinReader {
 		HoTTbinReader.tmpVoltage = DataParser.parse2Short(_buf, 29);
 		HoTTbinReader.tmpCurrent = DataParser.parse2Short(_buf, 37);
 		HoTTbinReader.tmpCapacity = DataParser.parse2Short(_buf, 33);
-		HoTTbinReader.tmpRevolution = DataParser.parse2Short(_buf, 41);
+		HoTTbinReader.tmpRevolution = DataParser.parse2UnsignedShort(_buf, 41);
 		HoTTbinReader.tmpTemperatureFet = (_buf[35] & 0xFF) - 20;
 		//73=VoltageM, 74=CurrentM, 75=CapacityM, 76=PowerM, 77=RevolutionM, 78=TemperatureM 1, 79=TemperatureM 2 80=Voltage_min, 81=Current_max, 82=Revolution_max, 83=Temperature1_max, 84=Temperature2_max 85=Event M
 		if (!pickerParameters.isFilterEnabled || HoTTbinReader.tmpVoltage > 0 && HoTTbinReader.tmpVoltage < 1000 && HoTTbinReader.tmpCurrent < 4000 && HoTTbinReader.tmpCurrent > -10

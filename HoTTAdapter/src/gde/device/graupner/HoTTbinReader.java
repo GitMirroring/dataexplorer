@@ -2101,7 +2101,7 @@ public class HoTTbinReader {
 			this.tmpCurrent = DataParser.parse2Short(_buf2, 1);
 			this.points[0] = (_buf0[4] & 0xFF) * 1000;
 			this.tmpCapacity = DataParser.parse2Short(_buf1, 7);
-			this.tmpRevolution = DataParser.parse2Short(_buf2, 5);
+			this.tmpRevolution = DataParser.parse2UnsignedShort(_buf2, 5);
 			this.tmpTemperatureFet = (_buf1[9] & 0xFF) - 20;
 			if (isPointsValid()) {
 				this.points[1] = this.tmpVoltage * 1000;
