@@ -1,0 +1,78 @@
+/**************************************************************************************
+  	This file is part of GNU DataExplorer.
+
+    GNU DataExplorer is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    DataExplorer is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with GNU DataExplorer.  If not, see <https://www.gnu.org/licenses/>.
+
+    Copyright (c) 2022 Winfried Bruegmann
+****************************************************************************************/
+package gde.device.igc;
+
+import java.util.HashMap;
+
+public class GpsLap extends HashMap<String, String>{
+
+	private static final long serialVersionUID = -415113738338117060L;
+
+	/**
+	 * @param lapInput "alt":106,"altGainLos":-88,"index":155,"time":120.07
+	 */
+	public GpsLap(String lapInput) {
+		super();
+		add(lapInput);
+	}
+	
+	/**
+	 * @param input "alt":106,"altGainLos":-88,"index":155,"time":120.07
+	 */
+	public void add(String input) {
+		String[] entries = input.substring(input.indexOf('{')+1, input.length()-1).split(",");
+		for (String entry : entries) {
+			String[] value = entry.split(":");
+			if (value.length == 2) this.put(value[0].substring(1, value[0].length()-1), value[1]);
+		}
+	}
+
+	public int getAlt() {
+		return Integer.parseInt(this.get("alt"));
+	}
+
+	public int getAltGainLos() {
+		return Integer.parseInt(this.get("altGainLos"));
+	}
+
+	public int getIndex() {
+		return Integer.parseInt(this.get("index"));
+	}
+
+	public double getTime() {
+		return Double.parseDouble(this.get("time"));
+	}
+
+	public int getIntTime() {		
+		return Double.valueOf(this.get("time")).intValue();
+	}
+	
+	public String getFormatedTime(int time) {
+		int minutes = time/60;
+		return String.format("%2d:%02d", minutes, (time - (minutes * 60)));		
+	}
+	
+	/**
+	 * @param lap
+	 * @return String containing LAP  INDEX	 DURATION	LAP-TIME ALT ∆ALT
+	 */
+	public String toString(int lap, Double duration) {	
+		return String.format("%3d %4d  %7s %7s   %4d  %4d\n", lap, getIndex(),  getFormatedTime(duration.intValue() + getIntTime()), getFormatedTime(getIntTime()), getAlt(), getAltGainLos());		
+	}
+}

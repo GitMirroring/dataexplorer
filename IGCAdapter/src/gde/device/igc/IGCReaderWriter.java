@@ -16,7 +16,7 @@
 
     Copyright (c) 2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022 Winfried Bruegmann
 ****************************************************************************************/
-package gde.io;
+package gde.device.igc;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -127,6 +127,7 @@ public class IGCReaderWriter {
 		String recordSetNameExtend = device.getRecordSetStemNameReplacement();
 		long timeStamp = -1, actualTimeStamp = -1, startTimeStamp = -1;
 		StringBuilder header = new StringBuilder();
+		StringBuilder triangles = new StringBuilder();
 		StringBuilder error = new StringBuilder();
 		StringBuilder albatrossTask = new StringBuilder();
 		StringBuilder gpsTriangleRelated = new StringBuilder();
@@ -140,6 +141,8 @@ public class IGCReaderWriter {
 		IgcExtension timeStepExtension = null;
 		Vector<IgcExtension> extensions = new Vector<IgcExtension>();
 		GDE.getUiNotification().setProgress(0);
+		
+		GpsTaskResult result = null;
 
 		try {
 			if (channelConfigNumber == null)
@@ -421,11 +424,53 @@ public class IGCReaderWriter {
 					}
 					else if (line.startsWith("E")) {
 						//skip E RECORD - Albatross enties
-						log.log(Level.FINE, "E RECORD - Albatross enty = " + line);
+						if (line.endsWith("ARM")) {
+							log.log(Level.FINE, "E RECORD - Albatross task arm = " + line);
+						}
+						else if (line.endsWith("TPC"))
+							log.log(Level.FINE, "E RECORD - Albatross task turn point condition = " + line);
+						else
+							log.log(Level.FINE, "E RECORD - Albatross entry = " + line);
 					}
-					else if (line.startsWith("L")) {
-						//skip L RECORD - Albatross stats
+					else if (line.startsWith("LISTAT")) {
 						log.log(Level.FINE, "L RECORD - Albatross stat = " + line);
+						if (line.startsWith("LISTAT{")) {
+							
+						}
+						else if (line.startsWith("LISTAT:LAP:{")) {
+							if (result == null)
+								result = new GpsTaskResult();
+							result.addLap(new GpsLap(line));
+						}
+					}
+					else if (line.startsWith("LSTAT")) {
+						log.log(Level.FINE, "L RECORD - Albatross stat = " + line);
+						if (result != null) {
+							result.add(line);
+							
+							String taskType = "Sport";
+							if (albatrossTask.toString().contains("200,200,70"))
+								taskType = "Light";
+							else if (albatrossTask.toString().contains("500,500,120"))
+								taskType = "SLS";
+
+							log.log(Level.OFF, result.toString(taskType));
+							triangles.append(result.toString(taskType));
+							
+							result = null;
+						}
+					}
+					else if (line.startsWith("LSTART")) {
+						log.log(Level.FINE, "L RECORD - Albatross start = " + line);
+					}
+					else if (line.startsWith("LSECT")) {
+						log.log(Level.FINE, "L RECORD - Albatross section = " + line);
+					}
+					else if (line.startsWith("LHRSTAT")) {
+						log.log(Level.FINE, "L RECORD - Albatross task stats = " + line);
+					}
+					else if (line.startsWith("LPNP")) {
+						log.log(Level.FINE, "L RECORD - Albatross lap add penalty = " + line);
 					}
 					else if (line.startsWith("G")) {
 						log.log(Level.FINE, "line number " + lineNumber + " contains security code and is voted as last line! " + lastLine); //$NON-NLS-1$ //$NON-NLS-2$
@@ -451,7 +496,7 @@ public class IGCReaderWriter {
 			
 			if (error.length() > 10)
 				recordSet.setRecordSetDescription(recordSet.getRecordSetDescription() + GDE.LINE_SEPARATOR + error);
-
+			
 		}
 		catch (FileNotFoundException e) {
 			log.log(java.util.logging.Level.WARNING, e.getMessage(), e);

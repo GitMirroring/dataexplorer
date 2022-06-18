@@ -51,7 +51,6 @@ import gde.data.Record;
 import gde.data.RecordSet;
 import gde.device.DataTypes;
 import gde.device.IDevice;
-import gde.io.FileHandler;
 import gde.messages.MessageIds;
 import gde.messages.Messages;
 import gde.ui.DataExplorer;
@@ -655,8 +654,8 @@ public class IgcExportDialog extends Dialog {
 							RecordSet recordSet = IgcExportDialog.this.application.getActiveRecordSet();
 							IDevice device = IgcExportDialog.this.application.getActiveDevice();
 							if (recordSet != null && device != null) {
-								new FileHandler().exportFileIGC(Messages.getString(MessageIds.GDE_MSGT0654), device, IgcExportDialog.this.getHeader(), ordinalLongitude, ordinalLatitude, ordinalHeight,
-										Integer.parseInt(IgcExportDialog.this.startAltitudeText.getText()));
+//								new FileHandler().exportFileIGC(Messages.getString(MessageIds.GDE_MSGT0654), device, IgcExportDialog.this.getHeader(), ordinalLongitude, ordinalLatitude, ordinalHeight,
+//										Integer.parseInt(IgcExportDialog.this.startAltitudeText.getText()));
 							}
 							IgcExportDialog.this.dialogShell.close();
 						}

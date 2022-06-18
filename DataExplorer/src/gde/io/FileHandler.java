@@ -30,7 +30,6 @@ import gde.GDE;
 import gde.config.Settings;
 import gde.data.Channel;
 import gde.data.Channels;
-import gde.data.Record;
 import gde.data.RecordSet;
 import gde.device.ChannelTypes;
 import gde.device.IDevice;
@@ -741,75 +740,75 @@ public class FileHandler {
 		}
 	}
 
-	/**
-	 * handles the export of an IGC file
-	 * @param dialogName
-	 * @param device
-	 * @param igcFileHeader
-	 * @param ordinalLongitude
-	 * @param ordinalLatitude
-	 * @param ordinalAltitude
-	 * @param offsetAltitude
-	 */
-	public void exportFileIGC(final String dialogName, final IDevice device, final StringBuilder igcFileHeader, final int ordinalLongitude, final int ordinalLatitude, final int ordinalAltitude,
-			final int offsetAltitude) {
-		final Channel activeChannel = this.channels.getActiveChannel();
-		if (activeChannel == null) {
-			this.application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGI0005));
-			return;
-		}
-		RecordSet activeRecordSet = activeChannel.getActiveRecordSet();
-		if (activeRecordSet == null) {
-			this.application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGI0005));
-			return;
-		}
-
-		Settings deviceSetting = Settings.getInstance();
-		String devicePath = getDevicePath();
-		String path = deviceSetting.getDataFilePath() + devicePath + GDE.STRING_FILE_SEPARATOR_UNIX;
-		String fileName = activeChannel.getFileName() == null ? this.getFileNameProposal(true) : activeChannel.getFileName();
-		fileName = fileName != null && fileName.contains(GDE.STRING_DOT) ? fileName.substring(0, fileName.indexOf(GDE.CHAR_DOT)) : fileName;
-		if (activeRecordSet.getName().contains(GDE.STRING_RIGHT_BRACKET) && activeRecordSet.getName().contains(GDE.STRING_LEFT_BRACKET)) {
-			try {
-				String flightNumber = activeRecordSet.getName().substring(activeRecordSet.getName().lastIndexOf(GDE.CHAR_LEFT_BRACKET) + 1, activeRecordSet.getName().lastIndexOf(GDE.CHAR_RIGHT_BRACKET));
-				if (fileName != null && !fileName.contains(GDE.STRING_EMPTY + Integer.parseInt(flightNumber))) {
-					fileName = fileName + GDE.STRING_UNDER_BAR + flightNumber;
-				}
-			}
-			catch (NumberFormatException e) {
-				// ignore
-			}
-		}
-		FileDialog igcFileDialog = this.application.prepareFileSaveDialog(dialogName, new String[] { GDE.FILE_ENDING_STAR_IGC }, path,
-				fileName != null && fileName.length() > 4 ? fileName : getFileNameProposal(true));
-		String igcFilePath = igcFileDialog.open();
-		if (igcFilePath != null && igcFileDialog.getFileName().length() > 4) {
-			if (FileUtils.checkFileExist(igcFilePath) && SWT.NO == this.application.openYesNoMessageDialog(Messages.getString(MessageIds.GDE_MSGI0007, new Object[] { igcFilePath }))) {
-				return;
-			}
-
-			try {
-				this.application.enableMenuActions(false);
-				this.application.setCursor(SWTResourceManager.getCursor(SWT.CURSOR_WAIT));
-
-				StringBuffer errorTxt = new StringBuffer();
-				if (0 > activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_LATITUDE)) errorTxt.append(Record.DataType.GPS_LATITUDE.value()).append(GDE.STRING_COMMA);
-				if (0 > activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_LONGITUDE)) errorTxt.append(Record.DataType.GPS_LATITUDE.value()).append(GDE.STRING_COMMA);
-				if (0 > activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_ALTITUDE)) errorTxt.append(Record.DataType.GPS_LATITUDE.value()).append(GDE.STRING_COMMA);
-				if (0 > activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_ALTITUDE)) errorTxt.append(Record.DataType.GPS_LATITUDE.value()).append(GDE.STRING_COMMA);
-				if (errorTxt.length() > 1) {
-					this.application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGI0051, new String[] { errorTxt.toString() }));
-					return;
-				}
-
-				IGCReaderWriter.write(device, igcFilePath, igcFileHeader, activeChannel.getActiveRecordSet(), ordinalLongitude, ordinalLatitude, ordinalAltitude, offsetAltitude);
-			}
-			catch (Exception e) {
-				FileHandler.log.log(Level.WARNING, e.getMessage(), e);
-				this.application.openMessageDialog(e.getClass().getSimpleName() + GDE.STRING_MESSAGE_CONCAT + e.getMessage());
-			}
-			this.application.enableMenuActions(true);
-			this.application.setCursor(SWTResourceManager.getCursor(SWT.CURSOR_ARROW));
-		}
-	}
+//	/**
+//	 * handles the export of an IGC file
+//	 * @param dialogName
+//	 * @param device
+//	 * @param igcFileHeader
+//	 * @param ordinalLongitude
+//	 * @param ordinalLatitude
+//	 * @param ordinalAltitude
+//	 * @param offsetAltitude
+//	 */
+//	public void exportFileIGC(final String dialogName, final IDevice device, final StringBuilder igcFileHeader, final int ordinalLongitude, final int ordinalLatitude, final int ordinalAltitude,
+//			final int offsetAltitude) {
+//		final Channel activeChannel = this.channels.getActiveChannel();
+//		if (activeChannel == null) {
+//			this.application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGI0005));
+//			return;
+//		}
+//		RecordSet activeRecordSet = activeChannel.getActiveRecordSet();
+//		if (activeRecordSet == null) {
+//			this.application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGI0005));
+//			return;
+//		}
+//
+//		Settings deviceSetting = Settings.getInstance();
+//		String devicePath = getDevicePath();
+//		String path = deviceSetting.getDataFilePath() + devicePath + GDE.STRING_FILE_SEPARATOR_UNIX;
+//		String fileName = activeChannel.getFileName() == null ? this.getFileNameProposal(true) : activeChannel.getFileName();
+//		fileName = fileName != null && fileName.contains(GDE.STRING_DOT) ? fileName.substring(0, fileName.indexOf(GDE.CHAR_DOT)) : fileName;
+//		if (activeRecordSet.getName().contains(GDE.STRING_RIGHT_BRACKET) && activeRecordSet.getName().contains(GDE.STRING_LEFT_BRACKET)) {
+//			try {
+//				String flightNumber = activeRecordSet.getName().substring(activeRecordSet.getName().lastIndexOf(GDE.CHAR_LEFT_BRACKET) + 1, activeRecordSet.getName().lastIndexOf(GDE.CHAR_RIGHT_BRACKET));
+//				if (fileName != null && !fileName.contains(GDE.STRING_EMPTY + Integer.parseInt(flightNumber))) {
+//					fileName = fileName + GDE.STRING_UNDER_BAR + flightNumber;
+//				}
+//			}
+//			catch (NumberFormatException e) {
+//				// ignore
+//			}
+//		}
+//		FileDialog igcFileDialog = this.application.prepareFileSaveDialog(dialogName, new String[] { GDE.FILE_ENDING_STAR_IGC }, path,
+//				fileName != null && fileName.length() > 4 ? fileName : getFileNameProposal(true));
+//		String igcFilePath = igcFileDialog.open();
+//		if (igcFilePath != null && igcFileDialog.getFileName().length() > 4) {
+//			if (FileUtils.checkFileExist(igcFilePath) && SWT.NO == this.application.openYesNoMessageDialog(Messages.getString(MessageIds.GDE_MSGI0007, new Object[] { igcFilePath }))) {
+//				return;
+//			}
+//
+//			try {
+//				this.application.enableMenuActions(false);
+//				this.application.setCursor(SWTResourceManager.getCursor(SWT.CURSOR_WAIT));
+//
+//				StringBuffer errorTxt = new StringBuffer();
+//				if (0 > activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_LATITUDE)) errorTxt.append(Record.DataType.GPS_LATITUDE.value()).append(GDE.STRING_COMMA);
+//				if (0 > activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_LONGITUDE)) errorTxt.append(Record.DataType.GPS_LATITUDE.value()).append(GDE.STRING_COMMA);
+//				if (0 > activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_ALTITUDE)) errorTxt.append(Record.DataType.GPS_LATITUDE.value()).append(GDE.STRING_COMMA);
+//				if (0 > activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_ALTITUDE)) errorTxt.append(Record.DataType.GPS_LATITUDE.value()).append(GDE.STRING_COMMA);
+//				if (errorTxt.length() > 1) {
+//					this.application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGI0051, new String[] { errorTxt.toString() }));
+//					return;
+//				}
+//
+//				IGCReaderWriter.write(device, igcFilePath, igcFileHeader, activeChannel.getActiveRecordSet(), ordinalLongitude, ordinalLatitude, ordinalAltitude, offsetAltitude);
+//			}
+//			catch (Exception e) {
+//				FileHandler.log.log(Level.WARNING, e.getMessage(), e);
+//				this.application.openMessageDialog(e.getClass().getSimpleName() + GDE.STRING_MESSAGE_CONCAT + e.getMessage());
+//			}
+//			this.application.enableMenuActions(true);
+//			this.application.setCursor(SWTResourceManager.getCursor(SWT.CURSOR_ARROW));
+//		}
+//	}
 }

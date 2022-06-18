@@ -10,6 +10,7 @@ Device specific changes/fixes
 	* HoTTAdapter* - add ESC extension CS-Electronics
 	* iChargerUSB* - add check for unsaved data before import
 	* OpenTx-Telemetry - fix wrong record assignment during KMZ export 
+	* IGCAdapter - add some GPS-Triangle related statistics to trace
 
 
 Version 3.6.0 - 20 May 2022

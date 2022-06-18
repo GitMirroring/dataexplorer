@@ -16,7 +16,7 @@
     
     Copyright (c) 2014,2015,2016,2017,2018,2019,2020,2021,2022 Winfried Bruegmann
 ****************************************************************************************/
-package gde.io;
+package gde.device.igc;
 
 /**
  * class to handle IGC file extension records
