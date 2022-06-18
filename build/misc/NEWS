@@ -1,32 +1,25 @@
-GNU DataExplorer - News - comes with Version 3.6.0 - 20 May 2022
+GNU DataExplorer - News - comes with Version 3.6.1 - 18 Jun 2022
 
 Generic changes/fixes
-	* fix trigger analysis while a secondary is defined but no values available
-	* fix error displaying curve compare while 10 spacings on scale
-	* fix time error in curve compare displaying curves different size or different time step
-		
+	* fix message dialog overlap while pointing out Java version outside specification
+	 
 Device specific changes/fixes
-	* HoTTAdapter2* - fix visualization of warning in configuration channels, sync with HoTTAdapter*
-	* HoTTAdapter* - find date and time deviations Sparrow/Swift
-	* HoTTAdapter* - add extended ESC values (YGE)
-	* IGCAdapter - add support Swift IGC format
-	* IGCAdapter - find high deviations in time 
-	* IGCAdapter - add some error handling
-	* ZeroAdapter - fix StatisticsType.fromString("min=true max=true avg=true sigma=false")
+	* iChargerDX* - fix missing anti spark system setting
+	* HoTTAdapter2* - fix error while opening OSD
+	* HoTTAdapter* - add ESC extension CS-Electronics
+	* iChargerUSB* - add check for unsaved data before import
+	* OpenTx-Telemetry - fix wrong record assignment during KMZ export 
+	* IGCAdapter - add some GPS-Triangle related statistics to trace
 	
 Generelle Änderungen/Verbesserungen
-	* Trigger-Analyse für Zusatz-Trigger ohne Werte korrigiert
-	* Fehler bei Anzeige Kurvenvergleich bei eingestellter 10ner-Teilung korrigiert
-	* Zeit-Fehler in Kurvenvergleich mit unterschiedlichen Zeitlängen und Zeitschritten korrigiert
+    * überlappender Dialog zur Anzeige der Java Versionswarnung behoben
 
 Geräte spezifische Änderungen/Verbesserungen
-	* HoTTAdapter2* - Visualisierung von Warnungen synchronisiert mit HoTTAdapter*
-	* HoTTAdapter* - Ausgabe von GPS-Zeit- und GPS-Datums-Fehlern Sparrow/Swift eingebaut
-	* HoTTAdapter* - Erweiterung zusätzlicher ESC Werte eingebaut (aktuell nur von YGE)
-	* IGCAdapter - Unterstützung des Swift IGC Formats eingebaut
-	* IGCAdapter - Ausgabe hoher Abweichungen in der Zeit eingebaut 
-	* IGCAdapter - Fehlerbehandlung eingefügt
-	* ZeroAdapter - Korrektur Schreibfehler StatisticsType.fromString("min=true max=true avg=true sigma=false")
-
+    * iChargerDX* - fehlende Anti-Funken Konfiguration zu Systemeinstellungen hinzugefügt
+    * HoTTAdapter2* - Fehler beim Öffnen älterer OSD Dateien korrigiert
+    * HoTTAdapter* - ESC Erweiterung für CS-Electronics Turbinen hinzugefügt
+    * iChargerUSB* - Prüfung vor dem Import von CSV Dateien hinzugefügt
+    * OpenTx-Telemetry - falsche Zuweisung der GPS Koordinatenposition beim KMZ Export korrigiert
+    * IGCAdapter - GPS-Triangle bezogenen Statistik hinzugefügt
 	
 	
