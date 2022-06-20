@@ -255,12 +255,11 @@ public class IGCReaderWriter {
 				}
 
 				time = line.substring(1, 7);//16 02 40
-				while (line != null && Integer.parseInt(time) == 0) { 
+				while (Integer.parseInt(time) == 0) { 
 					log.log(Level.WARNING, String.format("time entry B record zero, line %d", lineNumber));
 					line = reader.readLine();
 					++lineNumber;
 					time = line.substring(1, 7);
-					continue;
 				}
 				hour = Integer.parseInt(time.substring(0, 2));
 				minute = Integer.parseInt(time.substring(2, 4));
