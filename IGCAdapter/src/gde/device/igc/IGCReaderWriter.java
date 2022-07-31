@@ -227,7 +227,7 @@ public class IGCReaderWriter {
 					}
 					++lineNumber;
 				}
-				if (lineNumber >= 50) {
+				if (lineNumber >= 180) {
 					reader.close();
 					log.log(Level.SEVERE, filePath + " Check IGC header");
 					throw new IOException(filePath + " Check IGC header");

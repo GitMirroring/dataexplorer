@@ -5,7 +5,7 @@ Generic changes/fixes
 	* 
 	 
 Device specific changes/fixes
-	* IGCAdapter - simplify code
+	* IGCAdapter - simplify code, allow 3 minutes without sat fix b00000000000..
 	
 Version 3.6.1 - 18 Jun 2022
 Generic changes/fixes
