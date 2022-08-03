@@ -3201,7 +3201,7 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 							if (GDE.IS_WINDOWS) // DataExplorer_Setup_3.0.8_win64.exe
 								filename = "DataExplorer_Setup_" + version + "_win" + arch + GDE.FILE_ENDING_DOT_EXE;
 							else if (GDE.IS_LINUX && GDE.IS_OS_ARCH_ARM) // dataexplorer-3.0.8-bin_GNULinux_x86_64.tar.gz
-								filename = "dataexplorer-" + version + "-bin_RaspbianLinux_ARM_32.tar.gz";
+								filename = "dataexplorer-" + version + "-bin_RaspbianLinux_ARM_" + arch + ".tar.gz";
 							else if (GDE.IS_LINUX && !GDE.IS_OS_ARCH_ARM) // dataexplorer-3.0.8-bin_GNULinux_x86_64.tar.gz
 								filename = "dataexplorer-" + version + "-bin_GNULinux_x86_" + arch + ".tar.gz";
 							else if (GDE.IS_MAC) // DataExplorer-3.0.8_Mac_64.dmg
