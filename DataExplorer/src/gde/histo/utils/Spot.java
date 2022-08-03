@@ -47,8 +47,8 @@ public final class Spot<T extends Number> implements Comparable<Spot<T>> {
 			if (Float.isInfinite(x.floatValue()) || Float.isInfinite(y.floatValue())) throw new IllegalArgumentException("infinite");
 			if (Float.isNaN(x.floatValue()) || Float.isNaN(y.floatValue())) throw new IllegalArgumentException("NaN");
 			// convert -0.0 to +0.0
-			this.x = x.floatValue() == 0.0 ? (T) new Float(0.0) : x;
-			this.y = y.floatValue() == 0.0 ? (T) new Float(0.0) : y;
+			this.x = x.floatValue() == 0.0 ? (T) Float.valueOf(0.0f) : x;
+			this.y = y.floatValue() == 0.0 ? (T) Float.valueOf(0.0f) : y;
 		} else {
 			this.x = x;
 			this.y = y;

@@ -26,8 +26,6 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -530,7 +528,7 @@ public class GDE {
 			GDE.seStartupProgress(100);
 			int javaVmSpecificationVersion = Integer.parseInt(((String)props.get("java.vm.specification.version")).contains(GDE.STRING_DOT) 
 					? ((String)props.get("java.vm.specification.version")).substring(2) : ((String)props.get("java.vm.specification.version")));
-			if (javaVmSpecificationVersion < 8 || javaVmSpecificationVersion > 17) {
+			if (javaVmSpecificationVersion < 11 || javaVmSpecificationVersion > 17) {
 				application.openMessageDialogAsync(Messages.getString(MessageIds.GDE_MSGW0050, new Integer[] {javaVmSpecificationVersion}));
 			}
 			application.execute(inputFilePath);
@@ -620,14 +618,7 @@ public class GDE {
 			}
 		}
 		log.logp(Level.INFO, GDE.$CLASS_NAME, $METHOD_NAME, "using class loader URL = " + urls.toString()); //$NON-NLS-1$
-		ClassLoader newLoader = AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() {
-			@Override
-			public URLClassLoader run() {
-				return new URLClassLoader(urls.toArray(new URL[1]));
-			}
-		});
-
-		return newLoader;
+		return new URLClassLoader(urls.toArray(new URL[1]));
 	}
 
 	public static String getDevicesClasspathAsString() throws Exception {
