@@ -21,6 +21,7 @@ package gde.device.spektrum;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -58,6 +59,7 @@ import gde.exception.DataInconsitsentException;
 import gde.log.Level;
 import gde.messages.MessageIds;
 import gde.messages.Messages;
+import gde.ui.DataExplorer;
 import gde.ui.menu.MenuToolBar;
 import gde.utils.StringHelper;
 import gde.utils.TimeLine;
@@ -180,9 +182,16 @@ public class TlmReader {
 		if (new File(selectedImportFile).exists()) {
 			String modelName = "???";
 			int index = 0;
-			List<IFlight> flights = reader.parseFlightDefinitions(selectedImportFile);
-			if (log.isLoggable(Level.FINE)) 
-				log.log(Level.FINE, "found " + flights.size() + " flight sessions");
+			List<IFlight> flights = new ArrayList<>();
+			try {
+				flights = reader.parseFlightDefinitions(selectedImportFile);
+				if (log.isLoggable(Level.FINE)) 
+					log.log(Level.FINE, "found " + flights.size() + " flight sessions");
+			}
+			catch (Exception e) {
+				DataExplorer.getInstance().openMessageDialogAsync(e.getMessage());
+				log.log(Level.SEVERE, e.getMessage(),e);
+			}
 			String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date().getTime()); //$NON-NLS-1$
 			String dateTime = new SimpleDateFormat("yyyy-MM-dd, HH:mm:ss").format(new Date().getTime()); //$NON-NLS-1$
 			channel = SpektrumAdapter.channels.get(channelNumber);
