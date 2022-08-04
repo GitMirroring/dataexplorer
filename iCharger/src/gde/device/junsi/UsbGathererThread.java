@@ -355,7 +355,7 @@ public class UsbGathererThread extends Thread {
 		if (outputChannel != null) {
 			long deltaTimeStamp_ms = this.device.getTimeStamp(dataBuffer) - (number == 2 ? this.lastTimeStamp_02_ms : this.lastTimeStamp_01_ms);
 			// check if a record set matching for re-use is available and prepare a new if required, case continuous gathering check for timeStamp since starting a new process will reset time
-			if (recordSet == null || deltaTimeStamp_ms <= 0 || !processRecordSetKey.contains(batteryType)  || !processRecordSetKey.contains(processTypeName) || !processRecordSetKey.contains(processStatusName)) {
+			if (recordSet == null || (deltaTimeStamp_ms <= 0 && this.device.getTimeStamp(dataBuffer) == 0) || !processRecordSetKey.contains(batteryType)  || !processRecordSetKey.contains(processTypeName) || !processRecordSetKey.contains(processStatusName)) {
 				if (log.isLoggable(Level.FINER)) log.log(Level.FINER, "timestampDifference " + deltaTimeStamp_ms);
 				this.application.setStatusMessage(""); //$NON-NLS-1$
 
@@ -401,8 +401,8 @@ public class UsbGathererThread extends Thread {
 			}
 
 			deltaTimeStamp_ms = this.device.getTimeStamp(dataBuffer) - (number == 2 ? this.lastRecordEndTimeStamp_02_ms : this.lastRecordEndTimeStamp_01_ms);
-
-			recordSet.addPoints(this.device.convertDataBytes(points, dataBuffer), deltaTimeStamp_ms);
+			if (deltaTimeStamp_ms > 0)
+				recordSet.addPoints(this.device.convertDataBytes(points, dataBuffer), deltaTimeStamp_ms);
 			
 			long intervalTime_ms = deltaTimeStamp_ms - (number == 2 ? this.lastTimeStamp_02_ms : this.lastTimeStamp_01_ms);
 			if (this.usbPort.getTimeOut_ms() < intervalTime_ms)
