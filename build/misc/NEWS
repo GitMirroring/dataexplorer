@@ -1,25 +1,23 @@
-GNU DataExplorer - News - comes with Version 3.6.1 - 18 Jun 2022
+GNU DataExplorer - News - comes with Version 3.6.2 - 15 Aug 2022
 
 Generic changes/fixes
-	* fix message dialog overlap while pointing out Java version outside specification
+	* update build to use Java 11 for build, setting release=8 to enable execution using Java 8 runtime
+	* fix update download ARM architecture
+	* correct trigger reference handling, use primary and secondary if both referenced
 	 
 Device specific changes/fixes
-	* iChargerDX* - fix missing anti spark system setting
-	* HoTTAdapter2* - fix error while opening OSD
-	* HoTTAdapter* - add ESC extension CS-Electronics
-	* iChargerUSB* - add check for unsaved data before import
-	* OpenTx-Telemetry - fix wrong record assignment during KMZ export 
-	* IGCAdapter - add some GPS-Triangle related statistics to trace
+	* IGCAdapter - simplify code, allow 3 minutes without sat fix B00000000000..
+	* Spektrum-Telemetry - open message dialog while problems during log parsing occur
+	* iChargerUSB - handling while time difference of two read attempts is zero corrected
 	
 Generelle Änderungen/Verbesserungen
-    * überlappender Dialog zur Anzeige der Java Versionswarnung behoben
+	* update benutze Java 11 für den Bau, setze release=8, um Java 8 Ausführung zu errmöglichen
+	* Update-Download ARM Architektur korrigiert
+	* Handhabung Trigger Referenzen korrigiert, nutze Ersten und Zweiten nur, wenn beidee referenziert sind
 
 Geräte spezifische Änderungen/Verbesserungen
-    * iChargerDX* - fehlende Anti-Funken Konfiguration zu Systemeinstellungen hinzugefügt
-    * HoTTAdapter2* - Fehler beim Öffnen älterer OSD Dateien korrigiert
-    * HoTTAdapter* - ESC Erweiterung für CS-Electronics Turbinen hinzugefügt
-    * iChargerUSB* - Prüfung vor dem Import von CSV Dateien hinzugefügt
-    * OpenTx-Telemetry - falsche Zuweisung der GPS Koordinatenposition beim KMZ Export korrigiert
-    * IGCAdapter - GPS-Triangle bezogenen Statistik hinzugefügt
+	* IGCAdapter - Code vereinfacht, erlaube 3 Minutes ohnee Sat-Fix B00000000000..
+	* Spektrum-Telemetry - öffne Dialog weenn Parsing-Probleme aufgetreten sind
+	* iChargerUSB - Handhabung bei Zeitdifferenz von Leseversuchen 0 korrigiert
 	
 	

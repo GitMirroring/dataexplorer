@@ -3243,8 +3243,8 @@
 				<symbol>I</symbol>
 				<unit>A</unit>
 				<active>true</active>
-				<statistics min="true" max="true" avg="true" sigma="true" countByTrigger="true" countTriggerText="text_trigger_count" sumTriggerTimeText="text_trigger_time_sum">
-					<trigger level="3000" isGreater="true" minTimeSec="4" comment="comment_trigger_gt_def" isSecondary="false" />
+				<statistics min="true" max="true" avg="true" sigma="true" countByTrigger="true" countTriggerText="text_trigger_count" sumTriggerTimeText="text_trigger_time_sum" triggerRefOrdinal="88" comment="comment_trigger_ref">
+					<trigger level="20000" isGreater="true" minTimeSec="4" comment="comment_trigger_gt_def" isSecondary="false" />
 				</statistics>
 				<property name="factor" value="0.1" type="Double" description="factor to measurement value" />
 				<property name="scale_sync_ref_ordinal" value="39" type="Integer" />
@@ -5615,8 +5615,8 @@
 				<symbol>I</symbol>
 				<unit>A</unit>
 				<active>true</active>
-				<statistics min="true" max="true" avg="true" sigma="true" countByTrigger="true" countTriggerText="text_trigger_count" sumTriggerTimeText="text_trigger_time_sum">
-					<trigger level="3000" isGreater="true" minTimeSec="4" comment="comment_trigger_gt_def" isSecondary="false" />
+				<statistics min="true" max="true" avg="true" sigma="true" countByTrigger="true" countTriggerText="text_trigger_count" sumTriggerTimeText="text_trigger_time_sum" triggerRefOrdinal="88" comment="comment_trigger_ref">
+					<trigger level="20000" isGreater="true" minTimeSec="4" comment="comment_trigger_gt_def" isSecondary="false" />
 				</statistics>
 				<property name="factor" value="0.1" type="Double" description="factor to measurement value" />
 				<property name="scale_sync_ref_ordinal" value="39" type="Integer" />
