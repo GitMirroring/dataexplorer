@@ -1,9 +1,9 @@
-******** DataExplorer README ***********  11 Jan 2022 WB
+******** DataExplorer README ***********  18 Aug 2022 WB
 
 Der GNU DataExplorer ist freie Software, siehe http://www.gnu.org/philosophy/free-sw.html. Sie wird kostenfrei und ohne Spende 
 zur Verfügung gestellt. Es gibt aber auch keinerlei Gewährleistung. Durch die Implementierung in Java auf der Basis von der freien Bibliotheken 
 RXTXcomm/jSerialComm und SWT ist die Ausführung des Programms auf vielen populären Betriebssystemplattformen in 32 oder 64 Bit wie Windows, GNU/Linux 
-und MAC OS X möglich. Voraussetzung ist lediglich eine installierte Java Laufzeitumgebung der Version 1.8 bis 17, z.B. IcedTea, 
+und MAC OS X möglich. Voraussetzung ist lediglich eine installierte Java Laufzeitumgebung der Version 11 bis 17, z.B. IcedTea, 
 openJDK oder der SUN/Oracle Java Runtime. Vorzugsweise Versionen mit Long Term Support (LTS) verwenden.
 
 Der GNU DataExplorer nimmt Daten von seriell angeschlossenen Geräten oder als Textdateiimport entgegen, zeigt diese für verschiedene Auswertungen an. 
@@ -38,7 +38,7 @@ auch Anwendungkonfiguration und Tracelogdaten abgelegt.
 
 Hinweis: Erscheint nach der Ausführung von DataExplorer.exe folgende oder ähnliche Fehlermeldung 
 "The java class could not be loaded. java.lang.UnsupportedClassVersionError: (gde/GDE) bad major Version"
-ist die installierte Java Version (java -version) zu alt und muss gegen eine aktuelle Version 1.8.+ , bis Java 17 ausgetauscht werden.
+ist die installierte Java Version (java -version) zu alt und muss gegen eine aktuelle Version 11, bis Java 17 ausgetauscht werden.
 Zum Erzeugen der DataExplorer.exe wird ein Java-Wrapper, launch4j, benutzt. Gibt es Fehler beim Start der Anwendung könnte es helfen 
 die Anwendung über "DataExplorer.exe --l4j-debug" zu starten. Hierbei wird ein launch4j.log geschrieben, das wertvolle Informationen zeigt.
 
@@ -60,7 +60,7 @@ Anwendungkonfiguration und Tracelogdaten abgelegt.
 
 Hinweis: Erscheint nach der Ausführung von DataExplorer folgende oder ähnliche Fehlermeldung 
 "The java class could not be loaded. java.lang.UnsupportedClassVersionError: (gde/GDE) bad major Version"
-ist die installierte Java Version (java -version) zu alt und muss gegen eine aktuelle Version 1.8.+  bis Java 17 ausgetauscht werden.
+ist die installierte Java Version (java -version) zu alt und muss gegen eine aktuelle Version 11  bis Java 17 ausgetauscht werden.
 
 RXTXcomm locked den seriellen Port über die Gruppe "uucp" und "dialout", welcher der Anwendungsnutzer angehören sollte.
 Bei Problemen mit dem USB2Serial UART von SiliconLabs cp210x siehe das GNULinux_cp210x Verzeichnis im Downloadbereich.
@@ -84,5 +84,5 @@ angelegt. Hierunter werden auch Anwendungkonfiguration und Tracelogdaten abgeleg
 
 Hinweis: Wird die Anwendung nicht ausgeführt, sollte man mittels Terminal in das Verzeichnis /Applications/DataExplorer.app/Contents/MacOS wechslen und
 das Startscript dort ausführen. Wird als Fehlermeldung "The java class could not be loaded. java.lang.UnsupportedClassVersionError: (gde/GDE) bad major Version"
-angezeigt, ist die installierte/konfigurierte Java Version (java -version) zu alt und muss gegen eine aktuelle Version 1.8.+ bis Java 17 ausgetauscht werden.
+angezeigt, ist die installierte/konfigurierte Java Version (java -version) zu alt und muss gegen eine aktuelle Version 11 bis Java 17 ausgetauscht werden.
 
