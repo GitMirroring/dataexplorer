@@ -5,6 +5,7 @@ Generic changes/fixes
 	* update build to use Java 11 for build, setting release=8 to enable execution using Java 8 runtime
 	* fix update download ARM architecture
 	* correct trigger reference handling, use primary and secondary if both referenced
+	* enable capability to start data collection right after application startup
 	 
 Device specific changes/fixes
 	* IGCAdapter - simplify code, allow 3 minutes without sat fix b00000000000..

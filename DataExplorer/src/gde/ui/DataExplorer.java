@@ -901,6 +901,10 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 		if (log.isLoggable(Level.TIME)) log.logp(Level.TIME, $CLASS_NAME, $METHOD_NAME, String.format("done time = %s", StringHelper.getFormatedTime("ss:SSS", (new Date().getTime() - GDE.StartTime)))); //$NON-NLS-1$
 		GDE.shell.layout(); //fix Ubuntu update problem
 		this.updateLogger();
+		
+		if (DataExplorer.application.getActiveDevice() != null && Settings.getInstance().isStartDeviceCommunicationAfterStartup()) {
+			DataExplorer.application.getActiveDevice().open_closeCommPort();
+		}
 	}
 
 	/**

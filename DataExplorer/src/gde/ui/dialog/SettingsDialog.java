@@ -183,7 +183,7 @@ public class SettingsDialog extends Dialog {
 	Button															assocMimeTypeButton;
 	Button															removeLauncherButton;
 	Button															createLauncherButton;
-	Button															partialDataTableButton, blankChargeDischargeButton, continiousRecordSetButton;
+	Button															partialDataTableButton, blankChargeDischargeButton, continiousRecordSetButton, startCommunicationAfterStartupButton;
 	Button															drawScaleInRecordColorButton, drawNameInRecordColorButton, drawNumbersInRecordColorButton, draw10TicksPerRecordButton, addChannelConfigNameCurveCompareButton;
 	ParameterConfigControl							fontSizeCorrectionSlider, kmzExportTimeStepSlider;
 	int[]																fontCorrection					= new int[1];
@@ -236,7 +236,7 @@ public class SettingsDialog extends Dialog {
 
 	public void open() {
 		int shellWidth =  500;
-		int shellHeight =  GDE.IS_LINUX ? 600 : 590;
+		int shellHeight =  GDE.IS_LINUX ? 620 : 610;
 		try {
 			Shell parent = getParent();
 			this.dialogShell = new Shell(parent, SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL);
@@ -262,7 +262,7 @@ public class SettingsDialog extends Dialog {
 				this.settingsTabFolder = new CTabFolder(this.dialogShell, SWT.FLAT | SWT.BORDER);
 				this.settingsTabFolder.setSimple(false);
 				FormData cTabFolder1LData = new FormData();
-				cTabFolder1LData.height = GDE.IS_WINDOWS ? 460 : 495;
+				cTabFolder1LData.height = GDE.IS_WINDOWS ? 480 : 515;
 				cTabFolder1LData.left = new FormAttachment(0, 1000, 0);
 				cTabFolder1LData.right = new FormAttachment(1000, 1000, 0);
 				cTabFolder1LData.top = new FormAttachment(0, 1000, 0);
@@ -1638,6 +1638,24 @@ public class SettingsDialog extends Dialog {
 											// time gaps which can not be realized, so charger specific implementation take place here
 											SettingsDialog.this.application.openMessageDialogAsync(Messages.getString(MessageIds.GDE_MSGI0059));
 										}
+									}
+								});
+							}
+							{
+								this.startCommunicationAfterStartupButton = new Button(this.chargerSpecials, SWT.CHECK);
+								this.startCommunicationAfterStartupButton.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+								this.startCommunicationAfterStartupButton.setText(Messages.getString(MessageIds.GDE_MSGT0690));
+								this.startCommunicationAfterStartupButton.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0970));
+								this.startCommunicationAfterStartupButton.setSelection(this.settings.isStartDeviceCommunicationAfterStartup());
+								RowData createLauncerButtonLData = new RowData();
+								createLauncerButtonLData.width = 400;
+								createLauncerButtonLData.height = GDE.IS_LINUX ? 22 : GDE.IS_MAC ? 20 : 18;
+								this.startCommunicationAfterStartupButton.setLayoutData(createLauncerButtonLData);
+								this.startCommunicationAfterStartupButton.addSelectionListener(new SelectionAdapter() {
+									@Override
+									public void widgetSelected(SelectionEvent evt) {
+										SettingsDialog.log.log(Level.FINEST, "startCommunicationAfterStartupButton.widgetSelected, event=" + evt); //$NON-NLS-1$
+										SettingsDialog.this.settings.setStartDeviceCommunicationAfterStartup(SettingsDialog.this.startCommunicationAfterStartupButton.getSelection());
 									}
 								});
 							}
