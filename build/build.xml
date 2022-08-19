@@ -1291,7 +1291,7 @@
 				<echo message="signing: @{file}" />
 				<exec executable="bash" dir="${basedir}/build/target/install">
 					<arg value="-c" />
-					<arg value="gpg --batch -b --use-agent '@{file}'" />
+					<arg value="/usr/local/bin/gpg --batch -b --use-agent '@{file}'" />
 				</exec>
 			</sequential>
 		</for>
@@ -1302,7 +1302,7 @@
 			</path>
 			<sequential>
 				<echo message="verify: @{file}" />
-				<exec executable="gpg" dir="${basedir}/build/target/install">
+				<exec executable="/usr/local/bin/gpg" dir="${basedir}/build/target/install">
 					<arg value="--verify" />
 					<arg value="@{file}" />
 				</exec>
@@ -1328,7 +1328,7 @@
 				<echo message="build md5 @{file}" />
 				<exec executable="bash" dir="${basedir}/build/target/install">
 					<arg value="-c" />
-					<arg value="md5sum '@{file}' > '@{file}'.md5" />
+					<arg value="/usr/local/bin/md5sum '@{file}' > '@{file}'.md5" />
 				</exec>
 			</sequential>
 		</for>
@@ -1339,7 +1339,7 @@
 			</path>
 			<sequential>
 				<echo message="verify: @{file}" />
-				<exec executable="md5sum" dir="${basedir}/build/target/install">
+				<exec executable="/usr/local/bin/md5sum" dir="${basedir}/build/target/install">
 					<arg value="-c" />
 					<arg value="@{file}" />
 				</exec>
