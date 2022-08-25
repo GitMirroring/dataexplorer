@@ -457,6 +457,8 @@ public class GDE {
 		final String $METHOD_NAME = "main"; //$NON-NLS-1$
 		log.log(Level.FINER, "main    start");
 		try {
+			System.setProperty("https.protocols", "SSLv3,TLSv1,TLSv1.1,TLSv1.2");
+			System.setProperty("file.encoding", "UTF-8");
 			GDE.initLogger();
 			log.log(Level.INFO, "initLogger  done ");
 

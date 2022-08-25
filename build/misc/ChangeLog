@@ -1,6 +1,14 @@
 Development history / change log, please read from bottom up
 
-Version 3.6.2 - xx yyy 2022
+Version 3.6.3 - xx yyy 2022
+Generic changes/fixes
+	* export https.protocolls to enable personal build Java runtime
+	 
+Device specific changes/fixes
+	* 
+
+
+Version 3.6.2 - 20 Jul 2022
 Generic changes/fixes
 	* update build to use Java 11 for build, setting release=8 to enable execution using Java 8 runtime
 	* fix update download ARM architecture
