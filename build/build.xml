@@ -221,6 +221,7 @@
 		<mkdir dir="${output.mac64.bundle}" />
 		<mkdir dir="${output.mac64.bundle.bin}" />
 		<mkdir dir="${output.mac64.program}" />
+		<mkdir dir="${output.mac64.program.runtime}" />
 		<mkdir dir="${output.mac64.program.devices}" />
 		<mkdir dir="${output.mac64.java.ext}" />
 	</target>
@@ -377,6 +378,7 @@
 
 	<target name="MAC" if="isMAC">
 		<echo message="${os.name} ${os.arch} ${sun.arch.data.model}" />
+	    <antcall target="jlink_mac_intel" description="building java runtime" />		
 		<antcall target="MacDefault" />
 		<antcall target="MacPrefix" />
 	</target>
@@ -394,6 +396,10 @@
 		<copy toDir="${install.dir.mac}/${app.name}.app">
 			<fileset file="${output.dir}/Mac_${sun.arch.data.model}/${app.name}.app/**" />
 		</copy>
+		<echo message="chmod ${install.dir.mac}/${app.name}.app/Contents/Resources/runtime/bin" />
+		<chmod perm="+x" failonerror="true">
+			<fileset dir="${install.dir.mac}/${app.name}.app/Contents/Resources/runtime/bin" />
+		</chmod>
 	</target>
 	<target name="MacPrefix" if="prefix">
 		<echo message="installing to ${prefix}" />
@@ -409,6 +415,9 @@
 		<copy toDir="${prefix}">
 			<fileset file="${output.dir}/Mac_${sun.arch.data.model}/**" />
 		</copy>
+		<chmod perm="+x" failonerror="true">
+			<fileset dir="${prefix}/${output.dir}/Mac_${sun.arch.data.model}/${app.name}.app/Contents/Resources/runtime/bin" />
+		</chmod>
 	</target>
 
 	<target name="check_prefix">
@@ -1016,7 +1025,21 @@
 		</copy>
 		-->
 	</target>
-
+	
+	<!-- build java runtime using jlink MAC OS Intel -->
+	<target name="jlink_mac_intel" depends="copy-files-mac">		
+		<exec executable="jlink" dir="${output.mac64.program}">
+			<arg value="--compress=2" />
+			<arg value="--no-header-files" />
+			<arg value="--no-man-pages" />
+			<arg value="--strip-debug" />
+			<arg value="--output" />
+			<arg value="runtime" />
+			<arg value="--add-modules" />
+			<arg value="java.se" />
+		</exec>
+	</target>
+	
 	<!-- package, build Windows installer, MAC OS disk image, tar for GNULinux -->
 	<target name="binary_package" depends="copy-files">		
 	    <antcall target="build_Windows_NSIS_installer" description="building NSIS Windows installer" if:set="isWindows" />		
@@ -1546,6 +1569,13 @@
     </target>
     
     <target name="build_dmg_64" depends="init-mac" description="creates MAC OS disk image 64 bit">
+    	<!-- temporary call jlink to build self contained JRE -->
+	    <antcall target="jlink_mac_intel" description="building java runtime" />		
+		<echo message="chmod ${output.mac64.program}/runtime/bin" />
+		<chmod perm="+x" failonerror="true">
+			<fileset dir="${output.mac64.program}/runtime/bin" />
+		</chmod>
+
 	    <!-- Set this property value to your application name -->
 	    <property name="app.name" value="DataExplorer"/>
 	
