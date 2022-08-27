@@ -6,7 +6,7 @@
 #refer to bootstrap.log and look for org.eclipse.swt.internal.gtk.version = 2.24.32
 export SWT_GTK3=0
 
-echo java -Dfile.encoding=UTF-8 -jar -Xms64m -Xmx3092m $(dirname $0)/DataExplorer.jar
+echo java -jar -Xms64m -Xmx3092m $(dirname $0)/DataExplorer.jar
 echo argument $1
-java -Dfile.encoding=UTF-8 -jar -Xms64m -Xmx3092m $(dirname $0)/DataExplorer.jar $1
+java -jar -Xms64m -Xmx3092m $(dirname $0)/DataExplorer.jar $1
 

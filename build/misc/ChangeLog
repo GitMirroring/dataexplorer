@@ -3,6 +3,7 @@ Development history / change log, please read from bottom up
 Version 3.6.3 - xx yyy 2022
 Generic changes/fixes
 	* export https.protocolls to enable personal build Java runtime
+	* export file.encoding=UTF-8 internally
 	* add 1 to GPS data start index to make altitude level more stable
 	 
 Device specific changes/fixes

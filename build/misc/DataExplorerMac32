@@ -5,6 +5,6 @@
 GDE_DIR="$(dirname ${0})/../Resources"
 cd ${GDE_DIR}
 
-echo java -XstartOnFirstThread -d32 -Xdock:name=DataExplorer -Dfile.encoding=UTF-8 -jar -Xms64m -Xmx1024m ./DataExplorer.jar "$@"
-java -XstartOnFirstThread -d32 -Xdock:name=DataExplorer -Dfile.encoding=UTF-8 -jar -Xms64m -Xmx1024m ./DataExplorer.jar "$@"
+echo java -XstartOnFirstThread -d32 -Xdock:name=DataExplorer -jar -Xms64m -Xmx1024m ./DataExplorer.jar "$@"
+java -XstartOnFirstThread -d32 -Xdock:name=DataExplorer -jar -Xms64m -Xmx1024m ./DataExplorer.jar "$@"
 

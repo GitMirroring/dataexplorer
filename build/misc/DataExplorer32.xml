@@ -28,7 +28,6 @@
     <runtimeBits>32</runtimeBits>
     <initialHeapSize>64</initialHeapSize>
     <maxHeapSize>1280</maxHeapSize>
-    <opt>-Dfile.encoding=UTF-8</opt>
   </jre>
   <messages>
     <startupErr>An error occurred while starting the application.</startupErr>
