@@ -19,12 +19,12 @@
     <cp>DataExplorer.jar</cp>
   </classPath>
   <jre>
-    <path></path>
-    <bundledJre64Bit>false</bundledJre64Bit>
+    <path>runtime</path>
+    <bundledJre64Bit>true</bundledJre64Bit>
     <bundledJreAsFallback>false</bundledJreAsFallback>
     <minVersion>1.8</minVersion>
-    <maxVersion></maxVersion>
-    <jdkPreference>preferJre</jdkPreference>
+    <maxVersion>17</maxVersion>
+    <jdkPreference>jdkOnly</jdkPreference>
     <runtimeBits>64</runtimeBits>
     <initialHeapSize>64</initialHeapSize>
     <maxHeapSize>3092</maxHeapSize>

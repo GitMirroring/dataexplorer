@@ -5,7 +5,7 @@ Generic changes/fixes
 	* export https.protocolls to enable personal build Java runtime
 	* export file.encoding=UTF-8 internally
 	* add 1 to GPS data start index to make altitude level more stable
-	* prepare binary build MAX OS X using self contained JRE
+	* prepare binary build MAX OS X Intel 64 and Windows 64 using self contained JRE
 	 
 Device specific changes/fixes
 	* OpenTx-Telemetry - add measurement named 'Alt' to enable Record.DataType.GPS_ALTITUDE which is required to KMZ export 

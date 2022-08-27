@@ -322,6 +322,8 @@
 
 	<target name="Windows" if="isWindows">
 		<echo message="${os.name} ${os.arch} ${sun.arch.data.model}" />
+		<echo message="${os.name} ${os.arch} ${sun.arch.data.model}" />
+	    <antcall target="jlink_win_intel" description="building java runtime" />		
 		<antcall target="WindowsDefault" />
 		<antcall target="WindowsPrefix" />
 	</target>
@@ -1040,6 +1042,22 @@
 		</exec>
 	</target>
 	
+	<!-- build java runtime using jlink MAC OS Intel -->
+	<target name="jlink_win_intel" depends="copy-files-windows">		
+		<exec executable="jlink" dir="${output.windows64.program}">
+			<arg value="--compress=2" />
+			<arg value="--no-header-files" />
+			<arg value="--no-man-pages" />
+			<arg value="--strip-debug" />
+			<arg value="--output" />
+			<arg value="runtime" />
+			<arg value="--module-path" />
+			<arg value="C:\Program Files\Java\jdk-17.0.4.1\jmods" />
+			<arg value="--add-modules" />
+			<arg value="java.se" />
+		</exec>
+	</target>
+	
 	<!-- package, build Windows installer, MAC OS disk image, tar for GNULinux -->
 	<target name="binary_package" depends="copy-files">		
 	    <antcall target="build_Windows_NSIS_installer" description="building NSIS Windows installer" if:set="isWindows" />		
@@ -1390,6 +1408,9 @@
             Windows NSIS Installer
 	====================================================== -->
     <target name="build_Windows_NSIS_installer" description="Creates the installer">
+
+    	<!-- temporary call jlink to build self contained JRE -->
+	    <antcall target="jlink_win_intel" description="building java runtime" />		
 
    	    <property file="build/build.nsis.properties" />
 
