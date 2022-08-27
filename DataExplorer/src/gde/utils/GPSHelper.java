@@ -136,7 +136,8 @@ public class GPSHelper {
 			}
 		}
 
-		return startIndexGPS;
+		//add at least 1 to found start index to make possible altitude deviation more stable
+		return startIndexGPS < recordSize-1 ? startIndexGPS+1 : startIndexGPS;
 	}
 
 	/**

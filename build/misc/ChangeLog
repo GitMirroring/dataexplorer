@@ -3,9 +3,11 @@ Development history / change log, please read from bottom up
 Version 3.6.3 - xx yyy 2022
 Generic changes/fixes
 	* export https.protocolls to enable personal build Java runtime
+	* add 1 to GPS data start index to make altitude level more stable
 	 
 Device specific changes/fixes
-	* 
+	* OpenTx-Telemetry - add measurement named 'Alt' to enable Record.DataType.GPS_ALTITUDE which is required to KMZ export 
+	* OpenTx-Telemetry - fix manual KMZ export method
 
 
 Version 3.6.2 - 20 Jul 2022

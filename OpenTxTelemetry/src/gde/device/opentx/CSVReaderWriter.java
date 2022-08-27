@@ -274,7 +274,7 @@ public class CSVReaderWriter {
 					Record record = recordSet.get(i);
 					if (record.getName().toLowerCase().contains("gps") && record.getName().toLowerCase().contains("speed") || record.getName().startsWith("GSpd"))
 						record.setDataType(Record.DataType.GPS_SPEED);
-					else if ((record.getName().toLowerCase().contains("gps") && (record.getName().toLowerCase().contains("alt") || record.getName().toLowerCase().contains("höhe"))) || record.getName().startsWith("GAlt"))
+					else if ((record.getName().toLowerCase().contains("gps") && (record.getName().toLowerCase().contains("alt") || record.getName().toLowerCase().contains("höhe"))) || record.getName().startsWith("Alt") || record.getName().startsWith("GAlt"))
 						record.setDataType(Record.DataType.GPS_ALTITUDE);
 					else if ((record.getUnit().contains("°") && record.getUnit().contains("'") && (record.getName().toLowerCase().contains("long") || record.getName().toLowerCase().contains("länge")))
 							|| (record.getName().toLowerCase().contains("gps") && (record.getName().toLowerCase().contains("long") || record.getName().toLowerCase().contains("länge"))))
@@ -359,7 +359,7 @@ public class CSVReaderWriter {
 							Record record = recordSet.get(i);
 							if (record.getName().toLowerCase().contains("gps") && record.getName().toLowerCase().contains("speed") || record.getName().startsWith("GSpd"))
 								record.setDataType(Record.DataType.GPS_SPEED);
-							else if ((record.getName().toLowerCase().contains("gps") && (record.getName().toLowerCase().contains("alt") || record.getName().toLowerCase().contains("höhe"))) || record.getName().startsWith("GAlt"))
+							else if ((record.getName().toLowerCase().contains("gps") && (record.getName().toLowerCase().contains("alt") || record.getName().toLowerCase().contains("höhe"))) || record.getName().startsWith("Alt") || record.getName().startsWith("GAlt"))
 								record.setDataType(Record.DataType.GPS_ALTITUDE);
 							else if ((record.getUnit().contains("°") && record.getUnit().contains("'") && (record.getName().toLowerCase().contains("long") || record.getName().toLowerCase().contains("länge")))
 									|| (record.getName().toLowerCase().contains("gps") && (record.getName().toLowerCase().contains("long") || record.getName().toLowerCase().contains("länge"))))

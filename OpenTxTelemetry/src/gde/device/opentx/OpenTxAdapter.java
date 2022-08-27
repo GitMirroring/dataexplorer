@@ -670,14 +670,22 @@ public class OpenTxAdapter extends DeviceConfiguration implements IDevice {
 	 * @param type DeviceConfiguration.HEIGHT_RELATIVE | DeviceConfiguration.HEIGHT_ABSOLUTE
 	 */
 	public void export2KMZ3D(int type) {
+		final int additionalMeasurementOrdinal = this.getGPS2KMZMeasurementOrdinal();
 		RecordSet activeRecordSet = application.getActiveRecordSet();
-		int ordinalLongitude = findRecordByType(activeRecordSet, Record.DataType.GPS_LONGITUDE);
-		ordinalLongitude = ordinalLongitude == -1 ? findRecordByType(activeRecordSet, Record.DataType.GPS_LONGITUDE_DEGREE) : ordinalLongitude;
-		int ordinalLatitude = findRecordByType(activeRecordSet, Record.DataType.GPS_LATITUDE);
-		ordinalLatitude = ordinalLatitude == -1 ? findRecordByType(activeRecordSet, Record.DataType.GPS_LATITUDE_DEGREE) : ordinalLongitude;
-		new FileHandler().exportFileKMZ(Messages.getString(MessageIds.GDE_MSGT3310), ordinalLongitude, ordinalLatitude, 
-				findRecordByType(activeRecordSet, Record.DataType.GPS_ALTITUDE), findRecordByUnit(activeRecordSet, "km/h"),
-				findRecordByUnit(activeRecordSet, "m/s"), findRecordByUnit(activeRecordSet, "km"), -1, type == DeviceConfiguration.HEIGHT_RELATIVE, type == DeviceConfiguration.HEIGHT_CLAMPTOGROUND);
+		if (activeRecordSet != null) {
+			int ordinalLongitude = findRecordByType(activeRecordSet, Record.DataType.GPS_LONGITUDE);
+			ordinalLongitude = ordinalLongitude == -1 ? findRecordByType(activeRecordSet, Record.DataType.GPS_LONGITUDE_DEGREE) : ordinalLongitude;
+			int ordinalLatitude = findRecordByType(activeRecordSet, Record.DataType.GPS_LATITUDE);
+			ordinalLatitude = ordinalLatitude == -1 ? findRecordByType(activeRecordSet, Record.DataType.GPS_LATITUDE_DEGREE) : ordinalLatitude;
+			new FileHandler().exportFileKMZ(ordinalLongitude, ordinalLatitude,
+					findRecordByType(activeRecordSet, Record.DataType.GPS_ALTITUDE), 
+					additionalMeasurementOrdinal, 
+					findRecordByUnit(activeRecordSet, "m/s"), 
+					findRecordByUnit(activeRecordSet, "km"), 
+					-1, 
+					type == DeviceConfiguration.HEIGHT_RELATIVE,
+					type == DeviceConfiguration.HEIGHT_CLAMPTOGROUND);
+		}
 	}
 
 	/**
