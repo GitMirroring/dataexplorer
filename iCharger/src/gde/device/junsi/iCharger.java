@@ -220,7 +220,7 @@ public abstract class iCharger extends DeviceConfiguration implements IDevice {
 			for (final Record record : recordSet.getVisibleAndDisplayableRecordsForTable()) {
 				double reduction = record.getReduction();
 				double factor = record.getFactor(); // != 1 if a unit translation is required
-				if(record.getOrdinal() > 9 && record.getUnit().equals("V"))
+				if(record.getOrdinal() >= 9 && record.getUnit().equals("V"))
 					try {
 						dataTableRow[index + 1] = String.format("%.3f", (((record.realGet(rowIndex) / 1000.0) - reduction) * factor)); //$NON-NLS-1$
 					}

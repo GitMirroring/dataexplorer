@@ -10,6 +10,7 @@ Generic changes/fixes
 Device specific changes/fixes
 	* OpenTx-Telemetry - add measurement named 'Alt' to enable Record.DataType.GPS_ALTITUDE which is required to KMZ export 
 	* OpenTx-Telemetry - fix manual KMZ export method
+	* iCharger* - fix cell voltage number decimal format while displaying in table as well during export
 
 
 Version 3.6.2 - 20 Jul 2022
