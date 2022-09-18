@@ -322,8 +322,6 @@
 
 	<target name="Windows" if="isWindows">
 		<echo message="${os.name} ${os.arch} ${sun.arch.data.model}" />
-		<echo message="${os.name} ${os.arch} ${sun.arch.data.model}" />
-	    <antcall target="jlink_win_intel" description="building java runtime" />		
 		<antcall target="WindowsDefault" />
 		<antcall target="WindowsPrefix" />
 	</target>
@@ -380,7 +378,6 @@
 
 	<target name="MAC" if="isMAC">
 		<echo message="${os.name} ${os.arch} ${sun.arch.data.model}" />
-	    <antcall target="jlink_mac_intel" description="building java runtime" />		
 		<antcall target="MacDefault" />
 		<antcall target="MacPrefix" />
 	</target>
@@ -1029,7 +1026,7 @@
 	</target>
 	
 	<!-- build java runtime using jlink MAC OS Intel -->
-	<target name="jlink_mac_intel" depends="copy-files-mac">		
+	<target name="jlink_mac_intel" depends="init-mac">		
 		<exec executable="jlink" dir="${output.mac64.program}">
 			<arg value="--compress=2" />
 			<arg value="--no-header-files" />
@@ -1045,7 +1042,7 @@
 	</target>
 	
 	<!-- build java runtime using jlink MAC OS Intel -->
-	<target name="jlink_win_intel" depends="copy-files-windows">		
+	<target name="jlink_win_intel" depends="init-windows">		
 		<exec executable="jlink" dir="${output.windows64.program}">
 			<arg value="--compress=2" />
 			<arg value="--no-header-files" />
