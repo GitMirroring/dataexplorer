@@ -6,6 +6,7 @@ Generic changes/fixes
 	* export file.encoding=UTF-8 internally
 	* add 1 to GPS data start index to make altitude level more stable
 	* prepare binary build MAX OS X Intel 64 and Windows 64 using self contained JRE
+	* update SWT to 4.25 64 bit only
 	 
 Device specific changes/fixes
 	* OpenTx-Telemetry - add measurement named 'Alt' to enable Record.DataType.GPS_ALTITUDE which is required to KMZ export 
