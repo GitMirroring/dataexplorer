@@ -1,6 +1,6 @@
 Development history / change log, please read from bottom up
 
-Version 3.6.3 - xx yyy 2022
+Version 3.7.0 - 20 Sep 2022
 Generic changes/fixes
 	* export https.protocolls to enable personal build Java runtime
 	* export file.encoding=UTF-8 internally

@@ -1,10 +1,12 @@
-******** DataExplorer README ***********  18 Aug 2022 WB
+******** DataExplorer README ***********  18 Sep 2022 WB
 
 Der GNU DataExplorer ist freie Software, siehe http://www.gnu.org/philosophy/free-sw.html. Sie wird kostenfrei und ohne Spende 
 zur Verfügung gestellt. Es gibt aber auch keinerlei Gewährleistung. Durch die Implementierung in Java auf der Basis von der freien Bibliotheken 
 RXTXcomm/jSerialComm und SWT ist die Ausführung des Programms auf vielen populären Betriebssystemplattformen in 32 oder 64 Bit wie Windows, GNU/Linux 
-und MAC OS X möglich. Voraussetzung ist lediglich eine installierte Java Laufzeitumgebung der Version 11 bis 17, z.B. IcedTea, 
-openJDK oder der SUN/Oracle Java Runtime. Vorzugsweise Versionen mit Long Term Support (LTS) verwenden.
+und MAC OS X möglich. Die einzige Voraussetzung dazu ist die Installation einer Java Run-time der Version 8 bis Java 17 für die 32 Bit Versionen und 
+Java 11 bis 17 für die 64 Bit Versionen, wie z.B. IcedTea oder openJDK oder der SUN/Oracle Java Runtime. Vorzugsweise Versionen mit Long Term Support (LTS) verwenden.
+Der Einfachheit halber werden die 64 Bit Versionen für Windows und MAC OS mit integrierter Java Laufzeit bereitgestellt. Eine Java Laufzeit muss für 
+diese Fälle nicht mehr installiert werden. Da die MAC OS Versionen auf Intel Code basieren läuft der DataExplorer in der Emulationsschicht Rosetta.
 
 Der GNU DataExplorer nimmt Daten von seriell angeschlossenen Geräten oder als Textdateiimport entgegen, zeigt diese für verschiedene Auswertungen an. 
 Die Liste der unterstützten Geräte findet man hier http://www.nongnu.org/dataexplorer/index.de.html.

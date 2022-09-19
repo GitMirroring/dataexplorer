@@ -1,25 +1,25 @@
-GNU DataExplorer - News - comes with Version 3.6.2 - 20 Aug 2022
+GNU DataExplorer - News - comes with Version 3.7.0 - 20 Sep 2022
 
 Generic changes/fixes
-	* update build to use Java 11 for build, setting release=8 to enable execution using Java 8 runtime
-	* fix update download ARM architecture
-	* correct trigger reference handling, use primary and secondary if both referenced
-	* enable capability to start data collection right after application startup
-	
+	* add 1 to GPS data start index to make altitude level more stable
+	* binary build MAC OS X Intel 64 and Windows 64 using self contained JRE
+	* update SWT, 64 bit only
+	* update JRE check to allow Java 8 to 17 for 32 bit OS and Java 11 to 17 for 64 bit OS including ARM
+	 
 Device specific changes/fixes
-	* IGCAdapter - simplify code, allow 3 minutes without sat fix B00000000000..
-	* Spektrum-Telemetry - open message dialog while problems during log parsing occur
-	* iChargerUSB - handling while time difference of two read attempts is zero corrected
+	* OpenTx-Telemetry - add measurement named 'Alt' to enable Record.DataType.GPS_ALTITUDE which is required to KMZ export 
+	* OpenTx-Telemetry - fix manual KMZ export method
+	* iCharger* - fix cell voltage number decimal format while displaying in table as well during export
 	
 Generelle Änderungen/Verbesserungen
-	* update benutze Java 11 für den Bau, setze release=8, um Java 8 Ausführung zu errmöglichen
-	* Update-Download ARM Architektur korrigiert
-	* Handhabung Trigger Referenzen korrigiert, nutze Ersten und Zweiten nur, wenn beidee referenziert sind
-	* Möglichkeit, die Datenerfassung direkt nach dem Start der Anwendung zu starten
+	* für eine stabilere Ausgangshöhe wird zum GPS Daten Startindex ein hinzuaddiert
+	* Installationspakete für MAC OS X Intel 64 and Windows 64 hat eine integrierte Java Laufzeit.
+	* Update SWT, nur 64 Bit
+	* Update JRE Prüfung auf Java 8 bis 17 für 32 Bit OS und Java 11 bis 17 für 64 Bit OS ARM eingeschlossen
 
 Geräte spezifische Änderungen/Verbesserungen
-	* IGCAdapter - Code vereinfacht, erlaube 3 Minutes ohnee Sat-Fix B00000000000..
-	* Spektrum-Telemetry - öffne Dialog weenn Parsing-Probleme aufgetreten sind
-	* iChargerUSB - Handhabung bei Zeitdifferenz von Leseversuchen 0 korrigiert
+	* OpenTx-Telemetry - Messwert 'Alt' als Record.DataType.GPS_ALTITUDE hinzugefügt, für KMZ Export erforderlich
+	* OpenTx-Telemetry - manuelles Exportieren von KMZ-Dateien korrigiert
+	* iCharger* - Zellen Spannung, in Bezug auf die Nachkommastelle, für Tabellenanzeige und CSV Export korrigiert
 	
 	
