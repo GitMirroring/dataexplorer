@@ -1,5 +1,9 @@
 Development history / change log, please read from bottom up
 
+Version 3.7.1 - 23 Sep 2022
+Generic changes/fixes
+	* replace SWT Windows 64 Bit to version 4950 to make file dialog follow filter path
+
 Version 3.7.0 - 20 Sep 2022
 Generic changes/fixes
 	* export https.protocolls to enable personal build Java runtime
