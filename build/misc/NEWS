@@ -1,25 +1,9 @@
-GNU DataExplorer - News - comes with Version 3.7.0 - 20 Sep 2022
+GNU DataExplorer - News - comes with Version 3.7.1 - 23 Sep 2022
 
 Generic changes/fixes
-	* add 1 to GPS data start index to make altitude level more stable
-	* binary build MAC OS X Intel 64 and Windows 64 using self contained JRE
-	* update SWT, 64 bit only
-	* update JRE check to allow Java 8 to 17 for 32 bit OS and Java 11 to 17 for 64 bit OS including ARM
-	 
-Device specific changes/fixes
-	* OpenTx-Telemetry - add measurement named 'Alt' to enable Record.DataType.GPS_ALTITUDE which is required to KMZ export 
-	* OpenTx-Telemetry - fix manual KMZ export method
-	* iCharger* - fix cell voltage number decimal format while displaying in table as well during export
+	* SWT toolkit Windows 64 bit updated due to malfunction in file open dialog setFilterPath function
 	
-Generelle Änderungen/Verbesserungen
-	* für eine stabilere Ausgangshöhe wird zum GPS Daten Startindex ein hinzuaddiert
-	* Installationspakete für MAC OS X Intel 64 and Windows 64 hat eine integrierte Java Laufzeit.
-	* Update SWT, nur 64 Bit
-	* Update JRE Prüfung auf Java 8 bis 17 für 32 Bit OS und Java 11 bis 17 für 64 Bit OS ARM eingeschlossen
+Grundlegende Änderungen/Korrekturen:
+	* SWT Toolkit Windows 64 Bit wegen Fehlfunktion im Dateiauswahldialog der Funktion setFielterPath ausgewechselt 	 
 
-Geräte spezifische Änderungen/Verbesserungen
-	* OpenTx-Telemetry - Messwert 'Alt' als Record.DataType.GPS_ALTITUDE hinzugefügt, für KMZ Export erforderlich
-	* OpenTx-Telemetry - manuelles Exportieren von KMZ-Dateien korrigiert
-	* iCharger* - Zellen Spannung, in Bezug auf die Nachkommastelle, für Tabellenanzeige und CSV Export korrigiert
-	
 	
