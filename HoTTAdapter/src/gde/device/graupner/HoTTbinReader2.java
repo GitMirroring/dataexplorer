@@ -892,6 +892,10 @@ public class HoTTbinReader2 extends HoTTbinReader {
 	public static class VarBinParser extends BinParser {
 		private int	tmpHeight		= 0;
 		private int	tmpClimb10	= 0;
+		
+		protected VarBinParser(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[][] buffers, Sensor sensor) {
+			super(pickerParameters, points, timeSteps_ms, buffers, Sensor.VARIO);
+		}
 
 		protected VarBinParser(PickerParameters pickerParameters, long[] timeSteps_ms, byte[][] buffers) {
 			this(pickerParameters,

@@ -49,7 +49,6 @@ import gde.data.Channels;
 import gde.device.ChannelPropertyTypes;
 import gde.device.DataTypes;
 import gde.device.DeviceDialog;
-import gde.device.MeasurementPropertyTypes;
 import gde.device.graupner.hott.MessageIds;
 import gde.messages.Messages;
 import gde.ui.SWTResourceManager;
@@ -141,7 +140,7 @@ public class HoTTAdapterDialog extends DeviceDialog {
 				this.dialogShell.setLayout(dialogShellLayout);
 				this.dialogShell.layout();
 				//dialogShell.pack();
-				this.dialogShell.setSize(620, this.isHoTTAdapterD || (this.isHoTTAdapter2 && application.getActiveChannelNumber() == 6) ? 622 : 582); //header + tab + label + this.measurementsCount * 28 + loadButton + save/close buttons
+				this.dialogShell.setSize(620, this.isHoTTAdapterD || (this.isHoTTAdapter2 && application.getActiveChannelNumber() == 4) ? 622 : 582); //header + tab + label + this.measurementsCount * 28 + loadButton + save/close buttons
 				this.dialogShell.setText(this.device.getName() + Messages.getString(gde.messages.MessageIds.GDE_MSGT0273));
 				this.dialogShell.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 				this.dialogShell.setImage(SWTResourceManager.getImage("gde/resource/ToolBoxHot.gif")); //$NON-NLS-1$
@@ -188,7 +187,8 @@ public class HoTTAdapterDialog extends DeviceDialog {
 					tabFolderLData.top = new FormAttachment(0, 1000, 0);
 					tabFolderLData.left = new FormAttachment(0, 1000, 0);
 					tabFolderLData.right = new FormAttachment(1000, 1000, 0);
-					tabFolderLData.bottom = new FormAttachment(1000, 1000, this.isHoTTAdapterD || (this.isHoTTAdapter2 && application.getActiveChannelNumber() == 6) ? -142 : -102);
+					tabFolderLData.bottom = new FormAttachment(1000, 1000, -102);
+					//tabFolderLData.bottom = new FormAttachment(1000, 1000, this.isHoTTAdapterD || (this.isHoTTAdapter2 && application.getActiveChannelNumber() == 6) ? -142 : -102);
 					this.tabFolder.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 					this.tabFolder.setLayoutData(tabFolderLData);
 					this.tabFolder.addSelectionListener(new SelectionAdapter() {
@@ -241,285 +241,285 @@ public class HoTTAdapterDialog extends DeviceDialog {
 						});
 					}
 				}
-				{
-					if (this.isHoTTAdapterD || (this.isHoTTAdapter2 && application.getActiveChannelNumber() == 6)) {
-						{
-							this.filterStartTimeLabel = new CLabel(this.dialogShell, SWT.RIGHT);
-							FormData enableFilterLData = new FormData();
-							enableFilterLData.height = GDE.IS_MAC ? 22: 20;
-							enableFilterLData.left = new FormAttachment(0, 1000, 15);
-							enableFilterLData.width = 120;
-							enableFilterLData.bottom = new FormAttachment(1000, 1000, GDE.IS_MAC ? -118 : -120);
-							this.filterStartTimeLabel.setLayoutData(enableFilterLData);
-							this.filterStartTimeLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
-							this.filterStartTimeLabel.setText("Start-Wartezeit [s]");
-							this.filterStartTimeLabel.setToolTipText("Zeit bevor das Rundenzählen startet");
-						}
-						{
-							this.filterStartTimeCombo = new CCombo(this.dialogShell, SWT.BORDER);
-							FormData enableFilterLData = new FormData();
-							enableFilterLData.height = GDE.IS_MAC ? 18 : 16;
-							enableFilterLData.left = new FormAttachment(0, 1000, 140);
-							enableFilterLData.width = 42;
-							enableFilterLData.bottom = new FormAttachment(1000, 1000, GDE.IS_MAC ? -120 : -120);
-							this.filterStartTimeCombo.setLayoutData(enableFilterLData);
-							this.filterStartTimeCombo.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
-							this.filterStartTimeCombo.setItems(filterMinItems);
-							//this.filterStartTimeCombo.select(10);
-							this.filterStartTimeCombo.setToolTipText("Größerer Wert -> späterer Start Rundenzeiten");
-							this.filterStartTimeCombo.setEditable(false);
-							this.filterStartTimeCombo.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-							this.filterStartTimeCombo.addSelectionListener(new SelectionAdapter() {
-								@Override
-								public void widgetSelected(SelectionEvent evt) {
-									log.log(java.util.logging.Level.FINEST, "filterStartTimeCombo.widgetSelected, event=" + evt); //$NON-NLS-1$
-									if (isHoTTAdapter2 && application.getActiveChannelNumber() == 6) {
-										//5=Rx_dbm, 18=Distance, 86=SmoothedRx_dbm, 87=DiffRx_dbm, 88=LapsRx_dbm 89=DiffDistance, 90=LapsDistance
-										HoTTAdapterDialog.this.device.setMeasurementPropertyValue(6, 87, MeasurementPropertyTypes.FILTER_FACTOR.value(), DataTypes.STRING, HoTTAdapterDialog.this.filterStartTimeCombo.getText().trim());
-										HoTTAdapterDialog.this.device.makeInActiveDisplayable(application.getActiveRecordSet());
-										HoTTAdapterDialog.this.enableSaveButton(true);
-									}
-									else if (isHoTTAdapterD) {
-										//5=Rx_dbm, 109=SmoothedRx_dbm, 110=DiffRx_dbm, 111=LapsRx_dbm
-										//15=Distance, 112=DiffDistance, 113=LapsDistance
-										HoTTAdapterDialog.this.device.setMeasurementPropertyValue(1, 110, MeasurementPropertyTypes.FILTER_FACTOR.value(), DataTypes.STRING, HoTTAdapterDialog.this.filterStartTimeCombo.getText().trim());
-										HoTTAdapterDialog.this.device.makeInActiveDisplayable(application.getActiveRecordSet());
-										HoTTAdapterDialog.this.enableSaveButton(true);
-									}
-								}
-							});
-						}
-						{
-							this.filterMaxTimeLabel = new CLabel(this.dialogShell, SWT.RIGHT);
-							FormData enableFilterLData = new FormData();
-							enableFilterLData.height = GDE.IS_MAC ? 22: 20;
-							enableFilterLData.left = new FormAttachment(0, 1000, 190);
-							enableFilterLData.width = 160;
-							enableFilterLData.bottom = new FormAttachment(1000, 1000, GDE.IS_MAC ? -118 : -120);
-							this.filterMaxTimeLabel.setLayoutData(enableFilterLData);
-							this.filterMaxTimeLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
-							this.filterMaxTimeLabel.setText("Rundenzeit-Fenster [s]");
-							this.filterMaxTimeLabel.setToolTipText("Zeitfenster ab Startwartezeit in der das Rundenzählen statt findet");
-						}
-						{
-							this.filterMaxTimeCombo = new CCombo(this.dialogShell, SWT.BORDER);
-							FormData enableFilterLData = new FormData();
-							enableFilterLData.height = GDE.IS_MAC ? 18 : 16;
-							enableFilterLData.left = new FormAttachment(0, 1000, 360);
-							enableFilterLData.width = 42;
-							enableFilterLData.bottom = new FormAttachment(1000, 1000, GDE.IS_MAC ? -120 : -120);
-							this.filterMaxTimeCombo.setLayoutData(enableFilterLData);
-							this.filterMaxTimeCombo.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
-							this.filterMaxTimeCombo.setItems(filterMaxItems);
-							//this.filterMaxTimeCombo.select(10);
-							this.filterMaxTimeCombo.setToolTipText("Größerer Wert -> länger Rundenzeiten-Messung");
-							this.filterMaxTimeCombo.setEditable(false);
-							this.filterMaxTimeCombo.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-							this.filterMaxTimeCombo.addSelectionListener(new SelectionAdapter() {
-								@Override
-								public void widgetSelected(SelectionEvent evt) {
-									log.log(java.util.logging.Level.FINEST, "filterMaxTimeCombo.widgetSelected, event=" + evt); //$NON-NLS-1$
-									if (isHoTTAdapter2 && application.getActiveChannelNumber() == 6) {
-											//5=Rx_dbm, 18=Distance, 86=SmoothedRx_dbm, 87=DiffRx_dbm, 88=LapsRx_dbm 89=DiffDistance, 90=LapsDistance
-										HoTTAdapterDialog.this.device.setMeasurementPropertyValue(6, 5, MeasurementPropertyTypes.FILTER_FACTOR.value(), DataTypes.STRING, HoTTAdapterDialog.this.filterMaxTimeCombo.getText().trim());
-										HoTTAdapterDialog.this.device.makeInActiveDisplayable(application.getActiveRecordSet());
-										HoTTAdapterDialog.this.enableSaveButton(true);
-									}
-									else if (isHoTTAdapterD) {
-										//5=Rx_dbm, 109=SmoothedRx_dbm, 110=DiffRx_dbm, 111=LapsRx_dbm
-										//15=Distance, 112=DiffDistance, 113=LapsDistance
-										HoTTAdapterDialog.this.device.setMeasurementPropertyValue(1, 5, MeasurementPropertyTypes.FILTER_FACTOR.value(), DataTypes.STRING, HoTTAdapterDialog.this.filterMaxTimeCombo.getText().trim());
-										HoTTAdapterDialog.this.device.makeInActiveDisplayable(application.getActiveRecordSet());
-										HoTTAdapterDialog.this.enableSaveButton(true);
-									}
-								}
-							});
-						}
-						{
-							this.filterLapMinTimeLabel = new CLabel(this.dialogShell, SWT.RIGHT);
-							FormData enableFilterLData = new FormData();
-							enableFilterLData.height = GDE.IS_MAC ? 22: 20;
-							enableFilterLData.left = new FormAttachment(0, 1000, 410);
-							enableFilterLData.width = 150;
-							enableFilterLData.bottom = new FormAttachment(1000, 1000, GDE.IS_MAC ? -118 : -120);
-							this.filterLapMinTimeLabel.setLayoutData(enableFilterLData);
-							this.filterLapMinTimeLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
-							this.filterLapMinTimeLabel.setText("Minimale Rundenzeit [s]");
-							this.filterLapMinTimeLabel.setToolTipText("Etwas mehr, wie die halbe Rundenzeit einstellen");
-						}
-						{
-							this.filterLapMinTimeCombo = new CCombo(this.dialogShell, SWT.BORDER);
-							FormData enableFilterLData = new FormData();
-							enableFilterLData.height = GDE.IS_MAC ? 18 : 16;
-							enableFilterLData.left = new FormAttachment(0, 1000, 565);
-							enableFilterLData.width = 42;
-							enableFilterLData.bottom = new FormAttachment(1000, 1000, GDE.IS_MAC ? -120 : -120);
-							this.filterLapMinTimeCombo.setLayoutData(enableFilterLData);
-							this.filterLapMinTimeCombo.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
-							this.filterLapMinTimeCombo.setItems(filterMinItems);
-							//this.filterLapMinTimeCombo.select(0);
-							this.filterLapMinTimeCombo.setToolTipText("Filter Rundenzeitfehlmessung");
-							this.filterLapMinTimeCombo.setEditable(false);
-							this.filterLapMinTimeCombo.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-							this.filterLapMinTimeCombo.addSelectionListener(new SelectionAdapter() {
-								@Override
-								public void widgetSelected(SelectionEvent evt) {
-									log.log(java.util.logging.Level.FINEST, "filterLapMinTimeCombo.widgetSelected, event=" + evt); //$NON-NLS-1$
-									if (isHoTTAdapter2 && application.getActiveChannelNumber() == 6) {
-										//5=Rx_dbm, 18=Distance, 86=SmoothedRx_dbm, 87=DiffRx_dbm, 88=LapsRx_dbm 89=DiffDistance, 90=LapsDistance
-										HoTTAdapterDialog.this.device.setMeasurementPropertyValue(6, 88, MeasurementPropertyTypes.FILTER_FACTOR.value(), DataTypes.STRING, HoTTAdapterDialog.this.filterLapMinTimeCombo.getText().trim());
-										HoTTAdapterDialog.this.device.makeInActiveDisplayable(application.getActiveRecordSet());
-										HoTTAdapterDialog.this.enableSaveButton(true);
-									}
-									else if (isHoTTAdapterD) {
-										//5=Rx_dbm, 109=SmoothedRx_dbm, 110=DiffRx_dbm, 111=LapsRx_dbm
-										//15=Distance, 112=DiffDistance, 113=LapsDistance
-										HoTTAdapterDialog.this.device.setMeasurementPropertyValue(1, 111, MeasurementPropertyTypes.FILTER_FACTOR.value(), DataTypes.STRING, HoTTAdapterDialog.this.filterLapMinTimeCombo.getText().trim());
-										HoTTAdapterDialog.this.device.makeInActiveDisplayable(application.getActiveRecordSet());
-										HoTTAdapterDialog.this.enableSaveButton(true);
-									}
-								}
-							});
-						}
-						{
-							this.absorptionLevelLabel = new CLabel(this.dialogShell, SWT.RIGHT);
-							FormData enableFilterLData = new FormData();
-							enableFilterLData.height = GDE.IS_MAC ? 22: 20;
-							enableFilterLData.left = new FormAttachment(0, 1000, 15);
-							enableFilterLData.width = 140;
-							enableFilterLData.bottom = new FormAttachment(1000, 1000, GDE.IS_MAC ? -98 : -100);
-							this.absorptionLevelLabel.setLayoutData(enableFilterLData);
-							this.absorptionLevelLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
-							this.absorptionLevelLabel.setText("Rx dbm Glättungsgrad");
-							this.absorptionLevelLabel.setToolTipText("Glättung von Rx dbm");
-						}
-						{
-							this.absorptionLevelCombo = new CCombo(this.dialogShell, SWT.BORDER);
-							FormData enableFilterLData = new FormData();
-							enableFilterLData.height = GDE.IS_MAC ? 18 : 16;
-							enableFilterLData.left = new FormAttachment(0, 1000, 160);
-							enableFilterLData.width = 42;
-							enableFilterLData.bottom = new FormAttachment(1000, 1000, GDE.IS_MAC ? -100 : -100);
-							this.absorptionLevelCombo.setLayoutData(enableFilterLData);
-							this.absorptionLevelCombo.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
-							this.absorptionLevelCombo.setItems(filterItems);
-							this.absorptionLevelCombo.setToolTipText("Größerer Wert -> größere Glättung, 0 == aus");
-							this.absorptionLevelCombo.setEditable(false);
-							this.absorptionLevelCombo.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-							this.absorptionLevelCombo.addSelectionListener(new SelectionAdapter() {
-								@Override
-								public void widgetSelected(SelectionEvent evt) {
-									log.log(java.util.logging.Level.FINEST, "absorptionLevelCombo.widgetSelected, event=" + evt); //$NON-NLS-1$
-									if (isHoTTAdapter2 && application.getActiveChannelNumber() == 6) {
-										//5=Rx_dbm, 18=Distance, 86=SmoothedRx_dbm, 87=DiffRx_dbm, 88=LapsRx_dbm 89=DiffDistance, 90=LapsDistance
-										HoTTAdapterDialog.this.device.setMeasurementPropertyValue(6, 86, MeasurementPropertyTypes.FILTER_FACTOR.value(), DataTypes.STRING, HoTTAdapterDialog.this.absorptionLevelCombo.getText().trim());
-										HoTTAdapterDialog.this.device.makeInActiveDisplayable(application.getActiveRecordSet());
-										HoTTAdapterDialog.this.enableSaveButton(true);
-									}
-									else if (isHoTTAdapterD) {
-										//5=Rx_dbm, 109=SmoothedRx_dbm, 110=DiffRx_dbm, 111=LapsRx_dbm
-										//15=Distance, 112=DiffDistance, 113=LapsDistance
-										HoTTAdapterDialog.this.device.setMeasurementPropertyValue(1, 109, MeasurementPropertyTypes.FILTER_FACTOR.value(), DataTypes.STRING, HoTTAdapterDialog.this.absorptionLevelCombo.getText().trim());
-										HoTTAdapterDialog.this.device.makeInActiveDisplayable(application.getActiveRecordSet());
-										HoTTAdapterDialog.this.enableSaveButton(true);
-									}
-								}
-							});
-						}
-						{
-							this.filterMinDeltaRxDbmLabel = new CLabel(this.dialogShell, SWT.RIGHT);
-							FormData enableFilterLData = new FormData();
-							enableFilterLData.height = GDE.IS_MAC ? 22: 20;
-							enableFilterLData.left = new FormAttachment(0, 1000, 190);
-							enableFilterLData.width = 160;
-							enableFilterLData.bottom = new FormAttachment(1000, 1000, GDE.IS_MAC ? -98 : -100);
-							this.filterMinDeltaRxDbmLabel.setLayoutData(enableFilterLData);
-							this.filterMinDeltaRxDbmLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
-							this.filterMinDeltaRxDbmLabel.setText("Min-Delta Rx [dbm]");
-							this.filterMinDeltaRxDbmLabel.setToolTipText("Etwas mehr, wie die halbe maximale Differenz einstellen");
-						}
-						{
-							this.filterMinDeltaRxDbmCombo = new CCombo(this.dialogShell, SWT.BORDER);
-							FormData enableFilterLData = new FormData();
-							enableFilterLData.height = GDE.IS_MAC ? 18 : 16;
-							enableFilterLData.left = new FormAttachment(0, 1000, 360);
-							enableFilterLData.width = 42;
-							enableFilterLData.bottom = new FormAttachment(1000, 1000, GDE.IS_MAC ? -100 : -100);
-							this.filterMinDeltaRxDbmCombo.setLayoutData(enableFilterLData);
-							this.filterMinDeltaRxDbmCombo.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
-							this.filterMinDeltaRxDbmCombo.setItems(filterMinItems);
-							//this.filterMinDeltaRxDbmCombo.select(10);
-							this.filterMinDeltaRxDbmCombo.setToolTipText("Größerer Wert -> längere Rundenzeiten-Messung");
-							this.filterMinDeltaRxDbmCombo.setEditable(false);
-							this.filterMinDeltaRxDbmCombo.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-							this.filterMinDeltaRxDbmCombo.addSelectionListener(new SelectionAdapter() {
-								@Override
-								public void widgetSelected(SelectionEvent evt) {
-									log.log(java.util.logging.Level.FINEST, "filterMinDeltaRxDbmCombo.widgetSelected, event=" + evt); //$NON-NLS-1$
-									if (isHoTTAdapter2 && application.getActiveChannelNumber() == 6) {
-										//5=Rx_dbm, 18=Distance, 86=SmoothedRx_dbm, 87=DiffRx_dbm, 88=LapsRx_dbm 89=DiffDistance, 90=LapsDistance
-										HoTTAdapterDialog.this.device.setMeasurementPropertyValue(6, 87, MeasurementPropertyTypes.NONE_SPECIFIED.value(), DataTypes.STRING, HoTTAdapterDialog.this.filterMinDeltaRxDbmCombo.getText().trim());
-										HoTTAdapterDialog.this.device.makeInActiveDisplayable(application.getActiveRecordSet());
-										HoTTAdapterDialog.this.enableSaveButton(true);
-									}
-									else if (isHoTTAdapterD) {
-										//5=Rx_dbm, 109=SmoothedRx_dbm, 110=DiffRx_dbm, 111=LapsRx_dbm
-										//15=Distance, 112=DiffDistance, 113=LapsDistance
-										HoTTAdapterDialog.this.device.setMeasurementPropertyValue(1, 110, MeasurementPropertyTypes.NONE_SPECIFIED.value(), DataTypes.STRING, HoTTAdapterDialog.this.filterMinDeltaRxDbmCombo.getText().trim());
-										HoTTAdapterDialog.this.device.makeInActiveDisplayable(application.getActiveRecordSet());
-										HoTTAdapterDialog.this.enableSaveButton(true);
-									}
-								}
-							});
-						}
-						{
-							this.filterMinDeltaDistLabel = new CLabel(this.dialogShell, SWT.RIGHT);
-							FormData enableFilterLData = new FormData();
-							enableFilterLData.height = GDE.IS_MAC ? 22: 20;
-							enableFilterLData.left = new FormAttachment(0, 1000, 410);
-							enableFilterLData.width = 150;
-							enableFilterLData.bottom = new FormAttachment(1000, 1000, GDE.IS_MAC ? -98 : -100);
-							this.filterMinDeltaDistLabel.setLayoutData(enableFilterLData);
-							this.filterMinDeltaDistLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
-							this.filterMinDeltaDistLabel.setText("Min-Delta Distance [m]");
-							this.filterMinDeltaDistLabel.setToolTipText("Etwas mehr, wie die halbe maximale Differenz einstellen");
-						}
-						{
-							this.filterMinDeltaDistCombo = new CCombo(this.dialogShell, SWT.BORDER);
-							FormData enableFilterLData = new FormData();
-							enableFilterLData.height = GDE.IS_MAC ? 18 : 16;
-							enableFilterLData.left = new FormAttachment(0, 1000, 565);
-							enableFilterLData.width = 42;
-							enableFilterLData.bottom = new FormAttachment(1000, 1000, GDE.IS_MAC ? -100 : -100);
-							this.filterMinDeltaDistCombo.setLayoutData(enableFilterLData);
-							this.filterMinDeltaDistCombo.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
-							this.filterMinDeltaDistCombo.setItems(filterMinItems);
-							//this.filterMinDistDeltaCombo.select(0);
-							this.filterMinDeltaDistCombo.setToolTipText("Filter Rundenzeitfehlmessung durch Einschränken auf eine Differenz");
-							this.filterMinDeltaDistCombo.setEditable(false);
-							this.filterMinDeltaDistCombo.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-							this.filterMinDeltaDistCombo.addSelectionListener(new SelectionAdapter() {
-								@Override
-								public void widgetSelected(SelectionEvent evt) {
-									log.log(java.util.logging.Level.FINEST, "filterMinDistDeltaCombo.widgetSelected, event=" + evt); //$NON-NLS-1$
-									if (isHoTTAdapter2 && application.getActiveChannelNumber() == 6) {
-										//5=Rx_dbm, 18=Distance, 86=SmoothedRx_dbm, 87=DiffRx_dbm, 88=LapsRx_dbm 89=DiffDistance, 90=LapsDistance
-										HoTTAdapterDialog.this.device.setMeasurementPropertyValue(6, 89, MeasurementPropertyTypes.NONE_SPECIFIED.value(), DataTypes.STRING, HoTTAdapterDialog.this.filterMinDeltaDistCombo.getText().trim());
-										HoTTAdapterDialog.this.device.makeInActiveDisplayable(application.getActiveRecordSet());
-										HoTTAdapterDialog.this.enableSaveButton(true);
-									}
-									else if (isHoTTAdapterD) {
-										//5=Rx_dbm, 109=SmoothedRx_dbm, 110=DiffRx_dbm, 111=LapsRx_dbm
-										//15=Distance, 112=DiffDistance, 113=LapsDistance
-										HoTTAdapterDialog.this.device.setMeasurementPropertyValue(1, 112, MeasurementPropertyTypes.NONE_SPECIFIED.value(), DataTypes.STRING, HoTTAdapterDialog.this.filterMinDeltaDistCombo.getText().trim());
-										HoTTAdapterDialog.this.device.makeInActiveDisplayable(application.getActiveRecordSet());
-										HoTTAdapterDialog.this.enableSaveButton(true);
-									}
-								}
-							});
-						}
-					}
-				}
+//				{
+//					if (this.isHoTTAdapterD || (this.isHoTTAdapter2 && application.getActiveChannelNumber() == 6)) {
+//						{
+//							this.filterStartTimeLabel = new CLabel(this.dialogShell, SWT.RIGHT);
+//							FormData enableFilterLData = new FormData();
+//							enableFilterLData.height = GDE.IS_MAC ? 22: 20;
+//							enableFilterLData.left = new FormAttachment(0, 1000, 15);
+//							enableFilterLData.width = 120;
+//							enableFilterLData.bottom = new FormAttachment(1000, 1000, GDE.IS_MAC ? -118 : -120);
+//							this.filterStartTimeLabel.setLayoutData(enableFilterLData);
+//							this.filterStartTimeLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+//							this.filterStartTimeLabel.setText("Start-Wartezeit [s]");
+//							this.filterStartTimeLabel.setToolTipText("Zeit bevor das Rundenzählen startet");
+//						}
+//						{
+//							this.filterStartTimeCombo = new CCombo(this.dialogShell, SWT.BORDER);
+//							FormData enableFilterLData = new FormData();
+//							enableFilterLData.height = GDE.IS_MAC ? 18 : 16;
+//							enableFilterLData.left = new FormAttachment(0, 1000, 140);
+//							enableFilterLData.width = 42;
+//							enableFilterLData.bottom = new FormAttachment(1000, 1000, GDE.IS_MAC ? -120 : -120);
+//							this.filterStartTimeCombo.setLayoutData(enableFilterLData);
+//							this.filterStartTimeCombo.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+//							this.filterStartTimeCombo.setItems(filterMinItems);
+//							//this.filterStartTimeCombo.select(10);
+//							this.filterStartTimeCombo.setToolTipText("Größerer Wert -> späterer Start Rundenzeiten");
+//							this.filterStartTimeCombo.setEditable(false);
+//							this.filterStartTimeCombo.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+//							this.filterStartTimeCombo.addSelectionListener(new SelectionAdapter() {
+//								@Override
+//								public void widgetSelected(SelectionEvent evt) {
+//									log.log(java.util.logging.Level.FINEST, "filterStartTimeCombo.widgetSelected, event=" + evt); //$NON-NLS-1$
+//									if (isHoTTAdapter2 && application.getActiveChannelNumber() == 6) {
+//										//5=Rx_dbm, 18=Distance, 86=SmoothedRx_dbm, 87=DiffRx_dbm, 88=LapsRx_dbm 89=DiffDistance, 90=LapsDistance
+//										HoTTAdapterDialog.this.device.setMeasurementPropertyValue(6, 87, MeasurementPropertyTypes.FILTER_FACTOR.value(), DataTypes.STRING, HoTTAdapterDialog.this.filterStartTimeCombo.getText().trim());
+//										HoTTAdapterDialog.this.device.makeInActiveDisplayable(application.getActiveRecordSet());
+//										HoTTAdapterDialog.this.enableSaveButton(true);
+//									}
+//									else if (isHoTTAdapterD) {
+//										//5=Rx_dbm, 109=SmoothedRx_dbm, 110=DiffRx_dbm, 111=LapsRx_dbm
+//										//15=Distance, 112=DiffDistance, 113=LapsDistance
+//										HoTTAdapterDialog.this.device.setMeasurementPropertyValue(1, 110, MeasurementPropertyTypes.FILTER_FACTOR.value(), DataTypes.STRING, HoTTAdapterDialog.this.filterStartTimeCombo.getText().trim());
+//										HoTTAdapterDialog.this.device.makeInActiveDisplayable(application.getActiveRecordSet());
+//										HoTTAdapterDialog.this.enableSaveButton(true);
+//									}
+//								}
+//							});
+//						}
+//						{
+//							this.filterMaxTimeLabel = new CLabel(this.dialogShell, SWT.RIGHT);
+//							FormData enableFilterLData = new FormData();
+//							enableFilterLData.height = GDE.IS_MAC ? 22: 20;
+//							enableFilterLData.left = new FormAttachment(0, 1000, 190);
+//							enableFilterLData.width = 160;
+//							enableFilterLData.bottom = new FormAttachment(1000, 1000, GDE.IS_MAC ? -118 : -120);
+//							this.filterMaxTimeLabel.setLayoutData(enableFilterLData);
+//							this.filterMaxTimeLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+//							this.filterMaxTimeLabel.setText("Rundenzeit-Fenster [s]");
+//							this.filterMaxTimeLabel.setToolTipText("Zeitfenster ab Startwartezeit in der das Rundenzählen statt findet");
+//						}
+//						{
+//							this.filterMaxTimeCombo = new CCombo(this.dialogShell, SWT.BORDER);
+//							FormData enableFilterLData = new FormData();
+//							enableFilterLData.height = GDE.IS_MAC ? 18 : 16;
+//							enableFilterLData.left = new FormAttachment(0, 1000, 360);
+//							enableFilterLData.width = 42;
+//							enableFilterLData.bottom = new FormAttachment(1000, 1000, GDE.IS_MAC ? -120 : -120);
+//							this.filterMaxTimeCombo.setLayoutData(enableFilterLData);
+//							this.filterMaxTimeCombo.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+//							this.filterMaxTimeCombo.setItems(filterMaxItems);
+//							//this.filterMaxTimeCombo.select(10);
+//							this.filterMaxTimeCombo.setToolTipText("Größerer Wert -> länger Rundenzeiten-Messung");
+//							this.filterMaxTimeCombo.setEditable(false);
+//							this.filterMaxTimeCombo.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+//							this.filterMaxTimeCombo.addSelectionListener(new SelectionAdapter() {
+//								@Override
+//								public void widgetSelected(SelectionEvent evt) {
+//									log.log(java.util.logging.Level.FINEST, "filterMaxTimeCombo.widgetSelected, event=" + evt); //$NON-NLS-1$
+//									if (isHoTTAdapter2 && application.getActiveChannelNumber() == 6) {
+//											//5=Rx_dbm, 18=Distance, 86=SmoothedRx_dbm, 87=DiffRx_dbm, 88=LapsRx_dbm 89=DiffDistance, 90=LapsDistance
+//										HoTTAdapterDialog.this.device.setMeasurementPropertyValue(6, 5, MeasurementPropertyTypes.FILTER_FACTOR.value(), DataTypes.STRING, HoTTAdapterDialog.this.filterMaxTimeCombo.getText().trim());
+//										HoTTAdapterDialog.this.device.makeInActiveDisplayable(application.getActiveRecordSet());
+//										HoTTAdapterDialog.this.enableSaveButton(true);
+//									}
+//									else if (isHoTTAdapterD) {
+//										//5=Rx_dbm, 109=SmoothedRx_dbm, 110=DiffRx_dbm, 111=LapsRx_dbm
+//										//15=Distance, 112=DiffDistance, 113=LapsDistance
+//										HoTTAdapterDialog.this.device.setMeasurementPropertyValue(1, 5, MeasurementPropertyTypes.FILTER_FACTOR.value(), DataTypes.STRING, HoTTAdapterDialog.this.filterMaxTimeCombo.getText().trim());
+//										HoTTAdapterDialog.this.device.makeInActiveDisplayable(application.getActiveRecordSet());
+//										HoTTAdapterDialog.this.enableSaveButton(true);
+//									}
+//								}
+//							});
+//						}
+//						{
+//							this.filterLapMinTimeLabel = new CLabel(this.dialogShell, SWT.RIGHT);
+//							FormData enableFilterLData = new FormData();
+//							enableFilterLData.height = GDE.IS_MAC ? 22: 20;
+//							enableFilterLData.left = new FormAttachment(0, 1000, 410);
+//							enableFilterLData.width = 150;
+//							enableFilterLData.bottom = new FormAttachment(1000, 1000, GDE.IS_MAC ? -118 : -120);
+//							this.filterLapMinTimeLabel.setLayoutData(enableFilterLData);
+//							this.filterLapMinTimeLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+//							this.filterLapMinTimeLabel.setText("Minimale Rundenzeit [s]");
+//							this.filterLapMinTimeLabel.setToolTipText("Etwas mehr, wie die halbe Rundenzeit einstellen");
+//						}
+//						{
+//							this.filterLapMinTimeCombo = new CCombo(this.dialogShell, SWT.BORDER);
+//							FormData enableFilterLData = new FormData();
+//							enableFilterLData.height = GDE.IS_MAC ? 18 : 16;
+//							enableFilterLData.left = new FormAttachment(0, 1000, 565);
+//							enableFilterLData.width = 42;
+//							enableFilterLData.bottom = new FormAttachment(1000, 1000, GDE.IS_MAC ? -120 : -120);
+//							this.filterLapMinTimeCombo.setLayoutData(enableFilterLData);
+//							this.filterLapMinTimeCombo.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+//							this.filterLapMinTimeCombo.setItems(filterMinItems);
+//							//this.filterLapMinTimeCombo.select(0);
+//							this.filterLapMinTimeCombo.setToolTipText("Filter Rundenzeitfehlmessung");
+//							this.filterLapMinTimeCombo.setEditable(false);
+//							this.filterLapMinTimeCombo.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+//							this.filterLapMinTimeCombo.addSelectionListener(new SelectionAdapter() {
+//								@Override
+//								public void widgetSelected(SelectionEvent evt) {
+//									log.log(java.util.logging.Level.FINEST, "filterLapMinTimeCombo.widgetSelected, event=" + evt); //$NON-NLS-1$
+//									if (isHoTTAdapter2 && application.getActiveChannelNumber() == 6) {
+//										//5=Rx_dbm, 18=Distance, 86=SmoothedRx_dbm, 87=DiffRx_dbm, 88=LapsRx_dbm 89=DiffDistance, 90=LapsDistance
+//										HoTTAdapterDialog.this.device.setMeasurementPropertyValue(6, 88, MeasurementPropertyTypes.FILTER_FACTOR.value(), DataTypes.STRING, HoTTAdapterDialog.this.filterLapMinTimeCombo.getText().trim());
+//										HoTTAdapterDialog.this.device.makeInActiveDisplayable(application.getActiveRecordSet());
+//										HoTTAdapterDialog.this.enableSaveButton(true);
+//									}
+//									else if (isHoTTAdapterD) {
+//										//5=Rx_dbm, 109=SmoothedRx_dbm, 110=DiffRx_dbm, 111=LapsRx_dbm
+//										//15=Distance, 112=DiffDistance, 113=LapsDistance
+//										HoTTAdapterDialog.this.device.setMeasurementPropertyValue(1, 111, MeasurementPropertyTypes.FILTER_FACTOR.value(), DataTypes.STRING, HoTTAdapterDialog.this.filterLapMinTimeCombo.getText().trim());
+//										HoTTAdapterDialog.this.device.makeInActiveDisplayable(application.getActiveRecordSet());
+//										HoTTAdapterDialog.this.enableSaveButton(true);
+//									}
+//								}
+//							});
+//						}
+//						{
+//							this.absorptionLevelLabel = new CLabel(this.dialogShell, SWT.RIGHT);
+//							FormData enableFilterLData = new FormData();
+//							enableFilterLData.height = GDE.IS_MAC ? 22: 20;
+//							enableFilterLData.left = new FormAttachment(0, 1000, 15);
+//							enableFilterLData.width = 140;
+//							enableFilterLData.bottom = new FormAttachment(1000, 1000, GDE.IS_MAC ? -98 : -100);
+//							this.absorptionLevelLabel.setLayoutData(enableFilterLData);
+//							this.absorptionLevelLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+//							this.absorptionLevelLabel.setText("Rx dbm Glättungsgrad");
+//							this.absorptionLevelLabel.setToolTipText("Glättung von Rx dbm");
+//						}
+//						{
+//							this.absorptionLevelCombo = new CCombo(this.dialogShell, SWT.BORDER);
+//							FormData enableFilterLData = new FormData();
+//							enableFilterLData.height = GDE.IS_MAC ? 18 : 16;
+//							enableFilterLData.left = new FormAttachment(0, 1000, 160);
+//							enableFilterLData.width = 42;
+//							enableFilterLData.bottom = new FormAttachment(1000, 1000, GDE.IS_MAC ? -100 : -100);
+//							this.absorptionLevelCombo.setLayoutData(enableFilterLData);
+//							this.absorptionLevelCombo.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+//							this.absorptionLevelCombo.setItems(filterItems);
+//							this.absorptionLevelCombo.setToolTipText("Größerer Wert -> größere Glättung, 0 == aus");
+//							this.absorptionLevelCombo.setEditable(false);
+//							this.absorptionLevelCombo.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+//							this.absorptionLevelCombo.addSelectionListener(new SelectionAdapter() {
+//								@Override
+//								public void widgetSelected(SelectionEvent evt) {
+//									log.log(java.util.logging.Level.FINEST, "absorptionLevelCombo.widgetSelected, event=" + evt); //$NON-NLS-1$
+//									if (isHoTTAdapter2 && application.getActiveChannelNumber() == 6) {
+//										//5=Rx_dbm, 18=Distance, 86=SmoothedRx_dbm, 87=DiffRx_dbm, 88=LapsRx_dbm 89=DiffDistance, 90=LapsDistance
+//										HoTTAdapterDialog.this.device.setMeasurementPropertyValue(6, 86, MeasurementPropertyTypes.FILTER_FACTOR.value(), DataTypes.STRING, HoTTAdapterDialog.this.absorptionLevelCombo.getText().trim());
+//										HoTTAdapterDialog.this.device.makeInActiveDisplayable(application.getActiveRecordSet());
+//										HoTTAdapterDialog.this.enableSaveButton(true);
+//									}
+//									else if (isHoTTAdapterD) {
+//										//5=Rx_dbm, 109=SmoothedRx_dbm, 110=DiffRx_dbm, 111=LapsRx_dbm
+//										//15=Distance, 112=DiffDistance, 113=LapsDistance
+//										HoTTAdapterDialog.this.device.setMeasurementPropertyValue(1, 109, MeasurementPropertyTypes.FILTER_FACTOR.value(), DataTypes.STRING, HoTTAdapterDialog.this.absorptionLevelCombo.getText().trim());
+//										HoTTAdapterDialog.this.device.makeInActiveDisplayable(application.getActiveRecordSet());
+//										HoTTAdapterDialog.this.enableSaveButton(true);
+//									}
+//								}
+//							});
+//						}
+//						{
+//							this.filterMinDeltaRxDbmLabel = new CLabel(this.dialogShell, SWT.RIGHT);
+//							FormData enableFilterLData = new FormData();
+//							enableFilterLData.height = GDE.IS_MAC ? 22: 20;
+//							enableFilterLData.left = new FormAttachment(0, 1000, 190);
+//							enableFilterLData.width = 160;
+//							enableFilterLData.bottom = new FormAttachment(1000, 1000, GDE.IS_MAC ? -98 : -100);
+//							this.filterMinDeltaRxDbmLabel.setLayoutData(enableFilterLData);
+//							this.filterMinDeltaRxDbmLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+//							this.filterMinDeltaRxDbmLabel.setText("Min-Delta Rx [dbm]");
+//							this.filterMinDeltaRxDbmLabel.setToolTipText("Etwas mehr, wie die halbe maximale Differenz einstellen");
+//						}
+//						{
+//							this.filterMinDeltaRxDbmCombo = new CCombo(this.dialogShell, SWT.BORDER);
+//							FormData enableFilterLData = new FormData();
+//							enableFilterLData.height = GDE.IS_MAC ? 18 : 16;
+//							enableFilterLData.left = new FormAttachment(0, 1000, 360);
+//							enableFilterLData.width = 42;
+//							enableFilterLData.bottom = new FormAttachment(1000, 1000, GDE.IS_MAC ? -100 : -100);
+//							this.filterMinDeltaRxDbmCombo.setLayoutData(enableFilterLData);
+//							this.filterMinDeltaRxDbmCombo.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+//							this.filterMinDeltaRxDbmCombo.setItems(filterMinItems);
+//							//this.filterMinDeltaRxDbmCombo.select(10);
+//							this.filterMinDeltaRxDbmCombo.setToolTipText("Größerer Wert -> längere Rundenzeiten-Messung");
+//							this.filterMinDeltaRxDbmCombo.setEditable(false);
+//							this.filterMinDeltaRxDbmCombo.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+//							this.filterMinDeltaRxDbmCombo.addSelectionListener(new SelectionAdapter() {
+//								@Override
+//								public void widgetSelected(SelectionEvent evt) {
+//									log.log(java.util.logging.Level.FINEST, "filterMinDeltaRxDbmCombo.widgetSelected, event=" + evt); //$NON-NLS-1$
+//									if (isHoTTAdapter2 && application.getActiveChannelNumber() == 6) {
+//										//5=Rx_dbm, 18=Distance, 86=SmoothedRx_dbm, 87=DiffRx_dbm, 88=LapsRx_dbm 89=DiffDistance, 90=LapsDistance
+//										HoTTAdapterDialog.this.device.setMeasurementPropertyValue(6, 87, MeasurementPropertyTypes.NONE_SPECIFIED.value(), DataTypes.STRING, HoTTAdapterDialog.this.filterMinDeltaRxDbmCombo.getText().trim());
+//										HoTTAdapterDialog.this.device.makeInActiveDisplayable(application.getActiveRecordSet());
+//										HoTTAdapterDialog.this.enableSaveButton(true);
+//									}
+//									else if (isHoTTAdapterD) {
+//										//5=Rx_dbm, 109=SmoothedRx_dbm, 110=DiffRx_dbm, 111=LapsRx_dbm
+//										//15=Distance, 112=DiffDistance, 113=LapsDistance
+//										HoTTAdapterDialog.this.device.setMeasurementPropertyValue(1, 110, MeasurementPropertyTypes.NONE_SPECIFIED.value(), DataTypes.STRING, HoTTAdapterDialog.this.filterMinDeltaRxDbmCombo.getText().trim());
+//										HoTTAdapterDialog.this.device.makeInActiveDisplayable(application.getActiveRecordSet());
+//										HoTTAdapterDialog.this.enableSaveButton(true);
+//									}
+//								}
+//							});
+//						}
+//						{
+//							this.filterMinDeltaDistLabel = new CLabel(this.dialogShell, SWT.RIGHT);
+//							FormData enableFilterLData = new FormData();
+//							enableFilterLData.height = GDE.IS_MAC ? 22: 20;
+//							enableFilterLData.left = new FormAttachment(0, 1000, 410);
+//							enableFilterLData.width = 150;
+//							enableFilterLData.bottom = new FormAttachment(1000, 1000, GDE.IS_MAC ? -98 : -100);
+//							this.filterMinDeltaDistLabel.setLayoutData(enableFilterLData);
+//							this.filterMinDeltaDistLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+//							this.filterMinDeltaDistLabel.setText("Min-Delta Distance [m]");
+//							this.filterMinDeltaDistLabel.setToolTipText("Etwas mehr, wie die halbe maximale Differenz einstellen");
+//						}
+//						{
+//							this.filterMinDeltaDistCombo = new CCombo(this.dialogShell, SWT.BORDER);
+//							FormData enableFilterLData = new FormData();
+//							enableFilterLData.height = GDE.IS_MAC ? 18 : 16;
+//							enableFilterLData.left = new FormAttachment(0, 1000, 565);
+//							enableFilterLData.width = 42;
+//							enableFilterLData.bottom = new FormAttachment(1000, 1000, GDE.IS_MAC ? -100 : -100);
+//							this.filterMinDeltaDistCombo.setLayoutData(enableFilterLData);
+//							this.filterMinDeltaDistCombo.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+//							this.filterMinDeltaDistCombo.setItems(filterMinItems);
+//							//this.filterMinDistDeltaCombo.select(0);
+//							this.filterMinDeltaDistCombo.setToolTipText("Filter Rundenzeitfehlmessung durch Einschränken auf eine Differenz");
+//							this.filterMinDeltaDistCombo.setEditable(false);
+//							this.filterMinDeltaDistCombo.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+//							this.filterMinDeltaDistCombo.addSelectionListener(new SelectionAdapter() {
+//								@Override
+//								public void widgetSelected(SelectionEvent evt) {
+//									log.log(java.util.logging.Level.FINEST, "filterMinDistDeltaCombo.widgetSelected, event=" + evt); //$NON-NLS-1$
+//									if (isHoTTAdapter2 && application.getActiveChannelNumber() == 6) {
+//										//5=Rx_dbm, 18=Distance, 86=SmoothedRx_dbm, 87=DiffRx_dbm, 88=LapsRx_dbm 89=DiffDistance, 90=LapsDistance
+//										HoTTAdapterDialog.this.device.setMeasurementPropertyValue(6, 89, MeasurementPropertyTypes.NONE_SPECIFIED.value(), DataTypes.STRING, HoTTAdapterDialog.this.filterMinDeltaDistCombo.getText().trim());
+//										HoTTAdapterDialog.this.device.makeInActiveDisplayable(application.getActiveRecordSet());
+//										HoTTAdapterDialog.this.enableSaveButton(true);
+//									}
+//									else if (isHoTTAdapterD) {
+//										//5=Rx_dbm, 109=SmoothedRx_dbm, 110=DiffRx_dbm, 111=LapsRx_dbm
+//										//15=Distance, 112=DiffDistance, 113=LapsDistance
+//										HoTTAdapterDialog.this.device.setMeasurementPropertyValue(1, 112, MeasurementPropertyTypes.NONE_SPECIFIED.value(), DataTypes.STRING, HoTTAdapterDialog.this.filterMinDeltaDistCombo.getText().trim());
+//										HoTTAdapterDialog.this.device.makeInActiveDisplayable(application.getActiveRecordSet());
+//										HoTTAdapterDialog.this.enableSaveButton(true);
+//									}
+//								}
+//							});
+//						}
+//					}
+//				}
 				{
 					this.enableFilter = new Button(this.dialogShell, SWT.CHECK);
 					FormData enableFilterLData = new FormData();
@@ -836,31 +836,31 @@ public class HoTTAdapterDialog extends DeviceDialog {
 				HoTTAdapterDialog.this.altitudeClimbSelectLabel.setVisible(false);
 				HoTTAdapterDialog.this.altitudeClimbSelectCombo.setVisible(false);
 			}
-			else if (isHoTTAdapter2) {
+			else if (isHoTTAdapter2 || isHoTTAdapterD) {
 				this.altitudeClimbSelectCombo.select(Integer.parseInt(this.device.getChannelProperty(ChannelPropertyTypes.SENSOR_ALT_CLIMB).getValue() != null ? this.device.getChannelProperty(ChannelPropertyTypes.SENSOR_ALT_CLIMB).getValue() : "0"));
-				int activeChannelNumber = this.application.getActiveChannelNumber();
-				if (activeChannelNumber == 6 && this.device.getNumberOfMeasurements(activeChannelNumber) > 86  && this.device.getMeasurementPropertyValue(activeChannelNumber, 88, MeasurementPropertyTypes.FILTER_FACTOR.value()).toString().length() > 0) {
-					this.filterStartTimeCombo.select(findPosition(filterMinItems, this.device.getMeasurementPropertyValue(activeChannelNumber, 87, MeasurementPropertyTypes.FILTER_FACTOR.value()).toString().trim(), 10));
-					this.filterLapMinTimeCombo.select(findPosition(filterMinItems, this.device.getMeasurementPropertyValue(activeChannelNumber, 88, MeasurementPropertyTypes.FILTER_FACTOR.value()).toString().trim(), 0));
-					this.filterMaxTimeCombo.select(findPosition(filterMaxItems, this.device.getMeasurementPropertyValue(activeChannelNumber, 5, MeasurementPropertyTypes.FILTER_FACTOR.value()).toString().trim(), 10));
-					//5=Rx_dbm, 18=Distance, 86=SmoothedRx_dbm, 87=DiffRx_dbm, 88=LapsRx_dbm 89=DiffDistance, 90=LapsDistance
-					this.absorptionLevelCombo.select(findPosition(filterItems, this.device.getMeasurementPropertyValue(activeChannelNumber, 72, MeasurementPropertyTypes.FILTER_FACTOR.value()).toString().trim(), 0));
-					this.filterMinDeltaRxDbmCombo.select(findPosition(filterMinItems, this.device.getMeasurementPropertyValue(activeChannelNumber, 86, MeasurementPropertyTypes.NONE_SPECIFIED.value()).toString().trim(), 10));
-					this.filterMinDeltaDistCombo.select(findPosition(filterMinItems, this.device.getMeasurementPropertyValue(activeChannelNumber, 89, MeasurementPropertyTypes.NONE_SPECIFIED.value()).toString().trim(), 0));
-				}
-			}
-			else if (isHoTTAdapterD) {
-				this.altitudeClimbSelectCombo.select(Integer.parseInt(this.device.getChannelProperty(ChannelPropertyTypes.SENSOR_ALT_CLIMB).getValue() != null ? this.device.getChannelProperty(ChannelPropertyTypes.SENSOR_ALT_CLIMB).getValue() : "0"));
-				if (this.device.getMeasurementPropertyValue(1, 111, MeasurementPropertyTypes.FILTER_FACTOR.value()).toString().length() > 0) {
-					this.filterStartTimeCombo.select(findPosition(filterMinItems, this.device.getMeasurementPropertyValue(1, 110, MeasurementPropertyTypes.FILTER_FACTOR.value()).toString().trim(), 10));
-					this.filterLapMinTimeCombo.select(findPosition(filterMinItems, this.device.getMeasurementPropertyValue(1, 111, MeasurementPropertyTypes.FILTER_FACTOR.value()).toString().trim(), 0));
-					this.filterMaxTimeCombo.select(findPosition(filterMaxItems, this.device.getMeasurementPropertyValue(1, 5, MeasurementPropertyTypes.FILTER_FACTOR.value()).toString().trim(), 10));
-					//5=Rx_dbm, 109=SmoothedRx_dbm, 110=DiffRx_dbm, 111=LapsRx_dbm
-					this.absorptionLevelCombo.select(findPosition(filterItems, this.device.getMeasurementPropertyValue(1, 109, MeasurementPropertyTypes.FILTER_FACTOR.value()).toString().trim(), 0));
-					//15=Distance, 112=DiffDistance, 113=LapsDistance
-					this.filterMinDeltaRxDbmCombo.select(findPosition(filterMinItems, this.device.getMeasurementPropertyValue(1, 110, MeasurementPropertyTypes.NONE_SPECIFIED.value()).toString().trim(), 10));
-					this.filterMinDeltaDistCombo.select(findPosition(filterMinItems, this.device.getMeasurementPropertyValue(1, 112, MeasurementPropertyTypes.NONE_SPECIFIED.value()).toString().trim(), 0));
-				}
+//				int activeChannelNumber = this.application.getActiveChannelNumber();
+//				if (activeChannelNumber == 6 && this.device.getNumberOfMeasurements(activeChannelNumber) > 86  && this.device.getMeasurementPropertyValue(activeChannelNumber, 88, MeasurementPropertyTypes.FILTER_FACTOR.value()).toString().length() > 0) {
+//					this.filterStartTimeCombo.select(findPosition(filterMinItems, this.device.getMeasurementPropertyValue(activeChannelNumber, 87, MeasurementPropertyTypes.FILTER_FACTOR.value()).toString().trim(), 10));
+//					this.filterLapMinTimeCombo.select(findPosition(filterMinItems, this.device.getMeasurementPropertyValue(activeChannelNumber, 88, MeasurementPropertyTypes.FILTER_FACTOR.value()).toString().trim(), 0));
+//					this.filterMaxTimeCombo.select(findPosition(filterMaxItems, this.device.getMeasurementPropertyValue(activeChannelNumber, 5, MeasurementPropertyTypes.FILTER_FACTOR.value()).toString().trim(), 10));
+//					//5=Rx_dbm, 18=Distance, 86=SmoothedRx_dbm, 87=DiffRx_dbm, 88=LapsRx_dbm 89=DiffDistance, 90=LapsDistance
+//					this.absorptionLevelCombo.select(findPosition(filterItems, this.device.getMeasurementPropertyValue(activeChannelNumber, 72, MeasurementPropertyTypes.FILTER_FACTOR.value()).toString().trim(), 0));
+//					this.filterMinDeltaRxDbmCombo.select(findPosition(filterMinItems, this.device.getMeasurementPropertyValue(activeChannelNumber, 86, MeasurementPropertyTypes.NONE_SPECIFIED.value()).toString().trim(), 10));
+//					this.filterMinDeltaDistCombo.select(findPosition(filterMinItems, this.device.getMeasurementPropertyValue(activeChannelNumber, 89, MeasurementPropertyTypes.NONE_SPECIFIED.value()).toString().trim(), 0));
+//				}
+//			}
+//			else if (isHoTTAdapterD) {
+//				this.altitudeClimbSelectCombo.select(Integer.parseInt(this.device.getChannelProperty(ChannelPropertyTypes.SENSOR_ALT_CLIMB).getValue() != null ? this.device.getChannelProperty(ChannelPropertyTypes.SENSOR_ALT_CLIMB).getValue() : "0"));
+//				if (this.device.getMeasurementPropertyValue(1, 111, MeasurementPropertyTypes.FILTER_FACTOR.value()).toString().length() > 0) {
+//					this.filterStartTimeCombo.select(findPosition(filterMinItems, this.device.getMeasurementPropertyValue(1, 110, MeasurementPropertyTypes.FILTER_FACTOR.value()).toString().trim(), 10));
+//					this.filterLapMinTimeCombo.select(findPosition(filterMinItems, this.device.getMeasurementPropertyValue(1, 111, MeasurementPropertyTypes.FILTER_FACTOR.value()).toString().trim(), 0));
+//					this.filterMaxTimeCombo.select(findPosition(filterMaxItems, this.device.getMeasurementPropertyValue(1, 5, MeasurementPropertyTypes.FILTER_FACTOR.value()).toString().trim(), 10));
+//					//5=Rx_dbm, 109=SmoothedRx_dbm, 110=DiffRx_dbm, 111=LapsRx_dbm
+//					this.absorptionLevelCombo.select(findPosition(filterItems, this.device.getMeasurementPropertyValue(1, 109, MeasurementPropertyTypes.FILTER_FACTOR.value()).toString().trim(), 0));
+//					//15=Distance, 112=DiffDistance, 113=LapsDistance
+//					this.filterMinDeltaRxDbmCombo.select(findPosition(filterMinItems, this.device.getMeasurementPropertyValue(1, 110, MeasurementPropertyTypes.NONE_SPECIFIED.value()).toString().trim(), 10));
+//					this.filterMinDeltaDistCombo.select(findPosition(filterMinItems, this.device.getMeasurementPropertyValue(1, 112, MeasurementPropertyTypes.NONE_SPECIFIED.value()).toString().trim(), 0));
+//				}
 			}
 
 			if (this.serialPort.isConnected()) { // check serial port state, if user has closed the dialog while gathering data
