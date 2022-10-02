@@ -405,16 +405,18 @@ public class UsbGathererThread extends Thread {
 				recordSet.addPoints(this.device.convertDataBytes(points, dataBuffer), deltaTimeStamp_ms);
 			
 			long intervalTime_ms = deltaTimeStamp_ms - (number == 2 ? this.lastTimeStamp_02_ms : this.lastTimeStamp_01_ms);
-			if (this.usbPort.getTimeOut_ms() < intervalTime_ms)
+			if (UsbGathererThread.log.isLoggable(Level.INFO))
+				UsbGathererThread.log.log(Level.INFO, "TimeOut = " + this.usbPort.getTimeOut_ms() + " deltaTimeStamp_ms = " + deltaTimeStamp_ms + " intervalTime_ms = " + intervalTime_ms + " lastTimeStamp_01_ms = " + lastTimeStamp_01_ms);
+			if (this.usbPort.getTimeOut_ms() != (intervalTime_ms + 200))
 				this.usbPort.setTimeOut_ms(intervalTime_ms + 200);
 			
 			switch (number) {
 			default:
 			case 1:
-				this.lastTimeStamp_01_ms = this.device.getTimeStamp(dataBuffer);
+				this.lastTimeStamp_01_ms = deltaTimeStamp_ms;
 				break;
 			case 2:
-				this.lastTimeStamp_02_ms = this.device.getTimeStamp(dataBuffer);
+				this.lastTimeStamp_02_ms = deltaTimeStamp_ms;
 				break;
 			}
 
