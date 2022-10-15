@@ -29,7 +29,6 @@ import org.eclipse.swt.widgets.Text;
 import gde.GDE;
 import gde.histo.recordings.HistoGraphicsMapper;
 import gde.histo.recordings.TrailRecordSetFormatter;
-import gde.log.Level;
 import gde.log.Logger;
 import gde.messages.MessageIds;
 import gde.messages.Messages;

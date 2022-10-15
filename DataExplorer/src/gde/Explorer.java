@@ -33,6 +33,7 @@ public class Explorer extends Analyzer {
 		super();
 	}
 
+	@SuppressWarnings("unused")
 	private Explorer(Explorer analyzer) {
 		super(analyzer);
 	}

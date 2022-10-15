@@ -32,7 +32,7 @@ public class ExecTest {
 			unmarshaller.setSchema(schema);
 			
 			Marshaller marshaller = jc.createMarshaller();
-	    marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,  new Boolean(true));
+	    marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,  true);
 	    marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION,  "DeviceProperties_V04.xsd");
 			
 			JAXBElement<DevicePropertiesType> elememt1 = (JAXBElement<DevicePropertiesType>)unmarshaller.unmarshal(new File (basePath + "Picolario.xml"));

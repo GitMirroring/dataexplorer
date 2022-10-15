@@ -33,6 +33,7 @@ public class TestAnalyzer extends Analyzer {
 		super();
 	}
 
+	@SuppressWarnings("unused")
 	private TestAnalyzer(TestAnalyzer analyzer) {
 		super(analyzer);
 	}

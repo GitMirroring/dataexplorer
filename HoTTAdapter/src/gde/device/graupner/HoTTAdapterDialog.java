@@ -886,6 +886,7 @@ public class HoTTAdapterDialog extends DeviceDialog {
 	 * @param defaultPosition
 	 * @return
 	 */
+	@SuppressWarnings("unused")
 	private int findPosition(final String[] valueArray, final String value, final int defaultPosition) {
 		for (int i = 0; i < valueArray.length; i++) {
 			if (value.equals(valueArray[i])) {

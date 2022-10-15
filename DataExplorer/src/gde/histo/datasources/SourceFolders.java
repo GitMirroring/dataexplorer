@@ -247,6 +247,7 @@ public class SourceFolders {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private void removeDoubleDirectories() {
 		// no, because the same directory might contribute different file types to the screening
 	}

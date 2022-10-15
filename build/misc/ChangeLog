@@ -2,7 +2,7 @@ Development history / change log, please read from bottom up
 
 Version 3.7.2 - xx yyy 2022
 Generic changes/fixes
-	* 
+	* clean some project specific encoding warnings 
 	 
 Device specific changes/fixes
 	* HoTTAdapter* - enable HoTTlogReader* inheritance
