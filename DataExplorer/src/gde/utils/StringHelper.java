@@ -1028,4 +1028,12 @@ public class StringHelper {
 		}
 		return sb.toString();
 	}
+
+	public static Object arrayToString(byte[] inputArray) {
+		StringBuffer sb = new StringBuffer();
+		for (Object object : inputArray) {
+			sb.append(object).append(GDE.STRING_COMMA_BLANK);
+		}
+		return sb.toString();
+	}
 }

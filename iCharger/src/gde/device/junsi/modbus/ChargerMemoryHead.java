@@ -18,7 +18,10 @@
 ****************************************************************************************/
 package gde.device.junsi.modbus;
 
+import java.util.Arrays;
+
 import gde.io.DataParser;
+import gde.log.Level;
 
 public class ChargerMemoryHead {
 	//public final int[][] MEM_HEAD_DEFAULT	 = new int[][] {7,{0,1,2,3,4,5,6}};
@@ -37,6 +40,8 @@ public class ChargerMemoryHead {
 		for (int i = 0; i < this.count; ++i) {
 			this.index[i] = memoryHeadBuffer[2 + i];
 		}
+		if (ChargerDialog.log.isLoggable(Level.INFO)) 
+			ChargerDialog.log.log(Level.INFO, String.format("memoryHead index: %s", this.toString())); //$NON-NLS-1$
 	}
 	
 	/**
@@ -87,21 +92,47 @@ public class ChargerMemoryHead {
 		return this.index;
 	}
 
-	public byte[] addIndexAfter(byte batTypeOrdinal) {
-		byte[] updatedIndex = new byte[this.count + 1];
-		//find next free index, if there is any
-		int n = this.count;
-		int sum = n * (n + 1) / 2;
-		int restSum = 0;
-		for (int i = 0; i < this.count; i++) {
-			restSum += this.index[i];
+	/**
+	 * @return next unused index of memory head
+	 */
+	public short getNextFreeIndex() {
+		short nextFreeIndex = -1;
+		//find free index in between
+		byte[] sortedIndex = new byte[this.count];
+		System.arraycopy(this.index, 0, sortedIndex, 0, this.count);
+		Arrays.sort(sortedIndex);
+		for (int i = 0; i < this.count - 1; ++i) {
+			if (sortedIndex[i] + 1 != sortedIndex[i + 1]) {
+				nextFreeIndex = (short) (sortedIndex[i] + 1);
+				break;
+			}
 		}
-		int nextFreeIndex = sum - restSum;
-
+		if (nextFreeIndex == -1) {
+			//find next free index, at the end
+			int n = this.count;
+			int sum = n * (n + 1) / 2;
+			int restSum = 0;
+			for (int i = 0; i < this.count; i++) {
+				restSum += this.index[i];
+			}
+			nextFreeIndex = (short) (sum - restSum);
+		}
+		if (ChargerDialog.log.isLoggable(Level.INFO)) 
+			ChargerDialog.log.log(Level.INFO, String.format("memoryHead next free index: %s", nextFreeIndex)); //$NON-NLS-1$
+		return nextFreeIndex;
+	}
+	
+	/**
+	 * @param batTypeOrdinal
+	 * @param addFreeIndex
+	 * @return the updated memory head index array where the next free index is inserted after index of battery type ordinal
+	 */
+	public byte[] addIndexAfter(byte batTypeOrdinal, int addFreeIndex) {
+		byte[] updatedIndex = new byte[this.count + 1];
 		for (int i = 0, j = 0; i < this.count + 1;) {
 			updatedIndex[i++] = this.index[j++];
 			if (updatedIndex[i - 1] == batTypeOrdinal) 
-				updatedIndex[i++] = (byte) nextFreeIndex;
+				updatedIndex[i++] = (byte) addFreeIndex;
 		}
 		return updatedIndex;
 	}

@@ -1053,7 +1053,8 @@ public class ChargerDialog extends DeviceDialog {
 		try {
 			this.usbPort.masterWrite(Register.REG_SEL_MEM.value, (short) 1, index);
 
-			if (modifiedProgramMemory.getUseFlag() != useFlag) modifiedProgramMemory.setUseFlag(useFlag);
+			if (modifiedProgramMemory.getUseFlag() != useFlag) //replace BUILD_IN to CUSTOM
+				modifiedProgramMemory.setUseFlag(useFlag);
 			if (ChargerDialog.log.isLoggable(Level.INFO)) {
 				ChargerDialog.log.log(Level.INFO, String.format("Program memory name = %s", new String(modifiedProgramMemory.getName()).trim())); //$NON-NLS-1$
 				ChargerDialog.log.log(Level.INFO, String.format("Program memory useFlag = 0x%04X", modifiedProgramMemory.getUseFlag())); //$NON-NLS-1$
@@ -1111,13 +1112,15 @@ public class ChargerDialog extends DeviceDialog {
 				byte[] memHeadBuffer = new byte[sizeMemHead * 2];
 				this.usbPort.masterRead((byte) 0, ChargerDialog.REG_HOLDING_MEM_HEAD_START, sizeMemHead, memHeadBuffer);
 				ChargerMemoryHead memHead = new ChargerMemoryHead(memHeadBuffer, this.isDuo);
-				newHeadIndex = memHead.getCount();
-				if (newHeadIndex >= ChargerMemoryHead.getMaxListIndex(this.isDuo))
-					throw new IndexOutOfBoundsException();
 				if (ChargerDialog.log.isLoggable(Level.INFO)) ChargerDialog.log.log(Level.INFO, String.format("before modification: %s", memHead.toString())); //$NON-NLS-1$
 
-				//program memory count = 18
-				memHead.setIndex(memHead.addIndexAfter((byte) (((iChargerUsb) this.device).getBatTypeIndex(batTypeName) - 1)));
+				newHeadIndex = memHead.getNextFreeIndex();
+				
+				if (memHead.getCount() >= ChargerMemoryHead.getMaxListIndex(this.isDuo))
+					throw new IndexOutOfBoundsException();
+
+				byte[] updatedIndex = memHead.addIndexAfter(((byte) (((iChargerUsb) this.device).getBatTypeIndex(batTypeName) - 1)), newHeadIndex);
+				memHead.setIndex(updatedIndex);
 				//0, 17, 16, 15, 14, 13, 12, 10, 1, 2, 11, 3, 4, 5, 6, 7, 8, 9,
 				memHead.setCount((short) (memHead.getCount() + 1));
 				if (ChargerDialog.log.isLoggable(Level.INFO)) ChargerDialog.log.log(Level.INFO, String.format("after modification: %s", memHead.toString())); //$NON-NLS-1$
@@ -1187,10 +1190,14 @@ public class ChargerDialog extends DeviceDialog {
 		temp[0] = (byte) (ChargerDialog.VALUE_ORDER_KEY & 0xFF);
 		temp[1] = (byte) (ChargerDialog.VALUE_ORDER_KEY >> 8);
 		temp[2] = order;
-		this.usbPort.masterWrite(Register.REG_ORDER_KEY.value, (short) (temp.length / 2), temp);
+		ModBusErrorCode mbErrorCode = this.usbPort.masterWrite(Register.REG_ORDER_KEY.value, (short) (temp.length / 2), temp);
+		if (mbErrorCode !=  ModBusErrorCode.MB_EOK)
+			throw new IllegalStateException(mbErrorCode.toString());
 
 		temp = new byte[2];
-		this.usbPort.masterWrite(Register.REG_ORDER_KEY.value, (short) (temp.length / 2), temp);
+		mbErrorCode = this.usbPort.masterWrite(Register.REG_ORDER_KEY.value, (short) (temp.length / 2), temp);
+		if (mbErrorCode !=  ModBusErrorCode.MB_EOK)
+			throw new IllegalStateException(mbErrorCode.toString());
 	}
 
 	/**
@@ -1614,6 +1621,9 @@ public class ChargerDialog extends DeviceDialog {
 				String batteryType = new String(ChargerDialog.this.copiedProgramMemory.getName()).trim();
 				ChargerDialog.this.copiedProgramMemory.setName(batteryType + Messages.getString(MessageIds.GDE_MSGT2620));
 				short newIndex = addEntryMemoryHead(batteryType);
+				if (ChargerDialog.log.isLoggable(Level.INFO)) 
+					ChargerDialog.log.log(Level.INFO, String.format("memoryHead use new index: %s", newIndex)); //$NON-NLS-1$
+
 				if (newIndex > 0) {
 					writeProgramMemory(newIndex, ChargerDialog.this.copiedProgramMemory, (short) 0x55aa);
 					ChargerDialog.this.copiedProgramMemory = null;
