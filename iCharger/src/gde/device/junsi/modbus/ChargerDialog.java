@@ -2813,18 +2813,23 @@ public class ChargerDialog extends DeviceDialog {
 			if (this.isDuo) {
 				switch (this.memoryValues[0]) { //battery type LiPo,LiLo,LiFe,NiMH,Nicd,Pb,NiZn,LiHV
 				case 0: //LiPo
+					this.memoryParameters[4].updateTextFieldValues(ChargerMemory.LiMode.VALUES);
 					this.memoryParameters[7].updateValueRange("4.2V (3.850 - 4.350V)", 3850, 4350, 4200, -3850); //$NON-NLS-1$
 					break;
 				case 1: //LiIo
+					this.memoryParameters[4].updateTextFieldValues(ChargerMemory.LiMode.VALUES);
 					this.memoryParameters[7].updateValueRange("4.1V (3.750 - 4.350V)", 3750, 4350, 4100, -3750); //$NON-NLS-1$
 					break;
 				case 2: //LiFe
+					this.memoryParameters[4].updateTextFieldValues(ChargerMemory.LiMode.VALUES);
 					this.memoryParameters[7].updateValueRange("3.3V (3.300 - 3.800 V", 3300, 3800, 3600, -3300); //$NON-NLS-1$
 					break;
 				case 6: //NiZn
+					this.memoryParameters[4].updateTextFieldValues(ChargerMemory.NiMode.VALUES);
 					this.memoryParameters[7].updateValueRange("1.9V (1.200 - 2.100 V", 1200, 2100, 2000, -1200); //$NON-NLS-1$
 					break;
 				case 7: //LiHV
+					this.memoryParameters[4].updateTextFieldValues(ChargerMemory.LiMode.VALUES);
 					this.memoryParameters[7].updateValueRange("4.35V (3.900 - 4.450V)", 3900, 4450, 4350, -3900); //$NON-NLS-1$
 					break;
 				case 3: //NiMH
@@ -2853,21 +2858,27 @@ public class ChargerDialog extends DeviceDialog {
 			else {
 				switch (this.memoryValues[0]) { //battery type LiPo,LiLo,LiFe,LiHV,LTO, NiMH,Nicd,NiZn,Pb
 				case 0: //LiPo
+					this.memoryParameters[4].updateTextFieldValues(ChargerMemory.LiMode.VALUES);
 					this.memoryParameters[7].updateValueRange("4.2V (3.850 - 4.350V)", 3850, 4350, 4200, -3850); //$NON-NLS-1$
 					break;
 				case 1: //LiIo
+					this.memoryParameters[4].updateTextFieldValues(ChargerMemory.LiMode.VALUES);
 					this.memoryParameters[7].updateValueRange("4.1V (3.750 - 4.350V)", 3750, 4350, 4100, -3750); //$NON-NLS-1$
 					break;
 				case 2: //LiFe
+					this.memoryParameters[4].updateTextFieldValues(ChargerMemory.LiMode.VALUES);
 					this.memoryParameters[7].updateValueRange("3.3V (3.300 - 3.800 V", 3300, 3800, 3600, -3300); //$NON-NLS-1$
 					break;
 				case 3: //LiHV
+					this.memoryParameters[4].updateTextFieldValues(ChargerMemory.LiMode.VALUES);
 					this.memoryParameters[7].updateValueRange("4.35V (3.900 - 4.450V)", 3900, 4450, 4350, -3900); //$NON-NLS-1$
 					break;
 				case 4: //LTO
+					this.memoryParameters[4].updateTextFieldValues(ChargerMemory.LiMode.VALUES);
 					this.memoryParameters[7].updateValueRange("2.85V (2.400 - 3.100 V", 2400, 3100, 2850, -2400); //$NON-NLS-1$
 					break;
 				case 7: //NiZn
+					this.memoryParameters[4].updateTextFieldValues(ChargerMemory.NiMode.VALUES);
 					this.memoryParameters[7].updateValueRange("1.9V (1.200 - 2.100 V", 1200, 2100, 2000, -1200); //$NON-NLS-1$
 					break;
 				case 5: //NiMH

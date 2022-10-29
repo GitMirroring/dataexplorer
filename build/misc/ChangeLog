@@ -8,6 +8,7 @@ Device specific changes/fixes
 	* HoTTAdapter* - enable HoTTlogReader* inheritance
 	* iChargerUSB* - fix dynamically setting of timeout in dependency of program memory log interval
 	* iChargerUSB* - fix wrong memory head index selection
+	* iChargerUSB* - fix missing update memory configuration dialog switching to Li battery type
 
 Version 3.7.1 - 23 Sep 2022
 Generic changes/fixes
