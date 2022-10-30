@@ -10,6 +10,8 @@ Device specific changes/fixes
 	* iChargerUSB* - fix dynamically setting of timeout in dependency of program memory log interval
 	* iChargerUSB* - fix wrong memory head index selection
 	* iChargerUSB* - fix missing update memory configuration dialog switching to Li battery type
+	* iChargerDX* - fix wrong number of program memories
+	* iCharger*X* - fix removal of channel modus power setting
 
 Version 3.7.1 - 23 Sep 2022
 Generic changes/fixes

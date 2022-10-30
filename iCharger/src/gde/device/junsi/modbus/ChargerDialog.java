@@ -221,10 +221,10 @@ public class ChargerDialog extends DeviceDialog {
 
 				//Read memory structure of original and added/modified program memories
 				//MasterWrite(REG_HOLDING_MEM_HEAD_START,(sizeof(MEM_HEAD)+1)/2,(BYTE *)&MemHead)
-				short sizeMemHead = (short) ((ChargerMemoryHead.getSize(isDuo) + 1) / 2);
+				short sizeMemHead = (short) ((ChargerMemoryHead.getSize(isDuo || isDx) + 1) / 2);
 				byte[] memHeadBuffer = new byte[sizeMemHead * 2];
 				usbPort.masterRead((byte) 0, ChargerDialog.REG_HOLDING_MEM_HEAD_START, sizeMemHead, memHeadBuffer);
-				ChargerMemoryHead memHead = new ChargerMemoryHead(memHeadBuffer, isDuo);
+				ChargerMemoryHead memHead = new ChargerMemoryHead(memHeadBuffer, isDuo || isDx);
 				ChargerDialog.log.log(Level.INFO, memHead.toString());
 
 				for (int i = 0; i < memHead.getCount(); ++i) {
@@ -953,10 +953,10 @@ public class ChargerDialog extends DeviceDialog {
 		try {
 			if (this.usbPort != null && this.usbPort.isConnected()) {
 				//Read memory structure of original and added/modified program memories
-				short sizeMemHead = (short) ((ChargerMemoryHead.getSize(this.isDuo) + 1) / 2);
+				short sizeMemHead = (short) ((ChargerMemoryHead.getSize(this.isDuo || this.isDx) + 1) / 2);
 				byte[] memHeadBuffer = new byte[sizeMemHead * 2];
 				this.usbPort.masterRead((byte) 0, ChargerDialog.REG_HOLDING_MEM_HEAD_START, sizeMemHead, memHeadBuffer);
-				ChargerMemoryHead memHead = new ChargerMemoryHead(memHeadBuffer, this.isDuo);
+				ChargerMemoryHead memHead = new ChargerMemoryHead(memHeadBuffer, this.isDuo || this.isDx);
 				if (ChargerDialog.log.isLoggable(Level.INFO)) 
 					ChargerDialog.log.log(Level.INFO, memHead.toString());
 
@@ -1108,17 +1108,16 @@ public class ChargerDialog extends DeviceDialog {
 		try {
 			if (this.usbPort != null && this.usbPort.isConnected()) {
 				//Read memory structure of original and added/modified program memories
-				short sizeMemHead = (short) ((ChargerMemoryHead.getSize(this.isDuo) + 1) / 2);
+				short sizeMemHead = (short) ((ChargerMemoryHead.getSize(this.isDuo || this.isDx) + 1) / 2);
 				byte[] memHeadBuffer = new byte[sizeMemHead * 2];
 				this.usbPort.masterRead((byte) 0, ChargerDialog.REG_HOLDING_MEM_HEAD_START, sizeMemHead, memHeadBuffer);
-				ChargerMemoryHead memHead = new ChargerMemoryHead(memHeadBuffer, this.isDuo);
+				ChargerMemoryHead memHead = new ChargerMemoryHead(memHeadBuffer, this.isDuo || this.isDx);
 				if (ChargerDialog.log.isLoggable(Level.INFO)) ChargerDialog.log.log(Level.INFO, String.format("before modification: %s", memHead.toString())); //$NON-NLS-1$
-
-				newHeadIndex = memHead.getNextFreeIndex();
 				
-				if (memHead.getCount() >= ChargerMemoryHead.getMaxListIndex(this.isDuo))
+				if (memHead.getCount() >= ChargerMemoryHead.getMaxListIndex(this.isDuo || this.isDx))
 					throw new IndexOutOfBoundsException();
 
+				newHeadIndex = memHead.getNextFreeIndex();
 				byte[] updatedIndex = memHead.addIndexAfter(((byte) (((iChargerUsb) this.device).getBatTypeIndex(batTypeName) - 1)), newHeadIndex);
 				memHead.setIndex(updatedIndex);
 				//0, 17, 16, 15, 14, 13, 12, 10, 1, 2, 11, 3, 4, 5, 6, 7, 8, 9,
@@ -1126,7 +1125,7 @@ public class ChargerDialog extends DeviceDialog {
 				if (ChargerDialog.log.isLoggable(Level.INFO)) ChargerDialog.log.log(Level.INFO, String.format("after modification: %s", memHead.toString())); //$NON-NLS-1$
 
 				//write the updated memory head structure to device
-				this.usbPort.masterWrite(ChargerDialog.REG_HOLDING_MEM_HEAD_START, sizeMemHead, memHead.getAsByteArray(this.isDuo));
+				this.usbPort.masterWrite(ChargerDialog.REG_HOLDING_MEM_HEAD_START, sizeMemHead, memHead.getAsByteArray(this.isDuo || this.isDx));
 				transOrder((byte) Order.ORDER_WRITE_MEM_HEAD.ordinal());
 			}
 		}
@@ -1151,10 +1150,10 @@ public class ChargerDialog extends DeviceDialog {
 		try {
 			if (this.usbPort != null && this.usbPort.isConnected()) {
 				//Read memory structure of original and added/modified program memories
-				short sizeMemHead = (short) ((ChargerMemoryHead.getSize(this.isDuo) + 1) / 2);
+				short sizeMemHead = (short) ((ChargerMemoryHead.getSize(this.isDuo || this.isDx) + 1) / 2);
 				byte[] memHeadBuffer = new byte[sizeMemHead * 2];
 				this.usbPort.masterRead((byte) 0, ChargerDialog.REG_HOLDING_MEM_HEAD_START, sizeMemHead, memHeadBuffer);
-				ChargerMemoryHead memHead = new ChargerMemoryHead(memHeadBuffer, this.isDuo);
+				ChargerMemoryHead memHead = new ChargerMemoryHead(memHeadBuffer, this.isDuo || this.isDx);
 				if (ChargerDialog.log.isLoggable(Level.INFO)) ChargerDialog.log.log(Level.INFO, String.format("before modification: count %d; index.length %d", memHead.getCount(), memHead.getIndex().length)); //$NON-NLS-1$
 				if (ChargerDialog.log.isLoggable(Level.INFO)) ChargerDialog.log.log(Level.INFO, String.format("before modification: %s", memHead.toString())); //$NON-NLS-1$
 
@@ -1164,7 +1163,7 @@ public class ChargerDialog extends DeviceDialog {
 				if (ChargerDialog.log.isLoggable(Level.INFO)) ChargerDialog.log.log(Level.INFO, String.format("after modification: %s", memHead.toString())); //$NON-NLS-1$
 
 				//write the updated memory head structure to device
-				this.usbPort.masterWrite(ChargerDialog.REG_HOLDING_MEM_HEAD_START, sizeMemHead, memHead.getAsByteArray(this.isDuo));
+				this.usbPort.masterWrite(ChargerDialog.REG_HOLDING_MEM_HEAD_START, sizeMemHead, memHead.getAsByteArray(this.isDuo || this.isDx));
 				transOrder((byte) Order.ORDER_WRITE_MEM_HEAD.ordinal());
 			}
 		}
@@ -3270,6 +3269,8 @@ public class ChargerDialog extends DeviceDialog {
 			if (this.tbtmPower == null || this.tbtmPower.isDisposed()) {
 				createPowerTabItem();
 				this.tabFolderProgrMem.setSelection(0);
+				if (this.memoryParameters[47] != null)
+					this.memoryParameters[47].dispose();
 			}
 		}
 

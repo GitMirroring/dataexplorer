@@ -33,8 +33,8 @@ public class ChargerMemoryHead {
 	 * constructor to create instance from received data
 	 * @param memoryHeadBuffer filled by Modbus communication
 	 */
-	public ChargerMemoryHead(final byte[] memoryHeadBuffer, boolean isDuo) {
-		this.index = new byte[ChargerMemoryHead.getMaxListIndex(isDuo)];
+	public ChargerMemoryHead(final byte[] memoryHeadBuffer, boolean isDuoOrDX) {
+		this.index = new byte[ChargerMemoryHead.getMaxListIndex(isDuoOrDX)];
 
 		this.count = DataParser.parse2Short(memoryHeadBuffer[0], memoryHeadBuffer[1]);
 		for (int i = 0; i < this.count; ++i) {
@@ -45,11 +45,11 @@ public class ChargerMemoryHead {
 	}
 	
 	/**
-	 * @param isDuo
+	 * @param isDuoOrDX
 	 * @return maximal list index, size of program memory
 	 */
-	public static int getMaxListIndex(boolean isDuo) {
-		return isDuo ? 64 : 32;
+	public static int getMaxListIndex(boolean isDuoOrDX) {
+		return isDuoOrDX ? 64 : 32;
 	}
 
 	@Override
@@ -64,8 +64,8 @@ public class ChargerMemoryHead {
 		return sb.toString();
 	}
 
-	public byte[] getAsByteArray(boolean isDuo) {
-		byte[] memHeadBuffer = new byte[ChargerMemoryHead.getSize(isDuo)];
+	public byte[] getAsByteArray(boolean isDuoOrDX) {
+		byte[] memHeadBuffer = new byte[ChargerMemoryHead.getSize(isDuoOrDX)];
 		memHeadBuffer[0] = (byte) (this.count & 0xFF);
 		memHeadBuffer[1] = (byte) (this.count >> 8);
 		for (int i = 0; i < this.count; i++) {
@@ -76,8 +76,8 @@ public class ChargerMemoryHead {
 
 	final static int size = 17 * 2; //size in byte
 
-	public static int getSize(boolean isDuo) {
-		return (isDuo ? 64 : 32) + 2 ;
+	public static int getSize(boolean isDuoOrDX) {
+		return (isDuoOrDX ? 64 : 32) + 2 ;
 	}
 
 	public short getCount() {
