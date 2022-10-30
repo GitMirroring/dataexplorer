@@ -12,6 +12,7 @@ Device specific changes/fixes
 	* iChargerUSB* - fix missing update memory configuration dialog switching to Li battery type
 	* iChargerDX* - fix wrong number of program memories
 	* iCharger*X* - fix removal of channel modus power setting
+	* iChargerUSB* - fix missing disable of delete button while BUILD IN memory selected
 
 Version 3.7.1 - 23 Sep 2022
 Generic changes/fixes

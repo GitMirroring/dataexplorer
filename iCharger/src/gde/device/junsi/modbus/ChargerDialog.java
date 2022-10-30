@@ -1549,6 +1549,7 @@ public class ChargerDialog extends DeviceDialog {
 				}
 				if (ChargerDialog.this.combo.getText().contains("BUILD IN")) { //$NON-NLS-1$
 					ChargerDialog.this.btnCopy.setEnabled(true);
+					ChargerDialog.this.btnDelete.setEnabled(false);
 					if (log.isLoggable(Level.FINEST)) 
 						ChargerDialog.this.btnDelete.setEnabled(true); //enable deletion of memory created by error
 				}
