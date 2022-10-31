@@ -1,10 +1,11 @@
 Development history / change log, please read from bottom up
 
 Version 3.7.2 - xx yyy 2022
-Generic changes/fixes
-	* clean some project specific encoding warnings 
+Generic changes/fixes 
 	* refine ARM architecture query
-	 
+	* update patched SWT for Windows 64 bit to have correct visualization below WIn10&11 as well as correct FileDialog.setFilterPath()
+		reference https://bugs.eclipse.org/bugs/show_bug.cgi?id=577190 
+		
 Device specific changes/fixes
 	* HoTTAdapter* - enable HoTTlogReader* inheritance
 	* iChargerUSB* - fix dynamically setting of timeout in dependency of program memory log interval
