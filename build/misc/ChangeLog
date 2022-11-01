@@ -1,9 +1,9 @@
 Development history / change log, please read from bottom up
 
-Version 3.7.2 - xx yyy 2022
+Version 3.7.2 - 01 Nov 2022
 Generic changes/fixes 
-	* refine ARM architecture query
-	* update patched SWT for Windows 64 bit to have correct visualization below WIn10&11 as well as correct FileDialog.setFilterPath()
+	* refine ARM processor architecture query
+	* update patched SWT for Windows 64 bit to have correct visualization below Win10&11 as well as correct function of FileDialog.setFilterPath()
 		reference https://bugs.eclipse.org/bugs/show_bug.cgi?id=577190 
 		
 Device specific changes/fixes
@@ -11,8 +11,8 @@ Device specific changes/fixes
 	* iChargerUSB* - fix dynamically setting of timeout in dependency of program memory log interval
 	* iChargerUSB* - fix wrong memory head index selection
 	* iChargerUSB* - fix missing update memory configuration dialog switching to Li battery type
-	* iChargerDX* - fix wrong number of program memories
-	* iCharger*X* - fix removal of channel modus power setting
+	* iChargerDX*  - fix wrong number of program memories
+	* iCharger*X*  - fix removal of channel modus power setting
 	* iChargerUSB* - fix missing disable of delete button while BUILD IN memory selected
 
 Version 3.7.1 - 23 Sep 2022

@@ -1,9 +1,32 @@
-GNU DataExplorer - News - comes with Version 3.7.1 - 23 Sep 2022
+GNU DataExplorer - News - comes with Version 3.7.2 - 01 Nov 2022
 
-Generic changes/fixes
-	* SWT toolkit Windows 64 bit updated due to malfunction in file open dialog setFilterPath function
-	
-Grundlegende Änderungen/Korrekturen:
-	* SWT Toolkit Windows 64 Bit wegen Fehlfunktion im Dateiauswahldialog der Funktion setFielterPath ausgewechselt 	 
+Generic changes/fixes 
+	* refine ARM processor architecture query
+	* update patched SWT for Windows 64 bit to have correct visualization below Win10&11 as well as correct function of FileDialog.setFilterPath()
+		reference https://bugs.eclipse.org/bugs/show_bug.cgi?id=577190 
+		
+Device specific changes/fixes
+	* HoTTAdapter* - enable HoTTlogReader* inheritance
+	* iChargerUSB* - fix dynamically setting of timeout in dependency of program memory log interval
+	* iChargerUSB* - fix wrong memory head index selection
+	* iChargerUSB* - fix missing update memory configuration dialog switching to Li battery type
+	* iChargerDX*  - support all possible 64 program memories
+	* iCharger*X*  - fix removal of channel modus power setting
+	* iChargerUSB* - fix missing disable of delete button while BUILD IN memory selected
 
 	
+Grundlegende Korrekturen/Änderungen
+	* Verbesserung ARM Prozessor Architectur Abfrage
+	* Update mit gepatchtem SWT für Windows 64 bit, um eine korrekte Visualisierung unter Win10&11, sowie eine korrekte Funktion von FileDialog.setFilterPath()
+		reference https://bugs.eclipse.org/bugs/show_bug.cgi?id=577190 
+
+Gerätespezifische Korrekturen/Änderungen
+	* HoTTAdapter* - HoTTlogReader* Vererbung ermöglicht
+	* iChargerUSB* - Korrektur beim dynamisches Setzen des Timeouts in Abhängigkeit vom Programmspeicher-Log-Intervalls
+	* iChargerUSB* - Korrektur Speicherkopfindex Selektion
+	* iChargerUSB* - fehlender Update des Programmspeicherdialoges korrigiert
+	* iChargerDX*  - Unterstützung aller 64 möglichen Programmspeicher
+	* iCharger*X*  - entfernen des Kanal-Modus für Power-Einstellungen korrigiert
+	* iChargerUSB* - BUILD IN Einträge können nun nicht mehr ausveersehen gelöscht werden
+
+		
