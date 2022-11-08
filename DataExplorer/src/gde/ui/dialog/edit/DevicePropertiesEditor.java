@@ -136,10 +136,11 @@ public class DevicePropertiesEditor extends Composite {
 	CTabItem															timeBaseTabItem;
 	Composite															timeBaseComposite;
 	Label																	timeBaseDescriptionLabel;
-	Label																	timeBaseNameLabel, timeBaseSymbolLabel, timeBaseUnitLabel, timeBaseTimeStepLabel;
-	Text																	timeBaseNameText, timeBaseSymbolText, timeBaseUnitText, timeBaseTimeStepText;
+	Label																	timeBaseNameLabel, timeBaseSymbolLabel, timeBaseUnitLabel, timeBaseTimeStepLabel, timeBaseUtcDeltaLabel;
+	Text																	timeBaseNameText, timeBaseSymbolText, timeBaseUnitText, timeBaseTimeStepText, timeBaseUtcDeltaText;
 
 	double																timeStep_ms															= 0.0;
+	int																		utcDelta																= 0;
 
 	CTabItem															dataBlockTabItem;
 	Composite															dataBlockComposite;
@@ -817,6 +818,7 @@ public class DevicePropertiesEditor extends Composite {
 							this.timeBaseTimeStepText = new Text(this.timeBaseComposite, SWT.RIGHT | SWT.BORDER);
 							this.timeBaseTimeStepText.setText("1000.0"); //$NON-NLS-1$
 							this.timeBaseTimeStepText.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL, false, false));
+							this.timeBaseTimeStepText.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0501));
 							this.timeBaseTimeStepText.setBounds(322, 184, 60, 20);
 							this.timeBaseTimeStepText.addVerifyListener(new VerifyListener() {
 								@Override
@@ -834,6 +836,44 @@ public class DevicePropertiesEditor extends Composite {
 										DevicePropertiesEditor.this.timeStep_ms = Double.parseDouble(String.format(Locale.ENGLISH, "%.1f", DevicePropertiesEditor.this.timeStep_ms)); //$NON-NLS-1$
 										if (DevicePropertiesEditor.this.deviceConfig != null) {
 											DevicePropertiesEditor.this.deviceConfig.setTimeStep_ms(DevicePropertiesEditor.this.timeStep_ms);
+											DevicePropertiesEditor.this.enableSaveButton(true);
+										}
+									}
+									catch (NumberFormatException e) {
+										// ignore input
+									}
+								}
+							});
+						}
+						{
+							this.timeBaseUtcDeltaLabel = new Label(this.timeBaseComposite, SWT.RIGHT);
+							this.timeBaseUtcDeltaLabel.setText("UCTdelta");
+							this.timeBaseUtcDeltaLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL, false, false));
+							this.timeBaseUtcDeltaLabel.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0971));
+							this.timeBaseUtcDeltaLabel.setBounds(142, 215, 150, 20);
+						}
+						{
+							this.timeBaseUtcDeltaText = new Text(this.timeBaseComposite, SWT.RIGHT | SWT.BORDER);
+							this.timeBaseUtcDeltaText.setText("0"); //$NON-NLS-1$
+							this.timeBaseUtcDeltaText.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL, false, false));
+							this.timeBaseUtcDeltaText.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0971));
+							this.timeBaseUtcDeltaText.setBounds(322, 214, 60, 20);
+							this.timeBaseUtcDeltaText.addVerifyListener(new VerifyListener() {
+								@Override
+								public void verifyText(VerifyEvent evt) {
+									log.log(java.util.logging.Level.FINEST, "timeBaseUtcDeltaText.verifyText, event=" + evt); //$NON-NLS-1$
+									evt.doit = StringHelper.verifyTypedInput(DataTypes.INTEGER, evt.text);
+								}
+							});
+							this.timeBaseUtcDeltaText.addKeyListener(new KeyAdapter() {
+								@Override
+								public void keyReleased(KeyEvent evt) {
+									log.log(java.util.logging.Level.FINEST, "timeBaseUtcDeltaText.keyReleased, event=" + evt); //$NON-NLS-1$
+									try {
+										DevicePropertiesEditor.this.utcDelta = Integer.parseInt(DevicePropertiesEditor.this.timeBaseUtcDeltaText.getText());
+										DevicePropertiesEditor.this.utcDelta = Integer.parseInt(String.format(Locale.ENGLISH, "%d", DevicePropertiesEditor.this.utcDelta)); //$NON-NLS-1$
+										if (DevicePropertiesEditor.this.deviceConfig != null) {
+											DevicePropertiesEditor.this.deviceConfig.setUTCdelta(DevicePropertiesEditor.this.utcDelta);
 											DevicePropertiesEditor.this.enableSaveButton(true);
 										}
 									}
@@ -1047,6 +1087,8 @@ public class DevicePropertiesEditor extends Composite {
 					this.timeBaseUnitText.setMenu(this.popupMenu);
 					this.timeBaseTimeStepLabel.setMenu(this.popupMenu);
 					this.timeBaseTimeStepText.setMenu(this.popupMenu);
+					this.timeBaseUtcDeltaLabel.setMenu(this.popupMenu);
+					this.timeBaseUtcDeltaText.setMenu(this.popupMenu);
 				}
 				else if (tabItemName.equals(Messages.getString(MessageIds.GDE_MSGT0515))) { // Data block
 					this.dataBlockComposite.setMenu(this.popupMenu);
@@ -1761,6 +1803,7 @@ public class DevicePropertiesEditor extends Composite {
 						//SerialPortType end
 						//TimeBaseType begin
 						DevicePropertiesEditor.this.timeStep_ms = DevicePropertiesEditor.this.deviceConfig.getTimeStep_ms();
+						DevicePropertiesEditor.this.utcDelta = DevicePropertiesEditor.this.deviceConfig.getUTCdelta();
 						initializeTimeBase();
 						//TimeBaseType end
 						//DataBlockType begin
@@ -1965,6 +2008,7 @@ public class DevicePropertiesEditor extends Composite {
 	 */
 	private void initializeTimeBase() {
 		DevicePropertiesEditor.this.timeBaseTimeStepText.setText(String.format("%.1f", DevicePropertiesEditor.this.timeStep_ms)); //$NON-NLS-1$
+		DevicePropertiesEditor.this.timeBaseUtcDeltaText.setText(String.format("%d", DevicePropertiesEditor.this.utcDelta)); //$NON-NLS-1$
 	}
 
 	/**
