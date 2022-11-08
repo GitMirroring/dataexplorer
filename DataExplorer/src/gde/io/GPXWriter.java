@@ -256,13 +256,13 @@ public class GPXWriter {
 				usedOrdinals.put(altitudeOrdinal, true);
 				final Record recordSpeed = recordSet.get(speedOrdinal);
 				//usedOrdinals.put(speedOrdinal, true);
-				final Record recordSatellites = recordSet.get(satellitesOrdinal);
+				final Record recordSatellites = satellitesOrdinal == -1 ? null : recordSet.get(satellitesOrdinal);
 				if (recordSatellites != null) usedOrdinals.put(satellitesOrdinal, true);
-				final Record recordHDOP = recordSet.get(hdopOrdinal);
+				final Record recordHDOP = hdopOrdinal == -1 ? null : recordSet.get(hdopOrdinal);
 				if (recordHDOP != null) usedOrdinals.put(hdopOrdinal, true);
-				final Record recordVDOP = recordSet.get(vdopOrdinal);
+				final Record recordVDOP = vdopOrdinal == -1 ? null : recordSet.get(vdopOrdinal);
 				if (recordVDOP != null) usedOrdinals.put(vdopOrdinal, true);
-				final Record recordPDOP = recordSet.get(pdodOrdinal);
+				final Record recordPDOP = pdodOrdinal == -1 ? null : recordSet.get(pdodOrdinal);
 				if (recordPDOP != null) usedOrdinals.put(pdodOrdinal, true);
 
 				final String dateString = new SimpleDateFormat("yyyy-MM-dd").format(recordSet.getStartTimeStamp());
@@ -284,9 +284,9 @@ public class GPXWriter {
 				long lastTimeStep_sec = recordSet.getStartTimeStamp()/1000;
 				//long lastTimeStep_msec = recordSet.getStartTimeStamp();
 				long startTimeStep_msec = recordSet.getStartTimeStamp();
-				writer.write(String.format(Locale.getDefault(), GPXWriter.metadata, new SimpleDateFormat("yyyy-MM-dd").format(startTimeStep_msec), new SimpleDateFormat("HH:mm:ss").format(startTimeStep_msec)));
+				writer.write(String.format(Locale.ENGLISH, GPXWriter.metadata, new SimpleDateFormat("yyyy-MM-dd").format(startTimeStep_msec), new SimpleDateFormat("HH:mm:ss").format(startTimeStep_msec)));
 				if (accelerationXYZ != null && accelerationXYZ.length == 3)  //Garmin extension
-					writer.write(String.format(Locale.getDefault(), GPXWriter.track_begin_garmin,
+					writer.write(String.format(Locale.ENGLISH, GPXWriter.track_begin_garmin,
 							new SimpleDateFormat("yyyy-MM-dd").format(startTimeStep_msec), new SimpleDateFormat("HH:mm:ss").format(startTimeStep_msec),
 							recordSet.getTime(recordSet.getRecordDataSize(true)-1)/1000, //seconds total time
 							recordSet.getTime(recordSet.getRecordDataSize(true)-1)/1000, //seconds moving time
@@ -297,7 +297,10 @@ public class GPXWriter {
 							(int)recordHeight.getMinDisplayValue()  //maximum elevaltion
 							));
 				else
-					writer.write(String.format(Locale.getDefault(), GPXWriter.track_begin, recordSet.getName(), recordSet.getRecordSetDescription().substring(0, recordSet.getRecordSetDescription().indexOf('\n'))));
+					writer.write(String.format(Locale.ENGLISH, GPXWriter.track_begin, recordSet.getName(), 
+							recordSet.getRecordSetDescription().contains("\n")
+								? recordSet.getRecordSetDescription().substring(0, recordSet.getRecordSetDescription().indexOf('\n'))
+								: recordSet.getRecordSetDescription()));
 
 				// write data
 				int realDataSize = recordSet.getRecordDataSize(true);
@@ -317,14 +320,14 @@ public class GPXWriter {
 						positionLongitude = device.translateValue(recordLongitude, recordLongitude.realGet(i) / 1000.0);
 						altitude = device.translateValue(recordHeight, recordHeight.realGet(i) / 1000.0);
 						if (accelerationXYZ != null && accelerationXYZ.length == 3)  //Garmin extension
-							writer.write(String.format(Locale.getDefault(), GPXWriter.track_point_begin, positionLatitude, positionLongitude,
+							writer.write(String.format(Locale.ENGLISH, GPXWriter.track_point_begin, positionLatitude, positionLongitude,
 									altitude, dateString, new SimpleDateFormat("HH:mm:ss").format(startTimeStep_msec + recordSet.getTime(i)/10),
 									recordSatellites != null ? recordSatellites.realGet(i) / 1000 : 0,
 									recordHDOP != null ? recordHDOP.realGet(i) / 1000.0 : 0.0,
 									recordVDOP != null ? recordVDOP.realGet(i) / 1000.0 : 0.0,
 									recordPDOP != null ? recordPDOP.realGet(i) / 1000.0 : 0.0));
 						else
-							writer.write(String.format(Locale.getDefault(), GPXWriter.track_point_begin, positionLatitude, positionLongitude,
+							writer.write(String.format(Locale.ENGLISH, GPXWriter.track_point_begin, positionLatitude, positionLongitude,
 									altitude, dateString, new SimpleDateFormat("HH:mm:ss.SSS").format(startTimeStep_msec + recordSet.getTime(i)/10),
 									recordSatellites != null ? recordSatellites.realGet(i) / 1000 : 0,
 									recordHDOP != null ? recordHDOP.realGet(i) / 1000.0 : 0.0,
@@ -334,14 +337,14 @@ public class GPXWriter {
 						if (accelerationXYZ != null && accelerationXYZ.length == 3) {
 							writer.write(GPXWriter.garmin_acc_ext_begin);
 							//<acc:accel offset=\"%d\" x=\"%.1f\" y=\"%.1f\" z=\"%.1f\" />
-//							writer.write(String.format(Locale.getDefault(), GPXWriter.garmin_acc_ext,
+//							writer.write(String.format(Locale.ENGLISH(), GPXWriter.garmin_acc_ext,
 //									((startTimeStep_msec + recordSet.getTime(i)/10) - lastTimeStep_msec),
 //									recordSet.get(accelerationXYZ[0]) != null ? recordSet.get(accelerationXYZ[0]).realGet(i) / 1000.0 : 0.0,
 //									recordSet.get(accelerationXYZ[1]) != null ? recordSet.get(accelerationXYZ[1]).realGet(i) / 1000.0 : 0.0,
 //									recordSet.get(accelerationXYZ[2]) != null ? recordSet.get(accelerationXYZ[2]).realGet(i) / 1000.0 : 0.0));
 							while (i < realDataSize && (startTimeStep_msec + recordSet.getTime(i)/10)/1000 <= lastTimeStep_sec) {
 								//<acc:accel offset=\"%d\" x=\"%.1f\" y=\"%.1f\" z=\"%.1f\" />
-								writer.write(String.format(Locale.getDefault(), GPXWriter.garmin_acc_ext,
+								writer.write(String.format(Locale.ENGLISH, GPXWriter.garmin_acc_ext,
 										((startTimeStep_msec + recordSet.getTime(i)/10) - lastTimeStep_sec*1000),
 										recordSet.get(accelerationXYZ[0]) != null ? recordSet.get(accelerationXYZ[0]).realGet(i) / 1000.0 : 0.0,
 										recordSet.get(accelerationXYZ[1]) != null ? recordSet.get(accelerationXYZ[1]).realGet(i) / 1000.0 : 0.0,
@@ -362,7 +365,7 @@ public class GPXWriter {
 									final Record record = recordSet.get(j);
 									if (record != null) {
 										final String name = record.getName().replace(GDE.CHAR_BLANK, GDE.CHAR_UNDER_BAR).replace(GDE.STRING_LEFT_PARENTHESIS, GDE.STRING_EMPTY).replace(GDE.STRING_RIGHT_PARENTHESIS, GDE.STRING_EMPTY);
-										writer.write(String.format(Locale.getDefault(), "          <%s>%.3f</%s>\n", name, record.realGet(i) / 1000.0, name));
+										writer.write(String.format(Locale.ENGLISH, "          <%s>%.3f</%s>\n", name, record.realGet(i) / 1000.0, name));
 									}
 								}
 							}
