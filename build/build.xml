@@ -221,7 +221,6 @@
 		<mkdir dir="${output.mac64.bundle}" />
 		<mkdir dir="${output.mac64.bundle.bin}" />
 		<mkdir dir="${output.mac64.program}" />
-		<mkdir dir="${output.mac64.program.runtime}" />
 		<mkdir dir="${output.mac64.program.devices}" />
 		<mkdir dir="${output.mac64.java.ext}" />
 	</target>
@@ -1035,7 +1034,7 @@
 			<arg value="--output" />
 			<arg value="runtime" />
 			<arg value="--module-path" />
-			<arg value="/Library/Java/JavaVirtualMachines/jdk-17.0.4.1.jdk/Contents/Home/jmods" />
+			<arg value="/Library/Java/JavaVirtualMachines/jdk-17.0.5.jdk/Contents/Home/jmods" />
 			<arg value="--add-modules" />
 			<arg value="java.se" />
 		</exec>
@@ -1051,7 +1050,7 @@
 			<arg value="--output" />
 			<arg value="runtime" />
 			<arg value="--module-path" />
-			<arg value="C:\Program Files\Java\jdk-17.0.4.1\jmods" />
+			<arg value="C:\Program Files\Java\jdk-17.0.5\jmods" />
 			<arg value="--add-modules" />
 			<arg value="java.se" />
 		</exec>
