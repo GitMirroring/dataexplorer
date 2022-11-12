@@ -510,9 +510,12 @@ public class HoTTAdapter2LiveGatherer extends HoTTAdapterLiveGatherer {
 								new Object[] { e.getClass().getSimpleName(), this.serialPort.getTimeoutErrors() + "; xferErrors = " + this.serialPort.getXferErrors() }), SWT.COLOR_RED);
 				WaitTimer.delay(HoTTAdapter.QUERY_GAP_MS); //give time to settle
 			}
-			catch (IOException e) {
+			catch (IOException | SerialPortException e) {
 				HoTTAdapter2LiveGatherer.logger.log(Level.WARNING, e.getMessage());
 				this.application.openMessageDialogAsync(Messages.getString(gde.messages.MessageIds.GDE_MSGE0022, new Object[] { e.getClass().getSimpleName(), e.getMessage() }));
+				for (RecordSet tmpRecordSet : HoTTAdapterLiveGatherer.recordSets.values()) {
+					finalizeRecordSet(tmpRecordSet);
+				}
 			}
 			catch (Throwable e) {
 				HoTTAdapter2LiveGatherer.logger.log(Level.SEVERE, e.getMessage(), e);

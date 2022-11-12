@@ -608,9 +608,12 @@ public class HoTTAdapterLiveGatherer extends Thread {
 								new Object[] { e.getClass().getSimpleName(), this.serialPort.getTimeoutErrors() + "; xferErrors = " + this.serialPort.getXferErrors() }), SWT.COLOR_RED);
 				WaitTimer.delay(HoTTAdapter.QUERY_GAP_MS); //give time to settle
 			}
-			catch (IOException e) {
+			catch (IOException | SerialPortException e) {
 				HoTTAdapterLiveGatherer.log.log(Level.WARNING, e.getMessage());
 				this.application.openMessageDialogAsync(Messages.getString(gde.messages.MessageIds.GDE_MSGE0022, new Object[] { e.getClass().getSimpleName(), e.getMessage() }));
+				for (RecordSet recordSet : HoTTAdapterLiveGatherer.recordSets.values()) {
+					finalizeRecordSet(recordSet);
+				}
 			}
 			catch (Throwable e) {
 				HoTTAdapterLiveGatherer.log.log(Level.SEVERE, e.getMessage(), e);
