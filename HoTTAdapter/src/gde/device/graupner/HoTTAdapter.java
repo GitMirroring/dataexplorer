@@ -90,6 +90,7 @@ import gde.utils.FileUtils;
 import gde.utils.GPSHelper;
 import gde.utils.LinearRegression;
 import gde.utils.ObjectKeyCompliance;
+import gde.utils.StringHelper;
 import gde.utils.WaitTimer;
 
 /**
@@ -975,15 +976,42 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 						points[14] = (dataBuffer[14] & 0xFF) * 1000; //14=EventGPS
 						//15=HomeDirection 16=Roll 17=Pitch 18=Yaw 19=GyroX 20=GyroY 21=GyroZ 22=Vibration 23=Version	
 						points[15] = (dataBuffer[38] & 0xFF) * 1000; //Home direction
-						points[16] = dataBuffer[39] * 1000; //Roll
-						points[17] = dataBuffer[40] * 1000; //Pitch
-						points[18] = dataBuffer[41] * 1000; //Yaw
-						points[19] = DataParser.parse2Short(dataBuffer, 42) * 1000;; //Gyro x or GPS time hours and minutes
-						points[20] = DataParser.parse2Short(dataBuffer, 44) * 1000;; //Gyro y or GPS time seconds and .sss
-						points[21] = DataParser.parse2Short(dataBuffer, 46) * 1000;; //Gyro z or MSLAltitude
-						points[22] = (dataBuffer[48] & 0xFF) * 1000; //ENL
-						//three char
-						points[23] = (dataBuffer[52] & 0xFF) * 1000; //Version
+						
+						if (log.isLoggable(Level.INFO)) {
+							log.log(Level.INFO, StringHelper.byte2Hex2CharString(dataBuffer, 39, dataBuffer.length));
+							if (dataBuffer[41] > 40 && dataBuffer[41] <= 100 && dataBuffer[47] > 0 && dataBuffer[47] <= 100)
+								log.log(Level.INFO, String.format("Sparrow: Voltage GU = %d; servo pulse = %d", 
+										dataBuffer[41] * 100, //voltage GPS 4-10
+										dataBuffer[47] * 1000));//servo pulse 0-100
+							if (dataBuffer[41] == 0 && dataBuffer[39] > -120 && dataBuffer[39] <= 120) 
+								log.log(Level.INFO, String.format("SM GPS-Logger: servo pulse = %d; not used = %d", 
+										dataBuffer[39] * 1000, //servoPulse 0-100
+										dataBuffer[41]));//not used
+						}
+						if (dataBuffer[41] > 40 && dataBuffer[41] <= 100 && dataBuffer[47] > 0 && dataBuffer[47] <= 100) { //RCE Sparrow
+							//30=servoPulse 31=n/a 32=voltage GU 33=HH:mm:ss.SSS 34=yy-dd-mm 35=Altitude MSL 36=ENL 37=Version
+							points[16] = dataBuffer[47] * 1000; //servo pulse
+							points[17] = 0;
+							points[18] = dataBuffer[41] * 100; //voltage GPS
+							points[19] = dataBuffer[42] * 10000000 + dataBuffer[43] * 100000 + dataBuffer[44] * 1000 + dataBuffer[45]*10;//HH:mm:ss.SSS
+							points[20] = ((dataBuffer[48]-48) * 1000000 + (dataBuffer[50]-48) * 10000 + (dataBuffer[49]-48) * 100) * 10;//yy-dd-mm
+							points[21] = DataParser.parse2Short(dataBuffer, 39) * 1000;; //Altitude MSL
+							points[22] = (dataBuffer[46] & 0xFF) * 1000; //ENL
+							//three char
+							points[23] = 4 * 1000; //Version
+						}
+						else if (dataBuffer[41] == 0 && dataBuffer[39] > -120 && dataBuffer[39] <= 120) { //SM GPS-Logger				
+							//30=servoPulse 31=airSpeed 32=n/a 33=GyroX 34=GyroY 35=GyroZ 36=ENL 37=Version	
+							points[16] = dataBuffer[39] * 1000; //servoPulse
+							points[17] = dataBuffer[40] * 1000; //airSpeed
+							points[18] = dataBuffer[41] * 1000; //n/a
+							points[19] = DataParser.parse2Short(dataBuffer, 42) * 1000; //Acc x
+							points[20] = DataParser.parse2Short(dataBuffer, 44) * 1000; //Acc y
+							points[21] = DataParser.parse2Short(dataBuffer, 46) * 1000; //Acc z
+							points[22] = (dataBuffer[48] & 0xFF) * 1000; //ENL
+							//three char
+							points[23] = 125 * 1000; //Version
+						}
 					}
 				}
 				break;
@@ -1180,14 +1208,42 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 						points[14] = (dataBuffer[1] & 0xFF) * 1000; //GPS inverse Event
 						//15=HomeDirection 16=Roll 17=Pitch 18=Yaw 19=GyroX 20=GyroY 21=GyroZ 22=Vibration 23=Version	
 						points[15] = DataParser.parse2Short(dataBuffer, 34) * 1000; //Home direction
-						points[16] = dataBuffer[36] * 1000; //Roll
-						points[17] = dataBuffer[37] * 1000; //Pitch
-						points[18] = dataBuffer[38] * 1000; //Yaw
-						points[19] = DataParser.parse2Short(dataBuffer, 39) * 1000; //Gyro x or GPS time hours and minutes
-						points[20] = DataParser.parse2Short(dataBuffer, 41) * 1000; //Gyro y or GPS time seconds and .sss
-						points[21] = DataParser.parse2Short(dataBuffer, 43) * 1000; //Gyro z or MSLAltitude
-						points[22] = (dataBuffer[46] & 0xFF) * 1000; //ENL
-						points[23] = 0; //Version
+						
+						if (log.isLoggable(Level.INFO)) {
+							log.log(Level.INFO, StringHelper.byte2Hex2CharString(dataBuffer, 36, dataBuffer.length));
+							if (dataBuffer[38] > 40 && dataBuffer[38] <= 100 && dataBuffer[45] > 0 && dataBuffer[45] <= 100)
+								log.log(Level.INFO, String.format("Sparrow: Voltage GU = %d; servo pulse = %d", 
+										dataBuffer[38] * 100, //voltage GPS
+										dataBuffer[45] * 1000));//servo pulse
+							if (dataBuffer[38] == 0 && dataBuffer[36] > -120 && dataBuffer[36] <= 120) 
+								log.log(Level.INFO, String.format("SM GPS-Logger: servo pulse = %d; not used = %d", 
+										dataBuffer[36] * 1000, //servoPulse
+										dataBuffer[38]));//not used
+						}
+						if (dataBuffer[38] > 40 && dataBuffer[38] <= 100 && dataBuffer[45] > 0 && dataBuffer[45] <= 100) { //RCE Sparrow
+							//16=servoPulse 17=fixed 18=Voltage 19=GPS hh:mm 20=GPS sss.SSS 21=MSL Altitude 22=ENL 23=Version	
+							points[16] = dataBuffer[45] * 1000; //servo pulse
+							points[17] = 0; //(dataBuffer[46] & 0xFF) * 1000; //0xDF
+							points[18] = dataBuffer[38] * 100; //voltage GPS
+							points[19] = dataBuffer[40] * 10000000 + dataBuffer[41] * 100000 + dataBuffer[42] * 1000 + dataBuffer[43]*10;//HH:mm:ss.SSS
+							points[20] = ((dataBuffer[46]-48) * 1000000 + (dataBuffer[48]-48) * 10000 + (dataBuffer[47]-48) * 100) * 10;//yy-dd-mm
+							points[21] = DataParser.parse2Short(dataBuffer, 39) * 1000;; //Altitude MSL
+							points[22] = (dataBuffer[44] & 0xFF) * 1000; //ENL
+							//three char
+							points[23] = 4 * 1000; //Version
+						}
+						else if (dataBuffer[38] == 0 && dataBuffer[36] > -120 && dataBuffer[36] <= 120) { //SM GPS-Logger				
+							//16=servoPulse 17=airSpeed 18=n/a 19=GyroX 20=GyroY 21=GyroZ 22=ENL 23=Version	
+							points[16] = dataBuffer[36] * 1000; //servoPulse
+							points[17] = dataBuffer[37] * 1000; //airSpeed
+							points[18] = dataBuffer[38] * 1000; //n/a
+							points[19] = DataParser.parse2Short(dataBuffer, 40) * 1000; //Acc x 
+							points[20] = DataParser.parse2Short(dataBuffer, 42) * 1000; //Acc y
+							points[21] = DataParser.parse2Short(dataBuffer, 44) * 1000; //Acc z
+							points[22] = (dataBuffer[46] & 0xFF) * 1000; //ENL
+							//three char
+							points[23] = 125 * 1000; //Version
+						}
 					}
 				}
 				break;

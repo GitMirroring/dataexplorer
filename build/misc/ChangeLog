@@ -10,6 +10,7 @@ Device specific changes/fixes
 	* Dynamite Passport GPS Speed Meter - add plug-in
 	* GSM-015 GNSS Speed Meter - add plug-in
 	* HoTTAdapter* - update error handling live gatherer
+	* HoTTAdapter* - update GPS detection for SM GPS-Logger & RCE Sparrow/Swift
 
 
 Version 3.7.2 - 01 Nov 2022

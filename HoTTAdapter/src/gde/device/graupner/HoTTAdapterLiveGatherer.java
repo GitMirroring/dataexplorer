@@ -271,6 +271,7 @@ public class HoTTAdapterLiveGatherer extends Thread {
 		this.channel.switchRecordSet(recordSetKey);
 		this.application.setStatusMessage(sb.toString());
 
+		boolean isGPSdetected = false;
 		Vector<Integer> queryRing = new Vector<Integer>();
 		for (int i = 1; i < HoTTAdapterLiveGatherer.isSensorType.length; ++i) {
 			if (HoTTAdapterLiveGatherer.isSensorType[i]) queryRing.add(i);
@@ -391,6 +392,11 @@ public class HoTTAdapterLiveGatherer extends Thread {
 								recordSetGPS.addPoints(this.device.convertDataBytes(pointsGPS, data), System.nanoTime() / 1000000 - startTime);
 								data[1] = HoTTAdapter.SENSOR_TYPE_RECEIVER_19200;
 								recordSetReceiver.addPoints(this.device.convertDataBytes(pointsReceiver, data), System.nanoTime() / 1000000 - startTime);
+								
+								if (!isGPSdetected) {
+									HoTTAdapter.updateGpsTypeDependent(pointsGPS[23]/1000, device, recordSetGPS, -1); //-1 -> suppress time stamp update
+									isGPSdetected = true;
+								}
 							}
 							catch (TimeOutException e) {
 								// ignore and go ahead gathering sensor data
@@ -554,6 +560,11 @@ public class HoTTAdapterLiveGatherer extends Thread {
 							}
 							this.serialPort.getDataDBM(false, this.dataBuffer);
 							recordSetGPS.addPoints(this.device.convertDataBytes(pointsGPS, this.dataBuffer), System.nanoTime() / 1000000 - startTime);
+							
+							if (!isGPSdetected) {
+								HoTTAdapter.updateGpsTypeDependent(pointsGPS[23]/1000, device, recordSetGPS, -1); //-1 -> suppress time stamp update
+								isGPSdetected = true;
+							}
 						}
 						catch (TimeOutException e) {
 							// ignore and go ahead gathering sensor data

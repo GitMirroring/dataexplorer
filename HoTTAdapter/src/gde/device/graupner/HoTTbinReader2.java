@@ -1068,10 +1068,10 @@ public class HoTTbinReader2 extends HoTTbinReader {
 					break;
 				}
 				this.points[28] = (this._buf1[1] & 0x0F) * 1000; // inverse event
-				// 24=HomeDirection 
 				this.points[29] = (_buf3[5] & 0xFF) * 1000;
+				// 29=HomeDirection 30=Roll 31=Pitch 32=Yaw 33=GyroX 34=GyroY 35=GyroZ 36=ENL 37=Version	
 				if ((_buf4[9] & 0xFF) > 100) { //SM GPS-Logger
-					//25=servoPulse 26=AirSpeed 27=n/a 28=GyroX 29=GyroY 30=GyroZ 31=ENL 32=Version	
+					//30=servoPulse 31=AirSpeed 32=n/a 33=GyroX 34=GyroY 35=GyroZ 36=ENL 37=Version	
 					this.points[30] = _buf3[6] * 1000; 
 					this.points[31] = DataParser.parse2UnsignedShort(_buf3, 7) * 1000;
 					this.points[33] = DataParser.parse2Short(_buf3[9], _buf4[0]) * 1000;
@@ -1080,7 +1080,7 @@ public class HoTTbinReader2 extends HoTTbinReader {
 					this.points[36] = (_buf4[5] & 0xFF) * 1000;
 				}
 				else if ((_buf4[9] & 0xFF) == 4) { //RCE Electronics Sparrow
-					//25=servoPulse 26=fixed 27=Voltage 28=GPS time 29=GPS date 30=MSL Altitude 31=ENL 32=Version	
+					//30=servoPulse 31=fixed 32=Voltage 33=GPS time 34=GPS date 35=MSL Altitude 37=ENL 37=Version	
 					this.points[30] = _buf4[4] * 1000; 
 					this.points[31] = 0; 
 					this.points[32] = _buf3[8] * 100; 
