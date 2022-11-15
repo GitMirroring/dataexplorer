@@ -1454,10 +1454,20 @@ public class MenuBar {
 
 	private void closeApplication(SelectionEvent evt) {
 		if (log.isLoggable(Level.FINEST)) log.log(Level.FINEST, "exitMenuItem.widgetSelected, event=" + evt); //$NON-NLS-1$
-		DeviceSelectionDialog deviceSelect = MenuBar.this.application.getDeviceSelectionDialog();
-		if (deviceSelect.checkDataSaved()) {
-			MenuBar.this.parent.getParent().dispose();
+		
+		// check all data saved - prevent closing application
+		evt.doit = MenuBar.this.application.getDeviceSelectionDialog().checkDataSaved();
+		
+		//check for device initiated running thread like data gathering, skip application shutdown
+		for (Thread thread : Thread.getAllStackTraces().keySet()) {
+			if (thread != null && !thread.isDaemon() && thread.isAlive() && thread.getClass().getName().startsWith("gde.device")) {
+				MenuBar.this.application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGW0048));
+				evt.doit = false;
+			}
 		}
+
+		if (evt.doit)
+			MenuBar.this.parent.getParent().dispose();
 	}
 
 	ArmListener armListener = new ArmListener() {

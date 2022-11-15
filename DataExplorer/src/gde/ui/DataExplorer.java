@@ -502,7 +502,7 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 			this.enableWritingTmpFiles(this.settings.getUsageWritingTmpFiles());
 			log.logp(Level.TIME, DataExplorer.$CLASS_NAME, $METHOD_NAME, "total init time = " + StringHelper.getFormatedTime("ss:SSS", (new Date().getTime() - GDE.StartTime))); //$NON-NLS-1$ //$NON-NLS-2$
 
-			while (!GDE.shell.isDisposed()) {
+			while (!GDE.shell.isDisposed() && !this.isDisposed()) {
 				if (!GDE.display.readAndDispatch()) GDE.display.sleep();
 			}
 		} catch (Throwable t) {
@@ -596,6 +596,7 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 					for (Thread thread : Thread.getAllStackTraces().keySet()) {
 						if (thread != null && !thread.isDaemon() && thread.isAlive() && thread.getClass().getName().startsWith("gde.device")) {
 							try {
+								//DataExplorer.this.openMessageDialog(Messages.getString(MessageIds.GDE_MSGW0048));
 								thread.stop();
 							}
 							catch (Throwable e) {
