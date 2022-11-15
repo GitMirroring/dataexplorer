@@ -314,7 +314,9 @@ public class DeviceJavaSerialCommPortImpl implements IDeviceCommPort, SerialPort
 					this.serialPort.setComPortParameters(this.deviceConfig.getBaudeRate(), this.deviceConfig.getDataBits().ordinal() + 5,  this.deviceConfig.getStopBits().ordinal() + 1, this.deviceConfig.getParity().ordinal());
 					this.serialPort.setFlowControl(this.deviceConfig.getFlowCtrlMode());
 					if (this.deviceConfig.isRTS()) this.serialPort.setRTS();
+					else this.serialPort.clearRTS();
 					if (this.deviceConfig.isDTR()) this.serialPort.setDTR();
+					else this.serialPort.clearDTR();
 				}
 				// init in and out stream for writing and reading
 				this.inputStream = this.serialPort.getInputStream();
