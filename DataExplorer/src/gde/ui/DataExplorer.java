@@ -596,7 +596,6 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 					for (Thread thread : Thread.getAllStackTraces().keySet()) {
 						if (thread != null && !thread.isDaemon() && thread.isAlive() && thread.getClass().getName().startsWith("gde.device")) {
 							try {
-								//DataExplorer.this.openMessageDialog(Messages.getString(MessageIds.GDE_MSGW0048));
 								thread.stop();
 							}
 							catch (Throwable e) {

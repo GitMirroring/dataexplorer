@@ -98,6 +98,7 @@ public class GathererThread extends Thread {
 
 		while (!this.isCollectDataStopped) {
 			try {
+				if (this.application != null) this.application.setPortConnected(true);
 				// get data from device
 				dataBuffer = this.serialPort.getData();
 

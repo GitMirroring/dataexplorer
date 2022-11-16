@@ -152,60 +152,59 @@ public class UsbGathererThread extends Thread {
 
 			while (!this.isCollectDataStopped && this.usbPort.isConnected()) {
 				try {
-					if (this.usbPort.isConnected()) {
-						if (this.application != null) {
-							this.application.setSerialTxOn();
-							this.application.setSerialRxOn();
-							this.application.setSerialTxOff();
-						}
-						dataBuffer = this.usbPort.getData();
-						if (this.application != null) this.application.setSerialRxOff();
+					if (this.application != null) {
+						this.application.setPortConnected(true);
+						//this.application.setSerialTxOn();
+						this.application.setSerialRxOn();
+						//this.application.setSerialTxOff();
+					}
+					dataBuffer = this.usbPort.getData();
+					if (this.application != null) this.application.setSerialRxOff();
 
-						this.isProgrammExecuting1 = dataBuffer[2] == 0x01; //output channel 1
-						this.isProgrammExecuting2 = dataBuffer[2] == 0x02 ;//output channel 2
+					this.isProgrammExecuting1 = dataBuffer[2] == 0x01; //output channel 1
+					this.isProgrammExecuting2 = dataBuffer[2] == 0x02 ;//output channel 2
+					
+					if (this.isProgrammExecuting1) 
+						System.arraycopy(dataBuffer, 0, dataBuffer1, 0, dataBuffer1.length);
+					if (this.isProgrammExecuting2) 
+						System.arraycopy(dataBuffer, 0, dataBuffer2, 0, dataBuffer2.length);
+
+					// check if device is ready for data capturing, charge,discharge or pause only
+					if (this.isProgrammExecuting1 || this.isProgrammExecuting2) {
+						lastEnergie1 = points1[5];
+						//points1 = new int[this.device.getNumberOfMeasurements(1)]; //move initialization of point array to processDataChannel for new recordSet created.
 						
-						if (this.isProgrammExecuting1) 
-							System.arraycopy(dataBuffer, 0, dataBuffer1, 0, dataBuffer1.length);
-						if (this.isProgrammExecuting2) 
-							System.arraycopy(dataBuffer, 0, dataBuffer2, 0, dataBuffer2.length);
-
-						// check if device is ready for data capturing, charge,discharge or pause only
-						if (this.isProgrammExecuting1 || this.isProgrammExecuting2) {
-							lastEnergie1 = points1[5];
-							//points1 = new int[this.device.getNumberOfMeasurements(1)]; //move initialization of point array to processDataChannel for new recordSet created.
-							
-							if (this.isProgrammExecuting2) {
-								lastEnergie2 = points2[5];
-								//points2 = new int[this.device.getNumberOfMeasurements(2)]; //move initialization of point array to processDataChannel for new recordSet created.
-							}
-
-							if (this.isProgrammExecuting1) { // checks for processes active includes check state change waiting to discharge to charge
-								points1[5] = lastEnergie1;
-								ch1 = processDataChannel(1, recordSet1, recordSetKey1, dataBuffer1, points1);
-								recordSet1 = (RecordSet) ch1[0];
-								recordSetKey1 = (String) ch1[1];
-							}
-							if (this.isProgrammExecuting2) { // checks for processes active includes check state change waiting to discharge to charge
-								points2[5] = lastEnergie2;
-								ch2 = processDataChannel(2, recordSet2, recordSetKey2, dataBuffer2, points2);
-								recordSet2 = (RecordSet) ch2[0];
-								recordSetKey2 = (String) ch2[1];
-							}
-							
-							this.application.setStatusMessage(GDE.STRING_EMPTY);
-							
-							this.retryCounter	= UsbGathererThread.WAIT_TIME_RETRYS;	//30 Min
+						if (this.isProgrammExecuting2) {
+							lastEnergie2 = points2[5];
+							//points2 = new int[this.device.getNumberOfMeasurements(2)]; //move initialization of point array to processDataChannel for new recordSet created.
 						}
-						else {
-							this.application.setStatusMessage(Messages.getString(MessageIds.GDE_MSGI2600));
-							log.logp(Level.FINE, UsbGathererThread.$CLASS_NAME, $METHOD_NAME, "wait for device activation ..."); //$NON-NLS-1$
-							WaitTimer.delay(1000);
 
-							if (0 >= (this.retryCounter -= 1)) {
-								log.log(Level.FINE, "device activation timeout"); //$NON-NLS-1$
-								this.application.openMessageDialogAsync(Messages.getString(MessageIds.GDE_MSGW2600));
-								stopDataGatheringThread(false, null);
-							}
+						if (this.isProgrammExecuting1) { // checks for processes active includes check state change waiting to discharge to charge
+							points1[5] = lastEnergie1;
+							ch1 = processDataChannel(1, recordSet1, recordSetKey1, dataBuffer1, points1);
+							recordSet1 = (RecordSet) ch1[0];
+							recordSetKey1 = (String) ch1[1];
+						}
+						if (this.isProgrammExecuting2) { // checks for processes active includes check state change waiting to discharge to charge
+							points2[5] = lastEnergie2;
+							ch2 = processDataChannel(2, recordSet2, recordSetKey2, dataBuffer2, points2);
+							recordSet2 = (RecordSet) ch2[0];
+							recordSetKey2 = (String) ch2[1];
+						}
+						
+						this.application.setStatusMessage(GDE.STRING_EMPTY);
+						
+						this.retryCounter	= UsbGathererThread.WAIT_TIME_RETRYS;	//30 Min
+					}
+					else {
+						this.application.setStatusMessage(Messages.getString(MessageIds.GDE_MSGI2600));
+						log.logp(Level.FINE, UsbGathererThread.$CLASS_NAME, $METHOD_NAME, "wait for device activation ..."); //$NON-NLS-1$
+						WaitTimer.delay(1000);
+
+						if (0 >= (this.retryCounter -= 1)) {
+							log.log(Level.FINE, "device activation timeout"); //$NON-NLS-1$
+							this.application.openMessageDialogAsync(Messages.getString(MessageIds.GDE_MSGW2600));
+							stopDataGatheringThread(false, null);
 						}
 					}
 				}

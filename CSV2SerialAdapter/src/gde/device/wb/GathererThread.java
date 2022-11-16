@@ -118,8 +118,10 @@ public class GathererThread extends Thread {
 		lastTmpCycleTime = System.nanoTime()/1000000;
 		while (!this.serialPort.isInterruptedByUser) {
 			try {
+				if (this.application != null) this.application.setPortConnected(true);
 				for (int i = 0; i < device.getChannelCount(); i++) {
-					if (this.serialPort.isInterruptedByUser) break;
+					if (this.serialPort.isInterruptedByUser) 
+						break;
 					// get data from device
 					dataBuffer = this.serialPort.getData();
 					// check if device is ready for data capturing else wait for 180 seconds max. for actions
