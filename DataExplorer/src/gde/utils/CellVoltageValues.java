@@ -35,13 +35,13 @@ public class CellVoltageValues {
 	
 	public final List<String> voltageLimitsArray = new ArrayList<String>();
 	
-	public final static int[]			liPoLimits					= new int[] {4200, 4200, 4150, 4000, 3200, 3300};
-	public final static int[]			liIoLimits					= new int[] {4100, 4100, 4050, 3900, 3100, 3200};
-	public final static int[]			liFeLimits					= new int[] {3600, 3600, 3450, 3300, 2700, 2600};
-	public final static int[]			niMhLimits					= new int[] {1450, 1450, 1350, 1000, 900, 800};
+	public final static int[]			liPoLimits					= new int[] {4200, 4200, 4150, 4000, 3300, 3200};
+	public final static int[]			liIoLimits					= new int[] {4100, 4100, 4050, 3900, 3200, 3100};
+	public final static int[]			liFeLimits					= new int[] {3600, 3600, 3450, 3300, 2600, 2700};
+	public final static int[]			niMhLimits					= new int[] {1450, 1450, 1350, 1000, 800, 900};
 
 	// all initial values fit to LiPo akku type LiPo 3.7 V, LiIo 3.6 V LiFe 3.3 V
-	static int[]	voltageLimits				= new int[] {4200, 4200, 4150, 4000, 3200, 3300};
+	static int[]	voltageLimits				= new int[] {4200, 4200, 4150, 4000, 3300, 3200};
 	
 	private static CellVoltageValues cellVoltageValues = null;
 	
