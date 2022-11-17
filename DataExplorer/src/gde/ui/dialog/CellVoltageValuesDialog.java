@@ -32,6 +32,7 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -198,7 +199,7 @@ public class CellVoltageValuesDialog extends org.eclipse.swt.widgets.Dialog {
 							CellVoltageValuesDialog.this.buttonLiFe.setSelection(false);
 
 							CellVoltageValuesDialog.this.voltageLimits = CellVoltageValues.getVoltageLimits(CellVoltageTypes.LiPo);
-							CellVoltageValuesDialog.this.individualGroup.redraw();
+							CellVoltageValuesDialog.this.individualGroup.notifyListeners(SWT.Paint, new Event());
 						}
 					});
 				}
@@ -222,7 +223,7 @@ public class CellVoltageValuesDialog extends org.eclipse.swt.widgets.Dialog {
 							CellVoltageValuesDialog.this.buttonLiFe.setSelection(false);
 
 							CellVoltageValuesDialog.this.voltageLimits = CellVoltageValues.getVoltageLimits(CellVoltageTypes.LiIo);
-							CellVoltageValuesDialog.this.individualGroup.redraw();
+							CellVoltageValuesDialog.this.individualGroup.notifyListeners(SWT.Paint, new Event());
 						}
 					});
 				}
@@ -247,7 +248,7 @@ public class CellVoltageValuesDialog extends org.eclipse.swt.widgets.Dialog {
 							CellVoltageValuesDialog.this.buttonLiPo.setSelection(false);
 
 							CellVoltageValuesDialog.this.voltageLimits = CellVoltageValues.getVoltageLimits(CellVoltageTypes.LiFe);
-							CellVoltageValuesDialog.this.individualGroup.redraw();
+							CellVoltageValuesDialog.this.individualGroup.notifyListeners(SWT.Paint, new Event());
 						}
 					});
 				}
@@ -272,7 +273,7 @@ public class CellVoltageValuesDialog extends org.eclipse.swt.widgets.Dialog {
 							CellVoltageValuesDialog.this.buttonLiPo.setSelection(false);
 
 							CellVoltageValuesDialog.this.voltageLimits = CellVoltageValues.getVoltageLimits(CellVoltageTypes.NiMh);
-							CellVoltageValuesDialog.this.individualGroup.redraw();
+							CellVoltageValuesDialog.this.individualGroup.notifyListeners(SWT.Paint, new Event());
 						}
 					});
 				}
@@ -310,6 +311,8 @@ public class CellVoltageValuesDialog extends org.eclipse.swt.widgets.Dialog {
 					@Override
 					public void paintControl(PaintEvent evt) {
 						CellVoltageValuesDialog.log.logp(Level.FINEST, CellVoltageValuesDialog.$CLASS_NAME, $METHOD_NAME, "lableComboComposite.paintControl, event=" + evt); //$NON-NLS-1$
+						if (evt.gc == null)
+							evt.gc = new GC(CellVoltageValuesDialog.this.individualGroup);
 						evt.gc.drawLine(100, 40, 145, 35);
 						evt.gc.drawLine(100, 61, 145, 83);
 						evt.gc.drawLine(100, 92, 145, 132);
@@ -551,7 +554,7 @@ public class CellVoltageValuesDialog extends org.eclipse.swt.widgets.Dialog {
 	 */
 	int matchValueToSelection(CCombo combo, int value) {
 		String[] comboValues = combo.getItems();
-		String strValue = String.format(Locale.ENGLISH, "%d", value);
+		String strValue = String.format(Locale.ENGLISH, "%04d", value);
 		int index = 0;
 		for (; index < comboValues.length; ++index) {
 			if (comboValues[index].replace(".", "").replace(",", "").equals(strValue)) break;
