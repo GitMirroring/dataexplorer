@@ -901,7 +901,7 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 						points[4] = (dataBuffer[13] & 0xFF) * -1000;
 						points[5] = (dataBuffer[8] & 0xFF) * -1000;
 						points[6] = tmpVoltageRx * 1000;
-						points[7] = tmpTemperatureRx * 1000;
+						points[7] = (tmpTemperatureRx - 20) * 1000;
 						points[8] = (dataBuffer[10] & 0xFF) * 1000;
 					}
 				}
@@ -1122,7 +1122,7 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 					// 0=RF_RXSQ, 1=RXSQ, 2=Strength, 3=PackageLoss, 4=Tx, 5=Rx, 6=VoltageRx, 7=TemperatureRx
 					tmpPackageLoss = DataParser.parse2Short(dataBuffer, 12);
 					tmpVoltageRx = dataBuffer[15] & 0xFF;
-					tmpTemperatureRx = (DataParser.parse2Short(dataBuffer, 10) + 20);
+					tmpTemperatureRx = DataParser.parse2Short(dataBuffer, 10);
 					if (!this.pickerParameters.isFilterEnabled || tmpPackageLoss > -1 && tmpVoltageRx > -1 && tmpVoltageRx < 100 && tmpTemperatureRx < 100) {
 						this.pickerParameters.reverseChannelPackageLossCounter.add((dataBuffer[5] & 0xFF) == 0 && (dataBuffer[4] & 0xFF) == 0 ? 0 : 1);
 						points[0] = this.pickerParameters.reverseChannelPackageLossCounter.getPercentage() * 1000;// (dataBuffer[16] & 0xFF) * 1000;
@@ -1133,7 +1133,7 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 						points[5] = (dataBuffer[4] & 0xFF) * -1000;
 						points[6] = tmpVoltageRx * 1000;
 						points[7] = tmpTemperatureRx * 1000;
-						points[8] = (dataBuffer[10] & 0xFF) * 1000;
+						points[8] = (dataBuffer[18] & 0xFF) * 1000;
 					}
 				}
 				break;
