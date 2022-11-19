@@ -108,6 +108,8 @@ public class GathererThread extends Thread {
 		this.application.setStatusMessage(""); //$NON-NLS-1$
 
 		try {
+			this.serialPort.read(new byte[14], 1000);
+			this.serialPort.read(new byte[14], 1000);
 			this.serialPort.getData();
 		}
 		catch (Exception e1) {

@@ -16,6 +16,7 @@ Device specific changes/fixes
 	* HoTTAdapter* - update error handling live gatherer
 	* HoTTAdapter* - update GPS detection for SM GPS-Logger & RCE Sparrow/Swift
 	* HoTTAdapter - fix VoltageRx_min and TemperatureRx while live-data gathering
+	* UT16E - add additional data query to suppress dirty bytes
 
 
 Version 3.7.2 - 01 Nov 2022
