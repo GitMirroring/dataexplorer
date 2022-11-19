@@ -14,7 +14,8 @@ Device specific changes/fixes
 	* Dynamite Passport GPS Speed Meter - add plug-in
 	* GSM-015 GNSS Speed Meter - add plug-in
 	* HoTTAdapter* - update error handling live gatherer
-	* HoTTAdapter* - update GPS detection for SM GPS-Logger & RCE Sparrow/Swift
+	* HoTTAdapter* - update GPS detection for SM GPS-Logger & RCE Sparrow/Swift live gatherer
+	* HoTTAdapter* - synchronize filter with binary parser live gatherer
 	* HoTTAdapter - fix VoltageRx_min and TemperatureRx while live-data gathering
 	* UT16E - add additional data query to suppress dirty bytes
 

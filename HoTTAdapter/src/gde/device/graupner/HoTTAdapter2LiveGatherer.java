@@ -72,7 +72,7 @@ public class HoTTAdapter2LiveGatherer extends HoTTAdapterLiveGatherer {
 			WaitTimer.delay(1000);
 			if (this.serialPort.cleanInputStream() > 2) {
 				HoTTAdapter.IS_SLAVE_MODE = true;
-				HoTTAdapter2LiveGatherer.logger.log(Level.FINE, "HoTTAdapter2.IS_SLAVE_MODE = " + HoTTAdapter.IS_SLAVE_MODE);
+				HoTTAdapter2LiveGatherer.logger.log(Level.WARNING, "HoTTAdapter2.IS_SLAVE_MODE = " + HoTTAdapter.IS_SLAVE_MODE);
 			}
 			else {
 				HoTTAdapter.IS_SLAVE_MODE = false;

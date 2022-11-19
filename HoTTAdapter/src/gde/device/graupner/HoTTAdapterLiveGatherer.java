@@ -108,7 +108,7 @@ public class HoTTAdapterLiveGatherer extends Thread {
 			WaitTimer.delay(1000);
 			if (this.serialPort.cleanInputStream() > 2) {
 				HoTTAdapter.IS_SLAVE_MODE = true;
-				HoTTAdapterLiveGatherer.log.log(Level.FINE, "HoTTAdapter.IS_SLAVE_MODE = " + HoTTAdapter.IS_SLAVE_MODE);
+				HoTTAdapterLiveGatherer.log.log(Level.WARNING, "HoTTAdapter.IS_SLAVE_MODE = " + HoTTAdapter.IS_SLAVE_MODE);
 			}
 			else {
 				HoTTAdapter.IS_SLAVE_MODE = false;
@@ -359,7 +359,7 @@ public class HoTTAdapterLiveGatherer extends Thread {
 								HoTTAdapterLiveGatherer.this.serialPort.getData(true);
 								WaitTimer.delay(HoTTAdapter.QUERY_GAP_MS);
 								byte[] data = HoTTAdapterLiveGatherer.this.serialPort.getData(true);
-								recordSetElectric.addPoints(this.device.convertDataBytes(pointsElectric, data), System.nanoTime() / 1000000 - startTime);
+								recordSetGeneral.addPoints(this.device.convertDataBytes(pointsGeneral, data), System.nanoTime() / 1000000 - startTime);
 								data[1] = HoTTAdapter.SENSOR_TYPE_RECEIVER_19200;
 								recordSetReceiver.addPoints(this.device.convertDataBytes(pointsReceiver, data), System.nanoTime() / 1000000 - startTime);
 							}
