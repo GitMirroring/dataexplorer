@@ -399,15 +399,13 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 					if (!this.pickerParameters.isFilterEnabled || (tmpClimb3 > -90 && tmpHeight >= -490 && tmpHeight < 5000 && Math.abs(tmpVoltage1) < 600 && Math.abs(tmpVoltage2) < 600)) {
 						points[38] = tmpVoltage * 1000;
 						points[39] = DataParser.parse2Short(dataBuffer, 38) * 1000;
-						if (!this.pickerParameters.isFilterEnabled || (tmpCapacity != 0 && Math.abs(tmpCapacity) <= (points[40] / 1000 + points[38] / 1000 * points[39] / 1000 / 2500 + 2))) {
-							points[40] = tmpCapacity * 1000;
-						}
+						points[40] = tmpCapacity * 1000;
 						points[41] = Double.valueOf(points[38] / 1000.0 * points[39]).intValue(); // power U*I [W];
 						if (tmpVoltage > 0) {
 							for (int j = 0; j < 6; j++) {
 								tmpCellVoltage = (dataBuffer[16 + j] & 0xFF);
-								points[j + 43] = tmpCellVoltage > 0 ? tmpCellVoltage * 1000 : points[j + 38];
-								if (points[j + 38] > 0) {
+								points[j + 43] = tmpCellVoltage > 0 ? tmpCellVoltage * 1000 : points[j + 43];
+								if (points[j + 43] > 0) {
 									maxVotage = points[j + 43] > maxVotage ? points[j + 43] : maxVotage;
 									minVotage = points[j + 43] < minVotage ? points[j + 43] : minVotage;
 								}
@@ -453,9 +451,7 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 					if (!this.pickerParameters.isFilterEnabled || (tmpClimb3 > -90 && tmpHeight >= -490 && tmpHeight < 5000 && Math.abs(tmpVoltage1) < 600 && Math.abs(tmpVoltage2) < 600)) {
 						points[60] = tmpVoltage * 1000;
 						points[61] = DataParser.parse2Short(dataBuffer, 38) * 1000;
-						if (!this.pickerParameters.isFilterEnabled || Math.abs(tmpCapacity) <= (points[62] / 1000 + points[60] / 1000 * points[61] / 1000 / 2500 + 2)) {
-							points[62] = tmpCapacity * 1000;
-						}						
+						points[62] = tmpCapacity * 1000;
 						points[63] = Double.valueOf(points[60] / 1000.0 * points[61]).intValue(); // power U*I [W];
 						if (tmpVoltage > 0) {
 							for (int j = 0; j < 14; j++) {
@@ -687,14 +683,12 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 					if (!this.pickerParameters.isFilterEnabled || (tmpClimb3 > -90 && tmpHeight >= -490 && tmpHeight < 5000 && Math.abs(tmpVoltage1) < 600 && Math.abs(tmpVoltage2) < 600)) {
 						points[38] = tmpVoltage * 1000;
 						points[39] = DataParser.parse2Short(dataBuffer, 34) * 1000;
-						if (!this.pickerParameters.isFilterEnabled || (tmpCapacity != 0 && Math.abs(tmpCapacity) <= (points[40] / 1000 + points[38] / 1000 * points[39] / 1000 / 2500 + 2))) {
-							points[40] = tmpCapacity * 1000;
-						}
+						points[40] = tmpCapacity * 1000;
 						points[41] = Double.valueOf(points[38] / 1000.0 * points[39]).intValue(); // power U*I [W];
 						if (tmpVoltage > 0) {
 							for (int i = 0, j = 0; i < 6; i++, j += 2) {
 								tmpCellVoltage = DataParser.parse2Short(dataBuffer, j + 10);
-								points[i + 43] = tmpCellVoltage > 0 ? tmpCellVoltage * 500 : points[i + 38];
+								points[i + 43] = tmpCellVoltage > 0 ? tmpCellVoltage * 500 : points[i + 43];
 								if (points[i + 43] > 0) {
 									maxVotage = points[i + 43] > maxVotage ? points[i + 43] : maxVotage;
 									minVotage = points[i + 43] < minVotage ? points[i + 43] : minVotage;
@@ -741,9 +735,7 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 					if (!this.pickerParameters.isFilterEnabled || (tmpClimb3 > -90 && tmpHeight >= -490 && tmpHeight < 5000 && Math.abs(tmpVoltage1) < 600 && Math.abs(tmpVoltage2) < 600)) {
 						points[60] = DataParser.parse2Short(dataBuffer, 50) * 1000;
 						points[61] = DataParser.parse2Short(dataBuffer, 48) * 1000;
-						if (!this.pickerParameters.isFilterEnabled || Math.abs(tmpCapacity) <= (points[62] / 1000 + points[60] / 1000 * points[61] / 1000 / 2500 + 2)) {
-							points[62] = tmpCapacity * 1000;
-						}						
+						points[62] = tmpCapacity * 1000;
 						points[63] = Double.valueOf(points[60] / 1000.0 * points[61]).intValue(); // power U*I [W];
 						if (tmpVoltage > 0) {
 							for (int i = 0, j = 0; i < 14; i++, j += 2) {

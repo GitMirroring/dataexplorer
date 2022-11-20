@@ -914,7 +914,7 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 					tmpHeight = DataParser.parse2Short(dataBuffer, 16);
 					if (!this.pickerParameters.isFilterEnabled || tmpHeight > 10 && tmpHeight < 5000) {
 						points[1] = tmpHeight * 1000;
-						points[2] = DataParser.parse2Short(dataBuffer, 22) * 1000;
+						points[2] = (DataParser.parse2Short(dataBuffer, 22) - 30000) * 10;
 					}
 					tmpClimb3 = DataParser.parse2Short(dataBuffer, 24);
 					tmpClimb10 = DataParser.parse2Short(dataBuffer, 26);
@@ -1026,9 +1026,9 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 					tmpVoltage1 = DataParser.parse2Short(dataBuffer, 22);
 					tmpVoltage2 = DataParser.parse2Short(dataBuffer, 24);
 					points[0] = (dataBuffer[9] & 0xFF) * 1000;
-					points[1] = tmpVoltage * 1000;
-					points[2] = DataParser.parse2Short(dataBuffer, 38) * 1000;
-					if (!this.pickerParameters.isFilterEnabled || (tmpCapacity != 0 && Math.abs(tmpCapacity) <= (points[3] / 1000 + points[1] / 1000 * points[2] / 1000 / 2500 + 2))) {
+					if (!this.pickerParameters.isFilterEnabled || (tmpClimb3 > 30 && tmpHeight > 10 && tmpHeight < 5000 && Math.abs(tmpVoltage1) < 600 && Math.abs(tmpVoltage2) < 600)) {
+						points[1] = tmpVoltage * 1000;
+						points[2] = DataParser.parse2Short(dataBuffer, 38) * 1000;
 						points[3] = tmpCapacity * 1000;
 						points[4] = Double.valueOf(points[1] / 1000.0 * points[2]).intValue(); // power U*I [W];
 						if (tmpVoltage > 0) {
@@ -1050,8 +1050,8 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 						points[16] = DataParser.parse2Short(dataBuffer, 29) * 1000;
 						points[17] = tmpVoltage1 * 1000;
 						points[18] = tmpVoltage2 * 1000;
-						points[19] = (dataBuffer[26] & 0xFF) * 1000;
-						points[20] = (dataBuffer[27] & 0xFF) * 1000;
+						points[19] = ((dataBuffer[26] & 0xFF) - 20) * 1000;
+						points[20] = ((dataBuffer[27] & 0xFF) - 20) * 1000;
 					}
 				}
 				break;
@@ -1066,9 +1066,9 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 					tmpVoltage1 = DataParser.parse2Short(dataBuffer, 30);
 					tmpVoltage2 = DataParser.parse2Short(dataBuffer, 32);
 					points[0] = (dataBuffer[9] & 0xFF) * 1000;
-					points[1] = tmpVoltage * 1000;
-					points[2] = DataParser.parse2Short(dataBuffer, 38) * 1000;
-					if (!this.pickerParameters.isFilterEnabled || Math.abs(tmpCapacity) <= (points[3] / 1000 + points[1] / 1000 * points[2] / 1000 / 2500 + 2)) {
+					if (!this.pickerParameters.isFilterEnabled || (tmpClimb3 > 30 && tmpHeight > 10 && tmpHeight < 5000 && Math.abs(tmpVoltage1) < 600 && Math.abs(tmpVoltage2) < 600)) {
+						points[1] = tmpVoltage * 1000;
+						points[2] = DataParser.parse2Short(dataBuffer, 38) * 1000;
 						points[3] = tmpCapacity * 1000;
 						points[4] = Double.valueOf(points[1] / 1000.0 * points[2]).intValue(); // power U*I [W];
 						if (tmpVoltage > 0) {
@@ -1088,8 +1088,8 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 						points[22] = tmpClimb3 * 1000;
 						points[23] = tmpVoltage1 * 1000;
 						points[24] = tmpVoltage2 * 1000;
-						points[25] = (dataBuffer[34] & 0xFF) * 1000;
-						points[26] = (dataBuffer[35] & 0xFF) * 1000;
+						points[25] = ((dataBuffer[34] & 0xFF) - 20) * 1000;
+						points[26] = ((dataBuffer[35] & 0xFF) - 20)  * 1000;
 						points[27] = DataParser.parse2Short(dataBuffer, 47) * 1000;
 					}
 				}
@@ -1149,7 +1149,7 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 					tmpHeight = DataParser.parse2Short(dataBuffer, 10) + 500;
 					if (!this.pickerParameters.isFilterEnabled || tmpHeight > 10 && tmpHeight < 5000) {
 						points[1] = tmpHeight * 1000;
-						points[2] = (DataParser.parse2Short(dataBuffer, 16) + 30000) * 1000;
+						points[2] = DataParser.parse2Short(dataBuffer, 16) * 1000;
 					}
 					tmpClimb3 = DataParser.parse2Short(dataBuffer, 18) + 30000;
 					tmpClimb10 = DataParser.parse2Short(dataBuffer, 20) + 30000;
@@ -1262,9 +1262,9 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 					tmpVoltage1 = DataParser.parse2Short(dataBuffer, 22);
 					tmpVoltage2 = DataParser.parse2Short(dataBuffer, 24);
 					points[0] = (dataBuffer[3] & 0xFF) * 1000;
-					points[1] = tmpVoltage * 1000;
-					points[2] = DataParser.parse2Short(dataBuffer, 34) * 1000;
-					if (!this.pickerParameters.isFilterEnabled || (tmpCapacity != 0 && Math.abs(tmpCapacity) <= (points[3] / 1000 + points[1] / 1000 * points[2] / 1000 / 2500 + 2))) {
+					if (!this.pickerParameters.isFilterEnabled || (tmpClimb3 > 30 && tmpHeight > 10 && tmpHeight < 5000 && Math.abs(tmpVoltage1) < 600 && Math.abs(tmpVoltage2) < 600)) {
+						points[1] = tmpVoltage * 1000;
+						points[2] = DataParser.parse2Short(dataBuffer, 34) * 1000;
 						points[3] = tmpCapacity * 1000;
 						points[4] = Double.valueOf(points[1] / 1000.0 * points[2]).intValue(); // power U*I [W];
 						if (tmpVoltage > 0) {
@@ -1302,9 +1302,9 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 					tmpVoltage1 = DataParser.parse2Short(dataBuffer, 38);
 					tmpVoltage2 = DataParser.parse2Short(dataBuffer, 40);
 					points[0] = (dataBuffer[3] & 0xFF) * 1000;
-					points[1] = DataParser.parse2Short(dataBuffer, 50) * 1000;
-					points[2] = DataParser.parse2Short(dataBuffer, 48) * 1000;
-					if (!this.pickerParameters.isFilterEnabled || Math.abs(tmpCapacity) <= (points[3] / 1000 + points[1] / 1000 * points[2] / 1000 / 2500 + 2)) {
+					if (!this.pickerParameters.isFilterEnabled || (tmpClimb3 > 30 && tmpHeight > 10 && tmpHeight < 5000 && Math.abs(tmpVoltage1) < 600 && Math.abs(tmpVoltage2) < 600)) {
+						points[1] = DataParser.parse2Short(dataBuffer, 50) * 1000;
+						points[2] = DataParser.parse2Short(dataBuffer, 48) * 1000;
 						points[3] = tmpCapacity * 1000;
 						points[4] = Double.valueOf(points[1] / 1000.0 * points[2]).intValue(); // power U*I [W];
 						if (tmpVoltage > 0) {
