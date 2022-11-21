@@ -172,7 +172,10 @@ public class HoTTAdapter2LiveGatherer extends HoTTAdapterLiveGatherer {
 		this.channels.switchChannel(this.channel.getName());
 		this.channel.switchRecordSet(recordSetKey);
 		this.application.setStatusMessage(HoTTbinReader2.detectedSensors.toString());
-		recordSet.setRecordSetDescription(recordSet.getRecordSetDescription() + GDE.STRING_MESSAGE_CONCAT + HoTTbinReader2.detectedSensors.toString());
+		recordSet.setRecordSetDescription(recordSet.getRecordSetDescription() + GDE.STRING_MESSAGE_CONCAT + HoTTbinReader2.detectedSensors.toString() 
+		+ (HoTTbinReader2.detectedSensors.size() > 1 
+				? String.format(" - %s = %s", Messages.getString(MessageIds.GDE_MSGT2419), Sensor.fromOrdinal(this.device.pickerParameters.altitudeClimbSensorSelection).name())
+						: ""));
 
 		boolean isGPSdetected = false;
 		Vector<Integer> queryRing = new Vector<Integer>();
