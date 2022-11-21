@@ -28,6 +28,7 @@ import org.eclipse.swt.SWT;
 import gde.GDE;
 import gde.comm.DeviceCommPort;
 import gde.data.RecordSet;
+import gde.device.graupner.HoTTAdapter.Sensor;
 import gde.device.graupner.hott.MessageIds;
 import gde.exception.ApplicationConfigurationException;
 import gde.exception.DataInconsitsentException;
@@ -96,23 +97,24 @@ public class HoTTAdapter2LiveGatherer extends HoTTAdapterLiveGatherer {
 				}
 
 				boolean[] tmpSensorType = HoTTAdapterLiveGatherer.isSensorType.clone();
-				//0=isReceiver, 1=isVario, 2=isGPS, 3=isGeneral, 4=isElectric
-				for (int i = HoTTAdapterLiveGatherer.isSensorType.length - 1; i >= 0; i--) {
+				//0=isReceiver, 1=isVario, 2=isGPS, 3=isGeneral, 4=isElectric 5=isESC
+				for (int i = 0; i < HoTTAdapterLiveGatherer.isSensorType.length; ++i) {
 					if (sb.length() == 0 && tmpSensorType[i]) {
-						sb.append(tmpSensorType[5] ? ">>>SpeedControler<<<" : tmpSensorType[4] ? ">>>Electric<<<" : tmpSensorType[3] ? ">>>General<<<" : tmpSensorType[2] ? ">>>GPS<<<"
-								: tmpSensorType[1] ? ">>>Vario<<<" : tmpSensorType[0] ? ">>>Receiver<<<" : "");
+						sb.append("Receiver");
 						tmpSensorType[i] = false;
 					}
 					else if (tmpSensorType[i]) {
-						sb.append(GDE.STRING_MESSAGE_CONCAT).append(
-								tmpSensorType[5] ? ">>>SpeedControler<<<" : tmpSensorType[4] ? ">>>Electric<<<" : tmpSensorType[3] ? ">>>General<<<" : tmpSensorType[2] ? ">>>GPS<<<"
-										: tmpSensorType[1] ? ">>>Vario<<<" : tmpSensorType[0] ? ">>>Receiver<<<" : "");
+						sb.append(GDE.STRING_COMMA_BLANK).append(
+								tmpSensorType[0] ? "Receiver" : tmpSensorType[1] ? "VARIO" : tmpSensorType[2] ? "GPS" : tmpSensorType[3] ? "GENERAL" 
+										: tmpSensorType[4] ? "ELECTRIC" : tmpSensorType[5] ? "AIR_ESC" : "");
 						tmpSensorType[i] = false;
 					}
 				}
 				if (HoTTAdapterLiveGatherer.log.isLoggable(Level.TIME))
 					HoTTAdapterLiveGatherer.log.log(Level.TIME, sb.toString() + ", detecting sensor type takes " + StringHelper.getFormatedTime("ss:SSS", (new Date().getTime() - startTime)));
-				this.application.setStatusMessage(sb.toString());
+				HoTTbinReader2.detectedSensors = Sensor.getSetFromDetected(sb.toString().replace(GDE.STRING_BLANK, GDE.STRING_EMPTY));
+				this.application.setStatusMessage(HoTTbinReader2.detectedSensors.toString());
+
 
 				//no sensor type detected, seams only receiver is connected
 				if (HoTTAdapterLiveGatherer.isSensorType[1] == false && HoTTAdapterLiveGatherer.isSensorType[2] == false && HoTTAdapterLiveGatherer.isSensorType[3] == false && HoTTAdapterLiveGatherer.isSensorType[4] == false
@@ -150,6 +152,9 @@ public class HoTTAdapter2LiveGatherer extends HoTTAdapterLiveGatherer {
 			return;
 		}
 
+		//set picker parameter setting sensor for altitude/climb usage (0=auto, 1=VARIO, 2=GPS, 3=GAM, 4=EAM)
+		HoTTbinReader.setAltitudeClimbPickeParameter(this.device.pickerParameters, HoTTbinReader2.detectedSensors);
+
 		this.channel = this.application.getActiveChannel();
 		String recordSetNameExtend = GDE.STRING_BLANK_LEFT_BRACKET + "live" + GDE.STRING_RIGHT_BRACKET;
 		String recordSetKey = this.channel.getNextRecordSetNumber() + this.device.getRecordSetStemNameReplacement() + recordSetNameExtend;
@@ -166,7 +171,8 @@ public class HoTTAdapter2LiveGatherer extends HoTTAdapterLiveGatherer {
 		this.application.getMenuToolBar().updateRecordSetSelectCombo();
 		this.channels.switchChannel(this.channel.getName());
 		this.channel.switchRecordSet(recordSetKey);
-		this.application.setStatusMessage(sb.toString());
+		this.application.setStatusMessage(HoTTbinReader2.detectedSensors.toString());
+		recordSet.setRecordSetDescription(recordSet.getRecordSetDescription() + GDE.STRING_MESSAGE_CONCAT + HoTTbinReader2.detectedSensors.toString());
 
 		boolean isGPSdetected = false;
 		Vector<Integer> queryRing = new Vector<Integer>();

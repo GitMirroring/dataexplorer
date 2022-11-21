@@ -18,6 +18,7 @@ Device specific changes/fixes
 	* HoTTAdapter* - synchronize filter with binary parser live gatherer
 	* HoTTAdapter* - fix several indexing values GAM EAM
 	* HoTTAdapter - fix VoltageRx_min and TemperatureRx while live-data gathering
+	* HoTTAdapter2 - enable altitude/climb value sensor by drop down selection live gatherer
 	* UT16E - add additional data query to suppress dirty bytes
 
 

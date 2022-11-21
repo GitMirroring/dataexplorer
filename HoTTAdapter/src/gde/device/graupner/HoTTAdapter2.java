@@ -277,16 +277,18 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 				if (dataBuffer.length == 57) {
 					// 0=RX-TX-VPacks, 1=RXSQ, 2=Strength, 3=VPacks, 4=Tx, 5=Rx, 6=VoltageRx, 7=TemperatureRx 8=VoltageRxMin 9=EventRx
 					// 10=Altitude, 11=Climb 1, 12=Climb 3, 13=Climb 10 14=EventVario 15=misc Vario_1 16=misc Vario_2 17=misc Vario_3 18=misc Vario_4 19=misc Vario_5
-					tmpHeight = DataParser.parse2Short(dataBuffer, 16) - 500;
-					if (tmpHeight > -490 && tmpHeight < 5000) {
-						points[10] = tmpHeight * 1000;
-						points[11] = (DataParser.parse2Short(dataBuffer, 22) - 30000) * 10;
-					}
-					tmpClimb3 = DataParser.parse2Short(dataBuffer, 24) - 30000;
-					tmpClimb10 = DataParser.parse2Short(dataBuffer, 26) - 30000;
-					if (tmpClimb3 > -10000 && tmpClimb10 > -10000 && tmpClimb3 < 10000 && tmpClimb10 < 10000) {
-						points[12] = tmpClimb3 * 10;
-						points[13] = tmpClimb10 * 10;
+					if (this.pickerParameters.altitudeClimbSensorSelection == 1) { //sensor selection GPS (auto, Vario, GPS, GAM, EAM)
+						tmpHeight = DataParser.parse2Short(dataBuffer, 16) - 500;
+						if (tmpHeight > -490 && tmpHeight < 5000) {
+							points[10] = tmpHeight * 1000;
+							points[11] = (DataParser.parse2Short(dataBuffer, 22) - 30000) * 10;
+						}
+						tmpClimb3 = DataParser.parse2Short(dataBuffer, 24) - 30000;
+						tmpClimb10 = DataParser.parse2Short(dataBuffer, 26) - 30000;
+						if (tmpClimb3 > -10000 && tmpClimb10 > -10000 && tmpClimb3 < 10000 && tmpClimb10 < 10000) {
+							points[12] = tmpClimb3 * 10;
+							points[13] = tmpClimb10 * 10;
+						}
 					}
 				}
 				break;
@@ -307,9 +309,11 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 						points[20] = dataBuffer[19] == 1 ? -1 * points[15] : points[15];
 						points[21] = tmpLongitudeGrad * 10000 + DataParser.parse2Short(dataBuffer, 27);
 						points[21] = dataBuffer[24] == 1 ? -1 * points[16] : points[16];
-						points[10] = tmpHeight * 1000;
-						points[11] = (DataParser.parse2Short(dataBuffer, 33) - 30000) * 10;
-						points[12] = tmpClimb3 * 1000;
+						if (this.pickerParameters.altitudeClimbSensorSelection == 2) { //sensor selection GPS (auto, Vario, GPS, GAM, EAM)
+							points[10] = tmpHeight * 1000;
+							points[11] = (DataParser.parse2Short(dataBuffer, 33) - 30000) * 10;
+							points[12] = tmpClimb3 * 1000;
+						}
 						points[22] = DataParser.parse2Short(dataBuffer, 17) * 1000;
 						points[23] = DataParser.parse2Short(dataBuffer, 29) * 1000;
 						points[24] = (dataBuffer[38] & 0xFF) * 1000;
@@ -414,9 +418,11 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 							points[42] = (maxVotage != Integer.MIN_VALUE && minVotage != Integer.MAX_VALUE ? maxVotage - minVotage : 0) * 10;
 						}
 						points[49] = DataParser.parse2Short(dataBuffer, 31) * 1000;
-						points[10] = tmpHeight * 1000;
-						points[11] = (DataParser.parse2Short(dataBuffer, 35) - 30000) * 10;
-						points[12] = tmpClimb3 * 1000;
+						if (this.pickerParameters.altitudeClimbSensorSelection == 3) { //sensor selection GPS (auto, Vario, GPS, GAM, EAM)
+							points[10] = tmpHeight * 1000;
+							points[11] = (DataParser.parse2Short(dataBuffer, 35) - 30000) * 10;
+							points[12] = tmpClimb3 * 1000;
+						}
 						points[50] = DataParser.parse2Short(dataBuffer, 29) * 1000;
 						points[51] = tmpVoltage1 * 100;
 						points[52] = tmpVoltage2 * 100;
@@ -465,9 +471,11 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 							//calculate balance on the fly
 							points[64] = (maxVotage != Integer.MIN_VALUE && minVotage != Integer.MAX_VALUE ? maxVotage - minVotage : 0) * 10;
 						}
-						points[10] = tmpHeight * 1000;
-						points[11] = (DataParser.parse2Short(dataBuffer, 44) - 30000) * 10;
-						points[12] = tmpClimb3 * 1000;
+						if (this.pickerParameters.altitudeClimbSensorSelection == 4) { //sensor selection GPS (auto, Vario, GPS, GAM, EAM)
+							points[10] = tmpHeight * 1000;
+							points[11] = (DataParser.parse2Short(dataBuffer, 44) - 30000) * 10;
+							points[12] = tmpClimb3 * 1000;
+						}
 						points[79] = tmpVoltage1 * 100;
 						points[80] = tmpVoltage2 * 100;
 						points[81] = ((dataBuffer[34] & 0xFF) - 20) * 1000;
@@ -562,16 +570,18 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 				if (dataBuffer.length >= 25) {
 					// 0=RX-TX-VPacks, 1=RXSQ, 2=Strength, 3=VPacks, 4=Tx, 5=Rx, 6=VoltageRx, 7=TemperatureRx 8=VoltageRxMin 9=EventRx
 					// 10=Altitude, 11=Climb 1, 12=Climb 3, 13=Climb 10 14=EventVario 15=misc Vario_1 16=misc Vario_2 17=misc Vario_3 18=misc Vario_4 19=misc Vario_5
-					tmpHeight = DataParser.parse2Short(dataBuffer, 10);
-					if (tmpHeight > -490 && tmpHeight < 5000) {
-						points[10] = tmpHeight * 1000;
-						points[11] = DataParser.parse2Short(dataBuffer, 16) * 10;
-					}
-					tmpClimb3 = DataParser.parse2Short(dataBuffer, 18);
-					tmpClimb10 = DataParser.parse2Short(dataBuffer, 20);
-					if (tmpClimb3 > -10000 && tmpClimb10 > -10000 && tmpClimb3 < 10000 && tmpClimb10 < 10000) {
-						points[12] = tmpClimb3 * 10;
-						points[13] = tmpClimb10 * 10;
+					if (this.pickerParameters.altitudeClimbSensorSelection == 1) { //sensor selection GPS (auto, Vario, GPS, GAM, EAM)
+						tmpHeight = DataParser.parse2Short(dataBuffer, 10);
+						if (tmpHeight > -490 && tmpHeight < 5000) {
+							points[10] = tmpHeight * 1000;
+							points[11] = DataParser.parse2Short(dataBuffer, 16) * 10;
+						}
+						tmpClimb3 = DataParser.parse2Short(dataBuffer, 18);
+						tmpClimb10 = DataParser.parse2Short(dataBuffer, 20);
+						if (tmpClimb3 > -10000 && tmpClimb10 > -10000 && tmpClimb3 < 10000 && tmpClimb10 < 10000) {
+							points[12] = tmpClimb3 * 10;
+							points[13] = tmpClimb10 * 10;
+						}
 					}
 				}
 				break;
@@ -592,9 +602,11 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 						points[20] = dataBuffer[26] == 1 ? -1 * points[15] : points[15];
 						points[21] = tmpLongitudeGrad * 10000 + DataParser.parse2Short(dataBuffer, 22);
 						points[21] = dataBuffer[27] == 1 ? -1 * points[16] : points[16];
-						points[10] = tmpHeight * 1000;
-						points[11] = DataParser.parse2Short(dataBuffer, 28) * 10;
-						points[12] = tmpClimb3 * 1000;
+						if (this.pickerParameters.altitudeClimbSensorSelection == 2) { //sensor selection GPS (auto, Vario, GPS, GAM, EAM)
+							points[10] = tmpHeight * 1000;
+							points[11] = DataParser.parse2Short(dataBuffer, 28) * 10;
+							points[12] = tmpClimb3 * 1000;
+						}
 						points[22] = DataParser.parse2Short(dataBuffer, 10) * 1000;
 						points[23] = DataParser.parse2Short(dataBuffer, 12) * 1000;
 						points[24] = DataParser.parse2Short(dataBuffer, 24) * 500;
@@ -698,9 +710,11 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 							points[42] = (maxVotage != Integer.MIN_VALUE && minVotage != Integer.MAX_VALUE ? maxVotage - minVotage : 0) * 10;
 						}
 						points[49] = DataParser.parse2Short(dataBuffer, 30) * 1000;
-						points[10] = tmpHeight * 1000;
-						points[11] = DataParser.parse2Short(dataBuffer, 42) * 10;
-						points[12] = tmpClimb3 * 1000;
+						if (this.pickerParameters.altitudeClimbSensorSelection == 3) { //sensor selection GPS (auto, Vario, GPS, GAM, EAM)
+							points[10] = tmpHeight * 1000;
+							points[11] = DataParser.parse2Short(dataBuffer, 42) * 10;
+							points[12] = tmpClimb3 * 1000;
+						}
 						points[50] = DataParser.parse2Short(dataBuffer, 40) * 1000;
 						points[51] = tmpVoltage1 * 100;
 						points[52] = tmpVoltage2 * 100;
@@ -749,9 +763,11 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 							//calculate balance on the fly
 							points[64] = (maxVotage != Integer.MIN_VALUE && minVotage != Integer.MAX_VALUE ? maxVotage - minVotage : 0) * 10;
 						}
-						points[10] = tmpHeight * 1000;
-						points[11] = DataParser.parse2Short(dataBuffer, 54) * 10;
-						points[12] = dataBuffer[46] * 1000;
+						if (this.pickerParameters.altitudeClimbSensorSelection == 4) { //sensor selection GPS (auto, Vario, GPS, GAM, EAM)
+							points[10] = tmpHeight * 1000;
+							points[11] = DataParser.parse2Short(dataBuffer, 54) * 10;
+							points[12] = dataBuffer[46] * 1000;
+						}
 						points[79] = tmpVoltage1 * 100;
 						points[80] = tmpVoltage2 * 100;
 						points[81] = DataParser.parse2Short(dataBuffer, 42) * 1000;

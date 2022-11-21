@@ -132,23 +132,22 @@ public class HoTTAdapterLiveGatherer extends Thread {
 				}
 
 				boolean[] tmpSensorType = HoTTAdapterLiveGatherer.isSensorType.clone();
-				//0=isReceiver, 1=isVario, 2=isGPS, 3=isGeneral, 4=isElectric
-				for (int i = HoTTAdapterLiveGatherer.isSensorType.length - 1; i >= 0; i--) {
+				//0=isReceiver, 1=isVario, 2=isGPS, 3=isGeneral, 4=isElectric 5=isESC
+				for (int i = 0; i < HoTTAdapterLiveGatherer.isSensorType.length; ++i) {
 					if (sb.length() == 0 && tmpSensorType[i]) {
-						sb.append(tmpSensorType[5] ? ">>>SpeedControl<<<" : tmpSensorType[4] ? ">>>Electric<<<" : tmpSensorType[3] ? ">>>General<<<" : tmpSensorType[2] ? ">>>GPS<<<"
-								: tmpSensorType[1] ? ">>>Vario<<<" : tmpSensorType[0] ? ">>>Receiver<<<" : "");
+						sb.append("Receiver");
 						tmpSensorType[i] = false;
 					}
 					else if (tmpSensorType[i]) {
-						sb.append(GDE.STRING_MESSAGE_CONCAT).append(
-								tmpSensorType[5] ? ">>>SpeedControl<<<" : tmpSensorType[4] ? ">>>Electric<<<" : tmpSensorType[3] ? ">>>General<<<" : tmpSensorType[2] ? ">>>GPS<<<" : tmpSensorType[1] ? ">>>Vario<<<"
-										: tmpSensorType[0] ? ">>>Receiver<<<" : "");
+						sb.append(GDE.STRING_COMMA_BLANK).append(
+								tmpSensorType[0] ? "Receiver" : tmpSensorType[1] ? "VARIO" : tmpSensorType[2] ? "GPS" : tmpSensorType[3] ? "GAM" 
+										: tmpSensorType[4] ? "EAM" : tmpSensorType[5] ? "ESC" : "");
 						tmpSensorType[i] = false;
 					}
 				}
 				if (HoTTAdapterLiveGatherer.log.isLoggable(Level.TIME))
 					HoTTAdapterLiveGatherer.log.log(Level.TIME, sb.toString() + ", detecting sensor type takes " + StringHelper.getFormatedTime("ss:SSS", (new Date().getTime() - startTime)));
-				this.application.setStatusMessage(sb.toString());
+				this.application.setStatusMessage("["+sb.toString()+"]");
 
 				//no sensor type detected, seams only receiver is connected
 				if (HoTTAdapterLiveGatherer.isSensorType[1] == false && HoTTAdapterLiveGatherer.isSensorType[2] == false && HoTTAdapterLiveGatherer.isSensorType[3] == false && HoTTAdapterLiveGatherer.isSensorType[4] == false
@@ -269,7 +268,8 @@ public class HoTTAdapterLiveGatherer extends Thread {
 			recordSetKey = recordSetNumber + GDE.STRING_RIGHT_PARENTHESIS_BLANK + HoTTAdapter.Sensor.ESC.value() + recordSetNameExtend;
 		}
 		this.channel.switchRecordSet(recordSetKey);
-		this.application.setStatusMessage(sb.toString());
+		this.application.setStatusMessage("["+sb.toString()+"]");
+		recordSetReceiver.setRecordSetDescription(recordSetReceiver.getRecordSetDescription() + GDE.STRING_MESSAGE_CONCAT + "["+sb.toString()+"]");
 
 		boolean isGPSdetected = false;
 		Vector<Integer> queryRing = new Vector<Integer>();
