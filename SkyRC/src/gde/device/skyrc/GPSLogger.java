@@ -126,7 +126,6 @@ public class GPSLogger extends DeviceConfiguration implements IDevice {
 		MenuItem convertKMZ3DRelativeItem;
 		MenuItem convertKMZ3DAbsoluteItem;
 		MenuItem convertGPXItem;
-		MenuItem convertGPXGarminItem;
 
 		if (exportMenue.getItem(exportMenue.getItemCount() - 1).getText().equals(Messages.getString(gde.messages.MessageIds.GDE_MSGT0732))) {
 			new MenuItem(exportMenue, SWT.SEPARATOR);
@@ -439,7 +438,7 @@ public class GPSLogger extends DeviceConfiguration implements IDevice {
 							}
 							selectedImportFile = selectedImportFile + ".3gpl";
 						}
-						log.log(java.util.logging.Level.OFF, "selectedImportFile = " + selectedImportFile); //$NON-NLS-1$
+						log.log(java.util.logging.Level.FINE, "selectedImportFile = " + selectedImportFile); //$NON-NLS-1$
 
 						if (fd.getFileName().length() > 5) {
 							try {

@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 import gde.GDE;
@@ -105,18 +106,21 @@ public class GplLogReader {
 						recordSet = RecordSet.createRecordSet(recordSetName, device, channelConfigNumber, true, true, true);
 						activeChannel.put(recordSetName, recordSet);
 						recordSet = activeChannel.get(recordSetName);
-						recordSet.setRecordSetDescription(recordSet.getRecordSetDescription());
+						String speedUnit = buffer[4] == 0x00 ? "km/h" : buffer[4] == 0x01 ? "Mph" : "?/h";
+						recordSet.get(0).setUnit(speedUnit);
+						int utcOffset = (buffer[5] & 0xFF) - 12;
 						timeStep_ms = 100 * buffer[3];
-						log.log(Level.OFF, String.format("timeStep_ms = %d", timeStep_ms));
+						log.log(Level.OFF, String.format("timeStep_ms = %d speedUnit = 0x%02X utcOffset = %d firmware = %d.%d", timeStep_ms, buffer[4], buffer[5] - 12, buffer[12], buffer[13]));
 						int year = 2000 + buffer[6];
 						int month = buffer[7];
 						int day = buffer[8];
-						int hour = buffer[9] + device.getUTCdelta();
+						int hour = buffer[9] + utcOffset + device.getUTCdelta();
 						int minute = buffer[10];
 						int seconds = buffer[11];
-						log.log(Level.OFF, String.format("startTimeStamp = %d-%02d-%02d %02d:%02d:%02d", year, month, day, hour, minute, seconds));						
+						log.log(Level.INFO, String.format("startTimeStamp = %d-%02d-%02d %02d:%02d:%02d", year, month, day, hour, minute, seconds));						
 						long startTimeStamp = new GregorianCalendar(year, month-1, day, hour, minute, seconds).getTimeInMillis();
-						recordSet.setRecordSetDescription(device.getName() + GDE.STRING_MESSAGE_CONCAT	+ Messages.getString(MessageIds.GDE_MSGT0129) + new SimpleDateFormat("yyyy-MM-dd, HH:mm:ss").format(startTimeStamp));
+						recordSet.setRecordSetDescription(device.getName() + GDE.STRING_MESSAGE_CONCAT	+ Messages.getString(MessageIds.GDE_MSGT0129) + new SimpleDateFormat("yyyy-MM-dd, HH:mm:ss").format(startTimeStamp)
+								 + String.format(Locale.ENGLISH, "\nFirmware: %d.%d", buffer[12], buffer[13]));
 						recordSet.setStartTimeStamp(startTimeStamp);
 						String dateTime = String.format("%d-%02d-%02d", year, month, day);	
 						activeChannel.setFileDescription(application.isObjectoriented() ? dateTime + GDE.STRING_BLANK + application.getObjectKey() : dateTime);
