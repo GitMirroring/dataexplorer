@@ -106,8 +106,22 @@ public class GplLogReader {
 						recordSet = RecordSet.createRecordSet(recordSetName, device, channelConfigNumber, true, true, true);
 						activeChannel.put(recordSetName, recordSet);
 						recordSet = activeChannel.get(recordSetName);
-						String speedUnit = buffer[4] == 0x00 ? "km/h" : buffer[4] == 0x01 ? "Mph" : "?/h";
+						String speedUnit = buffer[4] == 0x00 ? "km/h" : buffer[4] == 0x01 ? "mph" : "?/h";
 						recordSet.get(0).setUnit(speedUnit);
+						switch (speedUnit) {
+						case "km/h":
+							recordSet.get(1).setUnit("m");		//altitude
+							recordSet.get(1).setFactor(1.0);	//altitude
+							recordSet.get(4).setUnit("km"); 	//trip length
+							recordSet.get(4).setFactor(1.0);
+							break;
+						case "mph":
+							recordSet.get(1).setUnit("Feet");		//altitude
+							recordSet.get(1).setFactor(3.281);	//altitude
+							recordSet.get(4).setUnit("Miles");	//trip length
+							recordSet.get(4).setFactor(0.6214);
+							break;
+						}
 						int utcOffset = (buffer[5] & 0xFF) - 12;
 						timeStep_ms = 100 * buffer[3];
 						log.log(Level.OFF, String.format("timeStep_ms = %d speedUnit = 0x%02X utcOffset = %d firmware = %d.%d", timeStep_ms, buffer[4], buffer[5] - 12, buffer[12], buffer[13]));
