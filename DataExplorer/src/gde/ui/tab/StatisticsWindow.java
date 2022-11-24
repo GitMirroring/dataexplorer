@@ -275,7 +275,8 @@ public class StatisticsWindow extends CTabItem {
 	 * update statistics window display data
 	 */
 	public synchronized void updateStatisticsData(boolean forceUpdate) {
-		if (log.isLoggable(Level.FINE)) log.log(Level.FINE, "entry data table update"); //$NON-NLS-1$
+		if (log.isLoggable(Level.FINE)) log.log(Level.FINE, "entry updateStatisticsData"); //$NON-NLS-1$
+		this.descriptionGroup.redraw();
 
 		Channel activeChannel = this.channels.getActiveChannel();
 		if (activeChannel != null) {
