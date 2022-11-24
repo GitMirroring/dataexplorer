@@ -365,21 +365,22 @@ public class GPSLogger extends DeviceConfiguration implements IDevice {
 		Record recordLongitude = recordSet.get(2);
 		Record recordAlitude = recordSet.get(1);
 		if (recordLatitude.hasReasonableData() && recordLongitude.hasReasonableData() && recordAlitude.hasReasonableData()) {
-			int recordSize = recordLatitude.realSize();
-			int startAltitude = recordAlitude.get(0); // using this as start point might be sense less if the GPS data has no 3D-fix
-			// check GPS latitude and longitude
-			int indexGPS = 0;
-			int i = 0;
-			for (; i < recordSize; ++i) {
-				if (recordLatitude.get(i) != 0 && recordLongitude.get(i) != 0) {
-					indexGPS = i;
-					++i;
-					break;
-				}
-			}
-			startAltitude = recordAlitude.get(indexGPS); // set initial altitude to enable absolute altitude calculation
-
-			GPSHelper.calculateTripLength(this, recordSet, 3, 2, 1, startAltitude, 4);
+//			int recordSize = recordLatitude.realSize();
+//			int startAltitude = recordAlitude.get(0); // using this as start point might be sense less if the GPS data has no 3D-fix
+//			// check GPS latitude and longitude
+//			int indexGPS = 0;
+//			int i = 0;
+//			for (; i < recordSize; ++i) {
+//				if (recordLatitude.get(i) != 0 && recordLongitude.get(i) != 0) {
+//					indexGPS = i;
+//					++i;
+//					break;
+//				}
+//			}
+//			startAltitude = recordAlitude.get(indexGPS); // set initial altitude to enable absolute altitude calculation
+//
+//			GPSHelper.calculateTripLength(this, recordSet, 3, 2, 1, startAltitude, 4); //calculate 3D
+			GPSHelper.calculateTripLength2D(this, recordSet, 3, 2, 4); //calculate 2D
 		}
 
 		this.updateVisibilityStatus(recordSet, true);
