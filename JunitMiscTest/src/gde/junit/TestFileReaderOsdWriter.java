@@ -1033,7 +1033,6 @@ public class TestFileReaderOsdWriter extends TestSuperClass {
 			List<File> files = FileUtils.getFileListing(this.dataPath, 1);
 
 			for (File file : files) {
-				System.out.println("working with : " + file);
 				if (file.getAbsolutePath().toLowerCase().endsWith(".3gpl")
 						&& (file.getPath().toLowerCase().contains("/skyrc_dynamite_gps-logger/"))) { 
 					System.out.println("working with : " + file);
@@ -1070,7 +1069,7 @@ public class TestFileReaderOsdWriter extends TestSuperClass {
 							throw new FileNotFoundException(this.tmpDir1);
 
 						String absolutFilePath = this.tmpDir1 + file.getName();
-						absolutFilePath = absolutFilePath.substring(0, absolutFilePath.length() - 4) + "_3gpl.osd";
+						absolutFilePath = absolutFilePath.substring(0, absolutFilePath.length() - 5) + "_3gpl.osd";
 						System.out.println("writing as   : " + absolutFilePath);
 						OsdReaderWriter.write(absolutFilePath, this.channels.getActiveChannel(), GDE.DATA_EXPLORER_FILE_VERSION_INT);
 					}
@@ -1143,7 +1142,7 @@ public class TestFileReaderOsdWriter extends TestSuperClass {
 							throw new FileNotFoundException(this.tmpDir1);
 
 						String absolutFilePath = this.tmpDir1 + file.getName();
-						absolutFilePath = absolutFilePath.substring(0, absolutFilePath.length() - 4) + "_3gpl.osd";
+						absolutFilePath = absolutFilePath.substring(0, absolutFilePath.length() - 5) + "_3gpl.osd";
 						System.out.println("writing as   : " + absolutFilePath);
 						OsdReaderWriter.write(absolutFilePath, this.channels.getActiveChannel(), GDE.DATA_EXPLORER_FILE_VERSION_INT);
 					}
