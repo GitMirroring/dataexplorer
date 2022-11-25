@@ -48,6 +48,7 @@ import gde.device.jeti.JetiDataReader;
 import gde.device.junsi.DataParserDuo;
 import gde.device.junsi.iChargerUsb;
 import gde.device.logview.ZeroReaderWriter;
+import gde.device.skyrc.GplLogReader;
 import gde.exception.DataInconsitsentException;
 import gde.exception.DataTypeException;
 import gde.exception.NotSupportedException;
@@ -945,7 +946,7 @@ public class TestFileReaderOsdWriter extends TestSuperClass {
 	}
 
 	/**
-	 * test reading GPS-Logger2 NMEA files from device directory and writes OSD files to %TEMP%\Write_1_OSD
+	 * test reading GPS-Logger3 NMEA files from device directory and writes OSD files to %TEMP%\Write_1_OSD
 	 * all consistent files must red without failures
 	 */
 	public final void testGPSLogger3ReaderOsdWriter() {
@@ -982,6 +983,155 @@ public class TestFileReaderOsdWriter extends TestSuperClass {
 						activeChannel.setSaved(true);
 
 						NMEAReaderWriter.read(file.getAbsolutePath(), device, "RecordSet", 1);
+						RecordSet recordSet = activeChannel.getActiveRecordSet();
+
+						if (recordSet != null) {
+							activeChannel.setActiveRecordSet(recordSet);
+							activeChannel.applyTemplate(recordSet.getName(), true);
+							//device.makeInActiveDisplayable(recordSet);
+							drawCurves(recordSet, 1024, 768);
+						}
+
+						if (!new File(this.tmpDir1).exists())
+							throw new FileNotFoundException(this.tmpDir1);
+
+						String absolutFilePath = this.tmpDir1 + file.getName();
+						absolutFilePath = absolutFilePath.substring(0, absolutFilePath.length() - 4) + "_nmea.osd";
+						System.out.println("writing as   : " + absolutFilePath);
+						OsdReaderWriter.write(absolutFilePath, this.channels.getActiveChannel(), GDE.DATA_EXPLORER_FILE_VERSION_INT);
+					}
+					catch (Exception e) {
+						e.printStackTrace();
+						failures.put(file.getAbsolutePath(), e);
+					}
+				}
+			}
+
+		}
+		catch (FileNotFoundException e) {
+			e.printStackTrace();
+			fail(e.toString());
+		}
+
+		StringBuilder sb = new StringBuilder();
+		for (String key : failures.keySet()) {
+			sb.append(key).append(" - ").append(failures.get(key).getMessage()).append("\n");
+		}
+		if (failures.size() > 0) fail(sb.toString());
+	}
+
+	/**
+	 * test reading GSM-015 GNSS Speed Meterr 3gpl files from device directory and writes OSD files to %TEMP%\Write_1_OSD
+	 * all consistent files must red without failures
+	 */
+	public final void testSkyRC_GPSLoggerReaderOsdWriter() {
+		HashMap<String, Exception> failures = new HashMap<String, Exception>();
+
+		this.setDataPath(); //set the dataPath variable
+
+		try {
+			List<File> files = FileUtils.getFileListing(this.dataPath, 1);
+
+			for (File file : files) {
+				System.out.println("working with : " + file);
+				if (file.getAbsolutePath().toLowerCase().endsWith(".3gpl")
+						&& (file.getPath().toLowerCase().contains("/skyrc_dynamite_gps-logger/"))) { 
+					System.out.println("working with : " + file);
+
+					try {
+						//System.out.println("file.getPath() = " + file.getPath());
+						String deviceName = "GSM-015 GNSS Speed Meter";
+						//System.out.println("deviceName = " + deviceName);
+						DeviceConfiguration deviceConfig = this.deviceConfigurations.get(deviceName);
+						if (deviceConfig == null) throw new NotSupportedException("device = " + deviceName + " is not supported or in list of active devices");
+
+						// GPS-Logger and similar file
+						IDevice device = this.getInstanceOfDevice(deviceConfig);
+						this.analyzer.setActiveDevice(device);
+
+						setupDataChannels(device);
+
+						this.channels.setActiveChannelNumber(1);
+						Channel activeChannel = this.channels.getActiveChannel();
+						activeChannel.setFileName(file.getAbsolutePath());
+						activeChannel.setFileDescription(StringHelper.getDateAndTime() + " - imported from 3gpl file");
+						activeChannel.setSaved(true);
+
+						GplLogReader.read(file.getAbsolutePath(), device, "RecordSet", 1);
+						RecordSet recordSet = activeChannel.getActiveRecordSet();
+
+						if (recordSet != null) {
+							activeChannel.setActiveRecordSet(recordSet);
+							activeChannel.applyTemplate(recordSet.getName(), true);
+							//device.makeInActiveDisplayable(recordSet);
+							drawCurves(recordSet, 1024, 768);
+						}
+
+						if (!new File(this.tmpDir1).exists())
+							throw new FileNotFoundException(this.tmpDir1);
+
+						String absolutFilePath = this.tmpDir1 + file.getName();
+						absolutFilePath = absolutFilePath.substring(0, absolutFilePath.length() - 4) + "_nmea.osd";
+						System.out.println("writing as   : " + absolutFilePath);
+						OsdReaderWriter.write(absolutFilePath, this.channels.getActiveChannel(), GDE.DATA_EXPLORER_FILE_VERSION_INT);
+					}
+					catch (Exception e) {
+						e.printStackTrace();
+						failures.put(file.getAbsolutePath(), e);
+					}
+				}
+			}
+
+		}
+		catch (FileNotFoundException e) {
+			e.printStackTrace();
+			fail(e.toString());
+		}
+
+		StringBuilder sb = new StringBuilder();
+		for (String key : failures.keySet()) {
+			sb.append(key).append(" - ").append(failures.get(key).getMessage()).append("\n");
+		}
+		if (failures.size() > 0) fail(sb.toString());
+	}
+
+	/**
+	 * test reading Dynamite Passport GPS Speed Meter 3gpl files from device directory and writes OSD files to %TEMP%\Write_1_OSD
+	 * all consistent files must red without failures
+	 */
+	public final void testDynamite_GPSLoggerReaderOsdWriter() {
+		HashMap<String, Exception> failures = new HashMap<String, Exception>();
+
+		this.setDataPath(); //set the dataPath variable
+
+		try {
+			List<File> files = FileUtils.getFileListing(this.dataPath, 1);
+
+			for (File file : files) {
+				if (file.getAbsolutePath().toLowerCase().endsWith(".3gpl")
+						&& (file.getPath().toLowerCase().contains("/skyrc_dynamite_gps-logger/"))) { 
+					System.out.println("working with : " + file);
+
+					try {
+						//System.out.println("file.getPath() = " + file.getPath());
+						String deviceName = "Dynamite Passport GPS Speed Meter";
+						//System.out.println("deviceName = " + deviceName);
+						DeviceConfiguration deviceConfig = this.deviceConfigurations.get(deviceName);
+						if (deviceConfig == null) throw new NotSupportedException("device = " + deviceName + " is not supported or in list of active devices");
+
+						// GPS-Logger and similar file
+						IDevice device = this.getInstanceOfDevice(deviceConfig);
+						this.analyzer.setActiveDevice(device);
+
+						setupDataChannels(device);
+
+						this.channels.setActiveChannelNumber(1);
+						Channel activeChannel = this.channels.getActiveChannel();
+						activeChannel.setFileName(file.getAbsolutePath());
+						activeChannel.setFileDescription(StringHelper.getDateAndTime() + " - imported from 3gpl file");
+						activeChannel.setSaved(true);
+
+						GplLogReader.read(file.getAbsolutePath(), device, "RecordSet", 1);
 						RecordSet recordSet = activeChannel.getActiveRecordSet();
 
 						if (recordSet != null) {
