@@ -22,7 +22,7 @@ Device specific changes/fixes
 	* HoTTAdapter - fix VoltageRx_min and TemperatureRx while live-data gathering
 	* HoTTAdapter2 - enable altitude/climb value sensor by drop down selection live gatherer
 	* HoTTAdapter2 - add altitude/climb value sensor to record set description
-	* UT16E - add additional data query to suppress dirty bytes
+	* UT61E - add additional data query to suppress dirty bytes
 
 
 Version 3.7.2 - 01 Nov 2022
