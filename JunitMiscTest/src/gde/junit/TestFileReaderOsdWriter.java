@@ -1057,8 +1057,7 @@ public class TestFileReaderOsdWriter extends TestSuperClass {
 						activeChannel.setFileDescription(StringHelper.getDateAndTime() + " - imported from 3gpl file");
 						activeChannel.setSaved(true);
 
-						GplLogReader.read(file.getAbsolutePath(), device, "RecordSet", 1);
-						RecordSet recordSet = activeChannel.getActiveRecordSet();
+						RecordSet recordSet = GplLogReader.read(file.getAbsolutePath(), device, "RecordSet", 1);
 
 						if (recordSet != null) {
 							activeChannel.setActiveRecordSet(recordSet);
@@ -1071,7 +1070,7 @@ public class TestFileReaderOsdWriter extends TestSuperClass {
 							throw new FileNotFoundException(this.tmpDir1);
 
 						String absolutFilePath = this.tmpDir1 + file.getName();
-						absolutFilePath = absolutFilePath.substring(0, absolutFilePath.length() - 4) + "_nmea.osd";
+						absolutFilePath = absolutFilePath.substring(0, absolutFilePath.length() - 4) + "_3gpl.osd";
 						System.out.println("writing as   : " + absolutFilePath);
 						OsdReaderWriter.write(absolutFilePath, this.channels.getActiveChannel(), GDE.DATA_EXPLORER_FILE_VERSION_INT);
 					}
@@ -1131,8 +1130,7 @@ public class TestFileReaderOsdWriter extends TestSuperClass {
 						activeChannel.setFileDescription(StringHelper.getDateAndTime() + " - imported from 3gpl file");
 						activeChannel.setSaved(true);
 
-						GplLogReader.read(file.getAbsolutePath(), device, "RecordSet", 1);
-						RecordSet recordSet = activeChannel.getActiveRecordSet();
+						RecordSet recordSet = GplLogReader.read(file.getAbsolutePath(), device, "RecordSet", 1);
 
 						if (recordSet != null) {
 							activeChannel.setActiveRecordSet(recordSet);
@@ -1145,7 +1143,7 @@ public class TestFileReaderOsdWriter extends TestSuperClass {
 							throw new FileNotFoundException(this.tmpDir1);
 
 						String absolutFilePath = this.tmpDir1 + file.getName();
-						absolutFilePath = absolutFilePath.substring(0, absolutFilePath.length() - 4) + "_nmea.osd";
+						absolutFilePath = absolutFilePath.substring(0, absolutFilePath.length() - 4) + "_3gpl.osd";
 						System.out.println("writing as   : " + absolutFilePath);
 						OsdReaderWriter.write(absolutFilePath, this.channels.getActiveChannel(), GDE.DATA_EXPLORER_FILE_VERSION_INT);
 					}

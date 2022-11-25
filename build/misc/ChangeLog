@@ -1,6 +1,6 @@
 Development history / change log, please read from bottom up
 
-Version 3.7.3 - xx yyy 2022
+Version 3.7.3 - 26 Nov 2022
 Generic changes/fixes 
 	* enable modification of UTC delta value for GPS devices which does not define such value
 	* make GPX export more tolerant

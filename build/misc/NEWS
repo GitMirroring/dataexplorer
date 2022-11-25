@@ -1,32 +1,50 @@
-GNU DataExplorer - News - comes with Version 3.7.2 - 01 Nov 2022
+GNU DataExplorer - News - comes with Version 3.7.3 - 26 Nov 2022
 
 Generic changes/fixes 
-	* refine ARM processor architecture query
-	* update patched SWT for Windows 64 bit to have correct visualization below Win10&11 as well as correct function of FileDialog.setFilterPath()
-		reference https://bugs.eclipse.org/bugs/show_bug.cgi?id=577190 
+	* enable modification of UTC delta value for GPS devices which does not define such value
+	* make GPX export more tolerant
+	* update integrated Java runtime to 17.0.5
+	* fix setRTS(false) while using jSerialComm
+	* fix freeze while quit with running device thread
+	* add missing update of port related tool bar and menu while gatherer thread is running
+	* update cell voltage adjustment dialog
+	* add module jdk.xml.dom to version where runtime includes to fix MDL Viewer PDF export
+	* fix statistics description update, clear loading new file
 		
 Device specific changes/fixes
-	* HoTTAdapter* - enable HoTTlogReader* inheritance
-	* iChargerUSB* - fix dynamically setting of timeout in dependency of program memory log interval
-	* iChargerUSB* - fix wrong memory head index selection
-	* iChargerUSB* - fix missing update memory configuration dialog switching to Li battery type
-	* iChargerDX*  - support all possible 64 program memories
-	* iCharger*X*  - fix removal of channel modus power setting
-	* iChargerUSB* - fix missing disable of delete button while BUILD IN memory selected
+	* Dynamite Passport GPS Speed Meter - add plug-in
+	* GSM-015 GNSS Speed Meter - add plug-in
+	* HoTTAdapter* - update error handling live gatherer
+	* HoTTAdapter* - update GPS detection for SM GPS-Logger & RCE Sparrow/Swift live gatherer
+	* HoTTAdapter* - synchronize filter with binary parser live gatherer
+	* HoTTAdapter* - fix several indexing values GAM EAM
+	* HoTTAdapter - fix VoltageRx_min and TemperatureRx while live-data gathering
+	* HoTTAdapter2 - enable altitude/climb value sensor by drop down selection live gatherer
+	* HoTTAdapter2 - add altitude/climb value sensor to record set description
+	* UT61E - add additional data query to suppress dirty bytes
 
 	
 Grundlegende Korrekturen/Änderungen
-	* Verbesserung ARM Prozessor Architectur Abfrage
-	* Update mit gepatchtem SWT für Windows 64 bit, um eine korrekte Visualisierung unter Win10&11, sowie eine korrekte Funktion von FileDialog.setFilterPath()
-		reference https://bugs.eclipse.org/bugs/show_bug.cgi?id=577190 
+    * ermögliche Modifikation des UTC Zeitdeltas für GPS Logger, die diese Möglichkeit nicht bieten
+    * GPX Export ist nun toleranter
+    * Update integrierte Java Runtime zu 17.0.5
+    * Korrektur setRTS(false) bei Verwendung von jSerialComm
+    * Erkenne laufenden Geräte-Prozess zur Verhinderung von Fehlern, die das Beenden der Anwendung behindert
+    * Fehlender Update der Port bezogenen Tool Bar bei laufendem Geräteprozess behoben
+    * Zellenspannungs-Dialog überarbeitet
+    * Module jdk.xml.dom zur Java Runtime hinzugefügt, um dem MDL Viewer Export zu ermöglichen
+    * Update der Datensatzbeschreibung der Statistik Tabulators verbessert
 
-Gerätespezifische Korrekturen/Änderungen
-	* HoTTAdapter* - HoTTlogReader* Vererbung ermöglicht
-	* iChargerUSB* - Korrektur beim dynamisches Setzen des Timeouts in Abhängigkeit vom Programmspeicher-Log-Intervalls
-	* iChargerUSB* - Korrektur Speicherkopfindex Selektion
-	* iChargerUSB* - fehlender Update des Programmspeicherdialoges korrigiert
-	* iChargerDX*  - Unterstützung aller 64 möglichen Programmspeicher
-	* iCharger*X*  - entfernen des Kanal-Modus für Power-Einstellungen korrigiert
-	* iChargerUSB* - BUILD IN Einträge können nun nicht mehr ausveersehen gelöscht werden
+Geräte-spezifische Korrekturen/Änderungen
+    * Dynamite Passport GPS Speed Meter - Plug-in hinzugefügt
+    * GSM-015 GNSS Speed Meter - Plug-in hinzugefügt
+    * HoTTAdapter* - Korrektur der Fehlerbehandlung bei Live-Datenaufnahme
+    * HoTTAdapter* - Korrektur der GPS Type Erkennung für SM GPS-Logger & RCE Sparrow/Swift bei Live-Datenaufnahme
+    * HoTTAdapter* - Synchronisation der Filter zwischen Binär-Parser und Live-Datenaufnahme
+    * HoTTAdapter* - Korrektur verschiedener Indexfehler bei GAM EAM Live-Datenaufnahme
+    * HoTTAdapter - Korrektur SpannungRx_min and TemperaturRx bei Live-Datenaufnahme
+    * HoTTAdapter2 - Synchronisiere  Höhe/Steigen Sensorauswahl zwischen Binär-Parser und Live-Datenaufnahme
+    * HoTTAdapter2 - Höhe/Steigen Sensorauswahl wird nun als Datensatzbeschreibung mit ausgegeben
+    * UT61E - Zusätzliche Datenabfrage zur Unterdrückung fehlerhafter Bytes hinzugefügt
 
 		
