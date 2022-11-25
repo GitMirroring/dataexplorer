@@ -203,7 +203,7 @@ public class GPSLogger extends DeviceConfiguration implements IDevice {
 
 	@Override
 	public int[] convertDataBytes(int[] points, byte[] dataBuffer) {
-		//GPS 0=velocity 1=altitudeGPS 2=longitude 3=latitude 
+		//GPS 0=velocity 1=altitudeGPS 2=longitude 3=latitude 4=trip
 		//log.log(Level.OFF, StringHelper.byte2Hex2CharString(dataBuffer));
 		points[0] = DataParser.intFromBytes((byte)0, dataBuffer[0], dataBuffer[1], dataBuffer[2]) * 1000;
 		points[1] = DataParser.intFromBytes((byte)0, dataBuffer[3], dataBuffer[4], dataBuffer[5]) * 1000;

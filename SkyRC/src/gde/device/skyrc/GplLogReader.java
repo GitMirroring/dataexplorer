@@ -100,31 +100,35 @@ public class GplLogReader {
 				long timeStamp_ms = 0;
 				while (data_in.read(buffer) != -1) {
 					if (!isLogData && buffer[0] == beginMarker && buffer[1] == beginMarker && buffer[2] == beginMarker) {
+						//GPS 0=velocity 1=altitudeGPS 2=longitude 3=latitude 4=trip
 						isLogData = true;
 						recordSetName = (activeChannel.size() + 1) + recordSetNameExtend;
 						recordSetName = recordNameExtend.length() > 2 ? recordSetName + GDE.STRING_BLANK_LEFT_BRACKET + recordNameExtend + GDE.STRING_RIGHT_BRACKET : recordSetName;
 						recordSet = RecordSet.createRecordSet(recordSetName, device, channelConfigNumber, true, true, true);
 						activeChannel.put(recordSetName, recordSet);
 						recordSet = activeChannel.get(recordSetName);
-						String speedUnit = buffer[4] == 0x00 ? "km/h" : buffer[4] == 0x01 ? "mph" : "?/h";
+						String speedUnit = buffer[4] == 0x00 ? "km/h" : buffer[4] == 0x01 ? "mph" : "km/h";
 						recordSet.get(0).setUnit(speedUnit);
 						switch (speedUnit) {
+						default:
 						case "km/h":
-							recordSet.get(1).setUnit("m");		//altitude
-							recordSet.get(1).setFactor(1.0);	//altitude
-							recordSet.get(4).setUnit("km"); 	//trip length
-							recordSet.get(4).setFactor(1.0);
+							recordSet.get(0).setFactor(0.001);	//speed
+							recordSet.get(1).setUnit("m");			//altitude
+							recordSet.get(1).setFactor(0.1);		//altitude
+							recordSet.get(4).setUnit("km"); 		//trip length
+							recordSet.get(4).setFactor(1.0);		//trip length
 							break;
 						case "mph":
-							recordSet.get(1).setUnit("Feet");		//altitude
-							recordSet.get(1).setFactor(3.281);	//altitude
-							recordSet.get(4).setUnit("Miles");	//trip length
-							recordSet.get(4).setFactor(0.6214);
+							recordSet.get(0).setFactor(0.0006214);//speed
+							recordSet.get(1).setUnit("feet");		//altitude
+							recordSet.get(1).setFactor(0.3281);	//altitude
+							recordSet.get(4).setUnit("mi");			//trip length
+							recordSet.get(4).setFactor(0.6214);	//trip length
 							break;
 						}
 						int utcOffset = (buffer[5] & 0xFF) - 12;
 						timeStep_ms = 100 * buffer[3];
-						log.log(Level.OFF, String.format("timeStep_ms = %d speedUnit = 0x%02X utcOffset = %d firmware = %d.%d", timeStep_ms, buffer[4], buffer[5] - 12, buffer[12], buffer[13]));
+						log.log(Level.INFO, String.format("timeStep_ms = %d speedUnit = 0x%02X utcOffset = %d firmware = %d.%d", timeStep_ms, buffer[4], buffer[5] - 12, buffer[12], buffer[13]));
 						int year = 2000 + buffer[6];
 						int month = buffer[7];
 						int day = buffer[8];
