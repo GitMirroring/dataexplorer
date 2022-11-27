@@ -1,5 +1,12 @@
 Development history / change log, please read from bottom up
 
+Version 3.7.4 - xx yyy 2022
+Generic changes/fixes 
+	* enable modification of UTC delta value for GPS devices which does not define such value
+		
+Device specific changes/fixes
+	* HoTTAdapter2 - *.log import, correct dependency migrating GAM data
+
 Version 3.7.3 - 26 Nov 2022
 Generic changes/fixes 
 	* enable modification of UTC delta value for GPS devices which does not define such value
