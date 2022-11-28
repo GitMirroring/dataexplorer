@@ -97,11 +97,18 @@ public class iCharger4010DUO extends iChargerUsb {
 	}
 
 	/**
-	 * @return the maximal charge current
+	 * @return the maximal charge current for each channel (async)
 	 */
 	@Override
-	public int getChargeCurrentMax() {
+	public int getChargeCurrentMax4Channel() {
 		return 400; //*0.1 A
+	}
+	
+	/**
+	 * @return the maximal charge current for channels in sync
+	 */
+	public int getChargeCurrentMaxSyncChannels() {
+		return 700; //*0.1 A
 	}
 
 	/**

@@ -327,8 +327,8 @@ public class ChargerDialog extends DeviceDialog {
 		this.device = useDevice;
 		this.usbPort = ((iChargerUsb) this.device).getUsbPort();
 		setText(this.device.getName());
-		this.isDuo = this.device.getName().toLowerCase().endsWith("duo") ? true : false; //$NON-NLS-1$
-		this.isDx = device.getName().toLowerCase().contains(" dx") ? true : false; //$NON-NLS-1$
+		this.isDuo = this.device.getName().toLowerCase().endsWith("duo") && !this.device.getName().toLowerCase().contains("45") ? true : false; //$NON-NLS-1$
+		this.isDx = device.getName().toLowerCase().contains(" dx") || this.device.getName().toLowerCase().endsWith("duo") && this.device.getName().toLowerCase().contains("45")? true : false; //$NON-NLS-1$
 		String[] tmpNamesArray = this.isDuo ? iChargerUsb.BatteryTypesDuo.getValues() : iChargerX6.BatteryTypesX.getValues();
 		this.cellTypeNamesArray = new String[tmpNamesArray.length - (this.isDuo ? 2 : 4)];
 		System.arraycopy(tmpNamesArray, 1, this.cellTypeNamesArray, 0, this.cellTypeNamesArray.length);
@@ -760,6 +760,7 @@ public class ChargerDialog extends DeviceDialog {
 
 					case 47: // channel mode asynchronous | synchronous DUO only
 						ChargerDialog.this.selectedProgramMemory.setChannelMode((byte) ChargerDialog.this.memoryValues[47]);
+						log.log(Level.OFF, "channel async/sync = " + ChargerDialog.this.memoryValues[47]);
 						break;
 					case 48: // log interval
 						ChargerDialog.this.selectedProgramMemory.setLogInterval((short) (ChargerDialog.this.memoryValues[48] - ChargerDialog.this.memoryValues[48]%5));
@@ -1349,8 +1350,8 @@ public class ChargerDialog extends DeviceDialog {
 		this.device = (iChargerUsb) DataExplorer.getInstance().getActiveDevice();
 		this.usbPort = ((iChargerUsb) this.device).getUsbPort();
 		setText(this.device.getName());
-		this.isDuo = this.device.getName().toLowerCase().endsWith("duo") ? true : false; //$NON-NLS-1$
-		this.isDx = device.getName().toLowerCase().contains(" dx") ? true : false; //$NON-NLS-1$
+		this.isDuo = this.device.getName().toLowerCase().endsWith("duo") && !this.device.getName().toLowerCase().contains("45") ? true : false; //$NON-NLS-1$
+		this.isDx = device.getName().toLowerCase().contains(" dx") || this.device.getName().toLowerCase().endsWith("duo") && this.device.getName().toLowerCase().contains("45")? true : false; //$NON-NLS-1$
 		String[] tmpNamesArray = this.isDuo ? iChargerUsb.BatteryTypesDuo.getValues() : iChargerX6.BatteryTypesX.getValues();
 		this.cellTypeNamesArray = new String[tmpNamesArray.length - (this.isDuo ? 2 : 4)];
 		System.arraycopy(tmpNamesArray, 1, this.cellTypeNamesArray, 0, this.cellTypeNamesArray.length);
@@ -2490,8 +2491,8 @@ public class ChargerDialog extends DeviceDialog {
 		this.chargeComposite.setSize(750, GDE.IS_WINDOWS ? 880 : 1050);
 		//charge parameter current
 		this.memoryParameters[3] = new ParameterConfigControl(this.chargeComposite, this.memoryValues, 3, "%4.2f", Messages.getString(MessageIds.GDE_MSGT2640), 175, 
-				String.format("0.05 ~ %d A", device.getChargeCurrentMax()/10), 280, //$NON-NLS-1$
-				true, 50, 200, 5, device.getChargeCurrentMax()*10, -5, false);
+				String.format("0.05 ~ %d A", device.getChargeCurrentMax4Channel()/10), 280, //$NON-NLS-1$
+				true, 50, 200, 5, device.getChargeCurrentMax4Channel()*10, -5, false);
 		//charge parameter modus normal,balance,external,reflex
 		this.memoryParameters[4] = new ParameterConfigControl(this.chargeComposite, this.memoryValues, 4, Messages.getString(MessageIds.GDE_MSGT2641), 175, String.join(", ", ChargerMemory.LiMode.VALUES), //$NON-NLS-1$
 				280, ChargerMemory.LiMode.VALUES, 50, 200);
@@ -2607,8 +2608,8 @@ public class ChargerDialog extends DeviceDialog {
 		this.dischargeComposite.setSize(750, GDE.IS_WINDOWS ? 480 : 580);
 		//discharge parameter current
 		this.memoryParameters[17] = new ParameterConfigControl(this.dischargeComposite, this.memoryValues, 17, "%4.2f", Messages.getString(MessageIds.GDE_MSGT2671), 175, 
-				String.format("0.05 ~ %d A", device.getChargeCurrentMax()/10), 280, //$NON-NLS-1$
-				true, 50, 200, 5, device.getChargeCurrentMax()*10, -5, false);
+				String.format("0.05 ~ %d A", device.getChargeCurrentMax4Channel()/10), 280, //$NON-NLS-1$
+				true, 50, 200, 5, device.getChargeCurrentMax4Channel()*10, -5, false);
 		//discharge parameter cell voltage
 		this.memoryParameters[18] = new ParameterConfigControl(this.dischargeComposite, this.memoryValues, 18, "%4.3f", Messages.getString(MessageIds.GDE_MSGT2672), 175, "3.000 - 4.100 V", 280, //$NON-NLS-1$
 				true, 50, 200, 3000, 4100, -3000, false);
@@ -3189,20 +3190,32 @@ public class ChargerDialog extends DeviceDialog {
 					break;
 				}
 			}
-			if (isDuo || isDx) {//47 channel mode asynchronous | synchronous DUO only
-				this.memoryParameters[47].setEnabled(true);
-				if (this.regToInputWarningLable != null) {
-					boolean isToInput = this.memoryValues[20] == 1;
-					this.regToInputWarningLable.setEnabled(isToInput);
-					this.regToInputWarningLable.setForeground(isToInput ? SWTResourceManager.getColor(SWT.COLOR_RED) : SWTResourceManager.getColor(SWT.COLOR_WIDGET_BACKGROUND));
-				}
-				if (this.regToChannelSettings != null) {
-					boolean isToChannel = this.memoryValues[20] == 2;
-					this.regToChannelSettings.setEnabled(isToChannel);
-					this.memoryParameters[50].setEnabled(isToChannel);
-					boolean isResOrBulb = this.memoryValues[50] == 0;
-					this.memoryParameters[51].setEnabled(isToChannel && isResOrBulb);
-					this.memoryParameters[52].setEnabled(isToChannel && isResOrBulb);
+			if (isDuo || isDx) {//47 channel mode asynchronous | synchronous DUO/DX only
+				if (this.memoryParameters[47] != null) {
+					this.memoryParameters[47].setEnabled(true);
+					if (this.regToInputWarningLable != null) {
+						boolean isToInput = this.memoryValues[20] == 1;
+						this.regToInputWarningLable.setEnabled(isToInput);
+						this.regToInputWarningLable.setForeground(isToInput ? SWTResourceManager.getColor(SWT.COLOR_RED) : SWTResourceManager.getColor(SWT.COLOR_WIDGET_BACKGROUND));
+					}
+					if (this.regToChannelSettings != null) {
+						boolean isToChannel = this.memoryValues[20] == 2;
+						this.regToChannelSettings.setEnabled(isToChannel);
+						this.memoryParameters[50].setEnabled(isToChannel);
+						boolean isResOrBulb = this.memoryValues[50] == 0;
+						this.memoryParameters[51].setEnabled(isToChannel && isResOrBulb);
+						this.memoryParameters[52].setEnabled(isToChannel && isResOrBulb);
+					}
+					
+					//update charge/discharge max current channel async/sync
+					if (this.memoryValues[47] == 1) {//single channel or channels async
+						this.memoryParameters[3].updateValueRange(String.format("0.05 ~ %d A", device.getChargeCurrentMaxSyncChannels()/10), 5, device.getChargeCurrentMaxSyncChannels()*10); //$NON-NLS-1$
+						this.memoryParameters[17].updateValueRange(String.format("0.05 ~ %d A", device.getChargeCurrentMaxSyncChannels()/10), 5, device.getChargeCurrentMaxSyncChannels()*10); //$NON-NLS-1$
+					}
+					else {//duo device channels in sync
+						this.memoryParameters[3].updateValueRange(String.format("0.05 ~ %d A", device.getChargeCurrentMax4Channel()/10), 5, device.getChargeCurrentMax4Channel()*10); //$NON-NLS-1$
+						this.memoryParameters[17].updateValueRange(String.format("0.05 ~ %d A", device.getChargeCurrentMax4Channel()/10), 5, device.getChargeCurrentMax4Channel()*10); //$NON-NLS-1$
+					}
 				}
 			}
 			else {

@@ -99,12 +99,17 @@ public class iChargerX8 extends iChargerUsb {
 	}
 
 	/**
-	 * @return the maximal charge current
+	 * @return the maximal charge current for channel
 	 */
 	@Override
-	public int getChargeCurrentMax() {
+	public int getChargeCurrentMax4Channel() {
 		return 300; //*0.1 A
 	}
+	
+	/**
+	 * @return the maximal charge current for channels in sync
+	 */
+	public int getChargeCurrentMaxSyncChannels() { return 0;};
 
 	/**
 	 * @return the maximal charge power

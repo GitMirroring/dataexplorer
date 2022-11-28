@@ -88,7 +88,7 @@ public class iChargerDX6 extends iChargerUsb {
 	 */
 	@Override
 	public int getRegInputVoltMin() {
-		return 90; //*0.1V
+		return 100; //*0.1V
 	}
 	
 	/**
@@ -100,10 +100,17 @@ public class iChargerDX6 extends iChargerUsb {
 	}
 
 	/**
-	 * @return the maximal charge current
+	 * @return the maximal charge current for each channel (async)
 	 */
 	@Override
-	public int getChargeCurrentMax() {
+	public int getChargeCurrentMax4Channel() {
+		return 320; //*0.1 A
+	}
+	
+	/**
+	 * @return the maximal charge current for channels in sync
+	 */
+	public int getChargeCurrentMaxSyncChannels() {
 		return 500; //*0.1 A
 	}
 
@@ -128,7 +135,7 @@ public class iChargerDX6 extends iChargerUsb {
 	 */
 	@Override
 	public int[] getRegChannelVoltageLimits() {
-		return new int[] {2000, 28000};
+		return new int[] {10000, 33000};
 	}
 
 	/**
@@ -136,6 +143,6 @@ public class iChargerDX6 extends iChargerUsb {
 	 */
 	@Override
 	public int[] getRegChannelCurrentLimits() {
-		return new int[] {5, 3200};
+		return new int[] {10, 6500};
 	}
 }

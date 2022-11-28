@@ -822,9 +822,14 @@ public abstract class iChargerUsb extends iCharger implements IDevice {
 	public abstract int getRegInputVoltMax();
 	
 	/**
-	 * @return the maximal charge current
+	 * @return the maximal charge current for channel (duo -> async)
 	 */
-	public abstract int getChargeCurrentMax();
+	public abstract int getChargeCurrentMax4Channel();
+	
+	/**
+	 * @return the maximal charge current for channels in sync
+	 */
+	public abstract int getChargeCurrentMaxSyncChannels();
 	
 	/**
 	 * @return the maximal charge power

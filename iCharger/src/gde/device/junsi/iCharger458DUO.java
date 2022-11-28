@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with GNU DataExplorer.  If not, see <https://www.gnu.org/licenses/>.
 
-    Copyright (c) 2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022 Winfried Bruegmann
+    Copyright (c) 2019,2020,2021,2022 Winfried Bruegmann
 ****************************************************************************************/
 package gde.device.junsi;
 
@@ -23,28 +23,30 @@ import java.io.FileNotFoundException;
 import javax.xml.bind.JAXBException;
 
 import gde.device.DeviceConfiguration;
+import gde.device.junsi.iChargerX6.BatteryTypesX;
 
 /**
- * Junsi iCharger 406DUO device class
+ * Junsi iCharger DX8 device class
  * @author Winfried Brügmann
  */
-public class iCharger406DUO extends iChargerUsb {
+public class iCharger458DUO extends iChargerUsb {
 
 	/**
-	 * constructor using properties file
-	 * @throws JAXBException
+	 * @param deviceProperties
 	 * @throws FileNotFoundException
+	 * @throws JAXBException
 	 */
-	public iCharger406DUO(String deviceProperties) throws FileNotFoundException, JAXBException {
+	public iCharger458DUO(String deviceProperties) throws FileNotFoundException, JAXBException {
 		super(deviceProperties);
+		this.BATTERIE_TYPES = BatteryTypesX.getValues(); 
 	}
 
 	/**
-	 * constructor using existing device configuration
-	 * @param deviceConfig device configuration
+	 * @param deviceConfig
 	 */
-	public iCharger406DUO(DeviceConfiguration deviceConfig) {
+	public iCharger458DUO(DeviceConfiguration deviceConfig) {
 		super(deviceConfig);
+		this.BATTERIE_TYPES = BatteryTypesX.getValues(); 
 	}
 
 	/**
@@ -53,7 +55,7 @@ public class iCharger406DUO extends iChargerUsb {
 	 */
 	@Override
 	public int getNumberOfLithiumCells() {
-		return 6;
+		return 8;
 	}
 	
 	/**
@@ -69,7 +71,7 @@ public class iCharger406DUO extends iChargerUsb {
 	 */
 	@Override
 	public int getDcInputVoltMax() {
-		return 290; //*0.1 V
+		return 490; //*0.1 V
 	}
 	
 	/**
@@ -77,7 +79,7 @@ public class iCharger406DUO extends iChargerUsb {
 	 */
 	@Override
 	public int getDcInputCurrentMax() {
-		return 600; //*0.1 A
+		return 700; //*0.1 A
 	}
 	
 	/**
@@ -85,7 +87,7 @@ public class iCharger406DUO extends iChargerUsb {
 	 */
 	@Override
 	public int getRegInputVoltMin() {
-		return 100; //*0.1V
+		return 90; //*0.1V
 	}
 	
 	/**
@@ -93,7 +95,7 @@ public class iCharger406DUO extends iChargerUsb {
 	 */
 	@Override
 	public int getRegInputVoltMax() {
-		return 300; //*0.1 V
+		return 490; //*0.1 V
 	}
 
 	/**
@@ -101,7 +103,7 @@ public class iCharger406DUO extends iChargerUsb {
 	 */
 	@Override
 	public int getChargeCurrentMax4Channel() {
-		return 400; //*0.1 A
+		return 450; //*0.1 A
 	}
 	
 	/**
@@ -116,7 +118,7 @@ public class iCharger406DUO extends iChargerUsb {
 	 */
 	@Override
 	public int[] getChargePowerMax() {
-		return new int[] {1000, 1000};
+		return new int[] {1600, 1600};
 	}
 
 	/**
@@ -132,7 +134,7 @@ public class iCharger406DUO extends iChargerUsb {
 	 */
 	@Override
 	public int[] getRegChannelVoltageLimits() {
-		return new int[] {200, 27000};
+		return new int[] {2000, 36500};
 	}
 
 	/**
@@ -140,6 +142,6 @@ public class iCharger406DUO extends iChargerUsb {
 	 */
 	@Override
 	public int[] getRegChannelCurrentLimits() {
-		return new int[] {5, 4000};
+		return new int[] {5, 3000};
 	}
 }

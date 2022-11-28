@@ -6,6 +6,9 @@ Generic changes/fixes
 		
 Device specific changes/fixes
 	* HoTTAdapter2 - *.log import, correct dependency migrating GAM data
+	* iChargerUSB* - fix missing update switching async/sync dual channel devices
+	* iChargerUSB* - update some adjustment limit values to latest specification
+	* iCharger458/456 - add initial implementation 
 
 Version 3.7.3 - 26 Nov 2022
 Generic changes/fixes 
