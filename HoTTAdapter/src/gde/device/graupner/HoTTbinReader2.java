@@ -371,7 +371,7 @@ public class HoTTbinReader2 extends HoTTbinReader {
 					+ Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] { ((RcvBinParser) HoTTbinReader2.rcvBinParser).getCountPackageLoss(), packageLossPercentage, ((RcvBinParser) HoTTbinReader.rcvBinParser).getLostPackages().getStatistics() })
 					+ GDE.STRING_MESSAGE_CONCAT 
 					+ Sensor.getSetAsSignature(HoTTbinReader.detectedSensors)
-					+ (HoTTbinReader2.detectedSensors.size() > 1 
+					+ (HoTTbinReader2.detectedSensors.size() > 1 && pickerParameters.altitudeClimbSensorSelection != 0
 							? String.format(" - %s = %s", Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGT2419), Sensor.fromOrdinal(pickerParameters.altitudeClimbSensorSelection).name())
 									: ""));
 

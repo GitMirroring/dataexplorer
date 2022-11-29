@@ -983,7 +983,9 @@ public class HoTTbinReader {
 					: "100";
 			HoTTbinReader.recordSetReceiver.setRecordSetDescription(tmpRecordSet.getRecordSetDescription() + Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] {
 					((RcvBinParser) HoTTbinReader.rcvBinParser).getLossTotal(), packageLossPercentage,
-					((RcvBinParser) HoTTbinReader.rcvBinParser).getLostPackages().getStatistics() }) + Sensor.getSetAsSignature(HoTTbinReader.detectedSensors));
+					((RcvBinParser) HoTTbinReader.rcvBinParser).getLostPackages().getStatistics() }) 
+					+ GDE.STRING_MESSAGE_CONCAT 
+					+ Sensor.getSetAsSignature(HoTTbinReader.detectedSensors));
 			HoTTbinReader.log.logp(Level.WARNING, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, "skipped number receiver data due to package loss = " + ((RcvBinParser) HoTTbinReader.rcvBinParser).getLossTotal()); //$NON-NLS-1$
 			HoTTbinReader.log.logp(Level.TIME, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, "read time = " //$NON-NLS-1$
 					+ StringHelper.getFormatedTime("mm:ss:SSS", (System.nanoTime() / 1000000 - startTime))); //$NON-NLS-1$
@@ -1396,7 +1398,9 @@ public class HoTTbinReader {
 					: "100";
 			HoTTbinReader.recordSetReceiver.setRecordSetDescription(tmpRecordSet.getRecordSetDescription() + Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] {
 					((RcvBinParser) HoTTbinReader.rcvBinParser).getLossTotal(), packageLossPercentage,
-					((RcvBinParser) HoTTbinReader.rcvBinParser).getLostPackages().getStatistics() }) + Sensor.getSetAsSignature(HoTTbinReader.detectedSensors));
+					((RcvBinParser) HoTTbinReader.rcvBinParser).getLostPackages().getStatistics() }) 
+					+ GDE.STRING_MESSAGE_CONCAT 
+					+ Sensor.getSetAsSignature(HoTTbinReader.detectedSensors));
 			HoTTbinReader.log.logp(Level.WARNING, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, "skipped number receiver data due to package loss = " + ((RcvBinParser) HoTTbinReader.rcvBinParser).getLossTotal()); //$NON-NLS-1$
 			HoTTbinReader.log.logp(Level.TIME, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, "read time = " //$NON-NLS-1$
 					+ StringHelper.getFormatedTime("mm:ss:SSS", (System.nanoTime() / 1000000 - startTime))); //$NON-NLS-1$
