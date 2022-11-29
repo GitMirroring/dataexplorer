@@ -11,7 +11,7 @@
     <UsbPort>
         <vendorId>0x0483</vendorId>
         <productId>0x5751</productId>
-        <productString>Junsi 456Duo USB HID</productString>
+        <productString>Junsi 456DUO USB HID</productString>
         <usbInterface>
             <interface>0x00</interface>
             <endPointIn>0x01</endPointIn>
