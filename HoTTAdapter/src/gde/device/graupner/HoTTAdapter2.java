@@ -272,8 +272,8 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 				points[1] = (dataBuffer[9] & 0xFF) * 1000;
 				points[2] = (dataBuffer[5] & 0xFF) * 1000;
 				points[3] = tmpPackageLoss * 1000;
-				points[4] = (dataBuffer[13] & 0xFF) * 1000;
-				points[5] = (dataBuffer[8] & 0xFF) * 1000;
+				points[4] = (dataBuffer[13] & 0xFF) * -1000;
+				points[5] = (dataBuffer[8] & 0xFF) * -1000;
 				points[6] = tmpVoltageRx * 1000;
 				points[7] = tmpTemperatureRx * 1000;
 				points[8] = (dataBuffer[10] & 0xFF) * 1000;
@@ -564,8 +564,8 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 						points[1] = (dataBuffer[17] & 0xFF) * 1000;
 						points[2] = (dataBuffer[14] & 0xFF) * 1000;
 						points[3] = tmpPackageLoss * 1000;
-						points[4] = (dataBuffer[5] & 0xFF) * 1000;
-						points[5] = (dataBuffer[4] & 0xFF) * 1000;
+						points[4] = (dataBuffer[5] & 0xFF) * -1000;
+						points[5] = (dataBuffer[4] & 0xFF) * -1000;
 						points[6] = tmpVoltageRx * 1000;
 						points[7] = tmpTemperatureRx * 1000;
 						points[8] = (dataBuffer[18] & 0xFF) * 1000;
@@ -834,13 +834,13 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 				}
 				break;
 			case HoTTAdapter.SENSOR_TYPE_SERVO_POSITION_115200:
+				//attention, call this code part only, while HoTTAdapterD or HoTTAdapter2 with configuration channels
 				if (dataBuffer.length >= 74) {
 					//log.log(Level.INFO, StringHelper.byte2Hex2CharString(dataBuffer, dataBuffer.length));
-					StringBuffer sb = new StringBuffer();
+					// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=PowerOff, 104=BatterieLow, 105=Reset, 106=reserve
 					for (int i = 0, j = 0; i < 16; i++, j+=2) {
-						sb.append(String.format("%2d = %4d; ", i+1, DataParser.parse2Short(dataBuffer, 8 + j) / 16 + 50));					
+						points[87 + i] = (DataParser.parse2Short(dataBuffer, 8 + j) / 2 + 1500) * 1000;
 					}
-					log.log(Level.FINE, sb.toString());
 				}
 				break;
 			}

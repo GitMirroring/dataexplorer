@@ -61,8 +61,6 @@ public class HoTTbinReader2 extends HoTTbinReader {
 		HoTTbinReader.pickerParameters = newPickerParameters;
 		HashMap<String, String> header = getFileInfo(new File(filePath), newPickerParameters);
 		HoTTbinReader2.detectedSensors = Sensor.getSetFromDetected(header.get(HoTTAdapter.DETECTED_SENSOR));
-		//set fix detected sensors if sensor detection fails!
-		//HoTTbinReader2.detectedSensors = Sensor.getSetFromDetected("RECEIVER,GPS,AIR_ESC");
 		
 		//set picker parameter setting sensor for altitude/climb usage (0=auto, 1=VARIO, 2=GPS, 3=GAM, 4=EAM)
 		HoTTbinReader.setAltitudeClimbPickeParameter(HoTTbinReader.pickerParameters, HoTTbinReader2.detectedSensors);

@@ -473,6 +473,12 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 		HoTTAdapterSerialPort.log.log(Level.FINE, "protocolTypeOrdinal = " + newProtocolType.value());
 		this.protocolType = newProtocolType;
 	}
+	/**
+	 * @return protocolType value
+	 */
+	public String  getProtocolType() {
+		return this.protocolType.value();
+	}
 
 	//transmitter SD-Card to PC communication section
 	final static int		CMD_GAP_MS						= 5;

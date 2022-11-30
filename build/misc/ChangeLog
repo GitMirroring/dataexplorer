@@ -9,6 +9,7 @@ Device specific changes/fixes
 	* HoTTAdapter* - *.log import, display detected sensors independent of log entry
 	* HoTTAdapter2 - *.log import, add altitude/climb selected sensor
 	* HoTTAdapter2 - *.bin import, enhance display altitude/climb selected sensor
+	* HoTTAdapter2 - live-data, add capability recording channel data, add used protocol to description
 	* iChargerUSB* - fix missing update switching async/sync dual channel devices
 	* iChargerUSB* - update some adjustment limit values to latest specification
 	* iCharger458/456 - add initial implementation 

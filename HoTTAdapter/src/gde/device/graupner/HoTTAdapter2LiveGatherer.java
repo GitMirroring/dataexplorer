@@ -172,10 +172,13 @@ public class HoTTAdapter2LiveGatherer extends HoTTAdapterLiveGatherer {
 		this.channels.switchChannel(this.channel.getName());
 		this.channel.switchRecordSet(recordSetKey);
 		this.application.setStatusMessage(HoTTbinReader2.detectedSensors.toString());
-		recordSet.setRecordSetDescription(recordSet.getRecordSetDescription() + GDE.STRING_MESSAGE_CONCAT + HoTTbinReader2.detectedSensors.toString() 
-		+ (HoTTbinReader2.detectedSensors.size() > 1 
-				? String.format(" - %s = %s", Messages.getString(MessageIds.GDE_MSGT2419), Sensor.fromOrdinal(this.device.pickerParameters.altitudeClimbSensorSelection).name())
-						: ""));
+		recordSet.setRecordSetDescription(recordSet.getRecordSetDescription()
+				+ String.format(" - %s Baud", this.serialPort.getProtocolType())
+				+ String.format(" - Sensor: %s", HoTTbinReader2.detectedSensors.toString() 
+				+ ((HoTTbinReader2.detectedSensors.size() > 2 && HoTTbinReader2.detectedSensors.contains(Sensor.ESC)) 
+						|| (HoTTbinReader2.detectedSensors.size() > 1 && !HoTTbinReader2.detectedSensors.contains(Sensor.ESC)) 
+						? String.format(" - %s = %s", Messages.getString(MessageIds.GDE_MSGT2419), Sensor.fromOrdinal(this.device.pickerParameters.altitudeClimbSensorSelection).name())
+								: "")));
 
 		boolean isGPSdetected = false;
 		Vector<Integer> queryRing = new Vector<Integer>();
@@ -334,20 +337,20 @@ public class HoTTAdapter2LiveGatherer extends HoTTAdapterLiveGatherer {
 							// ignore and go ahead gathering sensor data
 							this.serialPort.addTimeoutError();
 						}
-						/*
-						try {
-							this.serialPort.setSensorType(HoTTAdapter.SENSOR_TYPE_SERVO_POSITION_115200);
-							for (int i = 0; i < 2 && !this.serialPort.isCheckSumOK(4, (this.dataBuffer = this.serialPort.getData())); ++i) {
+						if (this.device.getName().equals("HoTTAdapterD") || (this.device.getName().startsWith("HoTTAdapter2") && this.channels.getActiveChannelNumber() == 4)) {
+							try {
+								this.serialPort.setSensorType(HoTTAdapter.SENSOR_TYPE_SERVO_POSITION_115200);
+								for (int i = 0; i < 2 && !this.serialPort.isCheckSumOK(4, (this.dataBuffer = this.serialPort.getData())); ++i) {
+									Thread.sleep(HoTTAdapter.QUERY_GAP_MS);
+								}
+								this.device.convertDataBytes(points, this.dataBuffer);
 								Thread.sleep(HoTTAdapter.QUERY_GAP_MS);
 							}
-							this.device.convertDataBytes(points, this.dataBuffer);
-							Thread.sleep(HoTTAdapter.QUERY_GAP_MS);
+							catch (TimeOutException e) {
+								// ignore and go ahead gathering sensor data
+								this.serialPort.addTimeoutError();
+							}
 						}
-						catch (TimeOutException e) {
-							// ignore and go ahead gathering sensor data
-							this.serialPort.addTimeoutError();
-						}
-						*/
 					}
 					if (queryRing.size() > 0 && queryRing.firstElement() == 4) {
 						try {
