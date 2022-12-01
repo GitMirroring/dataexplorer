@@ -20,6 +20,7 @@ package gde.device.graupner;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
@@ -32,6 +33,8 @@ import gde.comm.DeviceCommPort;
 import gde.data.Channel;
 import gde.data.Channels;
 import gde.data.RecordSet;
+import gde.device.ChannelPropertyTypes;
+import gde.device.graupner.HoTTAdapter.Sensor;
 import gde.device.graupner.hott.MessageIds;
 import gde.exception.ApplicationConfigurationException;
 import gde.exception.DataInconsitsentException;
@@ -87,10 +90,11 @@ public class HoTTAdapterLiveGatherer extends Thread {
 	@Override
 	public void run() {
 		int recordSetNumber = this.channels.get(1).maxSize() + 1;
-		RecordSet recordSetReceiver = null, recordSetVario = null, recordSetGPS = null, recordSetGeneral = null, recordSetElectric = null, recordSetMotorDriver = null;
-		int[] pointsReceiver = null, pointsVario = null, pointsGPS = null, pointsGeneral = null, pointsElectric = null, pointsMotorDriver = null;
+		RecordSet recordSetReceiver = null, recordSetVario = null, recordSetGPS = null, recordSetGeneral = null, recordSetElectric = null, recordSetMotorDriver = null, recordSetChannels = null;
+		int[] pointsReceiver = null, pointsVario = null, pointsGPS = null, pointsGeneral = null, pointsElectric = null, pointsMotorDriver = null, pointsChannels = null;
 		HoTTAdapterLiveGatherer.recordSets.clear();
 		StringBuilder sb = new StringBuilder();
+		EnumSet<Sensor> detectedSensors = Sensor.getSetFromSignature("Receiver");
 		try {
 			if (!this.serialPort.isConnected()) {
 				this.serialPort.open();
@@ -145,6 +149,7 @@ public class HoTTAdapterLiveGatherer extends Thread {
 						tmpSensorType[i] = false;
 					}
 				}
+				detectedSensors = Sensor.getSetFromSignature(sb.toString().replace(GDE.STRING_BLANK, GDE.STRING_EMPTY));
 				if (HoTTAdapterLiveGatherer.log.isLoggable(Level.TIME))
 					HoTTAdapterLiveGatherer.log.log(Level.TIME, sb.toString() + ", detecting sensor type takes " + StringHelper.getFormatedTime("ss:SSS", (new Date().getTime() - startTime)));
 				this.application.setStatusMessage("["+sb.toString()+"]");
@@ -198,46 +203,66 @@ public class HoTTAdapterLiveGatherer extends Thread {
 		this.channel.applyTemplate(recordSetKey, true);
 		pointsReceiver = new int[recordSetReceiver.size()];
 		//vario
-		this.channel = this.channels.get(2);
-		recordSetKey = recordSetNumber + GDE.STRING_RIGHT_PARENTHESIS_BLANK + HoTTAdapter.Sensor.VARIO.value() + recordSetNameExtend;
-		recordSetVario = RecordSet.createRecordSet(recordSetKey, this.device, 2, true, true, true);
-		this.channel.put(recordSetKey, recordSetVario);
-		HoTTAdapterLiveGatherer.recordSets.put(HoTTAdapter.Sensor.VARIO.value(), recordSetVario);
-		this.channel.applyTemplate(recordSetKey, true);
-		pointsVario = new int[recordSetVario.size()];
-		//GPS
-		this.channel = this.channels.get(3);
-		recordSetKey = recordSetNumber + GDE.STRING_RIGHT_PARENTHESIS_BLANK + HoTTAdapter.Sensor.GPS.value() + recordSetNameExtend;
-		recordSetGPS = RecordSet.createRecordSet(recordSetKey, this.device, 3, true, true, true);
-		this.channel.put(recordSetKey, recordSetGPS);
-		HoTTAdapterLiveGatherer.recordSets.put(HoTTAdapter.Sensor.GPS.value(), recordSetGPS);
-		this.channel.applyTemplate(recordSetKey, true);
-		pointsGPS = new int[recordSetGPS.size()];
-		//General
-		this.channel = this.channels.get(4);
-		recordSetKey = recordSetNumber + GDE.STRING_RIGHT_PARENTHESIS_BLANK + HoTTAdapter.Sensor.GAM.value() + recordSetNameExtend;
-		recordSetGeneral = RecordSet.createRecordSet(recordSetKey, this.device, 4, true, true, true);
-		this.channel.put(recordSetKey, recordSetGeneral);
-		HoTTAdapterLiveGatherer.recordSets.put(HoTTAdapter.Sensor.GAM.value(), recordSetGeneral);
-		this.channel.applyTemplate(recordSetKey, true);
-		pointsGeneral = new int[recordSetGeneral.size()];
+		if (detectedSensors.contains(Sensor.VARIO)) {
+			this.channel = this.channels.get(2);
+			recordSetKey = recordSetNumber + GDE.STRING_RIGHT_PARENTHESIS_BLANK + HoTTAdapter.Sensor.VARIO.value() + recordSetNameExtend;
+			recordSetVario = RecordSet.createRecordSet(recordSetKey, this.device, 2, true, true, true);
+			this.channel.put(recordSetKey, recordSetVario);
+			HoTTAdapterLiveGatherer.recordSets.put(HoTTAdapter.Sensor.VARIO.value(), recordSetVario);
+			this.channel.applyTemplate(recordSetKey, true);
+			pointsVario = new int[recordSetVario.size()];
+		}
+		if (detectedSensors.contains(Sensor.GPS)) {
+			//GPS
+			this.channel = this.channels.get(3);
+			recordSetKey = recordSetNumber + GDE.STRING_RIGHT_PARENTHESIS_BLANK + HoTTAdapter.Sensor.GPS.value() + recordSetNameExtend;
+			recordSetGPS = RecordSet.createRecordSet(recordSetKey, this.device, 3, true, true, true);
+			this.channel.put(recordSetKey, recordSetGPS);
+			HoTTAdapterLiveGatherer.recordSets.put(HoTTAdapter.Sensor.GPS.value(), recordSetGPS);
+			this.channel.applyTemplate(recordSetKey, true);
+			pointsGPS = new int[recordSetGPS.size()];
+		}
+		if (detectedSensors.contains(Sensor.GAM)) {
+			//General
+			this.channel = this.channels.get(4);
+			recordSetKey = recordSetNumber + GDE.STRING_RIGHT_PARENTHESIS_BLANK + HoTTAdapter.Sensor.GAM.value() + recordSetNameExtend;
+			recordSetGeneral = RecordSet.createRecordSet(recordSetKey, this.device, 4, true, true, true);
+			this.channel.put(recordSetKey, recordSetGeneral);
+			HoTTAdapterLiveGatherer.recordSets.put(HoTTAdapter.Sensor.GAM.value(), recordSetGeneral);
+			this.channel.applyTemplate(recordSetKey, true);
+			pointsGeneral = new int[recordSetGeneral.size()];
+		}
 		//Electric
-		this.channel = this.channels.get(5);
-		recordSetKey = recordSetNumber + GDE.STRING_RIGHT_PARENTHESIS_BLANK + HoTTAdapter.Sensor.EAM.value() + recordSetNameExtend;
-		recordSetElectric = RecordSet.createRecordSet(recordSetKey, this.device, 5, true, true, true);
-		this.channel.put(recordSetKey, recordSetElectric);
-		HoTTAdapterLiveGatherer.recordSets.put(HoTTAdapter.Sensor.EAM.value(), recordSetElectric);
-		this.channel.applyTemplate(recordSetKey, true);
-		pointsElectric = new int[recordSetElectric.size()];
+		if (detectedSensors.contains(Sensor.EAM)) {
+			this.channel = this.channels.get(5);
+			recordSetKey = recordSetNumber + GDE.STRING_RIGHT_PARENTHESIS_BLANK + HoTTAdapter.Sensor.EAM.value() + recordSetNameExtend;
+			recordSetElectric = RecordSet.createRecordSet(recordSetKey, this.device, 5, true, true, true);
+			this.channel.put(recordSetKey, recordSetElectric);
+			HoTTAdapterLiveGatherer.recordSets.put(HoTTAdapter.Sensor.EAM.value(), recordSetElectric);
+			this.channel.applyTemplate(recordSetKey, true);
+			pointsElectric = new int[recordSetElectric.size()];
+		}
+		//Channels
+		boolean isChannels = Boolean.parseBoolean(this.device.getChannelProperty(ChannelPropertyTypes.ENABLE_CHANNEL).getValue());
+		if (isChannels) {
+			this.channel = this.channels.get(6);
+			recordSetKey = recordSetNumber + GDE.STRING_RIGHT_PARENTHESIS_BLANK + HoTTAdapter.Sensor.CHANNEL.value() + recordSetNameExtend;
+			recordSetChannels = RecordSet.createRecordSet(recordSetKey, this.device, 6, true, true, true);
+			this.channel.put(recordSetKey, recordSetChannels);
+			HoTTAdapterLiveGatherer.recordSets.put(HoTTAdapter.Sensor.CHANNEL.value(), recordSetChannels);
+			this.channel.applyTemplate(recordSetKey, true);
+			pointsChannels = new int[recordSetChannels.size()];
+		}
 		//SpeedControl
-		this.channel = this.channels.get(7);
-		recordSetKey = recordSetNumber + GDE.STRING_RIGHT_PARENTHESIS_BLANK + HoTTAdapter.Sensor.ESC.value() + recordSetNameExtend;
-		recordSetMotorDriver = RecordSet.createRecordSet(recordSetKey, this.device, 7, true, true, true);
-		this.channel.put(recordSetKey, recordSetMotorDriver);
-		HoTTAdapterLiveGatherer.recordSets.put(HoTTAdapter.Sensor.ESC.value(), recordSetMotorDriver);
-		this.channel.applyTemplate(recordSetKey, true);
-		pointsMotorDriver = new int[recordSetMotorDriver.size()];
-
+		if (detectedSensors.contains(Sensor.ESC)) {
+			this.channel = this.channels.get(7);
+			recordSetKey = recordSetNumber + GDE.STRING_RIGHT_PARENTHESIS_BLANK + HoTTAdapter.Sensor.ESC.value() + recordSetNameExtend;
+			recordSetMotorDriver = RecordSet.createRecordSet(recordSetKey, this.device, 7, true, true, true);
+			this.channel.put(recordSetKey, recordSetMotorDriver);
+			HoTTAdapterLiveGatherer.recordSets.put(HoTTAdapter.Sensor.ESC.value(), recordSetMotorDriver);
+			this.channel.applyTemplate(recordSetKey, true);
+			pointsMotorDriver = new int[recordSetMotorDriver.size()];
+		}
 		this.application.getMenuToolBar().updateChannelSelector();
 		this.application.getMenuToolBar().updateRecordSetSelectCombo();
 		this.channels.switchChannel(this.channel.getName());
@@ -263,13 +288,19 @@ public class HoTTAdapterLiveGatherer extends Thread {
 			this.dialog.selectTab(5);
 			recordSetKey = recordSetNumber + GDE.STRING_RIGHT_PARENTHESIS_BLANK + HoTTAdapter.Sensor.EAM.value() + recordSetNameExtend;
 		}
+		else if (isChannels) {
+			this.dialog.selectTab(5);
+			recordSetKey = recordSetNumber + GDE.STRING_RIGHT_PARENTHESIS_BLANK + HoTTAdapter.Sensor.CHANNEL.value() + recordSetNameExtend;
+		}
 		else if (HoTTAdapterLiveGatherer.isSensorType[HoTTAdapter.Sensor.ESC.ordinal()]) {
 			this.dialog.selectTab(7);
 			recordSetKey = recordSetNumber + GDE.STRING_RIGHT_PARENTHESIS_BLANK + HoTTAdapter.Sensor.ESC.value() + recordSetNameExtend;
 		}
 		this.channel.switchRecordSet(recordSetKey);
 		this.application.setStatusMessage("["+sb.toString()+"]");
-		recordSetReceiver.setRecordSetDescription(recordSetReceiver.getRecordSetDescription() + GDE.STRING_MESSAGE_CONCAT + "["+sb.toString()+"]");
+		recordSetReceiver.setRecordSetDescription(recordSetReceiver.getRecordSetDescription() 
+				+ String.format(" - %s Baud", this.serialPort.getProtocolType())
+				+ String.format(" - Sensor: %s", detectedSensors.toString()));
 
 		boolean isGPSdetected = false;
 		Vector<Integer> queryRing = new Vector<Integer>();
@@ -436,79 +467,79 @@ public class HoTTAdapterLiveGatherer extends Thread {
 							// ignore and go ahead gathering sensor data
 							this.serialPort.addTimeoutError();
 						}
-							/*
+						if (isChannels) {
 							try {
 								this.serialPort.setSensorType(HoTTAdapter.SENSOR_TYPE_SERVO_POSITION_115200);
 								for (int i = 0; i < 2 && !this.serialPort.isCheckSumOK(4, (this.dataBuffer = this.serialPort.getData())); ++i) {
 									Thread.sleep(HoTTAdapter.QUERY_GAP_MS);
 								}
-								this.device.convertDataBytes(pointsReceiver, this.dataBuffer);
+								recordSetChannels.addPoints(this.device.convertDataBytes(pointsChannels, this.dataBuffer), System.nanoTime() / 1000000 - startTime);
 								Thread.sleep(HoTTAdapter.QUERY_GAP_MS);
 							}
 							catch (TimeOutException e) {
 								// ignore and go ahead gathering sensor data
 								this.serialPort.addTimeoutError();
 							}
-							*/
-							/* switch change detection
-							try {
-								this.serialPort.setSensorType(HoTTAdapter.SENSOR_TYPE_CONTROL_1_115200);
-								for (int i = 0; i < 5 && !this.serialPort.isCheckSumOK(4, (this.dataBuffer = this.serialPort.getData())); ++i) {
-									Thread.sleep(HoTTAdapter.QUERY_GAP_MS);
-								}
-								System.out.println("Control positions 1 : ");
-								for (int i = 161; i < this.dataBuffer.length - 2; i++) { //start 161
-									System.out.print(StringHelper.printBinary(this.dataBuffer[i], false));
-								}
-								System.out.println();
-								String swS = String.format("S%02d changed!", setSwitchS());
-								if (!swS.substring(1, 3).equals("00")) System.out.println(swS);
-
-								for (int i = 0, j = 1; i < 2; i++) {
-									for (int k = 1; j <= (i + 1) * 8; j++, k *= 2) {
-										System.out.print(String.format("S%02d : %d; ", j, ((this.dataBuffer[i + 161] & k) != 0 ? 1 : 0)));
-									}
-								}
-								System.out.println();
-								for (int i = 0, j = 1; i < 1; i++) {
-									for (int k = 1; j <= (i + 1) * 8; j++, k *= 2) {
-										System.out.print(String.format("G%02d : %d; ", j, ((this.dataBuffer[i + 169] & k) != 0 ? 1 : 0)));
-									}
-								}
-								System.out.println();
-								String swG = String.format("G%02d changed!", setSwitchG());
-								if (!swG.substring(1, 3).equals("00")) System.out.println(swG);
-
-								for (int i = 0, j = 1; i < 1; i++) {
-									for (int k = 1; j <= (i + 1) * 8; j++, k *= 2) {
-										System.out.print(String.format("L%02d : %d; ", j, ((this.dataBuffer[i + 173] & k) != 0 ? 1 : 0)));
-									}
-								}
-								System.out.println();
-								if (setSwitchL() > 0) System.out.println(String.format("L%02d changed!", setSwitchL()));
+						}
+						/* switch change detection
+						try {
+							this.serialPort.setSensorType(HoTTAdapter.SENSOR_TYPE_CONTROL_1_115200);
+							for (int i = 0; i < 5 && !this.serialPort.isCheckSumOK(4, (this.dataBuffer = this.serialPort.getData())); ++i) {
+								Thread.sleep(HoTTAdapter.QUERY_GAP_MS);
 							}
-							catch (Exception e) {
-								e.printStackTrace();
+							System.out.println("Control positions 1 : ");
+							for (int i = 161; i < this.dataBuffer.length - 2; i++) { //start 161
+								System.out.print(StringHelper.printBinary(this.dataBuffer[i], false));
 							}
-							*/
-							/* transmitter voltage detection
-							try {
-								this.serialPort.setSensorType(HoTTAdapter.SENSOR_TYPE_CONTROL_2_115200);
-								for (int i = 0; i < 5 && !this.serialPort.isCheckSumOK(4, (this.dataBuffer = this.serialPort.getData())); ++i) {
-									Thread.sleep(HoTTAdapter.QUERY_GAP_MS);
+							System.out.println();
+							String swS = String.format("S%02d changed!", setSwitchS());
+							if (!swS.substring(1, 3).equals("00")) System.out.println(swS);
+						
+							for (int i = 0, j = 1; i < 2; i++) {
+								for (int k = 1; j <= (i + 1) * 8; j++, k *= 2) {
+									System.out.print(String.format("S%02d : %d; ", j, ((this.dataBuffer[i + 161] & k) != 0 ? 1 : 0)));
 								}
 							}
-							catch (Exception e) {
-								e.printStackTrace();
+							System.out.println();
+							for (int i = 0, j = 1; i < 1; i++) {
+								for (int k = 1; j <= (i + 1) * 8; j++, k *= 2) {
+									System.out.print(String.format("G%02d : %d; ", j, ((this.dataBuffer[i + 169] & k) != 0 ? 1 : 0)));
+								}
 							}
-							System.out.println("Control positions 2 : ");
-							System.out.println(StringHelper.byte2Hex2CharString(this.dataBuffer, this.dataBuffer.length - 2));
-							if (24 < this.dataBuffer.length - 1) System.out.println(String.format("transmitter voltage %.2f V", this.dataBuffer[24] / 10.0f));
-
-							if (26 < this.dataBuffer.length - 1) {
-								System.out.println(StringHelper.printBinary(this.dataBuffer[26], false));
+							System.out.println();
+							String swG = String.format("G%02d changed!", setSwitchG());
+							if (!swG.substring(1, 3).equals("00")) System.out.println(swG);
+						
+							for (int i = 0, j = 1; i < 1; i++) {
+								for (int k = 1; j <= (i + 1) * 8; j++, k *= 2) {
+									System.out.print(String.format("L%02d : %d; ", j, ((this.dataBuffer[i + 173] & k) != 0 ? 1 : 0)));
+								}
 							}
-							*/
+							System.out.println();
+							if (setSwitchL() > 0) System.out.println(String.format("L%02d changed!", setSwitchL()));
+						}
+						catch (Exception e) {
+							e.printStackTrace();
+						}
+						*/
+						/* transmitter voltage detection
+						try {
+							this.serialPort.setSensorType(HoTTAdapter.SENSOR_TYPE_CONTROL_2_115200);
+							for (int i = 0; i < 5 && !this.serialPort.isCheckSumOK(4, (this.dataBuffer = this.serialPort.getData())); ++i) {
+								Thread.sleep(HoTTAdapter.QUERY_GAP_MS);
+							}
+						}
+						catch (Exception e) {
+							e.printStackTrace();
+						}
+						System.out.println("Control positions 2 : ");
+						System.out.println(StringHelper.byte2Hex2CharString(this.dataBuffer, this.dataBuffer.length - 2));
+						if (24 < this.dataBuffer.length - 1) System.out.println(String.format("transmitter voltage %.2f V", this.dataBuffer[24] / 10.0f));
+						
+						if (26 < this.dataBuffer.length - 1) {
+							System.out.println(StringHelper.printBinary(this.dataBuffer[26], false));
+						}
+						*/
 					}
 					if (queryRing.size() > 0 && queryRing.firstElement() == 4) {
 						try {
