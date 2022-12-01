@@ -176,6 +176,8 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 
 					switch ((byte) (HoTTbinReader.buf[26] & 0xFF)) { //actual sensor
 					case HoTTAdapter.ANSWER_SENSOR_VARIO_19200:
+						if (!detectedSensors.contains(Sensor.VARIO)) 
+							detectedSensors.add(Sensor.VARIO);
 						isVarioData = parseVario(HoTTbinReader.buf, valuesVario, true);
 						if (isVarioData && isReceiverData) {
 							migrateAddPoints(isVarioData, isGPSData, isGeneralData, isElectricData, isMotorDriverData, channelNumber, valuesVario, valuesGPS, valuesGAM, valuesEAM, valuesESC);
@@ -188,6 +190,8 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 						}
 						break;
 					case HoTTAdapter.ANSWER_SENSOR_GPS_19200:
+						if (!detectedSensors.contains(Sensor.GPS)) 
+							detectedSensors.add(Sensor.GPS);
 						isGPSData = parseGPS(HoTTbinReader.buf, valuesGPS, true);
 						if (isGPSData && isReceiverData) {
 							migrateAddPoints(isVarioData, isGPSData, isGeneralData, isElectricData, isMotorDriverData, channelNumber, valuesVario, valuesGPS, valuesGAM, valuesEAM, valuesESC);
@@ -200,6 +204,8 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 						}
 						break;
 					case HoTTAdapter.ANSWER_SENSOR_GENERAL_19200:
+						if (!detectedSensors.contains(Sensor.GAM)) 
+							detectedSensors.add(Sensor.GAM);
 						isGeneralData = parseGAM(HoTTbinReader.buf, valuesGAM, HoTTlogReaderD.recordSet, true);
 						if (isGeneralData && isReceiverData) {
 							migrateAddPoints(isVarioData, isGPSData, isGeneralData, isElectricData, isMotorDriverData, channelNumber, valuesVario, valuesGPS, valuesGAM, valuesEAM, valuesESC);
@@ -207,6 +213,8 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 						}
 						break;
 					case HoTTAdapter.ANSWER_SENSOR_ELECTRIC_19200:
+						if (!detectedSensors.contains(Sensor.EAM)) 
+							detectedSensors.add(Sensor.EAM);
 						isElectricData = parseEAM(HoTTbinReader.buf, valuesEAM, HoTTlogReaderD.recordSet, true);
 						if (isElectricData && isReceiverData) {
 							migrateAddPoints(isVarioData, isGPSData, isGeneralData, isElectricData, isMotorDriverData, channelNumber, valuesVario, valuesGPS, valuesGAM, valuesEAM, valuesESC);
@@ -214,6 +222,8 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 						}
 						break;
 					case HoTTAdapter.ANSWER_SENSOR_MOTOR_DRIVER_19200:
+						if (!detectedSensors.contains(Sensor.ESC)) 
+							detectedSensors.add(Sensor.ESC);
 						isMotorDriverData = parseESC(HoTTbinReader.buf, valuesESC, HoTTlogReaderD.recordSet);
 						if (isMotorDriverData && isReceiverData) {
 							migrateAddPoints(isVarioData, isGPSData, isGeneralData, isElectricData, isMotorDriverData, channelNumber, valuesVario, valuesGPS, valuesGAM, valuesEAM, valuesESC);
@@ -270,10 +280,24 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 //					HoTTbinReader.application.openMessageDialogAsync(Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGW2404));
 //				}
 			}
+			Sensor altitudeClimbSensorSelection = pickerParameters.altitudeClimbSensorSelection == 0 ? null : Sensor.fromOrdinal(pickerParameters.altitudeClimbSensorSelection);
+			if (pickerParameters.altitudeClimbSensorSelection == 0 || !detectedSensors.contains(Sensor.fromOrdinal(pickerParameters.altitudeClimbSensorSelection))) { //auto
+				if (isElectricData && !isVarioData && !isGPSData && !isGeneralData) 
+					altitudeClimbSensorSelection = Sensor.EAM;
+				else if (isGeneralData && !isVarioData && !isGPSData)
+					altitudeClimbSensorSelection = Sensor.GAM;
+				else if (isGPSData && !isVarioData)
+					altitudeClimbSensorSelection = Sensor.GPS;
+				else if (isVarioData)
+					altitudeClimbSensorSelection = Sensor.VARIO;
+			}
 			String packageLossPercentage = tmpRecordSet.getRecordDataSize(true) > 0 ? String.format("%.1f", (countPackageLoss / tmpRecordSet.getTime_ms(tmpRecordSet.getRecordDataSize(true) - 1) * 1000)) : "100";
 			tmpRecordSet.setRecordSetDescription(tmpRecordSet.getRecordSetDescription()
 					+ Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] { countPackageLoss, packageLossPercentage, HoTTbinReader.lostPackages.getStatistics() })
-					+ Sensor.getSetAsSignature(HoTTbinReader.detectedSensors));
+					+ String.format(" - Sensor: %s", Sensor.getSetAsSignature(HoTTlogReader.detectedSensors))
+					+ (altitudeClimbSensorSelection != null && (detectedSensors.contains(Sensor.fromOrdinal(pickerParameters.altitudeClimbSensorSelection)) || detectedSensors.contains(altitudeClimbSensorSelection))
+							? String.format(" - %s = %s", Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGT2419), altitudeClimbSensorSelection)
+									: ""));
 			log.logp(Level.WARNING, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, "skipped number receiver data due to package loss = " + countPackageLoss); //$NON-NLS-1$
 			log.logp(Level.TIME, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, "read time = " + StringHelper.getFormatedTime("mm:ss:SSS", (System.nanoTime() / 1000000 - startTime))); //$NON-NLS-1$ //$NON-NLS-2$
 

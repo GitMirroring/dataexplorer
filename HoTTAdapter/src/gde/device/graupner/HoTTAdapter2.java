@@ -805,7 +805,7 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 					tmpCurrent = DataParser.parse2Short(dataBuffer, 14);
 					tmpRevolution = DataParser.parse2Short(dataBuffer, 18);
 					tmpTemperatureFet = DataParser.parse2Short(dataBuffer, 24);
-					if (this.application.getActiveChannelNumber() == 4) {
+					if (this.application.getActiveChannelNumber() == 4 || this.getName().equals("HoTTAdapterD")) {
 						//107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max,
 						if (!this.pickerParameters.isFilterEnabled
 								|| tmpVoltage > 0 && tmpVoltage < 1000 && tmpCurrent < 4000 && tmpCurrent > -10 && tmpRevolution > -1
