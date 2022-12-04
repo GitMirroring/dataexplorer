@@ -32,6 +32,8 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;enumeration value="outlier_sigma"/>
  *     &lt;enumeration value="outlier_range_factor"/>
  *     &lt;enumeration value="none_specified"/>
+ *     &lt;enumeration value="channel_percentage"/>
+ *     &lt;enumeration value="sensor_alt_climb"/>
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
@@ -63,7 +65,7 @@ public enum ChannelPropertyTypes {
     OUTLIER_RANGE_FACTOR("outlier_range_factor"),
     @XmlEnumValue("none_specified")
     NONE_SPECIFIED("none_specified"),
-    @XmlEnumValue("none_specified")
+    @XmlEnumValue("channel_percentage")
     CHANNEL_PERCENTAGE("channel_percentage"),
     @XmlEnumValue("sensor_alt_climb")
     SENSOR_ALT_CLIMB("sensor_alt_climb");

@@ -434,10 +434,11 @@ public class HoTTAdapter2LiveGatherer extends HoTTAdapterLiveGatherer {
 						this.device.updateVisibilityStatus(tmpRecordSet, true);
 					}
 				}
-
-				if (recordSet.size() > 0 && recordSet.isChildOfActiveChannel() && recordSet.equals(this.channels.getActiveChannel().getActiveRecordSet())) {
-					HoTTAdapter2LiveGatherer.this.application.updateAllTabs(false,  lastNumberDisplayableRecords != this.application.getActiveRecordSet().getConfiguredDisplayable());
-					lastNumberDisplayableRecords = this.application.getActiveRecordSet().getConfiguredDisplayable();
+				
+				RecordSet activeRecordSet = this.channels.getActiveChannel().getActiveRecordSet();
+				if (activeRecordSet != null && recordSet.size() > 0 && recordSet.isChildOfActiveChannel() && recordSet.equals(activeRecordSet)) {
+					HoTTAdapter2LiveGatherer.this.application.updateAllTabs(false,  lastNumberDisplayableRecords != recordSet.getConfiguredDisplayable());
+					lastNumberDisplayableRecords = recordSet.getConfiguredDisplayable();
 				}
 
 				if (this.serialPort.getTimeoutErrors() > 2 && this.serialPort.getTimeoutErrors() % 10 == 0) {
