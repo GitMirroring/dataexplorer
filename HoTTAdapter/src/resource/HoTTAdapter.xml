@@ -731,7 +731,7 @@
 				<name>climb 3</name>
 				<symbol>vh</symbol>
 				<unit>m/3sec</unit>
-				<active>false</active>
+				<active>true</active>
 				<statistics min="true" max="true" avg="false" sigma="false" />
 				<property name="reduction" value="120.0" type="Double" description="reduction of measurement value before apply offset and factor" />
 				<label>label_climb_3</label>
@@ -1726,7 +1726,7 @@
 				<name>Ch 9</name>
 				<symbol></symbol>
 				<unit>%</unit>
-				<active>false</active>
+				<active>true</active>
 				<statistics min="true" max="true" avg="true" sigma="false" />
 				<property name="scale_sync_ref_ordinal" value="3" type="Integer" />
 			</Measurement>
@@ -1734,7 +1734,7 @@
 				<name>Ch 10</name>
 				<symbol></symbol>
 				<unit>%</unit>
-				<active>false</active>
+				<active>true</active>
 				<statistics min="true" max="true" avg="true" sigma="false" />
 				<property name="scale_sync_ref_ordinal" value="3" type="Integer" />
 			</Measurement>
@@ -1742,7 +1742,7 @@
 				<name>Ch 11</name>
 				<symbol></symbol>
 				<unit>%</unit>
-				<active>false</active>
+				<active>true</active>
 				<statistics min="true" max="true" avg="true" sigma="false" />
 				<property name="scale_sync_ref_ordinal" value="3" type="Integer" />
 			</Measurement>
@@ -1750,7 +1750,7 @@
 				<name>Ch 12</name>
 				<symbol></symbol>
 				<unit>%</unit>
-				<active>false</active>
+				<active>true</active>
 				<statistics min="true" max="true" avg="true" sigma="false" />
 				<property name="scale_sync_ref_ordinal" value="3" type="Integer" />
 			</Measurement>
@@ -1758,7 +1758,7 @@
 				<name>Ch 13</name>
 				<symbol></symbol>
 				<unit>%</unit>
-				<active>false</active>
+				<active>true</active>
 				<statistics min="true" max="true" avg="true" sigma="false" />
 				<property name="scale_sync_ref_ordinal" value="3" type="Integer" />
 			</Measurement>
@@ -1766,7 +1766,7 @@
 				<name>Ch 14</name>
 				<symbol></symbol>
 				<unit>%</unit>
-				<active>false</active>
+				<active>true</active>
 				<statistics min="true" max="true" avg="true" sigma="false" />
 				<property name="scale_sync_ref_ordinal" value="3" type="Integer" />
 			</Measurement>
@@ -1774,7 +1774,7 @@
 				<name>Ch 15</name>
 				<symbol></symbol>
 				<unit>%</unit>
-				<active>false</active>
+				<active>true</active>
 				<statistics min="true" max="true" avg="true" sigma="false" />
 				<property name="scale_sync_ref_ordinal" value="3" type="Integer" />
 			</Measurement>
@@ -1782,7 +1782,7 @@
 				<name>Ch 16</name>
 				<symbol></symbol>
 				<unit>%</unit>
-				<active>false</active>
+				<active>true</active>
 				<statistics min="true" max="true" avg="true" sigma="false" />
 				<property name="scale_sync_ref_ordinal" value="3" type="Integer" />
 			</Measurement>

@@ -314,7 +314,7 @@
                 <name>Ch 5</name>
                 <symbol></symbol>
 				<unit>%</unit>
-				<active>false</active>
+				<active>true</active>
 				<statistics min="true" max="true" avg="true" sigma="false"/>
                 <property  type="Integer" value="3" name="scale_sync_ref_ordinal"/>
             </Measurement>
@@ -322,7 +322,7 @@
                 <name>Ch 6</name>
                 <symbol></symbol>
  				<unit>%</unit>
-				<active>false</active>
+				<active>true</active>
 				<statistics min="true" max="true" avg="true" sigma="false"/>
                 <property  type="Integer" value="3" name="scale_sync_ref_ordinal"/>
             </Measurement>
@@ -330,7 +330,7 @@
                 <name>Ch 7</name>
                 <symbol></symbol>
 				<unit>%</unit>
-				<active>false</active>
+				<active>true</active>
 				<statistics min="true" max="true" avg="true" sigma="false"/>
                 <property  type="Integer" value="3" name="scale_sync_ref_ordinal"/>
             </Measurement>
@@ -338,7 +338,7 @@
                 <name>Ch 8</name>
                 <symbol></symbol>
  				<unit>%</unit>
-				<active>false</active>
+				<active>true</active>
 				<statistics min="true" max="true" avg="true" sigma="false"/>
                 <property  type="Integer" value="3" name="scale_sync_ref_ordinal"/>
             </Measurement>
@@ -346,28 +346,28 @@
                 <name>Power Off</name>
                 <symbol>evt</symbol>
                 <unit></unit>
-                <active>false</active>
+                <active>true</active>
                 <statistics sigma="false" avg="false" max="true" min="true"/>
             </Measurement>
             <Measurement>
                 <name>Batt Low</name>
                 <symbol>evt</symbol>
                 <unit></unit>
-                <active>false</active>
+                <active>true</active>
                 <statistics sigma="false" avg="false" max="true" min="true"/>
             </Measurement>
             <Measurement>
                 <name>Reset</name>
                 <symbol>evt</symbol>
                 <unit></unit>
-                <active>false</active>
+                <active>true</active>
                 <statistics sigma="false" avg="false" max="true" min="true"/>
             </Measurement>
             <Measurement>
                 <name>Reserve</name>
                 <symbol>evt</symbol>
                 <unit></unit>
-                <active>false</active>
+                <active>true</active>
                 <statistics sigma="false" avg="false" max="true" min="true"/>
             </Measurement>
         </Channel>

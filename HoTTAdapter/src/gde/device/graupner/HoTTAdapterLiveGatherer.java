@@ -266,33 +266,34 @@ public class HoTTAdapterLiveGatherer extends Thread {
 		this.application.getMenuToolBar().updateChannelSelector();
 		this.application.getMenuToolBar().updateRecordSetSelectCombo();
 		this.channels.switchChannel(this.channel.getName());
+		int activeChannelNumber = this.channels.getActiveChannelNumber();
 
-		//0=isReceiver, 1=isVario, 2=isGPS, 3=isGeneral, 4=isElectric
-		if (HoTTAdapterLiveGatherer.isSensorType[0]) {
+		//0=isReceiver, 1=isVario, 2=isGPS, 3=isGeneral, 4=isElectric 5=Channels 6=ESC
+		if (HoTTAdapterLiveGatherer.isSensorType[0] && activeChannelNumber == 1) {
 			this.dialog.selectTab(1);
 			recordSetKey = recordSetNumber + GDE.STRING_RIGHT_PARENTHESIS_BLANK + HoTTAdapter.Sensor.RECEIVER.value() + recordSetNameExtend;
 		}
-		else if (HoTTAdapterLiveGatherer.isSensorType[HoTTAdapter.Sensor.VARIO.ordinal()]) {
+		else if (HoTTAdapterLiveGatherer.isSensorType[HoTTAdapter.Sensor.VARIO.ordinal()] && activeChannelNumber == 2) {
 			this.dialog.selectTab(2);
 			recordSetKey = recordSetNumber + GDE.STRING_RIGHT_PARENTHESIS_BLANK + HoTTAdapter.Sensor.VARIO.value() + recordSetNameExtend;
 		}
-		else if (HoTTAdapterLiveGatherer.isSensorType[HoTTAdapter.Sensor.GPS.ordinal()]) {
+		else if (HoTTAdapterLiveGatherer.isSensorType[HoTTAdapter.Sensor.GPS.ordinal()] && activeChannelNumber == 3) {
 			this.dialog.selectTab(3);
 			recordSetKey = recordSetNumber + GDE.STRING_RIGHT_PARENTHESIS_BLANK + HoTTAdapter.Sensor.GPS.value() + recordSetNameExtend;
 		}
-		else if (HoTTAdapterLiveGatherer.isSensorType[HoTTAdapter.Sensor.GAM.ordinal()]) {
+		else if (HoTTAdapterLiveGatherer.isSensorType[HoTTAdapter.Sensor.GAM.ordinal()] && activeChannelNumber == 4) {
 			this.dialog.selectTab(4);
 			recordSetKey = recordSetNumber + GDE.STRING_RIGHT_PARENTHESIS_BLANK + HoTTAdapter.Sensor.GAM.value() + recordSetNameExtend;
 		}
-		else if (HoTTAdapterLiveGatherer.isSensorType[HoTTAdapter.Sensor.EAM.ordinal()]) {
+		else if (HoTTAdapterLiveGatherer.isSensorType[HoTTAdapter.Sensor.EAM.ordinal()] && activeChannelNumber == 5) {
 			this.dialog.selectTab(5);
 			recordSetKey = recordSetNumber + GDE.STRING_RIGHT_PARENTHESIS_BLANK + HoTTAdapter.Sensor.EAM.value() + recordSetNameExtend;
 		}
-		else if (isChannels) {
-			this.dialog.selectTab(5);
+		else if (isChannels && activeChannelNumber == 6) {
+			this.dialog.selectTab(6);
 			recordSetKey = recordSetNumber + GDE.STRING_RIGHT_PARENTHESIS_BLANK + HoTTAdapter.Sensor.CHANNEL.value() + recordSetNameExtend;
 		}
-		else if (HoTTAdapterLiveGatherer.isSensorType[HoTTAdapter.Sensor.ESC.ordinal()]) {
+		else if (HoTTAdapterLiveGatherer.isSensorType[HoTTAdapter.Sensor.ESC.ordinal()] && activeChannelNumber == 7) {
 			this.dialog.selectTab(7);
 			recordSetKey = recordSetNumber + GDE.STRING_RIGHT_PARENTHESIS_BLANK + HoTTAdapter.Sensor.ESC.value() + recordSetNameExtend;
 		}
@@ -308,6 +309,7 @@ public class HoTTAdapterLiveGatherer extends Thread {
 			if (HoTTAdapterLiveGatherer.isSensorType[i]) queryRing.add(i);
 		}
 		long measurementCount = 0;
+		int lastNumberDisplayableRecords = 0;
 		final long startTime = System.nanoTime() / 1000000;
 		while (!this.serialPort.isInterruptedByUser) {
 			if (HoTTAdapterLiveGatherer.log.isLoggable(Level.FINE)) HoTTAdapterLiveGatherer.log.log(Level.FINE, "====> entry"); //$NON-NLS-1$
@@ -625,9 +627,11 @@ public class HoTTAdapterLiveGatherer extends Thread {
 						this.device.updateVisibilityStatus(recordSet, true);
 					}
 				}
-				//if (recordSet.isChildOfActiveChannel() && recordSet.equals(HoTTAdapterLiveGatherer.this.channels.getActiveChannel().getActiveRecordSet())) {
-				HoTTAdapterLiveGatherer.this.application.updateAllTabs(false);
-				//}
+				RecordSet activeRecordSet = this.application.getActiveRecordSet();
+				if (activeRecordSet != null && activeRecordSet.size() > 0 && activeRecordSet.isChildOfActiveChannel() && activeRecordSet.equals(activeRecordSet)) {
+					HoTTAdapterLiveGatherer.this.application.updateAllTabs(false, lastNumberDisplayableRecords != activeRecordSet.getConfiguredDisplayable());
+					lastNumberDisplayableRecords = activeRecordSet.getConfiguredDisplayable();
+				}
 
 				if (this.serialPort.getTimeoutErrors() > 2 && this.serialPort.getTimeoutErrors() % 10 == 0) {
 					this.application.setStatusMessage(

@@ -186,6 +186,7 @@ public class HoTTAdapter2LiveGatherer extends HoTTAdapterLiveGatherer {
 			if (HoTTAdapterLiveGatherer.isSensorType[i]) queryRing.add(i);
 		}
 		long measurementCount = 0;
+		int lastNumberDisplayableRecords = 0;
 		final long startTime = System.nanoTime() / 1000000;
 		while (!this.serialPort.isInterruptedByUser) {
 			if (HoTTAdapter2LiveGatherer.logger.isLoggable(Level.FINE)) HoTTAdapter2LiveGatherer.logger.log(Level.FINE, "====> entry"); //$NON-NLS-1$
@@ -434,7 +435,10 @@ public class HoTTAdapter2LiveGatherer extends HoTTAdapterLiveGatherer {
 					}
 				}
 
-				HoTTAdapter2LiveGatherer.this.application.updateAllTabs(false);
+				if (recordSet.size() > 0 && recordSet.isChildOfActiveChannel() && recordSet.equals(this.channels.getActiveChannel().getActiveRecordSet())) {
+					HoTTAdapter2LiveGatherer.this.application.updateAllTabs(false,  lastNumberDisplayableRecords != this.application.getActiveRecordSet().getConfiguredDisplayable());
+					lastNumberDisplayableRecords = this.application.getActiveRecordSet().getConfiguredDisplayable();
+				}
 
 				if (this.serialPort.getTimeoutErrors() > 2 && this.serialPort.getTimeoutErrors() % 10 == 0) {
 					this.application.setStatusMessage(
