@@ -95,6 +95,7 @@ public class HoTTAdapterLiveGatherer extends Thread {
 		HoTTAdapterLiveGatherer.recordSets.clear();
 		StringBuilder sb = new StringBuilder();
 		EnumSet<Sensor> detectedSensors = Sensor.getSetFromSignature("Receiver");
+		boolean isChannelsActivated = this.serialPort.getProtocolType().equals("115200") && Boolean.parseBoolean(this.device.getChannelProperty(ChannelPropertyTypes.ENABLE_CHANNEL).getValue());
 		try {
 			if (!this.serialPort.isConnected()) {
 				this.serialPort.open();
@@ -149,6 +150,8 @@ public class HoTTAdapterLiveGatherer extends Thread {
 						tmpSensorType[i] = false;
 					}
 				}
+				if (isChannelsActivated)
+					sb.append(GDE.STRING_COMMA_BLANK).append(Sensor.CHANNEL);
 				detectedSensors = Sensor.getSetFromSignature(sb.toString().replace(GDE.STRING_BLANK, GDE.STRING_EMPTY));
 				if (HoTTAdapterLiveGatherer.log.isLoggable(Level.TIME))
 					HoTTAdapterLiveGatherer.log.log(Level.TIME, sb.toString() + ", detecting sensor type takes " + StringHelper.getFormatedTime("ss:SSS", (new Date().getTime() - startTime)));
@@ -212,8 +215,8 @@ public class HoTTAdapterLiveGatherer extends Thread {
 			this.channel.applyTemplate(recordSetKey, true);
 			pointsVario = new int[recordSetVario.size()];
 		}
+		//GPS
 		if (detectedSensors.contains(Sensor.GPS)) {
-			//GPS
 			this.channel = this.channels.get(3);
 			recordSetKey = recordSetNumber + GDE.STRING_RIGHT_PARENTHESIS_BLANK + HoTTAdapter.Sensor.GPS.value() + recordSetNameExtend;
 			recordSetGPS = RecordSet.createRecordSet(recordSetKey, this.device, 3, true, true, true);
@@ -222,8 +225,8 @@ public class HoTTAdapterLiveGatherer extends Thread {
 			this.channel.applyTemplate(recordSetKey, true);
 			pointsGPS = new int[recordSetGPS.size()];
 		}
+		//General
 		if (detectedSensors.contains(Sensor.GAM)) {
-			//General
 			this.channel = this.channels.get(4);
 			recordSetKey = recordSetNumber + GDE.STRING_RIGHT_PARENTHESIS_BLANK + HoTTAdapter.Sensor.GAM.value() + recordSetNameExtend;
 			recordSetGeneral = RecordSet.createRecordSet(recordSetKey, this.device, 4, true, true, true);
@@ -243,8 +246,7 @@ public class HoTTAdapterLiveGatherer extends Thread {
 			pointsElectric = new int[recordSetElectric.size()];
 		}
 		//Channels
-		boolean isChannels = Boolean.parseBoolean(this.device.getChannelProperty(ChannelPropertyTypes.ENABLE_CHANNEL).getValue());
-		if (isChannels) {
+		if (isChannelsActivated) {
 			this.channel = this.channels.get(6);
 			recordSetKey = recordSetNumber + GDE.STRING_RIGHT_PARENTHESIS_BLANK + HoTTAdapter.Sensor.CHANNEL.value() + recordSetNameExtend;
 			recordSetChannels = RecordSet.createRecordSet(recordSetKey, this.device, 6, true, true, true);
@@ -252,6 +254,7 @@ public class HoTTAdapterLiveGatherer extends Thread {
 			HoTTAdapterLiveGatherer.recordSets.put(HoTTAdapter.Sensor.CHANNEL.value(), recordSetChannels);
 			this.channel.applyTemplate(recordSetKey, true);
 			pointsChannels = new int[recordSetChannels.size()];
+			detectedSensors.add(Sensor.CHANNEL);
 		}
 		//SpeedControl
 		if (detectedSensors.contains(Sensor.ESC)) {
@@ -265,7 +268,6 @@ public class HoTTAdapterLiveGatherer extends Thread {
 		}
 		this.application.getMenuToolBar().updateChannelSelector();
 		this.application.getMenuToolBar().updateRecordSetSelectCombo();
-		this.channels.switchChannel(this.channel.getName());
 		int activeChannelNumber = this.channels.getActiveChannelNumber();
 
 		//0=isReceiver, 1=isVario, 2=isGPS, 3=isGeneral, 4=isElectric 5=Channels 6=ESC
@@ -289,7 +291,7 @@ public class HoTTAdapterLiveGatherer extends Thread {
 			this.dialog.selectTab(5);
 			recordSetKey = recordSetNumber + GDE.STRING_RIGHT_PARENTHESIS_BLANK + HoTTAdapter.Sensor.EAM.value() + recordSetNameExtend;
 		}
-		else if (isChannels && activeChannelNumber == 6) {
+		else if (isChannelsActivated && activeChannelNumber == 6) {
 			this.dialog.selectTab(6);
 			recordSetKey = recordSetNumber + GDE.STRING_RIGHT_PARENTHESIS_BLANK + HoTTAdapter.Sensor.CHANNEL.value() + recordSetNameExtend;
 		}
@@ -298,7 +300,8 @@ public class HoTTAdapterLiveGatherer extends Thread {
 			recordSetKey = recordSetNumber + GDE.STRING_RIGHT_PARENTHESIS_BLANK + HoTTAdapter.Sensor.ESC.value() + recordSetNameExtend;
 		}
 		this.channel.switchRecordSet(recordSetKey);
-		this.application.setStatusMessage("["+sb.toString()+"]");
+		this.channels.switchChannel(this.channel.getName());
+		this.application.setStatusMessage(String.format("Sensor: %s", detectedSensors.toString()));
 		recordSetReceiver.setRecordSetDescription(recordSetReceiver.getRecordSetDescription() 
 				+ String.format(" - %s Baud", this.serialPort.getProtocolType())
 				+ String.format(" - Sensor: %s", detectedSensors.toString()));
@@ -469,7 +472,7 @@ public class HoTTAdapterLiveGatherer extends Thread {
 							// ignore and go ahead gathering sensor data
 							this.serialPort.addTimeoutError();
 						}
-						if (isChannels) {
+						if (isChannelsActivated) {
 							try {
 								this.serialPort.setSensorType(HoTTAdapter.SENSOR_TYPE_SERVO_POSITION_115200);
 								for (int i = 0; i < 2 && !this.serialPort.isCheckSumOK(4, (this.dataBuffer = this.serialPort.getData())); ++i) {

@@ -25,6 +25,7 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Vector;
 import java.util.function.Supplier;
@@ -517,7 +518,7 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 					tmpCapacity = DataParser.parse2Short(dataBuffer, 20);
 					tmpRevolution = DataParser.parse2Short(dataBuffer, 28);
 					tmpTemperatureFet = (dataBuffer[35] & 0xFF) + 20;
-					if (this.application.getActiveChannelNumber() == 4) {
+					if (this.application.getActiveChannelNumber() == 4 || this.getName().equals("HoTTAdapterD")) {
 						if (!this.pickerParameters.isFilterEnabled
 								|| tmpVoltage > 0 && tmpVoltage < 1000 && tmpCurrent < 4000 && tmpCurrent > -10 && tmpRevolution > -1
 								&& tmpRevolution < 20000 && !(points[112] != 0 && points[112] / 1000 - tmpTemperatureFet > 20)) {
@@ -2983,6 +2984,16 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 			tmpRecordSet.get(111 + channelOffset).setName(device.getMeasurementReplacement("engine") + " M");
 			tmpRecordSet.get(111 + channelOffset).setUnit("");
 		}
-
+	}
+	
+	/**
+	 * @param detectedSensors
+	 * @return if one sensor contained for altitude/climb values
+	 */
+	public static boolean isAltClimbSensor(EnumSet<Sensor> detectedSensors) {
+		return detectedSensors.contains(Sensor.VARIO) 
+				|| detectedSensors.contains(Sensor.GPS) 
+				|| detectedSensors.contains(Sensor.GAM) 
+				|| detectedSensors.contains(Sensor.EAM);
 	}
 }

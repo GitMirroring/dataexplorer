@@ -335,10 +335,11 @@ public class HoTTlogReader extends HoTTbinReader {
 			String packageLossPercentage = HoTTbinReader.recordSetReceiver.getRecordDataSize(true) > 0
 					? String.format("%.1f", (countPackageLoss / HoTTbinReader.recordSetReceiver.getTime_ms(HoTTbinReader.recordSetReceiver.getRecordDataSize(true) - 1) * 1000)) : "100";
 			HoTTlogReader.detectedSensors = Sensor.getSetFromSignature(HoTTbinReader.recordSets.keySet().toString().replace("[", GDE.STRING_EMPTY).replace("]", GDE.STRING_EMPTY).replace(" ", GDE.STRING_EMPTY));
+			if (HoTTbinReader.pickerParameters.isChannelsChannelEnabled)
+				HoTTbinReader.detectedSensors.add(Sensor.CHANNEL);
 			HoTTbinReader.recordSetReceiver.setRecordSetDescription(tmpRecordSet.getRecordSetDescription()
 					+ Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] { countPackageLoss, packageLossPercentage, HoTTbinReader.lostPackages.getStatistics() })
-					+ GDE.STRING_MESSAGE_CONCAT 
-					+ Sensor.getSetAsSignature(HoTTlogReader.detectedSensors));
+					+ String.format(" - Sensor: %s", HoTTbinReader2.detectedSensors.toString()));
 			HoTTbinReader.log.logp(Level.WARNING, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, "skipped number receiver data due to package loss = " + countPackageLoss); //$NON-NLS-1$
 			HoTTbinReader.log.logp(Level.TIME, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, "read time = " //$NON-NLS-1$
 					+ StringHelper.getFormatedTime("mm:ss:SSS", (System.nanoTime() / 1000000 - startTime))); //$NON-NLS-1$

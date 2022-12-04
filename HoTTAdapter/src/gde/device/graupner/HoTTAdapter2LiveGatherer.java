@@ -56,6 +56,7 @@ public class HoTTAdapter2LiveGatherer extends HoTTAdapterLiveGatherer {
 		RecordSet recordSet = null;
 		int[] points = null;
 		HoTTAdapterLiveGatherer.recordSets.clear();
+		boolean isChannelsActive = this.serialPort.getProtocolType().equals("115200") && (this.device.getName().equals("HoTTAdapterD") || (this.device.getName().startsWith("HoTTAdapter2") && this.channels.getActiveChannelNumber() == 4));
 		StringBuilder sb = new StringBuilder();
 		try {
 			if (!this.serialPort.isConnected()) {
@@ -112,7 +113,10 @@ public class HoTTAdapter2LiveGatherer extends HoTTAdapterLiveGatherer {
 				}
 				if (HoTTAdapterLiveGatherer.log.isLoggable(Level.TIME))
 					HoTTAdapterLiveGatherer.log.log(Level.TIME, sb.toString() + ", detecting sensor type takes " + StringHelper.getFormatedTime("ss:SSS", (new Date().getTime() - startTime)));
+
 				HoTTbinReader2.detectedSensors = Sensor.getSetFromDetected(sb.toString().replace(GDE.STRING_BLANK, GDE.STRING_EMPTY));
+				if (isChannelsActive)
+					HoTTbinReader2.detectedSensors.add(Sensor.CHANNEL);
 				this.application.setStatusMessage(HoTTbinReader2.detectedSensors.toString());
 
 
@@ -174,11 +178,10 @@ public class HoTTAdapter2LiveGatherer extends HoTTAdapterLiveGatherer {
 		this.application.setStatusMessage(HoTTbinReader2.detectedSensors.toString());
 		recordSet.setRecordSetDescription(recordSet.getRecordSetDescription()
 				+ String.format(" - %s Baud", this.serialPort.getProtocolType())
-				+ String.format(" - Sensor: %s", HoTTbinReader2.detectedSensors.toString() 
-				+ ((HoTTbinReader2.detectedSensors.size() > 2 && HoTTbinReader2.detectedSensors.contains(Sensor.ESC)) 
-						|| (HoTTbinReader2.detectedSensors.size() > 1 && !HoTTbinReader2.detectedSensors.contains(Sensor.ESC)) 
+				+ String.format(" - Sensor: %s", HoTTbinReader2.detectedSensors.toString())
+				+ (HoTTAdapter2.isAltClimbSensor(HoTTbinReader2.detectedSensors)
 						? String.format(" - %s = %s", Messages.getString(MessageIds.GDE_MSGT2419), Sensor.fromOrdinal(this.device.pickerParameters.altitudeClimbSensorSelection).name())
-								: "")));
+								: ""));
 
 		boolean isGPSdetected = false;
 		Vector<Integer> queryRing = new Vector<Integer>();
@@ -338,7 +341,7 @@ public class HoTTAdapter2LiveGatherer extends HoTTAdapterLiveGatherer {
 							// ignore and go ahead gathering sensor data
 							this.serialPort.addTimeoutError();
 						}
-						if (this.device.getName().equals("HoTTAdapterD") || (this.device.getName().startsWith("HoTTAdapter2") && this.channels.getActiveChannelNumber() == 4)) {
+						if (isChannelsActive) {
 							try {
 								this.serialPort.setSensorType(HoTTAdapter.SENSOR_TYPE_SERVO_POSITION_115200);
 								for (int i = 0; i < 2 && !this.serialPort.isCheckSumOK(4, (this.dataBuffer = this.serialPort.getData())); ++i) {

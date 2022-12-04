@@ -627,11 +627,11 @@ public class HoTTbinReaderD extends HoTTbinReader2 {
 			String packageLossPercentage = tmpRecordSet.getRecordDataSize(true) > 0
 					? String.format("%.1f", (((RcvBinParser) HoTTbinReader2.rcvBinParser).getCountPackageLoss() / tmpRecordSet.getTime_ms(tmpRecordSet.getRecordDataSize(true) - 1) * 1000))
 					: "100";
+			HoTTbinReader.detectedSensors.add(Sensor.CHANNEL);
 			tmpRecordSet.setRecordSetDescription(tmpRecordSet.getRecordSetDescription()
 					+ Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] { ((RcvBinParser) HoTTbinReader2.rcvBinParser).getCountPackageLoss(), packageLossPercentage, ((RcvBinParser) HoTTbinReader.rcvBinParser).getLostPackages().getStatistics() })
-					+ GDE.STRING_MESSAGE_CONCAT 
-					+ Sensor.getSetAsSignature(HoTTbinReader.detectedSensors)
-					+ (HoTTbinReader2.detectedSensors.size() > 1 && pickerParameters.altitudeClimbSensorSelection != 0
+					+ String.format(" - Sensor: %s", HoTTlogReader.detectedSensors.toString())
+					+ (HoTTAdapter2.isAltClimbSensor(HoTTbinReader2.detectedSensors)
 							? String.format(" - %s = %s", Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGT2419), Sensor.fromOrdinal(pickerParameters.altitudeClimbSensorSelection).name())
 									: ""));
 			HoTTbinReader2.log.log(Level.WARNING, "skipped number receiver data due to package loss = " + ((RcvBinParser) HoTTbinReader2.rcvBinParser).getCountPackageLoss()); //$NON-NLS-1$
@@ -929,11 +929,11 @@ public class HoTTbinReaderD extends HoTTbinReader2 {
 			String packageLossPercentage = tmpRecordSet.getRecordDataSize(true) > 0
 					? String.format("%.1f", (((RcvBinParser) HoTTbinReader.rcvBinParser).getCountPackageLoss() / tmpRecordSet.getTime_ms(tmpRecordSet.getRecordDataSize(true) - 1) * 1000))
 					: "100";
+			HoTTbinReader.detectedSensors.add(Sensor.CHANNEL);
 			tmpRecordSet.setRecordSetDescription(tmpRecordSet.getRecordSetDescription()
 					+ Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] { ((RcvBinParser) HoTTbinReader2.rcvBinParser).getCountPackageLoss(), packageLossPercentage, ((RcvBinParser) HoTTbinReader.rcvBinParser).getLostPackages().getStatistics() })
-					+ GDE.STRING_MESSAGE_CONCAT 
-					+ Sensor.getSetAsSignature(HoTTbinReader.detectedSensors)
-					+ (HoTTbinReader2.detectedSensors.size() > 1 
+					+ String.format(" - Sensor: %s", HoTTlogReader.detectedSensors.toString())
+					+ (HoTTAdapter2.isAltClimbSensor(HoTTbinReader2.detectedSensors)
 							? String.format(" - %s = %s", Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGT2419), Sensor.fromOrdinal(pickerParameters.altitudeClimbSensorSelection).name())
 									: ""));
 			HoTTbinReader2.log.log(Level.WARNING, "skipped number receiver data due to package loss = " + ((RcvBinParser) HoTTbinReader.rcvBinParser).getCountPackageLoss()); //$NON-NLS-1$
