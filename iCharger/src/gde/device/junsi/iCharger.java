@@ -284,6 +284,7 @@ public abstract class iCharger extends DeviceConfiguration implements IDevice {
 	 * at least an update of the graphics window should be included at the end of this method
 	 */
 	public void updateVisibilityStatus(RecordSet recordSet, boolean includeReasonableDataCheck) {
+		int displayableCounter = 0;
 
 		//0=VersorgungsSpg. 1=Spannung 2=Strom 3=Ladung 4=Leistung 5=Energie 6=Temp.intern 7=Temp.extern 8=Balance
 		//9=SpannungZelle1 10=SpannungZelle2 11=SpannungZelle3 12=SpannungZelle4 13=SpannungZelle5 14=SpannungZelle6 15=SpannungZelle7 16=SpannungZelle8 17=SpannungZelle9 18=SpannungZelle10
@@ -293,6 +294,10 @@ public abstract class iCharger extends DeviceConfiguration implements IDevice {
 				record.setDisplayable(record.hasReasonableData());
 				if (log.isLoggable(Level.FINER))
 					log.log(Level.FINER, record.getName() + " setDisplayable=" + record.hasReasonableData()); //$NON-NLS-1$
+
+				if (record.isActive() && record.isDisplayable()) {
+					++displayableCounter;
+				}
 		}
 
 		if (log.isLoggable(Level.FINE)) {
@@ -301,6 +306,7 @@ public abstract class iCharger extends DeviceConfiguration implements IDevice {
 				log.log(Level.FINE, record.getName() + " isActive=" + record.isActive() + " isVisible=" + record.isVisible() + " isDisplayable=" + record.isDisplayable()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 		}
+		recordSet.setConfiguredDisplayable(displayableCounter);
 	}
 
 	/**

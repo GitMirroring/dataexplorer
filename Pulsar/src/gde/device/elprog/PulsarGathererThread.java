@@ -57,8 +57,9 @@ public class PulsarGathererThread extends Thread {
 	int											retryCounter					= PulsarGathererThread.WAIT_TIME_RETRYS;									//3600 * 1 sec = 60 Min
 	boolean									isCollectDataStopped	= false;
 	boolean									isProgrammExecuting	= false;
-	boolean										isPortOpenedByLiveGatherer	= false;
+	boolean									isPortOpenedByLiveGatherer	= false;
 	boolean									isContinuousRecordSet	= Settings.getInstance().isContinuousRecordSet();
+	int											lastNumberDisplayableRecords	= 0;
 
 	/**
 	 * 
@@ -184,12 +185,14 @@ public class PulsarGathererThread extends Thread {
 					++measurementCount;
 
 					if (recordSet != null) {
-						if (recordSet.size() > 0 && recordSet.isChildOfActiveChannel() && recordSet.equals(this.channels.getActiveChannel().getActiveRecordSet())) {
-							PulsarGathererThread.this.application.updateAllTabs(false);
-						}
 						if (measurementCount > 0 && measurementCount % 2 == 0) {
 							this.device.updateVisibilityStatus(recordSet, true);
 							recordSet.syncScaleOfSyncableRecords();
+						}
+						RecordSet activeRecordSet = this.channels.getActiveChannel().getActiveRecordSet();
+						if (activeRecordSet != null && recordSet.size() > 0 && recordSet.isChildOfActiveChannel() && recordSet.equals(activeRecordSet)) {
+							PulsarGathererThread.this.application.updateAllTabs(false, this.lastNumberDisplayableRecords != recordSet.getConfiguredDisplayable());
+							this.lastNumberDisplayableRecords = recordSet.getConfiguredDisplayable();
 						}
 					}
 					this.application.setStatusMessage(GDE.STRING_EMPTY);

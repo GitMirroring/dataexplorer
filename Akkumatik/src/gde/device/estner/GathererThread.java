@@ -57,6 +57,8 @@ public class GathererThread extends Thread {
 	int												numberBatteryCells2					= 0;
 	int												retryCounter								= GathererThread.WAIT_TIME_RETRYS;
 	boolean										isCollectDataStopped				= false;
+	int												lastNumberDisplayableRecords1	= 0;
+	int												lastNumberDisplayableRecords2	= 0;
 
 	/**
 	 * data gatherer thread definition 
@@ -165,11 +167,13 @@ public class GathererThread extends Thread {
 							if (log.isLoggable(Level.TIME)) GathererThread.log.logp(Level.TIME, GathererThread.$CLASS_NAME, $METHOD_NAME, "time = " + TimeLine.getFomatedTimeWithUnit(startCycleTime1 + this.device.getProcessingTime(data))); //$NON-NLS-1$
 							lastCycleTime1 = timeStep1;
 						}
-						if (recordSet1 != null && recordSet1.size() > 0 && recordSet1.isChildOfActiveChannel() && recordSet1.equals(this.channels.getActiveChannel().getActiveRecordSet())) {
-							GathererThread.this.application.updateAllTabs(false);
-						}
 						if (recordSet1 != null && recordSet1.get(0).realSize() < 3 || recordSet1 != null && recordSet1.get(0).realSize() % 10 == 0) {
 							this.device.updateVisibilityStatus(recordSet1, true);
+						}
+						RecordSet activeRecordSet = this.channels.getActiveChannel().getActiveRecordSet();
+						if (activeRecordSet != null && recordSet1 != null && recordSet1.size() > 0 && recordSet1.isChildOfActiveChannel() && recordSet1.equals(activeRecordSet)) {
+							GathererThread.this.application.updateAllTabs(false, this.lastNumberDisplayableRecords1 != recordSet1.getConfiguredDisplayable());
+							this.lastNumberDisplayableRecords1 = recordSet1.getConfiguredDisplayable();
 						}
 					}
 					break;
@@ -223,11 +227,13 @@ public class GathererThread extends Thread {
 							lastCycleTime2 = timeStep2;
 						}
 
-						if (recordSet2 != null && recordSet2.size() > 0 && recordSet2.isChildOfActiveChannel() && recordSet2.equals(this.channels.getActiveChannel().getActiveRecordSet())) {
-							GathererThread.this.application.updateAllTabs(false);
-						}
 						if (recordSet2 != null && recordSet2.get(0).realSize() < 3 || recordSet2 != null && recordSet2.get(0).realSize() % 10 == 0) {
 							this.device.updateVisibilityStatus(recordSet2, true);
+						}
+						RecordSet activeRecordSet = this.channels.getActiveChannel().getActiveRecordSet();
+						if (activeRecordSet != null && recordSet2 != null && recordSet2.size() > 0 && recordSet2.isChildOfActiveChannel() && recordSet2.equals(activeRecordSet)) {
+							GathererThread.this.application.updateAllTabs(false, this.lastNumberDisplayableRecords2 != recordSet2.getConfiguredDisplayable());
+							this.lastNumberDisplayableRecords2 = recordSet2.getConfiguredDisplayable();
 						}
 					}
 					break;

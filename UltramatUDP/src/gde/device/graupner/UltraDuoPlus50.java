@@ -364,13 +364,17 @@ public class UltraDuoPlus50 extends Ultramat {
 	 */
 	@Override
 	public void updateVisibilityStatus(RecordSet recordSet, boolean includeReasonableDataCheck) {
-
+		int displayableCounter = 0;
 		recordSet.setAllDisplayable();
 		int numCells = recordSet.getChannelConfigNumber() < 3 ? 7 : 14;
 		for (int i = recordSet.size() - numCells - 1; i < recordSet.size(); ++i) {
 			Record record = recordSet.get(i);
 			record.setDisplayable(record.getOrdinal() <= 5 || record.hasReasonableData());
 			log.log(Level.FINER, record.getName() + " setDisplayable=" + (record.getOrdinal() <= 5 || record.hasReasonableData())); //$NON-NLS-1$
+
+			if (record.isActive() && record.isDisplayable()) {
+				++displayableCounter;
+			}
 		}
 
 		if (logger.isLoggable(Level.FINE)) {
@@ -379,6 +383,7 @@ public class UltraDuoPlus50 extends Ultramat {
 				logger.log(Level.FINE, record.getName() + " isActive=" + record.isActive() + " isVisible=" + record.isVisible() + " isDisplayable=" + record.isDisplayable()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 		}
+		recordSet.setConfiguredDisplayable(displayableCounter);
 	}
 
 	/**

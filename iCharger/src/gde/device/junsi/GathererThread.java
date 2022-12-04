@@ -56,6 +56,7 @@ public class GathererThread extends Thread {
 	int												numberBatteryCells					= 0;
 	int												retryCounter								= GathererThread.WAIT_TIME_RETRYS;													// 120 * 2500 = 3000 sec
 	boolean										isCollectDataStopped				= false;
+	int												lastNumberDisplayableRecords	= 0;
 
 	/**
 	 * data gatherer thread definition 
@@ -165,9 +166,6 @@ public class GathererThread extends Thread {
 					++measurementCount;
 
 					if (recordSet != null) {
-						if (recordSet.size() > 0 && recordSet.isChildOfActiveChannel() && recordSet.equals(this.channels.getActiveChannel().getActiveRecordSet())) {
-							GathererThread.this.application.updateAllTabs(false);
-						}
 						if (measurementCount > 0 && measurementCount % 5 == 0) {
 							this.numberBatteryCells = 0;
 							for (int i = numCells; i < recordSet.size(); i++) {
@@ -178,6 +176,11 @@ public class GathererThread extends Thread {
 							}
 
 							this.device.updateVisibilityStatus(recordSet, true);
+						}
+						RecordSet activeRecordSet = this.channels.getActiveChannel().getActiveRecordSet();
+						if (activeRecordSet != null && recordSet.size() > 0 && recordSet.isChildOfActiveChannel() && recordSet.equals(activeRecordSet)) {
+							GathererThread.this.application.updateAllTabs(false, this.lastNumberDisplayableRecords != recordSet.getConfiguredDisplayable());
+							this.lastNumberDisplayableRecords = recordSet.getConfiguredDisplayable();
 						}
 					}
 				}

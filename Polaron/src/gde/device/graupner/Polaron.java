@@ -45,6 +45,7 @@ import gde.exception.ApplicationConfigurationException;
 import gde.exception.DataInconsitsentException;
 import gde.exception.SerialPortException;
 import gde.io.DataParser;
+import gde.log.Level;
 import gde.messages.Messages;
 import gde.ui.DataExplorer;
 
@@ -580,19 +581,26 @@ public abstract class Polaron extends DeviceConfiguration implements IDevice {
 	 */
 	@Override
 	public void updateVisibilityStatus(RecordSet recordSet, boolean includeReasonableDataCheck) {
-
+		int displayableCounter = 0;
 		recordSet.setAllDisplayable();
 		for (int i = 0; i < recordSet.size(); i++) {
 			Record record = recordSet.get(i);
 			record.setDisplayable(record.getOrdinal() <= 5 || record.hasReasonableData());
-			Polaron.log.log(java.util.logging.Level.FINER, record.getName() + " setDisplayable=" + (record.getOrdinal() <= 5 || record.hasReasonableData())); //$NON-NLS-1$
+			if (log.isLoggable(Level.FINER))
+				Polaron.log.log(Level.FINER, record.getName() + " setDisplayable=" + (record.getOrdinal() <= 5 || record.hasReasonableData())); //$NON-NLS-1$
+
+			if (record.isActive() && record.isDisplayable()) {
+				++displayableCounter;
+			}
 		}
 
-//		if (Polaron.log.isLoggable(java.util.logging.Level.FINE)) {
-//			for (Record record : recordSet.values()) {
-//				Polaron.log.log(java.util.logging.Level.FINE, record.getName() + " isActive=" + record.isActive() + " isVisible=" + record.isVisible() + " isDisplayable=" + record.isDisplayable()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-//			}
-//		}
+		if (log.isLoggable(Level.FINE)) {
+			for (int i = 0; i < recordSet.size(); i++) {
+				Record record = recordSet.get(i);
+				log.log(Level.FINE, record.getName() + " isActive=" + record.isActive() + " isVisible=" + record.isVisible() + " isDisplayable=" + record.isDisplayable()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			}
+		}
+		recordSet.setConfiguredDisplayable(displayableCounter);
 	}
 
 	/**

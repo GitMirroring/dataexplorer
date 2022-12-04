@@ -482,7 +482,7 @@ public class eStation extends DeviceConfiguration implements IDevice {
 	 * at least an update of the graphics window should be included at the end of this method
 	 */
 	public void updateVisibilityStatus(RecordSet recordSet, boolean includeReasonableDataCheck) {
-
+		int displayableCounter = 0;
 		//BC6 0=Spannung 1=Strom 2=Ladung 3=Leistung 4=Energie 5=VersorgungsSpg. 6=Balance
 		// 0=Spannung 1=Strom 2=Ladung 3=Leistung 4=Energie 5=Temp.extern 6=Temp.intern 7=VersorgungsSpg. 8=Balance
 		recordSet.setAllDisplayable();
@@ -494,6 +494,10 @@ public class eStation extends DeviceConfiguration implements IDevice {
 				record.setDisplayable(record.hasReasonableData());
 				if (log.isLoggable(Level.FINER))
 					log.log(Level.FINER, record.getName() + " setDisplayable=" + record.hasReasonableData());
+
+				if (record.isActive() && record.isDisplayable()) {
+					++displayableCounter;
+				}
 		}
 
 		if (log.isLoggable(Level.FINE)) {
@@ -502,6 +506,7 @@ public class eStation extends DeviceConfiguration implements IDevice {
 				log.log(Level.FINE, record.getName() + " isActive=" + record.isActive() + " isVisible=" + record.isVisible() + " isDisplayable=" + record.isDisplayable());
 			}
 		}
+		recordSet.setConfiguredDisplayable(displayableCounter);
 	}
 
 	/**

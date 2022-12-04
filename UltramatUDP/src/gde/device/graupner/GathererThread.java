@@ -63,6 +63,7 @@ public class GathererThread extends Thread {
 	boolean[]									isAlerted4Finish						= {false, false, false, false};
 	boolean										isCombinedMode							= false;
 	boolean 									isContinuousRecordSet 			= Settings.getInstance().isContinuousRecordSet();
+	int												lastNumberDisplayableRecords	= 0;
 
 	/**
 	 * data gatherer thread definition 
@@ -494,7 +495,11 @@ public class GathererThread extends Thread {
 				
 			recordSet.addPoints(this.device.convertDataBytes(points, dataBuffer));
 
-			GathererThread.this.application.updateAllTabs(false);
+			RecordSet activeRecordSet = this.channels.getActiveChannel().getActiveRecordSet();
+			if (activeRecordSet != null && recordSet.size() > 0 && recordSet.isChildOfActiveChannel() && recordSet.equals(activeRecordSet)) {
+				GathererThread.this.application.updateAllTabs(false, this.lastNumberDisplayableRecords != recordSet.getConfiguredDisplayable());
+				this.lastNumberDisplayableRecords = recordSet.getConfiguredDisplayable();
+			}
 
 			if (recordSet.get(0).realSize() < 3 || recordSet.get(0).realSize() % 10 == 0) {
 				this.device.updateVisibilityStatus(recordSet, true);

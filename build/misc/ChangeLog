@@ -16,6 +16,14 @@ Device specific changes/fixes
 	* iChargerUSB* - fix missing update switching async/sync dual channel devices
 	* iChargerUSB* - update some adjustment limit values to latest specification
 	* iCharger458/456 - add initial implementation 
+	* iCharger* - suppress curve selector update while number of display records doesn't changed
+	* Ultramat* - suppress curve selector update while number of display records doesn't changed
+	* UltraDuoPlus* - suppress curve selector update while number of display records doesn't changed
+	* Polaron* - suppress curve selector update while number of display records doesn't changed
+	* Akkumatik* - suppress curve selector update while number of display records doesn't changed
+	* eStation* - suppress curve selector update while number of display records doesn't changed
+	* Pulsar3 - suppress curve selector update while number of display records doesn't changed
+	
 
 Version 3.7.3 - 26 Nov 2022
 Generic changes/fixes 

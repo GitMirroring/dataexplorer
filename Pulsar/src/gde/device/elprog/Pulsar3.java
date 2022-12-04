@@ -468,7 +468,7 @@ public class Pulsar3 extends DeviceConfiguration implements IDevice {
 	 */
 	@Override
 	public void updateVisibilityStatus(RecordSet recordSet, boolean includeReasonableDataCheck) {
-
+		int displayableCounter = 0;
 		//0=Spannung 1=Strom 2=Ladung 3=Leistung 4=Energie 5=Temperature 6=Ri 7=Balance
 		//8=SpannungZelle1 9=SpannungZelle2 10=SpannungZelle3 11=SpannungZelle4 12=SpannungZelle5 13=SpannungZelle6 ... 23=SpannungZelle16
 		//24=RiZelle1 25=RiZelle2 26=RiZelle3 27=RiZelle4 28=RiZelle5 29=RiZelle6 ... 39=RiZelle16
@@ -479,6 +479,10 @@ public class Pulsar3 extends DeviceConfiguration implements IDevice {
 				record.setDisplayable(record.hasReasonableData());
 				if (log.isLoggable(Level.FINER))
 					log.log(Level.FINER, record.getName() + " setDisplayable=" + record.hasReasonableData()); //$NON-NLS-1$
+
+				if (record.isActive() && record.isDisplayable()) {
+					++displayableCounter;
+				}
 		}
 
 		if (log.isLoggable(Level.FINE)) {
@@ -487,6 +491,7 @@ public class Pulsar3 extends DeviceConfiguration implements IDevice {
 				log.log(Level.FINE, record.getName() + " isActive=" + record.isActive() + " isVisible=" + record.isVisible() + " isDisplayable=" + record.isDisplayable()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 		}
+		recordSet.setConfiguredDisplayable(displayableCounter);
 	}
 
 	/**

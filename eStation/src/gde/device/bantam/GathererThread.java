@@ -62,6 +62,7 @@ public class GathererThread extends Thread {
 	int 											numberBatteryCells 					= 0; 
 	int												retryCounter								= GathererThread.WAIT_TIME_RETRYS;	// 36 * 5 sec timeout = 180 sec
 	boolean										isCollectDataStopped				= false;
+	int												lastNumberDisplayableRecords	= 0;
 
 	/**
 	 * data gatherer thread definition 
@@ -168,11 +169,15 @@ public class GathererThread extends Thread {
 							log.logp(Level.FINER, GathererThread.$CLASS_NAME, $METHOD_NAME, "record = " + record.getName() + " " + record.getRealMinValue() + " " + record.getRealMaxValue()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						}
 					}
-
-					GathererThread.this.application.updateAllTabs(false);
 					
 					if (recordSet.get(0).realSize() < 3 || recordSet.get(0).realSize() % 10 == 0) {
 						this.device.updateVisibilityStatus(recordSet, true);
+					}
+
+					RecordSet activeRecordSet = this.channels.getActiveChannel().getActiveRecordSet();
+					if (activeRecordSet != null && recordSet.size() > 0 && recordSet.isChildOfActiveChannel() && recordSet.equals(activeRecordSet)) {
+						GathererThread.this.application.updateAllTabs(false, this.lastNumberDisplayableRecords != recordSet.getConfiguredDisplayable());
+						this.lastNumberDisplayableRecords = recordSet.getConfiguredDisplayable();
 					}
 				}
 				else { // no eStation program is executing, wait for 180 seconds max. for actions

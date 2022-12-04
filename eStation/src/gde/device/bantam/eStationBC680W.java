@@ -371,7 +371,7 @@ public class eStationBC680W extends eStation {
 	 */
 	@Override
 	public void updateVisibilityStatus(RecordSet recordSet, boolean includeReasonableDataCheck) {
-
+		int displayableCounter = 0;
 		// 0=Spannung 1=Strom 2=Ladung 3=Leistung 4=Energie 5=Temperature 6=VersorgungsSpg. 7=Balance
 		recordSet.setAllDisplayable();
 		for (String recordKey : recordSet.getNoneCalculationRecordNames()) {
@@ -383,6 +383,10 @@ public class eStationBC680W extends eStation {
 				record.setDisplayable(record.hasReasonableData());
 				if (log.isLoggable(Level.FINER))
 					log.log(Level.FINER, record.getName() + " setDisplayable=" + record.hasReasonableData());
+
+				if (record.isActive() && record.isDisplayable()) {
+					++displayableCounter;
+				}
 		}
 
 		if (log.isLoggable(Level.FINE)) {
@@ -391,6 +395,7 @@ public class eStationBC680W extends eStation {
 				log.log(Level.FINE, record.getName() + " isActive=" + record.isActive() + " isVisible=" + record.isVisible() + " isDisplayable=" + record.isDisplayable());
 			}
 		}
+		recordSet.setConfiguredDisplayable(displayableCounter);
 	}
 
 }

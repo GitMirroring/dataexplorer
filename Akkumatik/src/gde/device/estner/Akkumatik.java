@@ -481,7 +481,7 @@ public class Akkumatik extends DeviceConfiguration implements IDevice {
 	 */
 	@Override
 	public void updateVisibilityStatus(RecordSet recordSet, boolean includeReasonableDataCheck) {
-
+		int displayableCounter = 0;
 		// 0=Voltage 4=Current 2=Capacity 3=Power 4=Energy 5=SupplyVoltage 6=Resistance 7=Temperature 8=TemperatureInt 9=Balance
 		// 10=CellVoltage1 11=CellVoltage2 12=CellVoltage3 13=CellVoltage4 14=CellVoltage5 15=CellVoltage6
 		// 16=CellVoltage7 17=CellVoltage8 18=CellVoltage9 19=CellVoltage10 20=CellVoltage11 21=CellVoltage12
@@ -493,6 +493,10 @@ public class Akkumatik extends DeviceConfiguration implements IDevice {
 			Record record = recordSet.get(i);
 			record.setDisplayable(record.hasReasonableData());
 			if (Akkumatik.log.isLoggable(java.util.logging.Level.FINER)) Akkumatik.log.log(java.util.logging.Level.FINER, record.getName() + " setDisplayable=" + record.hasReasonableData());
+
+			if (record.isActive() && record.isDisplayable()) {
+				++displayableCounter;
+			}
 		}
 
 		if (Akkumatik.log.isLoggable(java.util.logging.Level.FINE)) {
@@ -501,6 +505,7 @@ public class Akkumatik extends DeviceConfiguration implements IDevice {
 				Akkumatik.log.log(java.util.logging.Level.FINE, record.getName() + " isActive=" + record.isActive() + " isVisible=" + record.isVisible() + " isDisplayable=" + record.isDisplayable());
 			}
 		}
+		recordSet.setConfiguredDisplayable(displayableCounter);
 	}
 
 	/**

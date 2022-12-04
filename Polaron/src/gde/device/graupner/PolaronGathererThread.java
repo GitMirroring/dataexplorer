@@ -64,6 +64,7 @@ public class PolaronGathererThread extends Thread {
 	boolean[]								isAlerted4Finish			= { false, false, false, false };
 	boolean									isLinkedMode					= false;
 	boolean									isContinuousRecordSet	= Settings.getInstance().isContinuousRecordSet();
+	int											lastNumberDisplayableRecords	= 0;
 
 	/**
 	 * data gatherer thread definition 
@@ -399,7 +400,11 @@ public class PolaronGathererThread extends Thread {
 
 			recordSet.addPoints(this.device.convertDataBytes(points, dataBuffer));
 
-			PolaronGathererThread.this.application.updateAllTabs(false);
+			RecordSet activeRecordSet = this.channels.getActiveChannel().getActiveRecordSet();
+			if (activeRecordSet != null && recordSet.size() > 0 && recordSet.isChildOfActiveChannel() && recordSet.equals(activeRecordSet)) {
+				PolaronGathererThread.this.application.updateAllTabs(false, this.lastNumberDisplayableRecords != activeRecordSet.getConfiguredDisplayable());
+				this.lastNumberDisplayableRecords = activeRecordSet.getConfiguredDisplayable();
+			}
 
 			if (recordSet.get(0).realSize() < 3 || recordSet.get(0).realSize() % 10 == 0) {
 				this.device.updateVisibilityStatus(recordSet, true);

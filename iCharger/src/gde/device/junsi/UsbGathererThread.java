@@ -77,6 +77,7 @@ public class UsbGathererThread extends Thread {
 	long								lastTimeStamp_02_ms						= 0;
 	long 								lastRecordEndTimeStamp_02_ms 	= 0;
 	ChargerInfo 				chargerInfo 									= null;
+	int									lastNumberDisplayableRecords	= 0;
 
 
 	/**
@@ -419,10 +420,14 @@ public class UsbGathererThread extends Thread {
 				break;
 			}
 
-			UsbGathererThread.this.application.updateAllTabs(false);
-
 			if (recordSet.get(0).realSize() < 3 || recordSet.get(0).realSize() % 10 == 0) {
 				this.device.updateVisibilityStatus(recordSet, true);
+			}
+
+			RecordSet activeRecordSet = this.channels.getActiveChannel().getActiveRecordSet();
+			if (activeRecordSet != null && recordSet.size() > 0 && recordSet.isChildOfActiveChannel() && recordSet.equals(activeRecordSet)) {
+				UsbGathererThread.this.application.updateAllTabs(false, this.lastNumberDisplayableRecords != activeRecordSet.getConfiguredDisplayable());
+				this.lastNumberDisplayableRecords = activeRecordSet.getConfiguredDisplayable();
 			}
 		}
 		result[0] = recordSet;
