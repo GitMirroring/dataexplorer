@@ -12,10 +12,11 @@ Device specific changes/fixes
 	* HoTTAdapter* - live-data, add capability recording channel data, add used protocol to description
 	* HoTTAdapter2 - live-data, suppress curve selector update while number of display able records doesn't changed
 	* HoTTAdapter* - fix persistence of channel unit selection
-	* HoTTAdapter* - add Channel as sensor to sensor list
+	* HoTTAdapter* - add Channel as sensor to sensor list, while import or live-date 115200 Baud
+	* HoTTAdapter* - fix visibility of Channels, display all as long as values available
 	* iChargerUSB* - fix missing update switching async/sync dual channel devices
 	* iChargerUSB* - update some adjustment limit values to latest specification
-	* iCharger458/456 - add initial implementation 
+	* iCharger458/456DUO - add initial implementation 
 	* iCharger* - suppress curve selector update while number of display records doesn't changed
 	* Ultramat* - suppress curve selector update while number of display records doesn't changed
 	* UltraDuoPlus* - suppress curve selector update while number of display records doesn't changed

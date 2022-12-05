@@ -130,6 +130,13 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 		catch (NumberFormatException e) {
 			this.pickerParameters.altitudeClimbSensorSelection = 0;
 		}
+		try {
+			this.pickerParameters.isChannelPercentEnabled = this.getChannelProperty(ChannelPropertyTypes.CHANNEL_PERCENTAGE) != null && this.getChannelProperty(ChannelPropertyTypes.CHANNEL_PERCENTAGE).getValue() != null //$NON-NLS-1$
+					? Boolean.parseBoolean(this.getChannelProperty(ChannelPropertyTypes.CHANNEL_PERCENTAGE).getValue()) : true;
+		}
+		catch (NumberFormatException e) {
+			this.pickerParameters.isChannelPercentEnabled = true;
+		}
 	}
 
 	/**
@@ -1014,12 +1021,12 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 			double minuten = (value - (grad * 1000.0)) / 10.0;
 			newValue = grad + minuten / 60.0;
 		}
-		else if (record.getAbstractParent().getChannelConfigNumber() == 4 && (record.getOrdinal() >= 87 && record.getOrdinal() <= 102)) {
+		else if (record.getAbstractParent().getChannelConfigNumber() == 4 && (record.getOrdinal() >= 87 && record.getOrdinal() <= 102) && value != 0.) {
 			if (this.pickerParameters.isChannelPercentEnabled) {
 				if (!record.getUnit().equals("%")) record.setUnit("%");
 				factor = 0.250;
 				reduction = 1500.0;
-				newValue = (value - reduction) * factor;
+				newValue = (value - reduction) * factor + 0.001;
 			}
 			else {
 				if (!record.getUnit().equals("µsec")) record.setUnit("µsec");
@@ -1066,12 +1073,12 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 			double minuten = (value - grad * 1.0) * 60.0;
 			newValue = (grad + minuten / 100.0) * 1000.0;
 		}
-		else if (record.getAbstractParent().getChannelConfigNumber() == 4 && (record.getOrdinal() >= 87 && record.getOrdinal() <= 102)) {
+		else if (record.getAbstractParent().getChannelConfigNumber() == 4 && (record.getOrdinal() >= 87 && record.getOrdinal() <= 102) && value != 0.) {
 			if (this.pickerParameters.isChannelPercentEnabled) {
 				if (!record.getUnit().equals("%")) record.setUnit("%");
 				factor = 0.250;
 				reduction = 1500.0;
-				newValue = value / factor + reduction;
+				newValue = value / factor + reduction - 0.001;
 			}
 			else {
 				if (!record.getUnit().equals("µsec")) record.setUnit("µsec");

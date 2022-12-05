@@ -689,7 +689,13 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 		catch (NumberFormatException e) {
 			this.pickerParameters.altitudeClimbSensorSelection = 0;
 		}
-		
+		try {
+			this.pickerParameters.isChannelPercentEnabled = this.getChannelProperty(ChannelPropertyTypes.CHANNEL_PERCENTAGE) != null && this.getChannelProperty(ChannelPropertyTypes.CHANNEL_PERCENTAGE).getValue() != null //$NON-NLS-1$
+					? Boolean.parseBoolean(this.getChannelProperty(ChannelPropertyTypes.CHANNEL_PERCENTAGE).getValue()) : true;
+		}
+		catch (NumberFormatException e) {
+			this.pickerParameters.isChannelPercentEnabled = true;
+		}		
 		this.pickerParameters.latitudeToleranceFactor = this.getMeasurementPropertyValue(3, 1, MeasurementPropertyTypes.FILTER_FACTOR.value()).toString().length() > 0
 				? Double.parseDouble(this.getMeasurementPropertyValue(3, 1, MeasurementPropertyTypes.FILTER_FACTOR.value()).toString()) : 90.0;
 		this.pickerParameters.longitudeToleranceFactor = this.getMeasurementPropertyValue(3, 2, MeasurementPropertyTypes.FILTER_FACTOR.value()).toString().length() > 0
@@ -1581,12 +1587,13 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 				double minuten = (value - (grad * 1000.0)) / 10.0;
 				newValue = grad + minuten / 60.0;
 		}
-		else if (record.getAbstractParent().getChannelConfigNumber() == 6 && (record.getOrdinal() >= 3 && record.getOrdinal() <= 18)) {
+		else if (record.getAbstractParent().getChannelConfigNumber() == 6 && (record.getOrdinal() >= 3 && record.getOrdinal() <= 18) && value != 0.) {
+			//channel recordSet, channel values
 			if (this.pickerParameters.isChannelPercentEnabled) {
 				if (!record.getUnit().equals("%")) record.setUnit("%");
 				factor = 0.250;
 				reduction = 1500.0;
-				newValue = (value - reduction) * factor;
+				newValue = (value - reduction) * factor + 0.001;
 			}
 			else {
 				if (!record.getUnit().equals("µsec")) record.setUnit("µsec");
@@ -1620,12 +1627,12 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 				double minuten = (value - grad * 1.0) * 60.0;
 				newValue = (grad + minuten / 100.0) * 1000.0;
 		} 
-		else if (record.getAbstractParent().getChannelConfigNumber() == 6 && (record.getOrdinal() >= 3 && record.getOrdinal() <= 18)) {
+		else if (record.getAbstractParent().getChannelConfigNumber() == 6 && (record.getOrdinal() >= 3 && record.getOrdinal() <= 18) && value != 0.) {
 			if (this.pickerParameters.isChannelPercentEnabled) {
 				if (!record.getUnit().equals("%")) record.setUnit("%");
 				factor = 0.250;
 				reduction = 1500.0;
-				newValue = value / factor + reduction;
+				newValue = value / factor + reduction - 0.001;
 			}
 			else {
 				if (!record.getUnit().equals("µsec")) record.setUnit("µsec");
