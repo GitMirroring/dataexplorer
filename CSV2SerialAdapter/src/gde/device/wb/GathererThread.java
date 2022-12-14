@@ -65,6 +65,7 @@ public class GathererThread extends Thread {
 	String									recordSetKey;
 	boolean									isPortOpenedByLiveGatherer	= false;
 	int											retryCounter								= GathererThread.WAIT_TIME_RETRYS;									// 36 * 5 sec timeout = 180 sec
+	int											lastNumberDisplayableRecords	= 0;
 
 	/**
 	 * data gatherer thread definition 
@@ -194,15 +195,17 @@ public class GathererThread extends Thread {
 							this.application.setStatusMessage(String.format("Miss match record set size = %d to parsed values length = %d, please correct!", channelRecordSet.size(), this.parser.getValues().length), SWT.COLOR_RED);
 							
 						if (log.isLoggable(Level.FINER)) log.logp(Level.TIME, GathererThread.$CLASS_NAME, $METHOD_NAME, "time after add = " + TimeLine.getFomatedTimeWithUnit(tmpCycleTime - startCycleTime)); //$NON-NLS-1$
-						if (channelRecordSet.size() > 0 && channelRecordSet.isChildOfActiveChannel() && channelRecordSet.equals(this.channels.getActiveChannel().getActiveRecordSet())) {
-							GathererThread.this.application.updateAllTabs(false);
-						}
 						if (measurementCount > 0 && measurementCount % 10 == 0) {
 							this.activeChannel = this.channels.getActiveChannel();
 							if (activeChannel != null) {
 								this.activeRecordSet = activeChannel.getActiveRecordSet();
 								if (activeRecordSet != null) this.device.updateVisibilityStatus(channelRecordSet, true);
 							}
+						}
+						RecordSet activeRecordSet = this.channels.getActiveChannel().getActiveRecordSet();
+						if (activeRecordSet != null && channelRecordSet.size() > 0 && channelRecordSet.isChildOfActiveChannel() && channelRecordSet.equals(activeRecordSet)) {
+							GathererThread.this.application.updateAllTabs(false, this.lastNumberDisplayableRecords != channelRecordSet.getConfiguredDisplayable());
+							this.lastNumberDisplayableRecords = channelRecordSet.getConfiguredDisplayable();
 						}
 					}
 				}

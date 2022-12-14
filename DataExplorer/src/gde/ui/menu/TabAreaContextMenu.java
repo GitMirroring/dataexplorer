@@ -131,6 +131,7 @@ public class TabAreaContextMenu {
 						boolean selection = TabAreaContextMenu.this.displayGraphicsCommentItem.getSelection();
 						TabAreaContextMenu.this.application.getMenuBar().getRecordCommentMenuItem().setSelection(selection);
 						TabAreaContextMenu.this.application.enableRecordSetComment(selection);
+						TabAreaContextMenu.this.application.updateGraphicsWindow();
 					}
 				});
 

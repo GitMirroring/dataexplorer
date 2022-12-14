@@ -1,8 +1,8 @@
 Development history / change log, please read from bottom up
 
-Version 3.7.4 - xx yyy 2022
+Version 3.7.4 - 20 Dec 2022
 Generic changes/fixes 
-	* enable modification of UTC delta value for GPS devices which does not define such value
+	* add missing update while switch visibility of record comment in graphics composite
 		
 Device specific changes/fixes
 	* HoTTAdapter2 - *.log import, correct dependency migrating GAM data
@@ -24,6 +24,11 @@ Device specific changes/fixes
 	* Akkumatik* - suppress curve selector update while number of display records doesn't changed
 	* eStation* - suppress curve selector update while number of display records doesn't changed
 	* Pulsar3 - suppress curve selector update while number of display records doesn't changed
+	* 4D-Akkumonitor - suppress curve selector update while number of display records doesn't changed
+	* AV4ms_FV_762 - suppress curve selector update while number of display records doesn't changed
+	* CSVSerial* - suppress curve selector update while number of display records doesn't changed
+	* Herkules_III_Telemetry - suppress curve selector update while number of display records doesn't changed
+	* *SpeedMeter - replace device picture to avoid legal problems, no answer from SkyRC
 	
 
 Version 3.7.3 - 26 Nov 2022
