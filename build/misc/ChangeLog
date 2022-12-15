@@ -7,8 +7,7 @@ Generic changes/fixes
 Device specific changes/fixes
 	* HoTTAdapter2 - *.log import, correct dependency migrating GAM data
 	* HoTTAdapter* - *.log import, display detected sensors independent of log entry
-	* HoTTAdapter2 - *.log import, add altitude/climb selected sensor
-	* HoTTAdapter2 - *.bin import, enhance display altitude/climb selected sensor
+	* HoTTAdapter2* - import, add altitude/climb selected sensor to dataset comment
 	* HoTTAdapter* - live-data, add capability recording channel data, add used protocol to description
 	* HoTTAdapter2 - live-data, suppress curve selector update while number of display able records doesn't changed
 	* HoTTAdapter* - fix persistence of channel unit selection
