@@ -2,6 +2,7 @@ GNU DataExplorer - News - comes with Version 3.7.4 - 20 Dec 2022
 
 Generic changes/fixes 
 	* add missing update while switch visibility of record comment in graphics composite
+	* fix scale synchronization problem while synchronization master record contains only zero values
 		
 Device specific changes/fixes
 	* HoTTAdapter2 - *.log import, correct dependency migrating GAM data
@@ -32,7 +33,8 @@ Device specific changes/fixes
 	
 
 Grundlegende Korrekturen/Änderungen
-    * fehlenden Update beim EEin- oder Aus-Blenden des Datensatz Kommentar hinzugefügt.
+    * fehlenden Update beim EEin- oder Aus-Blenden des Datensatz Kommentar hinzugefügt
+    * Behebung des Problems der Skalensynchronisation, wenn der Synchronisationsstammdatensatz nur Nullwerte enthält
     
 Geräte-spezifische Korrekturen/Änderungen
     * HoTTAdapter2 - *.log Import, Korrektur beim Migrieren von GAM Daten

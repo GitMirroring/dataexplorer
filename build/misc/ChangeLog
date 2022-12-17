@@ -3,6 +3,7 @@ Development history / change log, please read from bottom up
 Version 3.7.4 - 20 Dec 2022
 Generic changes/fixes 
 	* add missing update while switch visibility of record comment in graphics composite
+	* fix scale synchronization problem while synchronization master record contains only zero values
 		
 Device specific changes/fixes
 	* HoTTAdapter2 - *.log import, correct dependency migrating GAM data

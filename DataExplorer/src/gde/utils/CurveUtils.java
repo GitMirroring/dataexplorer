@@ -123,7 +123,7 @@ public class CurveUtils {
 			}
 			if (record.isStartpointZero()) {
 				// check if the main part of the curve is on positive side
-				if (record.getAvgValue() > 0) { // main part of curve is on positive side
+				if (record.getAvgValue() >= 0) { // main part of curve is on positive side
 					yMinValueDisplay = 0;
 					if (isRaw) {
 						yMinValue = yMinValueDisplay - record.getOffset();
