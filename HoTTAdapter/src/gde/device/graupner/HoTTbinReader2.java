@@ -1233,7 +1233,7 @@ public class HoTTbinReader2 extends HoTTbinReader {
 					}
 				}
 				this.points[42] = maxVotage != Integer.MIN_VALUE && minVotage != Integer.MAX_VALUE ? (maxVotage - minVotage) * 10 : 0;
-				this.points[49] = DataParser.parse2Short(this._buf2, 8) * 1000;
+				this.points[49] = DataParser.parse2UnsignedShort(this._buf2, 8) * 1000;
 				this.points[50] = DataParser.parse2Short(this._buf2, 6) * 1000;
 				if (this.pickerParameters.altitudeClimbSensorSelection == 3) { //sensor selection GPS (auto, Vario, GPS, GAM, EAM)
 					this.points[10] = this.tmpHeight * 1000;
@@ -1354,7 +1354,7 @@ public class HoTTbinReader2 extends HoTTbinReader {
 				this.points[80] = this.tmpVoltage2 * 100;
 				this.points[81] = ((this._buf3[1] & 0xFF) - 20) * 1000;
 				this.points[82] = ((this._buf3[2] & 0xFF) - 20) * 1000;
-				this.points[83] = DataParser.parse2Short(this._buf4, 4) * 1000;
+				this.points[83] = DataParser.parse2UnsignedShort(this._buf4, 4) * 1000;
 				this.points[84] = ((this._buf4[6] & 0xFF) * 60 + (this._buf4[7] & 0xFF)) * 1000; 	// motor time
 				this.points[85] = DataParser.parse2Short(this._buf4, 8) * 1000; 									// speed
 				this.points[86] = ((this._buf1[1] & 0xFF) + ((this._buf1[2] & 0x7F) << 8)) * 1000;// inverse event
@@ -1522,7 +1522,7 @@ public class HoTTbinReader2 extends HoTTbinReader {
 					this.points[113] = ((this._buf2[9] & 0xFF) - 20) * 1000;
 					this.points[114] = DataParser.parse2Short(this._buf1, 5) * 1000;
 					this.points[115] = DataParser.parse2Short(this._buf2, 3) * 1000;
-					this.points[116] = DataParser.parse2Short(this._buf2, 7) * 1000;
+					this.points[116] = DataParser.parse2UnsignedShort(this._buf2, 7) * 1000;
 					this.points[117] = ((this._buf2[0] & 0xFF) - 20) * 1000;
 					this.points[118] = ((this._buf3[0] & 0xFF) - 20) * 1000;
 					this.points[119] = (this._buf1[1] & 0xFF) * 1000; // inverse event
@@ -1593,7 +1593,7 @@ public class HoTTbinReader2 extends HoTTbinReader {
 					this.points[93] = ((this._buf2[9] & 0xFF) - 20) * 1000;
 					this.points[94] = DataParser.parse2Short(this._buf1, 5) * 1000;
 					this.points[95] = DataParser.parse2Short(this._buf2, 3) * 1000;
-					this.points[96] = DataParser.parse2Short(this._buf2, 7) * 1000;
+					this.points[96] = DataParser.parse2UnsignedShort(this._buf2, 7) * 1000;
 					this.points[97] = ((this._buf2[0] & 0xFF) - 20) * 1000;
 					this.points[98] = ((this._buf3[0] & 0xFF) - 20) * 1000;
 					this.points[99] = (this._buf1[1] & 0xFF) * 1000; // inverse event

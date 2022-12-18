@@ -514,7 +514,7 @@ public class HoTTbinReaderX extends HoTTbinReader {
 		HoTTbinReader.tmpVoltage = DataParser.parse2Short(_buf4, 20);
 		HoTTbinReader.tmpCurrent = DataParser.parse2Short(_buf6, 20);
 		HoTTbinReader.tmpCapacity = DataParser.parse2Short(_buf5, 20);
-		HoTTbinReader.tmpRevolution = DataParser.parse2Short(_buf7[20], _buf8[17]);
+		HoTTbinReader.tmpRevolution = DataParser.parse2UnsignedShort(_buf7[20], _buf8[17]);
 		HoTTbinReader.tmpTemperatureFet = _buf8[20] - 20;
 		if (!pickerParameters.isFilterEnabled || HoTTbinReader.tmpVoltage > 0 && HoTTbinReader.tmpVoltage < 1000 && HoTTbinReader.tmpCurrent < 4000 && HoTTbinReader.tmpCurrent > -10
 				&& HoTTbinReader.tmpRevolution > -1 && HoTTbinReader.tmpRevolution < 20000
@@ -534,7 +534,7 @@ public class HoTTbinReaderX extends HoTTbinReader {
 						+ (HoTTbinReaderX.points_1[13] / 1000) + " + " + (HoTTbinReader.tmpVoltage * HoTTbinReader.tmpCurrent / 2500 + 2));
 			}
 			HoTTbinReaderX.points_1[15] = HoTTbinReader.tmpRevolution * 1000;
-			HoTTbinReaderX.points_1[16] = DataParser.parse2Short(_buf8, 18) * 1000;
+			HoTTbinReaderX.points_1[16] = DataParser.parse2UnsignedShort(_buf8, 18) * 1000;
 			HoTTbinReaderX.points_1[17] = (_buf6[18] - 20) * 1000;
 			HoTTbinReaderX.points_1[18] = (_buf6[19] - 20) * 1000;
 			HoTTbinReaderX.points_1[19] = HoTTbinReader.tmpTemperatureFet * 1000;

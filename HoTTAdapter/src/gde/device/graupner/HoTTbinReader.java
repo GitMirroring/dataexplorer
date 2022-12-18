@@ -1940,7 +1940,7 @@ public class HoTTbinReader {
 					}
 				}
 				this.points[5] = maxVotage != Integer.MIN_VALUE && minVotage != Integer.MAX_VALUE ? (maxVotage - minVotage) * 10 : 0;
-				this.points[12] = DataParser.parse2Short(_buf2, 8) * 1000;
+				this.points[12] = DataParser.parse2UnsignedShort(_buf2, 8) * 1000;
 				this.points[13] = this.tmpHeight * 1000;
 				this.points[14] = DataParser.parse2UnsignedShort(_buf3, 2) * 1000;
 				this.points[15] = this.tmpClimb3 * 1000;
@@ -2051,7 +2051,7 @@ public class HoTTbinReader {
 				this.points[24] = this.tmpVoltage2 * 1000;
 				this.points[25] = ((_buf3[1] & 0xFF) - 20) * 1000;
 				this.points[26] = ((_buf3[2] & 0xFF) - 20) * 1000;
-				this.points[27] = DataParser.parse2Short(_buf4, 4) * 1000; // revolution
+				this.points[27] = DataParser.parse2UnsignedShort(_buf4, 4) * 1000; // revolution
 				this.points[28] = ((_buf4[6] & 0xFF) * 60 + (_buf4[7] & 0xFF)) * 1000; // motor time
 				this.points[29] = DataParser.parse2Short(_buf4, 8) * 1000; // speed
 				this.points[30] = ((_buf1[1] & 0xFF) + ((_buf1[2] & 0x7F) << 8)) * 1000; // inverse event
@@ -2129,7 +2129,7 @@ public class HoTTbinReader {
 				// 11=Temperature1_max, 12=Temperature2_max
 				this.points[8] = DataParser.parse2Short(_buf1, 5) * 1000;
 				this.points[9] = DataParser.parse2Short(_buf2, 3) * 1000;
-				this.points[10] = DataParser.parse2Short(_buf2, 7) * 1000;
+				this.points[10] = DataParser.parse2UnsignedShort(_buf2, 7) * 1000;
 				this.points[11] = ((_buf2[0] & 0xFF) - 20) * 1000;
 				this.points[12] = ((_buf3[0] & 0xFF) - 20) * 1000; 	//Temperature Motor_max
 				

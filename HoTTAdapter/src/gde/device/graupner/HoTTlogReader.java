@@ -671,7 +671,7 @@ public class HoTTlogReader extends HoTTbinReader {
 			}
 		}
 		values[5] = maxVotage != Integer.MIN_VALUE && minVotage != Integer.MAX_VALUE ? (maxVotage - minVotage) * 10 : 0; //balance
-		values[12] = DataParser.parse2Short(_buf, 44) * 1000;
+		values[12] = DataParser.parse2UnsignedShort(_buf, 44) * 1000;
 		values[13] = HoTTbinReader.tmpHeight * 1000;
 		values[14] = isHoTTAdapter2 ? (DataParser.parse2UnsignedShort(_buf, 48) - 30000) * 10 : (DataParser.parse2UnsignedShort(_buf, 48) * 1000);
 		values[15] = HoTTbinReader.tmpClimb3 * 1000;
@@ -731,7 +731,7 @@ public class HoTTlogReader extends HoTTbinReader {
 		values[24] = HoTTbinReader.tmpVoltage2 * 100;
 		values[25] = ((_buf[47] & 0xFF) - 20) * 1000;
 		values[26] = ((_buf[48] & 0xFF) - 20) * 1000;
-		values[27] = DataParser.parse2Short(_buf, 60) * 1000;
+		values[27] = DataParser.parse2UnsignedShort(_buf, 60) * 1000;
 		values[28] = ((_buf[62] & 0xFF) * 60 + (_buf[63] & 0xFF)) * 1000; // motor time
 		values[29] = DataParser.parse2Short(_buf, 64) * 1000; // speed
 		values[30] = ((_buf[27] & 0xFF) + ((_buf[28] & 0x7F) << 8)) * 1000; //inverse event
@@ -785,7 +785,7 @@ public class HoTTlogReader extends HoTTbinReader {
 			values[7] = ((_buf[45] & 0xFF) - 20) * 1000;
 			values[8] = DataParser.parse2Short(_buf, 31) * 1000;
 			values[9] = DataParser.parse2Short(_buf, 39) * 1000;
-			values[10] = DataParser.parse2Short(_buf, 43) * 1000;
+			values[10] = DataParser.parse2UnsignedShort(_buf, 43) * 1000;
 			values[11] = ((_buf[36] & 0xFF) - 20) * 1000;
 			values[12] = ((_buf[46] & 0xFF) - 20) * 1000;
 		}

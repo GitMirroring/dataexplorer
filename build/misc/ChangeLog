@@ -14,6 +14,7 @@ Device specific changes/fixes
 	* HoTTAdapter* - fix persistence of channel unit selection
 	* HoTTAdapter* - add Channel as sensor to sensor list, while import or live-date 115200 Baud
 	* HoTTAdapter* - fix visibility of Channels, display all as long as values available
+	* HoTTAdapter* - harmonize RPM parsing to unsigned short value
 	* iChargerUSB* - fix missing update switching async/sync dual channel devices
 	* iChargerUSB* - update some adjustment limit values to latest specification
 	* iCharger458/456DUO - add initial implementation 

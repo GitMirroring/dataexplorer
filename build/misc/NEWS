@@ -13,6 +13,7 @@ Device specific changes/fixes
 	* HoTTAdapter* - fix persistence of channel unit selection
 	* HoTTAdapter* - add Channel as sensor to sensor list, while import or live-date 115200 Baud
 	* HoTTAdapter* - fix visibility of Channels, display all as long as values available
+	* HoTTAdapter* - harmonize RPM parsing to unsigned short value
 	* iChargerUSB* - fix missing update switching async/sync dual channel devices
 	* iChargerUSB* - update some adjustment limit values to latest specification
 	* iCharger458/456DUO - add initial implementation 
@@ -45,6 +46,7 @@ Geräte-spezifische Korrekturen/Änderungen
     * HoTTAdapter* - Persistenz der Kanal-Einheit korrigiert
     * HoTTAdapter* - Channel als Sensor beim Import oder Live-Datenaufnahme hinzugefügt
     * HoTTAdapter* - Korrektur der Sichtbarkeit von Kanälen durchgeführt, solange Werte ungleich Null vorhanden sind
+	* HoTTAdapter* - Harmonisierung des RPM-Parsing auf vorzeichenlosen 2 Byte Wert
     * iChargerUSB* - Fehlender Update beim Umschalten der Ausgangskonfiguration Sync/async
     * iChargerUSB* - Update einiger Konfigurationswerte analog zur aktuellen Spezifikation
     * iCharger458/456DUO - Initiale Implementierung

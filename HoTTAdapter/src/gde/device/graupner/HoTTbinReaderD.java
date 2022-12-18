@@ -193,7 +193,7 @@ public class HoTTbinReaderD extends HoTTbinReader2 {
 				this.points[113] = ((this._buf2[9] & 0xFF) - 20) * 1000;
 				this.points[114] = DataParser.parse2Short(this._buf1, 5) * 1000;
 				this.points[115] = DataParser.parse2Short(this._buf2, 3) * 1000;
-				this.points[116] = DataParser.parse2Short(this._buf2, 7) * 1000;
+				this.points[116] = DataParser.parse2UnsignedShort(this._buf2, 7) * 1000;
 				this.points[117] = ((this._buf2[0] & 0xFF) - 20) * 1000;
 				this.points[118] = ((this._buf3[0] & 0xFF) - 20) * 1000;
 				this.points[119] = (this._buf1[1] & 0xFF) * 1000; // inverse event
