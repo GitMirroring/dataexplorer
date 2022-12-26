@@ -1067,9 +1067,17 @@ public interface IDevice {
 
 	/**
 	 * query if the record set numbering should follow channel configuration numbering
+	 * this need code numbering the record sets to be created accordingly
+	 * this does not allow to import or live gather more than one total sets of record sets
 	 * @return true where devices does not distinguish between channels (for example Av4ms_FV_762)
 	 */
 	public boolean recordSetNumberFollowChannel();
+
+	/**
+	 * query if the channel in use has dependency with each other to initiate file description synchronization 
+	 * @return true for devices with one source of data distributed over record sets (HoTTAdapter, Av4ms_FV_762)
+	 */
+	public boolean useChannelWithSyncedDescription();
 
 	/**
 	 * query device for specific smoothing index

@@ -2182,7 +2182,7 @@ public class SettingsDialog extends Dialog {
 								public void widgetSelected(SelectionEvent evt) {
 									SettingsDialog.log.log(Level.FINEST, "tree.widgetSelected, event=" + evt); //$NON-NLS-1$
 									TreeItem tmpItem = (TreeItem) evt.item;
-									if (tmpItem.getParentItem() != null) {
+									if (tmpItem != null && tmpItem.getParentItem() != null) {
 										StringBuilder sb = new StringBuilder();
 										TreeItem tmpParent = tmpItem;
 										while (null != (tmpParent = tmpParent.getParentItem())) {

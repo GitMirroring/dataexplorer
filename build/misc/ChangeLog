@@ -1,5 +1,13 @@
 Development history / change log, please read from bottom up
 
+Version 3.7.5 - xx yyy 2023
+Generic changes/fixes 
+	* extend IDevice interface to enable device individual file comment synchronization
+	* 
+		
+Device specific changes/fixes
+	*
+
 Version 3.7.4 - 20 Dec 2022
 Generic changes/fixes 
 	* add missing update while switch visibility of record comment in graphics composite
