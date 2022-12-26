@@ -402,6 +402,13 @@ public class OsdReaderWriter {
 				}
 			}
 
+			//synchronize file description over channels, if required
+			Channel activeChannel = channels.getActiveChannel();
+			IDevice device = Analyzer.getInstance().getActiveDevice();
+			if (activeChannel != null && device != null && device.useChannelWithSyncedDescription()) {
+				activeChannel.syncFileDescription(activeChannel, activeChannel.getFileDescription());
+			}
+			
 			return recordSet;
 		}
 		finally {

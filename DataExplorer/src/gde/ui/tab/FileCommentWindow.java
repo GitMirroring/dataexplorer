@@ -450,9 +450,7 @@ public class FileCommentWindow extends CTabItem {
 	}
 
 	public synchronized void update() {
-		if (this.channels.getActiveChannel() != null) {
-			this.fileCommentText.setText(this.channels.getActiveChannel().getFileDescription());
-		}
+		this.fileCommentText.redraw();
 		updateRecordSetTable();
 	}
 
@@ -530,8 +528,10 @@ public class FileCommentWindow extends CTabItem {
 	public void setFileComment() {
 		Channel activeChannel = this.channels.getActiveChannel();
 		if (activeChannel != null && this.isFileCommentChanged) {
-			activeChannel.setFileDescription(FileCommentWindow.this.fileCommentText.getText());
-			activeChannel.setUnsaved(RecordSet.UNSAVED_REASON_DATA);
+			String updateFileDescription = this.fileCommentText.getText();
+			activeChannel.setFileDescription(updateFileDescription);
+			if (activeChannel.getActiveRecordSet() != null && activeChannel.getActiveRecordSet().getDevice().useChannelWithSyncedDescription())
+				activeChannel.syncFileDescription(activeChannel, updateFileDescription);
 			this.isFileCommentChanged = false;
 		}
 	}

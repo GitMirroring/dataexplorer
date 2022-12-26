@@ -703,14 +703,26 @@ public class Channel extends HashMap<String, RecordSet> {
 
 
 	public String getFileDescription() {
+		if (log.isLoggable(Level.INFO)) log.log(Level.INFO, String.format("Channel %s get description %s", this.getName(), this.fileDescription));
 		return this.fileDescription;
 	}
 
 	public void setFileDescription(String newFileDescription) {
 		this.setUnsaved(RecordSet.UNSAVED_REASON_COMMENT);
 		this.fileDescription = newFileDescription;
+		if (log.isLoggable(Level.INFO)) log.log(Level.INFO, String.format("Channel %s set description %s", this.getName(), newFileDescription));
 		DataExplorer.getInstance().updateGraphicsCaptions();
 	}
+	
+	/**
+	 * synchronize file comment between channels
+	 * @param syncChannel the channel which initialize the synchronization
+	 * @param updateComment the comment text to synchronize
+	 */
+	public void syncFileDescription(Channel syncChannel, String updateComment) {
+		this.parent.syncFileDescription(syncChannel, updateComment);
+	}
+
 
 	public boolean isSaved() {
 		return this.isSaved;

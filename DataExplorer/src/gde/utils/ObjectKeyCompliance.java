@@ -349,11 +349,16 @@ public class ObjectKeyCompliance {
 							updateFileDescription = updateFileDescription.substring(0, updateFileDescription.indexOf(channelObjKey) - 1) + updateFileDescription.substring(updateFileDescription.lastIndexOf(channelObjKey) + channelObjKey.length());
 						}
 					} else if (newObjectKey.length() >= GDE.MIN_OBJECT_KEY_LENGTH && !updateFileDescription.contains(newObjectKey)) {
-						updateFileDescription = updateFileDescription + GDE.STRING_BLANK + newObjectKey;
+						if (updateFileDescription.indexOf(GDE.STRING_BLANK) == -1)
+							updateFileDescription = updateFileDescription + GDE.STRING_BLANK + newObjectKey;
+						else
+							updateFileDescription = updateFileDescription.substring(0, updateFileDescription.indexOf(GDE.STRING_BLANK) + 1) + newObjectKey + updateFileDescription.substring(updateFileDescription.indexOf(GDE.STRING_BLANK));
 					}
 					activeChannel.setFileDescription(updateFileDescription);
 				}
 				// do not exchange the object key in the channel/configuration, but keep the selector switch to enable new data load
+				if (GDE.isWithUi()) 
+					DataExplorer.getInstance().updateAllTabs(false);
 			}
 		}
 	}

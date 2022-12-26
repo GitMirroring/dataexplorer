@@ -357,4 +357,16 @@ public final class Channels extends HashMap<Integer, Channel> {
 		return channel;
 	}
 
+	/**
+	 * synchronize file comment between channels
+	 * @param syncChannel the channel which initialize the synchronization
+	 * @param updateComment the comment text to synchronize
+	 */
+	public void syncFileDescription(Channel syncChannel, String updateComment) {
+		for (Integer channelNumber : this.keySet()) {
+			Channel channel = this.get(channelNumber);
+			if (!channel.equals(syncChannel))
+				channel.setFileDescription(updateComment);
+		}		
+	}
 }
