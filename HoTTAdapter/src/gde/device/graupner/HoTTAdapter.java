@@ -2618,7 +2618,7 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 		if (version > 100) { //SM GPS-Logger
 			//15=HomeDirection 16=ServoPulse 17=AirSpeed 18=n/a 19=GyroX 20=GyroY 21=GyroZ 22=Vibration 23=Version		
 			tmpRecordSet.get(16).setName(device.getMeasurementReplacement("servo_impulse"));
-			tmpRecordSet.get(16).setUnit("");
+			tmpRecordSet.get(16).setUnit("%");
 			tmpRecordSet.get(17).setName(device.getMeasurementReplacement("air_speed"));
 			tmpRecordSet.get(17).setUnit("km/h");
 			tmpRecordSet.get(17).createProperty(IDevice.SYNC_ORDINAL, DataTypes.INTEGER, 6); //$NON-NLS-1$
@@ -2817,5 +2817,10 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 			tmpRecordSet.get(25).setUnit("#");
 		}
 	}
-	
+
+	/**
+	 * query if the channel in use has dependency with each other to initiate file description synchronization 
+	 * @return true for devices with one source of data distributed over channel record sets (HoTTAdapter, Av4ms_FV_762)
+	 */
+	public boolean useChannelWithSyncedDescription() { return true; }
 }

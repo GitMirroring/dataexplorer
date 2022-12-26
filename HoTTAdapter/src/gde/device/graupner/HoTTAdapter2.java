@@ -2769,7 +2769,7 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 		if (version > 100) { //SM GPS-Logger
 			// 29=HomeDirection 30=ServoPulse 31=AirSpeed 32=n/a 33=GyroX 34=GyroY 35=GyroZ 36=ENL 37=Version	
 			tmpRecordSet.get(30).setName(device.getMeasurementReplacement("servo_impulse") + " GPS");
-			tmpRecordSet.get(30).setUnit("");
+			tmpRecordSet.get(30).setUnit("%");
 			tmpRecordSet.get(31).setName(device.getMeasurementReplacement("air_speed") + " GPS");
 			tmpRecordSet.get(31).setUnit("km/h");
 			tmpRecordSet.get(31).createProperty(IDevice.SYNC_ORDINAL, DataTypes.INTEGER, 22); //$NON-NLS-1$

@@ -6,6 +6,7 @@ Generic changes/fixes
 	* 
 		
 Device specific changes/fixes
+	* HoTTAdapter* change "ServoImpuls GPS" received from SM GPS-Logger to %
 	*
 
 Version 3.7.4 - 20 Dec 2022
