@@ -98,7 +98,7 @@ public class HoTTlogReader extends HoTTbinReader {
 			// data always present, but not in the same data rate and signals
 			channel = HoTTbinReader.channels.get(1);
 			String newFileDescription = HoTTbinReader.application.isObjectoriented() ? date + GDE.STRING_BLANK + HoTTbinReader.application.getObjectKey()	: date;
-			if (channel.getFileDescription().length() < newFileDescription.length() || (HoTTbinReader.application.isObjectoriented() && channel.getFileDescription().contains(HoTTbinReader.application.getObjectKey())))
+			if (channel.getFileDescription().length() <= newFileDescription.length() || (HoTTbinReader.application.isObjectoriented() && !channel.getFileDescription().contains(HoTTbinReader.application.getObjectKey())))
 				channel.setFileDescription(newFileDescription);
 			recordSetName = recordSetNumber + GDE.STRING_RIGHT_PARENTHESIS_BLANK + HoTTAdapter.Sensor.RECEIVER.value() + recordSetNameExtend;
 			HoTTbinReader.recordSetReceiver = RecordSet.createRecordSet(recordSetName, device, 1, true, true, true);

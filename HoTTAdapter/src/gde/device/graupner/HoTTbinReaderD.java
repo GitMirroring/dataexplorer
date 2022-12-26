@@ -431,7 +431,7 @@ public class HoTTbinReaderD extends HoTTbinReader2 {
 			// check if recordSet initialized, transmitter and receiver data always present, but not in the same data rate and signals
 			channel = HoTTbinReader.channels.get(channelNumber);
 			String newFileDescription = HoTTbinReader.application.isObjectoriented() ? date + GDE.STRING_BLANK + HoTTbinReader.application.getObjectKey()	: date;
-			if (channel.getFileDescription().length() < newFileDescription.length() || (HoTTbinReader.application.isObjectoriented() && channel.getFileDescription().contains(HoTTbinReader.application.getObjectKey())))
+			if (channel.getFileDescription().length() <= newFileDescription.length() || (HoTTbinReader.application.isObjectoriented() && !channel.getFileDescription().contains(HoTTbinReader.application.getObjectKey())))
 				channel.setFileDescription(newFileDescription);
 			recordSetName = recordSetNumber + device.getRecordSetStemNameReplacement() + recordSetNameExtend;
 			HoTTbinReader2.recordSet = RecordSet.createRecordSet(recordSetName, device, channelNumber, true, true, true);
@@ -742,7 +742,7 @@ public class HoTTbinReaderD extends HoTTbinReader2 {
 			// receiver data are always contained
 			channel = HoTTbinReader.channels.get(channelNumber);
 			String newFileDescription = HoTTbinReader.application.isObjectoriented() ? date + GDE.STRING_BLANK + HoTTbinReader.application.getObjectKey()	: date;
-			if (channel.getFileDescription().length() < newFileDescription.length() || (HoTTbinReader.application.isObjectoriented() && channel.getFileDescription().contains(HoTTbinReader.application.getObjectKey())))
+			if (channel.getFileDescription().length() <= newFileDescription.length() || (HoTTbinReader.application.isObjectoriented() && !channel.getFileDescription().contains(HoTTbinReader.application.getObjectKey())))
 				channel.setFileDescription(newFileDescription);
 			recordSetName = recordSetNumber + device.getRecordSetStemNameReplacement() + recordSetNameExtend;
 			HoTTbinReader2.recordSet = RecordSet.createRecordSet(recordSetName, device, channelNumber, true, true, true);
