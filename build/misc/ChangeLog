@@ -8,6 +8,10 @@ Generic changes/fixes
 Device specific changes/fixes
 	* HoTTAdapter* change "ServoImpuls GPS" received from SM GPS-Logger to %
 	* HoTTAdapter* synchronize initial file comment date with start time stamp of log
+	* HoTTAdapter* synchronize file comment after edit/change
+	* AVm4s_FV_762 synchronize file comment after edit/change
+	* Herkules III Telemetrie synchronize file comment after edit/change
+	* S32 synchronize file comment after edit/change
 
 Version 3.7.4 - 20 Dec 2022
 Generic changes/fixes 

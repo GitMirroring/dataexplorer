@@ -581,4 +581,10 @@ public class S32 extends DeviceConfiguration implements IDevice {
 	public boolean recordSetNumberFollowChannel() {
 		return true;
 	}
+
+	/**
+	 * query if the channel in use has dependency with each other to initiate file description synchronization 
+	 * @return true for devices with one source of data distributed over channel record sets (HoTTAdapter, Av4ms_FV_762)
+	 */
+	public boolean useChannelWithSyncedDescription() { return true; }
 }

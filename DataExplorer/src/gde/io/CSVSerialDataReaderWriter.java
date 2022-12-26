@@ -329,7 +329,10 @@ public class CSVSerialDataReaderWriter {
 							long startTimeStamp = (long) (new File(filePath).lastModified() - tmpRecordSet.getMaxTime_ms());
 							tmpRecordSet.setRecordSetDescription(device.getName() + GDE.STRING_MESSAGE_CONCAT	+ Messages.getString(MessageIds.GDE_MSGT0129) + new SimpleDateFormat("yyyy-MM-dd, HH:mm:ss").format(startTimeStamp));
 							tmpRecordSet.setStartTimeStamp(startTimeStamp);
-							activeChannel.setFileDescription(dateTime.substring(0, 10) + activeChannel.getFileDescription().substring(10));
+							String initialFileDescription = dateTime.substring(0, 10) + activeChannel.getFileDescription().substring(10);
+							activeChannel.setFileDescription(initialFileDescription);
+							if (activeChannel.getActiveRecordSet() != null && activeChannel.getActiveRecordSet().getDevice().useChannelWithSyncedDescription())
+								activeChannel.syncFileDescription(activeChannel, initialFileDescription);
 						}
 						else {
 							tmpRecordSet.setRecordSetDescription(device.getName() + GDE.STRING_MESSAGE_CONCAT	+ Messages.getString(MessageIds.GDE_MSGT0129) + new SimpleDateFormat("yyyy-MM-dd, HH:mm:ss").format(new Date())); //$NON-NLS-1$
