@@ -84,7 +84,7 @@ public class HoTTlogReader extends HoTTbinReader {
 		int logDataOffset = Integer.valueOf(fileInfoHeader.get("LOG DATA OFFSET"));
 		long numberDatablocks = (fileSize - logDataOffset) / HoTTbinReader.dataBlockSize;
 		long startTimeStamp_ms = HoTTbinReader.getStartTimeStamp(fileInfoHeader.get("LOG START TIME"), HoTTbinReader.getStartTimeStamp(file.getName(), file.lastModified(), numberDatablocks));
-		String date = StringHelper.getDate();
+		String date = new SimpleDateFormat("yyyy-MM-dd").format(startTimeStamp_ms); //$NON-NLS-1$
 		String dateTime = new SimpleDateFormat("yyyy-MM-dd, HH:mm:ss").format(startTimeStamp_ms); //$NON-NLS-1$
 		RecordSet tmpRecordSet;
 		MenuToolBar menuToolBar = HoTTbinReader.application.getMenuToolBar();
@@ -97,8 +97,9 @@ public class HoTTlogReader extends HoTTbinReader {
 			// check if recordSetReceiver initialized, transmitter and receiver
 			// data always present, but not in the same data rate and signals
 			channel = HoTTbinReader.channels.get(1);
-			channel.setFileDescription(HoTTbinReader.application.isObjectoriented()
-					? date + GDE.STRING_BLANK + HoTTbinReader.application.getObjectKey() : date);
+			String newFileDescription = HoTTbinReader.application.isObjectoriented() ? date + GDE.STRING_BLANK + HoTTbinReader.application.getObjectKey()	: date;
+			if (channel.getFileDescription().length() < newFileDescription.length() || (HoTTbinReader.application.isObjectoriented() && channel.getFileDescription().contains(HoTTbinReader.application.getObjectKey())))
+				channel.setFileDescription(newFileDescription);
 			recordSetName = recordSetNumber + GDE.STRING_RIGHT_PARENTHESIS_BLANK + HoTTAdapter.Sensor.RECEIVER.value() + recordSetNameExtend;
 			HoTTbinReader.recordSetReceiver = RecordSet.createRecordSet(recordSetName, device, 1, true, true, true);
 			channel.put(recordSetName, HoTTbinReader.recordSetReceiver);

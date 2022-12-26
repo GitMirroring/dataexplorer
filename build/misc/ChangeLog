@@ -7,7 +7,7 @@ Generic changes/fixes
 		
 Device specific changes/fixes
 	* HoTTAdapter* change "ServoImpuls GPS" received from SM GPS-Logger to %
-	*
+	* HoTTAdapter* synchronize initial file comment date with start time stamp of log
 
 Version 3.7.4 - 20 Dec 2022
 Generic changes/fixes 
