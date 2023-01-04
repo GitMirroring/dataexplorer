@@ -570,8 +570,8 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 		boolean									isChannelPercentEnabled				= true;
 		int											altitudeClimbSensorSelection	= 0;
 		
-		double									latitudeToleranceFactor				= 90.0;
-		double									longitudeToleranceFactor			= 25.0;
+		double									latitudeToleranceFactor				= 50.0;
+		double									longitudeToleranceFactor			= 15.0;
 
 		public PickerParameters(Analyzer analyzer) {
 			this.analyzer = analyzer;
@@ -697,9 +697,9 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 			this.pickerParameters.isChannelPercentEnabled = true;
 		}		
 		this.pickerParameters.latitudeToleranceFactor = this.getMeasurementPropertyValue(3, 1, MeasurementPropertyTypes.FILTER_FACTOR.value()).toString().length() > 0
-				? Double.parseDouble(this.getMeasurementPropertyValue(3, 1, MeasurementPropertyTypes.FILTER_FACTOR.value()).toString()) : 90.0;
+				? Double.parseDouble(this.getMeasurementPropertyValue(3, 1, MeasurementPropertyTypes.FILTER_FACTOR.value()).toString()) : 50.0;
 		this.pickerParameters.longitudeToleranceFactor = this.getMeasurementPropertyValue(3, 2, MeasurementPropertyTypes.FILTER_FACTOR.value()).toString().length() > 0
-				? Double.parseDouble(this.getMeasurementPropertyValue(3, 2, MeasurementPropertyTypes.FILTER_FACTOR.value()).toString()) : 25.0;
+				? Double.parseDouble(this.getMeasurementPropertyValue(3, 2, MeasurementPropertyTypes.FILTER_FACTOR.value()).toString()) : 15.0;
 	}
 
 	/**

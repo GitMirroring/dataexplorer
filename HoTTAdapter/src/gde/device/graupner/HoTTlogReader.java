@@ -509,10 +509,10 @@ public class HoTTlogReader extends HoTTbinReader {
 		HoTTbinReader.tmpClimb3 = isHoTTAdapter2 ? (_buf[48] & 0xFF) - 120 : (_buf[48] & 0xFF);
 		HoTTbinReader.tmpVelocity = DataParser.parse2UnsignedShort(_buf, 30) * 1000;
 		values[6] = HoTTbinReader.tmpVelocity;
-		HoTTbinReader.tmpLatitude = DataParser.parse2Short(_buf, 33) * 10000 + DataParser.parse2Short(_buf, 35);
+		HoTTbinReader.tmpLatitude = DataParser.parse2UnsignedShort(_buf, 33) * 10000 + DataParser.parse2UnsignedShort(_buf, 35);
 		HoTTbinReader.tmpLatitude =  _buf[32] == 1 ? -1 * HoTTbinReader.tmpLatitude : HoTTbinReader.tmpLatitude;
 		values[1] = HoTTbinReader.tmpLatitude;
-		HoTTbinReader.tmpLongitude = DataParser.parse2Short(_buf, 38) * 10000 + DataParser.parse2Short(_buf, 40);
+		HoTTbinReader.tmpLongitude = DataParser.parse2UnsignedShort(_buf, 38) * 10000 + DataParser.parse2UnsignedShort(_buf, 40);
 		HoTTbinReader.tmpLongitude =  _buf[37] == 1 ? -1 * HoTTbinReader.tmpLongitude : HoTTbinReader.tmpLongitude;
 		values[2] = HoTTbinReader.tmpLongitude;
 		values[3] = HoTTbinReader.tmpHeight * 1000;		//altitude

@@ -234,7 +234,7 @@
 				<unit>° '</unit>
 				<active>true</active>
 				<statistics min="true" max="true" avg="true" sigma="false" />
-				<property name="filter_factor" value="100.0" type="Double" description="Filter factor - increase value more powerfull filter" />
+				<property name="filter_factor" value="50.0" type="Double" description="Filter factor - increase value more powerfull filter" />
 			</Measurement>
 			<Measurement>
 				<name>longitude</name>
@@ -242,7 +242,7 @@
 				<unit>° '</unit>
 				<active>true</active>
 				<statistics min="true" max="true" avg="true" sigma="false" />
-				<property name="filter_factor" value="25.0" type="Double" description="Filter factor - increase value more powerfull filter" />
+				<property name="filter_factor" value="15.0" type="Double" description="Filter factor - increase value more powerfull filter" />
 			</Measurement>
 			<Measurement>
 				<name>velocity</name>
@@ -1390,7 +1390,7 @@
 				<unit>° '</unit>
 				<active>true</active>
 				<statistics min="true" max="true" avg="true" sigma="false" />
-				<property name="filter_factor" value="100.0" type="Double" description="Filter factor - increase value more powerfull filter" />
+				<property name="filter_factor" value="50.0" type="Double" description="Filter factor - increase value more powerfull filter" />
 			</Measurement>
 			<Measurement>
 				<name>longitude</name>
@@ -1398,7 +1398,7 @@
 				<unit>° '</unit>
 				<active>true</active>
 				<statistics min="true" max="true" avg="true" sigma="false" />
-				<property name="filter_factor" value="25.0" type="Double" description="Filter factor - increase value more powerfull filter" />
+				<property name="filter_factor" value="15.0" type="Double" description="Filter factor - increase value more powerfull filter" />
 			</Measurement>
 			<Measurement>
 				<name>velocity</name>
@@ -2607,7 +2607,7 @@
 				<unit>° '</unit>
 				<active>true</active>
 				<statistics min="true" max="true" avg="true" sigma="false" />
-				<property name="filter_factor" value="100.0" type="Double" description="Filter factor - increase value more powerfull filter" />
+				<property name="filter_factor" value="50.0" type="Double" description="Filter factor - increase value more powerfull filter" />
 			</Measurement>
 			<Measurement>
 				<name>longitude</name>
@@ -2615,7 +2615,7 @@
 				<unit>° '</unit>
 				<active>true</active>
 				<statistics min="true" max="true" avg="true" sigma="false" />
-				<property name="filter_factor" value="25.0" type="Double" description="Filter factor - increase value more powerfull filter" />
+				<property name="filter_factor" value="15.0" type="Double" description="Filter factor - increase value more powerfull filter" />
 			</Measurement>
 			<Measurement>
 				<name>velocity</name>
@@ -3817,7 +3817,7 @@
 				<unit>° '</unit>
 				<active>true</active>
 				<statistics min="true" max="true" avg="true" sigma="false" />
-				<property name="filter_factor" value="100.0" type="Double" description="Filter factor - increase value more powerfull filter" />
+				<property name="filter_factor" value="50.0" type="Double" description="Filter factor - increase value more powerfull filter" />
 			</Measurement>
 			<Measurement>
 				<name>longitude</name>
@@ -3825,7 +3825,7 @@
 				<unit>° '</unit>
 				<active>true</active>
 				<statistics min="true" max="true" avg="true" sigma="false" />
-				<property name="filter_factor" value="25.0" type="Double" description="Filter factor - increase value more powerfull filter" />
+				<property name="filter_factor" value="15.0" type="Double" description="Filter factor - increase value more powerfull filter" />
 			</Measurement>
 			<Measurement>
 				<name>velocity</name>
@@ -4982,7 +4982,7 @@
 				<unit>° '</unit>
 				<active>true</active>
 				<statistics min="true" max="true" avg="true" sigma="false" />
-				<property name="filter_factor" value="100.0" type="Double" description="Filter factor - increase value more powerfull filter" />
+				<property name="filter_factor" value="50.0" type="Double" description="Filter factor - increase value more powerfull filter" />
 			</Measurement>
 			<Measurement>
 				<name>longitude</name>
@@ -4990,7 +4990,7 @@
 				<unit>° '</unit>
 				<active>true</active>
 				<statistics min="true" max="true" avg="true" sigma="false" />
-				<property name="filter_factor" value="25.0" type="Double" description="Filter factor - increase value more powerfull filter" />
+				<property name="filter_factor" value="15.0" type="Double" description="Filter factor - increase value more powerfull filter" />
 			</Measurement>
 			<Measurement>
 				<name>velocity</name>

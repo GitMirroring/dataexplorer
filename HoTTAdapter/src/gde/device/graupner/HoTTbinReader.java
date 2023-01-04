@@ -1732,35 +1732,35 @@ public class HoTTbinReader {
 				//15=HomeDirection 16=Roll 17=Pitch 18=Yaw 19=GyroX 20=GyroY 21=GyroZ 22=Vibration 23=Version	
 				this.points[6] = this.pickerParameters.isFilterEnabled && this.tmpVelocity > 2000000 ? this.points[6] : this.tmpVelocity;
 
-				this.tmpLatitude = DataParser.parse2Short(_buf1, 7) * 10000 + DataParser.parse2Short(_buf1[9], _buf2[0]);
+				this.tmpLatitude = DataParser.parse2UnsignedShort(_buf1, 7) * 10000 + DataParser.parse2UnsignedShort(_buf1[9], _buf2[0]);
 				this.tmpLatitude = _buf1[6] == 1 ? -1 * this.tmpLatitude : this.tmpLatitude;
 				this.tmpLatitudeDelta = Math.abs(this.tmpLatitude - this.points[1]);
 				this.tmpLatitudeDelta = this.tmpLatitudeDelta > 400000 ? this.tmpLatitudeDelta - 400000 : this.tmpLatitudeDelta;
 				this.latitudeTolerance = this.points[6] / 1000.0 * (this.getTimeStep_ms() - this.lastLatitudeTimeStep) / this.pickerParameters.latitudeToleranceFactor;
-				this.latitudeTolerance = this.latitudeTolerance > 0 ? this.latitudeTolerance : 5;
+				this.latitudeTolerance = this.latitudeTolerance > 0 ? this.latitudeTolerance : 25;
 
 				if (!this.pickerParameters.isFilterEnabled || this.points[1] == 0 || this.tmpLatitudeDelta <= this.latitudeTolerance) {
 					this.lastLatitudeTimeStep = this.getTimeStep_ms();
 					this.points[1] = this.tmpLatitude;
 				}
 				else {
-					if (log.isLoggable(Level.FINE)) log.log(Level.FINE,
+					if (log.isLoggable(Level.INFO)) log.log(Level.INFO,
 							StringHelper.getFormatedTime("HH:mm:ss:SSS", this.getTimeStep_ms() - GDE.ONE_HOUR_MS) + " Lat " + this.tmpLatitude + " - " + this.tmpLatitudeDelta);
 				}
 
-				this.tmpLongitude = DataParser.parse2Short(_buf2, 2) * 10000 + DataParser.parse2Short(_buf2, 4);
+				this.tmpLongitude = DataParser.parse2UnsignedShort(_buf2, 2) * 10000 + DataParser.parse2UnsignedShort(_buf2, 4);
 				this.tmpLongitude = _buf2[1] == 1 ? -1 * this.tmpLongitude : this.tmpLongitude;
 				this.tmpLongitudeDelta = Math.abs(this.tmpLongitude - this.points[2]);
 				this.tmpLongitudeDelta = this.tmpLongitudeDelta > 400000 ? this.tmpLongitudeDelta - 400000 : this.tmpLongitudeDelta;
 				this.longitudeTolerance = this.points[6] / 1000.0 * (this.getTimeStep_ms() - this.lastLongitudeTimeStep) / this.pickerParameters.longitudeToleranceFactor;
-				this.longitudeTolerance = this.longitudeTolerance > 0 ? this.longitudeTolerance : 5;
+				this.longitudeTolerance = this.longitudeTolerance > 0 ? this.longitudeTolerance : 45;
 
 				if (!this.pickerParameters.isFilterEnabled || this.points[2] == 0 || this.tmpLongitudeDelta <= this.longitudeTolerance) {
 					this.lastLongitudeTimeStep = this.getTimeStep_ms();
 					this.points[2] = this.tmpLongitude;
 				}
 				else {
-					if (log.isLoggable(Level.FINE)) log.log(Level.FINE, StringHelper.getFormatedTime("HH:mm:ss:SSS", this.getTimeStep_ms() - GDE.ONE_HOUR_MS) + " Long "
+					if (log.isLoggable(Level.INFO)) log.log(Level.INFO, StringHelper.getFormatedTime("HH:mm:ss:SSS", this.getTimeStep_ms() - GDE.ONE_HOUR_MS) + " Long "
 							+ this.tmpLongitude + " - " + this.tmpLongitudeDelta + " - " + this.longitudeTolerance);
 				}
 

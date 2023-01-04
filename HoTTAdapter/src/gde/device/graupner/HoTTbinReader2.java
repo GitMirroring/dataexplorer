@@ -1016,34 +1016,34 @@ public class HoTTbinReader2 extends HoTTbinReader {
 			if (isPointsValid()) {
 				this.points[22] = this.pickerParameters.isFilterEnabled && this.tmpVelocity > 500000 ? this.points[22] : this.tmpVelocity;
 
-				this.tmpLatitude = DataParser.parse2Short(this._buf1, 7) * 10000 + DataParser.parse2Short(this._buf1[9], this._buf2[0]);
+				this.tmpLatitude = DataParser.parse2UnsignedShort(this._buf1, 7) * 10000 + DataParser.parse2UnsignedShort(this._buf1[9], this._buf2[0]);
 				this.tmpLatitude = this._buf1[6] == 1 ? -1 * this.tmpLatitude : this.tmpLatitude;
 				this.tmpLatitudeDelta = Math.abs(this.tmpLatitude - this.points[20]);
 				this.tmpLatitudeDelta = this.tmpLatitudeDelta > 400000 ? this.tmpLatitudeDelta - 400000 : this.tmpLatitudeDelta;
 				this.latitudeTolerance = (this.points[22] / 1000.0) * (this.getTimeStep_ms() - this.lastLatitudeTimeStep) / this.pickerParameters.latitudeToleranceFactor;
-				this.latitudeTolerance = this.latitudeTolerance > 0 ? this.latitudeTolerance : 5;
+				this.latitudeTolerance = this.latitudeTolerance > 0 ? this.latitudeTolerance : 25;
 
-				if (!this.pickerParameters.isFilterEnabled || this.points[15] == 0 || this.tmpLatitudeDelta <= this.latitudeTolerance) {
+				if (!this.pickerParameters.isFilterEnabled || this.points[20] == 0 || this.tmpLatitudeDelta <= this.latitudeTolerance) {
 					this.lastLatitudeTimeStep = this.getTimeStep_ms();
 					this.points[20] = this.tmpLatitude;
 				} else {
-					if (HoTTbinReader2.log.isLoggable(Level.FINE))
-						HoTTbinReader2.log.log(Level.FINE, StringHelper.getFormatedTime("HH:mm:ss:SSS", this.getTimeStep_ms() - GDE.ONE_HOUR_MS) + " Lat " + this.tmpLatitude + " - " + this.tmpLatitudeDelta);
+					if (HoTTbinReader2.log.isLoggable(Level.INFO))
+						HoTTbinReader2.log.log(Level.INFO, StringHelper.getFormatedTime("HH:mm:ss:SSS", this.getTimeStep_ms() - GDE.ONE_HOUR_MS) + " Lat " + this.tmpLatitude + " - " + this.tmpLatitudeDelta+ " - " + this.latitudeTolerance);
 				}
 
-				this.tmpLongitude = DataParser.parse2Short(this._buf2, 2) * 10000 + DataParser.parse2Short(this._buf2, 4);
+				this.tmpLongitude = DataParser.parse2UnsignedShort(this._buf2, 2) * 10000 + DataParser.parse2UnsignedShort(this._buf2, 4);
 				this.tmpLongitude = this._buf2[1] == 1 ? -1 * this.tmpLongitude : this.tmpLongitude;
 				this.tmpLongitudeDelta = Math.abs(this.tmpLongitude - this.points[21]);
 				this.tmpLongitudeDelta = this.tmpLongitudeDelta > 400000 ? this.tmpLongitudeDelta - 400000 : this.tmpLongitudeDelta;
 				this.longitudeTolerance = (this.points[22] / 1000.0) * (this.getTimeStep_ms() - this.lastLongitudeTimeStep) / this.pickerParameters.longitudeToleranceFactor;
-				this.longitudeTolerance = this.longitudeTolerance > 0 ? this.longitudeTolerance : 5;
+				this.longitudeTolerance = this.longitudeTolerance > 0 ? this.longitudeTolerance : 45;
 
-				if (!this.pickerParameters.isFilterEnabled || this.points[16] == 0 || this.tmpLongitudeDelta <= this.longitudeTolerance) {
+				if (!this.pickerParameters.isFilterEnabled || this.points[21] == 0 || this.tmpLongitudeDelta <= this.longitudeTolerance) {
 					this.lastLongitudeTimeStep = this.getTimeStep_ms();
 					this.points[21] = this.tmpLongitude;
 				} else {
-					if (HoTTbinReader2.log.isLoggable(Level.FINE))
-						HoTTbinReader2.log.log(Level.FINE, StringHelper.getFormatedTime("HH:mm:ss:SSS", this.getTimeStep_ms() - GDE.ONE_HOUR_MS) + " Long " + this.tmpLongitude + " - " + this.tmpLongitudeDelta);
+					if (HoTTbinReader2.log.isLoggable(Level.INFO))
+						HoTTbinReader2.log.log(Level.INFO, StringHelper.getFormatedTime("HH:mm:ss:SSS", this.getTimeStep_ms() - GDE.ONE_HOUR_MS) + " Long " + this.tmpLongitude + " - " + this.tmpLongitudeDelta + " - " + this.longitudeTolerance);
 				}
 
 				if (this.pickerParameters.altitudeClimbSensorSelection == 2) { //sensor selection GPS (auto, Vario, GPS, GAM, EAM)

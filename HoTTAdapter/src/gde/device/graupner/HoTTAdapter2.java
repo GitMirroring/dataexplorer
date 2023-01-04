@@ -120,9 +120,9 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 				? Boolean.parseBoolean(this.getChannelProperty(ChannelPropertyTypes.TEXT_MODE).getValue()) : false;
 		// 20=Latitude, 21=Longitude, 22=Velocity, 23=Distance, 24=Direction, 25=TripDistance 26=NumSatellites 27=GPS-Fix 28=EventGPS
 		this.pickerParameters.latitudeToleranceFactor = this.getMeasurementPropertyValue(application.getActiveChannelNumber(), 20, MeasurementPropertyTypes.FILTER_FACTOR.value()).toString().length() > 0
-				? Double.parseDouble(this.getMeasurementPropertyValue(application.getActiveChannelNumber(), 20, MeasurementPropertyTypes.FILTER_FACTOR.value()).toString()) : 90.0;
+				? Double.parseDouble(this.getMeasurementPropertyValue(application.getActiveChannelNumber(), 20, MeasurementPropertyTypes.FILTER_FACTOR.value()).toString()) : 50.0;
 		this.pickerParameters.longitudeToleranceFactor = this.getMeasurementPropertyValue(application.getActiveChannelNumber(), 21, MeasurementPropertyTypes.FILTER_FACTOR.value()).toString().length() > 0
-				? Double.parseDouble(this.getMeasurementPropertyValue(application.getActiveChannelNumber(), 21, MeasurementPropertyTypes.FILTER_FACTOR.value()).toString()) : 25.0;
+				? Double.parseDouble(this.getMeasurementPropertyValue(application.getActiveChannelNumber(), 21, MeasurementPropertyTypes.FILTER_FACTOR.value()).toString()) : 15.0;
 		try {
 			this.pickerParameters.altitudeClimbSensorSelection = this.getChannelProperty(ChannelPropertyTypes.SENSOR_ALT_CLIMB) != null && this.getChannelProperty(ChannelPropertyTypes.SENSOR_ALT_CLIMB).getValue() != null //$NON-NLS-1$
 					? Integer.parseInt(this.getChannelProperty(ChannelPropertyTypes.SENSOR_ALT_CLIMB).getValue()) : 0;
