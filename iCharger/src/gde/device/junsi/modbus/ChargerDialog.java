@@ -988,7 +988,7 @@ public class ChargerDialog extends DeviceDialog {
 		}
 		catch (IllegalStateException | TimeOutException e) {
 			ChargerDialog.log.log(Level.SEVERE, e.getMessage(), e);
-			this.application.openMessageDialogAsync(e.getMessage());
+			this.application.openMessageDialogAsync(ChargerDialog.this.getDialogShell(), e.getMessage());
 		}
 		catch (RuntimeException rte) {
 			ChargerDialog.log.log(Level.SEVERE, rte.getMessage(), rte);
@@ -1132,7 +1132,7 @@ public class ChargerDialog extends DeviceDialog {
 		}
 		catch (IllegalStateException | TimeOutException e) {
 			if (e instanceof UsbException) {
-				this.application.openMessageDialogAsync(e.getMessage());
+				this.application.openMessageDialogAsync(ChargerDialog.this.getDialogShell(), e.getMessage());
 			}
 			ChargerDialog.log.log(Level.SEVERE, e.getMessage(), e);
 		}
@@ -1170,7 +1170,7 @@ public class ChargerDialog extends DeviceDialog {
 		}
 		catch (IllegalStateException | TimeOutException ex) {
 			if (ex instanceof UsbException) {
-				this.application.openMessageDialogAsync(ex.getMessage());
+				this.application.openMessageDialogAsync(ChargerDialog.this.getDialogShell(), ex.getMessage());
 			}
 			ChargerDialog.log.log(Level.SEVERE, ex.getMessage(), ex);
 		}
@@ -1221,7 +1221,7 @@ public class ChargerDialog extends DeviceDialog {
 		}
 		catch (IllegalStateException | TimeOutException e) {
 			if (e instanceof UsbException) {
-				this.application.openMessageDialogAsync(e.getMessage());
+				this.application.openMessageDialogAsync(ChargerDialog.this.getDialogShell(), e.getMessage());
 			}
 			ChargerDialog.log.log(Level.SEVERE, e.getMessage(), e);
 		}
@@ -1256,7 +1256,7 @@ public class ChargerDialog extends DeviceDialog {
 		}
 		catch (UsbException | IllegalStateException | TimeOutException e) {
 			if (e instanceof UsbException) {
-				this.application.openMessageDialogAsync(e.getMessage());
+				this.application.openMessageDialogAsync(ChargerDialog.this.getDialogShell(), e.getMessage());
 			}
 			ChargerDialog.log.log(Level.SEVERE, e.getMessage(), e);
 		}
@@ -1294,7 +1294,7 @@ public class ChargerDialog extends DeviceDialog {
 		}
 		catch (UsbException | IllegalStateException | TimeOutException e) {
 			if (e instanceof UsbException) {
-				this.application.openMessageDialogAsync(e.getMessage());
+				this.application.openMessageDialogAsync(ChargerDialog.this.getDialogShell(), e.getMessage());
 			}
 			ChargerDialog.log.log(Level.SEVERE, e.getMessage(), e);
 		}
@@ -1331,7 +1331,7 @@ public class ChargerDialog extends DeviceDialog {
 		}
 		catch (UsbException | IllegalStateException | TimeOutException e) {
 			if (e instanceof UsbException) {
-				this.application.openMessageDialogAsync(e.getMessage());
+				this.application.openMessageDialogAsync(ChargerDialog.this.getDialogShell(), e.getMessage());
 			}
 			ChargerDialog.log.log(Level.SEVERE, e.getMessage(), e);
 		}
@@ -1401,7 +1401,7 @@ public class ChargerDialog extends DeviceDialog {
 		this.systemInfo = this.readInfo();
 		if (this.systemInfo == null || this.systemInfo.getDeviceID() == 0) {
 			log.log(Level.SEVERE, "Read system info failed");
-			this.application.openMessageDialogAsync(Messages.getString(MessageIds.GDE_MSGW2602, new String[] { this.device.getName() }));
+			this.application.openMessageDialogAsync(ChargerDialog.this.getDialogShell(), Messages.getString(MessageIds.GDE_MSGW2602, new String[] { this.device.getName() }));
 			try {
 				this.usbPort.closeUsbPort(true);
 			}
@@ -1412,7 +1412,7 @@ public class ChargerDialog extends DeviceDialog {
 		}
 		else if (this.systemInfo != null && (this.systemInfo.getStatus() & 0x02) != 0) {
 			log.log(Level.SEVERE, this.systemInfo.getStatusString());
-			this.application.openMessageDialogAsync(Messages.getString(MessageIds.GDE_MSGE2603));
+			this.application.openMessageDialogAsync(ChargerDialog.this.getDialogShell(), Messages.getString(MessageIds.GDE_MSGE2603));
 			try {
 				this.usbPort.closeUsbPort(true);
 			}

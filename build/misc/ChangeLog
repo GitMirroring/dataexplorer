@@ -10,6 +10,7 @@ Device specific changes/fixes
 	* HoTTAdapter* synchronize initial file comment date with start time stamp of log
 	* HoTTAdapter* synchronize file comment after edit/change
 	* HoTTAdapter* tune Lat/Long initial filter, fix wrong speed reference
+	* iChargerUSB* enhance displaying error in configuration dialog 
 	* AVm4s_FV_762 synchronize file comment after edit/change
 	* Herkules III Telemetrie synchronize file comment after edit/change
 	* S32 synchronize file comment after edit/change
