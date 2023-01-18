@@ -358,9 +358,9 @@ public class HoTTbinReaderX extends HoTTbinReader {
 					HoTTbinReaderX.logx.log(Level.WARNING, new String(HoTTbinReaderX.buf));
 				}
 			}
-			String packageLossPercentage = HoTTbinReaderX.recordSetReceiver.getRecordDataSize(true) > 0 ? String.format("%.1f",
-					(countPackageLoss / HoTTbinReaderX.recordSetReceiver.getTime_ms(HoTTbinReaderX.recordSetReceiver.getRecordDataSize(true) - 1) * 1000)) : "100";
-
+			String packageLossPercentage = HoTTbinReaderX.recordSetReceiver.getRecordDataSize(true) > 0 
+					? String.format("%.1f",	(countPackageLoss * 100. / numberDatablocks)) 
+					: "100";
 			HoTTbinReaderX.recordSetReceiver.setRecordSetDescription(tmpRecordSet.getRecordSetDescription()
 					+ Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] { countPackageLoss, packageLossPercentage, HoTTbinReaderX.lostPackages.getStatistics() })
 					+ HoTTbinReaderX.sensorSignature);

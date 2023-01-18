@@ -981,7 +981,7 @@ public class HoTTbinReader {
 				}
 			}
 			String packageLossPercentage = HoTTbinReader.recordSetReceiver.getRecordDataSize(true) > 0
-					? String.format("%.1f", (((RcvBinParser) HoTTbinReader.rcvBinParser).getLossTotal() / HoTTbinReader.recordSetReceiver.getTime_ms(HoTTbinReader.recordSetReceiver.getRecordDataSize(true) - 1) * 1000))
+					? String.format("%.1f", (((RcvBinParser) HoTTbinReader.rcvBinParser).getLossTotal() * 100. / numberDatablocks))
 					: "100";
 			if (HoTTbinReader.pickerParameters.isChannelsChannelEnabled)
 				HoTTbinReader.detectedSensors.add(Sensor.CHANNEL);
@@ -1398,7 +1398,7 @@ public class HoTTbinReader {
 			// new Object[] { HoTTbinReader.oldProtocolCount }));
 			// }
 			String packageLossPercentage = HoTTbinReader.recordSetReceiver.getRecordDataSize(true) > 0
-					? String.format("%.1f", (((RcvBinParser) HoTTbinReader.rcvBinParser).getLossTotal() / HoTTbinReader.recordSetReceiver.getTime_ms(HoTTbinReader.recordSetReceiver.getRecordDataSize(true) - 1) * 1000))
+					? String.format("%.1f", (((RcvBinParser) HoTTbinReader.rcvBinParser).getLossTotal() * 100. / numberDatablocks))
 					: "100";
 			if (HoTTbinReader.pickerParameters.isChannelsChannelEnabled)
 				HoTTbinReader.detectedSensors.add(Sensor.CHANNEL);

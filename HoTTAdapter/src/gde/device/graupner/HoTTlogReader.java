@@ -75,14 +75,14 @@ public class HoTTlogReader extends HoTTbinReader {
 		HoTTbinReader.buf = new byte[HoTTbinReader.dataBlockSize];
 		int logTimeStep = 1000/Integer.valueOf(fileInfoHeader.get("COUNTER").split("/")[1].split(GDE.STRING_BLANK)[0]);
 		PackageLossDeque reverseChannelPackageLossCounter = new PackageLossDeque(logTimeStep);
-		HoTTbinReader.isJustParsed = false;
+		PackageLoss	lostPackages = new PackageLoss();
+		int countPackageLoss = 0;
 		HoTTbinReader.isTextModusSignaled = false;
 		boolean isVarioDetected = false;
 		boolean isGPSdetected = false;
 		boolean isESCdetected = false;
-		int countPackageLoss = 0;
 		int logDataOffset = Integer.valueOf(fileInfoHeader.get("LOG DATA OFFSET"));
-		long numberDatablocks = (fileSize - logDataOffset) / HoTTbinReader.dataBlockSize;
+		long numberDatablocks = (fileSize - logDataOffset) / HoTTlogReader.dataBlockSize;
 		long startTimeStamp_ms = HoTTbinReader.getStartTimeStamp(fileInfoHeader.get("LOG START TIME"), HoTTbinReader.getStartTimeStamp(file.getName(), file.lastModified(), numberDatablocks));
 		String date = new SimpleDateFormat("yyyy-MM-dd").format(startTimeStamp_ms); //$NON-NLS-1$
 		String dateTime = new SimpleDateFormat("yyyy-MM-dd, HH:mm:ss").format(startTimeStamp_ms); //$NON-NLS-1$
@@ -303,10 +303,9 @@ public class HoTTlogReader extends HoTTbinReader {
 						if (i % progressIndicator == 0)
 							GDE.getUiNotification().setProgress((int) (i * 100 / numberDatablocks));
 
-						if (HoTTbinReader.isJustParsed && countPackageLoss > 0) {
-							HoTTbinReader.lostPackages.add(countPackageLoss);
+						if (countPackageLoss > 0) {
+							lostPackages.add(countPackageLoss);
 							countPackageLoss = 0;
-							HoTTbinReader.isJustParsed = false;
 						}
 					}
 					else { // tx,rx == 0
@@ -329,19 +328,17 @@ public class HoTTlogReader extends HoTTbinReader {
 				//	HoTTbinReader.application.openMessageDialogAsync(Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGW2404));
 				//}
 			}
-			// if (HoTTbinReader.oldProtocolCount > 2) {
-			// application.openMessageDialogAsync(Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGW2405,
-			// new Object[] { HoTTbinReader.oldProtocolCount }));
-			// }
+			if (countPackageLoss > 0) lostPackages.add(countPackageLoss);
 			String packageLossPercentage = HoTTbinReader.recordSetReceiver.getRecordDataSize(true) > 0
-					? String.format("%.1f", (countPackageLoss / HoTTbinReader.recordSetReceiver.getTime_ms(HoTTbinReader.recordSetReceiver.getRecordDataSize(true) - 1) * 1000)) : "100";
+					? String.format("%.1f", (lostPackages.getLossTotal() * 100. / numberDatablocks)) 
+					: "100";
 			HoTTlogReader.detectedSensors = Sensor.getSetFromSignature(HoTTbinReader.recordSets.keySet().toString().replace("[", GDE.STRING_EMPTY).replace("]", GDE.STRING_EMPTY).replace(" ", GDE.STRING_EMPTY));
 			if (HoTTbinReader.pickerParameters.isChannelsChannelEnabled)
 				HoTTbinReader.detectedSensors.add(Sensor.CHANNEL);
 			HoTTbinReader.recordSetReceiver.setRecordSetDescription(tmpRecordSet.getRecordSetDescription()
-					+ Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] { countPackageLoss, packageLossPercentage, HoTTbinReader.lostPackages.getStatistics() })
+					+ Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] { lostPackages.getLossTotal(), packageLossPercentage, lostPackages.getStatistics() })
 					+ String.format(" - Sensor: %s", HoTTbinReader2.detectedSensors.toString()));
-			HoTTbinReader.log.logp(Level.WARNING, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, "skipped number receiver data due to package loss = " + countPackageLoss); //$NON-NLS-1$
+			HoTTbinReader.log.logp(Level.WARNING, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, "skipped number receiver data due to package loss = " + lostPackages.getLossTotal()); //$NON-NLS-1$
 			HoTTbinReader.log.logp(Level.TIME, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, "read time = " //$NON-NLS-1$
 					+ StringHelper.getFormatedTime("mm:ss:SSS", (System.nanoTime() / 1000000 - startTime))); //$NON-NLS-1$
 

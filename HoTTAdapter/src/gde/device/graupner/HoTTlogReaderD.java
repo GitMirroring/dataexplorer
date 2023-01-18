@@ -113,10 +113,11 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 		int[] valuesESC = new int[30];
 		int logTimeStep = 1000/Integer.valueOf(fileInfoHeader.get("COUNTER").split("/")[1].split(GDE.STRING_BLANK)[0]);
 		PackageLossDeque reverseChannelPackageLossCounter = new PackageLossDeque(logTimeStep);
-		HoTTbinReader.isTextModusSignaled = false;
+		PackageLoss	lostPackages = new PackageLoss();
 		int countPackageLoss = 0;
+		HoTTbinReader.isTextModusSignaled = false;
 		int logDataOffset = Integer.valueOf(fileInfoHeader.get("LOG DATA OFFSET"));
-		long numberDatablocks = (fileSize - logDataOffset) / HoTTbinReader.dataBlockSize;
+		long numberDatablocks = (fileSize - logDataOffset) / HoTTlogReaderD.dataBlockSize;
 		long startTimeStamp_ms = getStartTimeStamp(fileInfoHeader.get("LOG START TIME"), getStartTimeStamp(file.getName(), file.lastModified(), numberDatablocks));
 		String date = new SimpleDateFormat("yyyy-MM-dd").format(startTimeStamp_ms); //$NON-NLS-1$
 		String dateTime = new SimpleDateFormat("yyyy-MM-dd, HH:mm:ss").format(startTimeStamp_ms); //$NON-NLS-1$
@@ -243,7 +244,7 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 					}
 
 					if (HoTTlogReaderD.isJustMigrated && countPackageLoss > 0) {
-						HoTTbinReader.lostPackages.add(countPackageLoss * 10);
+						lostPackages.add(countPackageLoss);
 						countPackageLoss = 0;
 					}
 
@@ -265,7 +266,7 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 
 						reverseChannelPackageLossCounter.add(0);
 						HoTTlogReaderD.points[0] = reverseChannelPackageLossCounter.getPercentage() * 1000;
-						countPackageLoss+=1; // add up lost packages in telemetry data
+						++countPackageLoss; // add up lost packages in telemetry data
 
 						parseChannel(HoTTbinReader.buf, valuesChannel, numberLogChannels);
 						//in 0=FreCh, 1=Tx, 2=Rx, 3=Ch 1, 4=Ch 2 .. 18=Ch 16 19=PowerOff 20=BattLow 21=Reset 22=Warning
@@ -293,15 +294,18 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 				else if (isVarioData)
 					altitudeClimbSensorSelection = Sensor.VARIO;
 			}
-			String packageLossPercentage = tmpRecordSet.getRecordDataSize(true) > 0 ? String.format("%.1f", (countPackageLoss / tmpRecordSet.getTime_ms(tmpRecordSet.getRecordDataSize(true) - 1) * 1000)) : "100";
+			if (countPackageLoss > 0) lostPackages.add(countPackageLoss);
+			String packageLossPercentage = tmpRecordSet.getRecordDataSize(true) > 0 
+					? String.format("%.1f", (lostPackages.getLossTotal() * 100. / numberDatablocks)) 
+					: "100";
 			HoTTbinReader.detectedSensors.add(Sensor.CHANNEL);
 			tmpRecordSet.setRecordSetDescription(tmpRecordSet.getRecordSetDescription()
-					+ Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] { countPackageLoss, packageLossPercentage, HoTTbinReader.lostPackages.getStatistics() })
+					+ Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] { lostPackages.getLossTotal(), packageLossPercentage, HoTTbinReader.lostPackages.getStatistics() })
 					+ String.format(" - Sensor: %s", HoTTlogReader.detectedSensors.toString())
 					+ (altitudeClimbSensorSelection != null && (detectedSensors.contains(Sensor.fromOrdinal(pickerParameters.altitudeClimbSensorSelection)) || detectedSensors.contains(altitudeClimbSensorSelection))
 							? String.format(" - %s = %s", Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGT2419), altitudeClimbSensorSelection)
 									: ""));
-			log.logp(Level.WARNING, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, "skipped number receiver data due to package loss = " + countPackageLoss); //$NON-NLS-1$
+			log.logp(Level.WARNING, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, "skipped number receiver data due to package loss = " + lostPackages.getLossTotal()); //$NON-NLS-1$
 			log.logp(Level.TIME, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, "read time = " + StringHelper.getFormatedTime("mm:ss:SSS", (System.nanoTime() / 1000000 - startTime))); //$NON-NLS-1$ //$NON-NLS-2$
 
 			if (GDE.isWithUi()) {

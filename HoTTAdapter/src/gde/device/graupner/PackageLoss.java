@@ -53,8 +53,16 @@ public class PackageLoss extends Vector<Integer> {
 				this.maxValue = value;
 			else if (value < this.minValue) this.minValue = value;
 		}
-
+		
+		this.lossTotal += value;
 		return super.add(value);
+	}
+
+	/**
+	 * @return the lossTotal
+	 */
+	public int getLossTotal() {
+		return lossTotal;
 	}
 
 	/**
