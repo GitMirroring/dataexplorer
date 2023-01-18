@@ -102,7 +102,10 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 		HoTTlogReaderD.points = new int[device.getNumberOfMeasurements(channelNumber)];
 		HoTTbinReader.timeStep_ms = 0;
 		int numberLogChannels = Integer.valueOf(fileInfoHeader.get("LOG NOB CHANNEL"));
-		HoTTbinReader.dataBlockSize = 66 + numberLogChannels * 2;
+		boolean isASCII = fileInfoHeader.get("LOG TYPE").contains("ASCII");
+		int rawDataBlockSize = 66 + numberLogChannels * 2;
+		int asciiDataBlockSize = 202 + numberLogChannels * 5;
+		HoTTbinReader.dataBlockSize = isASCII ? asciiDataBlockSize : rawDataBlockSize;
 		HoTTbinReader.buf = new byte[HoTTbinReader.dataBlockSize];
 		int[] valuesChannel = new int[23];
 		int[] valuesVario = new int[27];
@@ -145,7 +148,14 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 			for (int i = 0; i < numberDatablocks; i++) {
 				data_in.read(HoTTbinReader.buf);
 				if (log.isLoggable(Level.FINE)) {
-					log.logp(Level.FINE, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, StringHelper.byte2Hex4CharString(HoTTbinReader.buf, HoTTbinReader.buf.length));
+					if (isASCII)
+						log.logp(Level.FINE, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, new String(HoTTbinReader.buf));
+					else 
+						log.logp(Level.FINE, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, StringHelper.byte2Hex4CharString(HoTTbinReader.buf, HoTTbinReader.buf.length));
+				}
+
+				if (isASCII) { //convert ASCII log data to hex
+					HoTTlogReader.convertAscii2Raw(rawDataBlockSize);
 				}
 
 				//Ph(D)[4], Evt1(H)[5], Evt2(D)[6], Fch(D)[7], TXdBm(-D)[8], RXdBm(-D)[9], RfRcvRatio(D)[10], TrnRcvRatio(D)[11]

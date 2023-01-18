@@ -71,7 +71,10 @@ public class HoTTlogReader extends HoTTbinReader {
 		HoTTbinReader.pointsESC = new int[30];
 		HoTTbinReader.timeStep_ms = 0;
 		int numberLogChannels = Integer.valueOf(fileInfoHeader.get("LOG NOB CHANNEL"));
-		HoTTbinReader.dataBlockSize = 66 + numberLogChannels * 2;
+		boolean isASCII = fileInfoHeader.get("LOG TYPE").contains("ASCII");
+		int rawDataBlockSize = 66 + numberLogChannels * 2;
+		int asciiDataBlockSize = 202 + numberLogChannels * 5;
+		HoTTbinReader.dataBlockSize = isASCII ? asciiDataBlockSize : rawDataBlockSize;
 		HoTTbinReader.buf = new byte[HoTTbinReader.dataBlockSize];
 		int logTimeStep = 1000/Integer.valueOf(fileInfoHeader.get("COUNTER").split("/")[1].split(GDE.STRING_BLANK)[0]);
 		PackageLossDeque reverseChannelPackageLossCounter = new PackageLossDeque(logTimeStep);
@@ -138,9 +141,16 @@ public class HoTTlogReader extends HoTTbinReader {
 			for (int i = 0; i < numberDatablocks; i++) {
 				data_in.read(HoTTbinReader.buf);
 				if (log.isLoggable(Level.FINE)) {
-					log.logp(Level.FINE, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, StringHelper.byte2Hex4CharString(HoTTbinReader.buf, HoTTbinReader.buf.length));
+					if (isASCII)
+						log.logp(Level.FINE, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, new String(HoTTbinReader.buf));
+					else 
+						log.logp(Level.FINE, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, StringHelper.byte2Hex4CharString(HoTTbinReader.buf, HoTTbinReader.buf.length));
 				}
 
+				if (isASCII) { //convert ASCII log data to hex
+					convertAscii2Raw(rawDataBlockSize);
+				}
+				
 				//if (!pickerParameters.isFilterTextModus || (HoTTbinReader.buf[6] & 0x01) == 0) { // switch into text modus
 				if (HoTTbinReader.buf[8] != 0 && HoTTbinReader.buf[9] != 0) { //buf 8, 9, tx,rx, rx sensitivity data
 					if (HoTTbinReader.buf[24] != 0x1F) {//rx sensitivity data
@@ -360,6 +370,39 @@ public class HoTTlogReader extends HoTTbinReader {
 			data_in.close();
 			data_in = null;
 		}
+	}
+
+	/**
+	 * convert ASCII log data to raw, binary format to keep parser identically
+	 * @param rawDataBlockSize
+	 */
+	protected static void convertAscii2Raw(int rawDataBlockSize) {
+		String[] splitInput = new String(HoTTbinReader.buf).split("\\|");
+		if (log.isLoggable(Level.FINER))
+			for (String part : splitInput)
+				log.log(Level.FINER, "'" + part + "'");
+		byte[] rawBuf = new byte[rawDataBlockSize];
+		int index = 4;
+		for (String statuscByte : splitInput[1].split(","))
+			rawBuf[index++] = (byte)Integer.parseInt(statuscByte.trim());
+
+		for (String recByte : splitInput[2].split(","))
+			rawBuf[index++] = (byte)Integer.parseInt(recByte.trim(), 16);
+
+		for (String sensorInfoByte : splitInput[3].split(","))
+			rawBuf[index++] = (byte)Integer.parseInt(sensorInfoByte.trim(), 16);
+
+		for (String sensorByte : splitInput[4].split(","))
+			rawBuf[index++] = (byte)Integer.parseInt(sensorByte.trim(), 16);
+
+		for (String channelByte : splitInput[5].split(",")) {
+			String ch = String.format("%04X", Integer.parseInt(channelByte.trim()));
+			rawBuf[index++] = (byte)Integer.parseInt(ch.trim().substring(2), 16);
+			rawBuf[index++] =(byte)Integer.parseInt(ch.trim().substring(0, 2), 16);
+		}
+		if (log.isLoggable(Level.FINER))
+			log.log(Level.FINER, StringHelper.byte2Hex4CharString(rawBuf, rawBuf.length));
+		System.arraycopy(rawBuf, 0, HoTTbinReader.buf, 0, rawBuf.length);
 	}
 
 	/**
