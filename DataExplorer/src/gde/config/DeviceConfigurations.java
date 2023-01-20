@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with GNU DataExplorer.  If not, see <https://www.gnu.org/licenses/>.
 
-    Copyright (c) 2017,2018,2019,2020,2021,2022 Winfried Bruegmann, Thomas Eickert
+    Copyright (c) 2017,2018,2019,2020,2021,2022,2023 Winfried Bruegmann, Thomas Eickert
 ****************************************************************************************/
 
 package gde.config;
