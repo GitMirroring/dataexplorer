@@ -692,6 +692,8 @@ public class HoTTbinReader {
 		HoTTbinReader.escBinParser = Sensor.ESC.createBinParser(HoTTbinReader.pickerParameters, new int[30], timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
 		int version = -1;
 		HoTTbinReader.isJustParsed = false;
+		PackageLoss	lostPackages = new PackageLoss();
+		int countPackageLoss = 0;
 		HoTTbinReader.isTextModusSignaled = false;
 		boolean isVarioDetected = false;
 		boolean isGPSdetected = false;
@@ -958,6 +960,11 @@ public class HoTTbinReader {
 							HoTTbinReader.isJustParsed = true;
 						}
 						if (i % progressIndicator == 0) GDE.getUiNotification().setProgress((int) (i * 100 / numberDatablocks));
+						
+						if (countPackageLoss > 0) {
+							lostPackages.add(countPackageLoss);
+							countPackageLoss = 0;
+						}
 
 						if (HoTTbinReader.isJustParsed) {
 							HoTTbinReader.isJustParsed = !((RcvBinParser) HoTTbinReader.rcvBinParser).updateLossStatistics();
@@ -965,6 +972,8 @@ public class HoTTbinReader {
 					}
 					else { // skip empty block, but add time step
 						if (HoTTbinReader.log.isLoggable(Level.FINE)) HoTTbinReader.log.log(Level.FINE, "-->> Found tx=rx=0 dBm");
+						
+						++countPackageLoss;
 
 						((RcvBinParser) HoTTbinReader.rcvBinParser).trackPackageLoss(false);
 						if (HoTTbinReader.pickerParameters.isChannelsChannelEnabled) {
@@ -980,16 +989,16 @@ public class HoTTbinReader {
 					HoTTbinReader.application.openMessageDialogAsync(Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGW2404));
 				}
 			}
+			if (countPackageLoss > 0) lostPackages.add(countPackageLoss);
 			String packageLossPercentage = HoTTbinReader.recordSetReceiver.getRecordDataSize(true) > 0
-					? String.format("%.1f", (((RcvBinParser) HoTTbinReader.rcvBinParser).getLossTotal() * 100. / numberDatablocks))
+					? String.format("%.1f", lostPackages.getLossTotal() * 100. / numberDatablocks)
 					: "100";
 			if (HoTTbinReader.pickerParameters.isChannelsChannelEnabled)
 				HoTTbinReader.detectedSensors.add(Sensor.CHANNEL);
 			HoTTbinReader.recordSetReceiver.setRecordSetDescription(tmpRecordSet.getRecordSetDescription() + Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] {
-					((RcvBinParser) HoTTbinReader.rcvBinParser).getLossTotal(), packageLossPercentage,
-					((RcvBinParser) HoTTbinReader.rcvBinParser).getLostPackages().getStatistics() }) 
+					lostPackages.getLossTotal(), packageLossPercentage, lostPackages.getStatistics() }) 
 					+ String.format(" - Sensor: %s", HoTTbinReader2.detectedSensors.toString()));
-			HoTTbinReader.log.logp(Level.WARNING, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, "skipped number receiver data due to package loss = " + ((RcvBinParser) HoTTbinReader.rcvBinParser).getLossTotal()); //$NON-NLS-1$
+			HoTTbinReader.log.logp(Level.WARNING, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, "skipped number receiver data due to package loss = " + lostPackages.getLossTotal()); //$NON-NLS-1$
 			HoTTbinReader.log.logp(Level.TIME, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, "read time = " //$NON-NLS-1$
 					+ StringHelper.getFormatedTime("mm:ss:SSS", (System.nanoTime() / 1000000 - startTime))); //$NON-NLS-1$
 
@@ -1099,6 +1108,8 @@ public class HoTTbinReader {
 		byte actualSensor = -1, lastSensor = -1;
 		int logCountVario = 0, logCountGPS = 0, logCountGeneral = 0, logCountElectric = 0, logCountSpeedControl = 0;
 		HoTTbinReader.isJustParsed = false;
+		PackageLoss	lostPackages = new PackageLoss();
+		int countPackageLoss = 0;
 		HoTTbinReader.isTextModusSignaled = false;
 		boolean isVarioDetected = false;
 		boolean isGPSdetected = false;
@@ -1372,12 +1383,19 @@ public class HoTTbinReader {
 						if (i % progressIndicator == 0)
 							GDE.getUiNotification().setProgress((int) (i * 100 / numberDatablocks));
 
+						if (countPackageLoss > 0) {
+							lostPackages.add(countPackageLoss);
+							countPackageLoss = 0;
+						}
+
 						if (HoTTbinReader.isJustParsed) {
 							HoTTbinReader.isJustParsed = !((RcvBinParser) HoTTbinReader.rcvBinParser).updateLossStatistics();
 						}
 					}
 					else { // tx,rx == 0
 						if (HoTTbinReader.log.isLoggable(Level.FINE)) HoTTbinReader.log.log(Level.FINE, "-->> Found tx=rx=0 dBm");
+						
+						++countPackageLoss;
 
 						((RcvBinParser) HoTTbinReader.rcvBinParser).trackPackageLoss(false);
 						if (HoTTbinReader.pickerParameters.isChannelsChannelEnabled) {
@@ -1397,16 +1415,16 @@ public class HoTTbinReader {
 			// application.openMessageDialogAsync(Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGW2405,
 			// new Object[] { HoTTbinReader.oldProtocolCount }));
 			// }
+			if (countPackageLoss > 0) lostPackages.add(countPackageLoss);
 			String packageLossPercentage = HoTTbinReader.recordSetReceiver.getRecordDataSize(true) > 0
-					? String.format("%.1f", (((RcvBinParser) HoTTbinReader.rcvBinParser).getLossTotal() * 100. / numberDatablocks))
+					? String.format("%.1f", lostPackages.getLossTotal() * 100. / numberDatablocks)
 					: "100";
 			if (HoTTbinReader.pickerParameters.isChannelsChannelEnabled)
 				HoTTbinReader.detectedSensors.add(Sensor.CHANNEL);
 			HoTTbinReader.recordSetReceiver.setRecordSetDescription(tmpRecordSet.getRecordSetDescription() + Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] {
-					((RcvBinParser) HoTTbinReader.rcvBinParser).getLossTotal(), packageLossPercentage,
-					((RcvBinParser) HoTTbinReader.rcvBinParser).getLostPackages().getStatistics() }) 
+					lostPackages.getLossTotal(), packageLossPercentage, lostPackages.getStatistics() }) 
 					+ String.format(" - Sensor: %s", HoTTbinReader2.detectedSensors.toString()));
-			HoTTbinReader.log.logp(Level.WARNING, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, "skipped number receiver data due to package loss = " + ((RcvBinParser) HoTTbinReader.rcvBinParser).getLossTotal()); //$NON-NLS-1$
+			HoTTbinReader.log.logp(Level.WARNING, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, "skipped number receiver data due to package loss = " + lostPackages.getLossTotal()); //$NON-NLS-1$
 			HoTTbinReader.log.logp(Level.TIME, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, "read time = " //$NON-NLS-1$
 					+ StringHelper.getFormatedTime("mm:ss:SSS", (System.nanoTime() / 1000000 - startTime))); //$NON-NLS-1$
 

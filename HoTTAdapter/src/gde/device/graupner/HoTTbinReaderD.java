@@ -414,6 +414,8 @@ public class HoTTbinReaderD extends HoTTbinReader2 {
 		HoTTbinReader.gamBinParser = Sensor.GAM.createBinParserD(HoTTbinReader.pickerParameters, HoTTbinReader2.points, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
 		HoTTbinReader.eamBinParser = Sensor.EAM.createBinParserD(HoTTbinReader.pickerParameters, HoTTbinReader2.points, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
 		HoTTbinReader.escBinParser = Sensor.ESC.createBinParserD(HoTTbinReader.pickerParameters, HoTTbinReader2.points, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
+		PackageLoss	lostPackages = new PackageLoss();
+		int countPackageLoss = 0;
 		HoTTbinReader.isTextModusSignaled = false;
 		boolean isSdLogFormat = Boolean.parseBoolean(header.get(HoTTAdapter.SD_FORMAT));
 		long numberDatablocks = isSdLogFormat ? fileSize - HoTTbinReaderX.headerSize - HoTTbinReaderX.footerSize : fileSize / HoTTbinReader.dataBlockSize;
@@ -607,10 +609,17 @@ public class HoTTbinReaderD extends HoTTbinReader2 {
 						tmpRecordSet.addPoints(HoTTbinReader2.points, timeSteps_ms[BinParser.TIMESTEP_INDEX]);
 
 						timeSteps_ms[BinParser.TIMESTEP_INDEX] += 10; // add default time step from device of 10 msec
+						
+						if (countPackageLoss > 0) {
+							lostPackages.add(countPackageLoss);
+							countPackageLoss = 0;
+						}
 
 						if (i % progressIndicator == 0) GDE.getUiNotification().setProgress((int) (i * 100 / numberDatablocks));
 					} else { // skip empty block, but add time step
 						if (HoTTbinReader2.log.isLoggable(Level.FINE)) HoTTbinReader2.log.log(Level.FINE, "-->> Found tx=rx=0 dBm");
+
+						++countPackageLoss;
 
 						((RcvBinParser) HoTTbinReader.rcvBinParser).trackPackageLoss(false);
 
@@ -625,17 +634,18 @@ public class HoTTbinReaderD extends HoTTbinReader2 {
 					HoTTbinReader.application.openMessageDialogAsync(Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGW2404));
 				}
 			}
+			if (countPackageLoss > 0) lostPackages.add(countPackageLoss);
 			String packageLossPercentage = tmpRecordSet.getRecordDataSize(true) > 0
-					? String.format("%.1f", (((RcvBinParser) HoTTbinReaderD.rcvBinParser).getCountPackageLoss() * 100. / numberDatablocks))
+					? String.format("%.1f", lostPackages.getLossTotal() * 100. / numberDatablocks)
 					: "100";
 			HoTTbinReader.detectedSensors.add(Sensor.CHANNEL);
 			tmpRecordSet.setRecordSetDescription(tmpRecordSet.getRecordSetDescription()
-					+ Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] { ((RcvBinParser) HoTTbinReader2.rcvBinParser).getCountPackageLoss(), packageLossPercentage, ((RcvBinParser) HoTTbinReader.rcvBinParser).getLostPackages().getStatistics() })
+					+ Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] { lostPackages.getLossTotal(), packageLossPercentage, lostPackages.getStatistics() })
 					+ String.format(" - Sensor: %s", HoTTlogReader.detectedSensors.toString())
 					+ (HoTTAdapter2.isAltClimbSensor(HoTTbinReader2.detectedSensors)
 							? String.format(" - %s = %s", Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGT2419), Sensor.fromOrdinal(pickerParameters.altitudeClimbSensorSelection).name())
 									: ""));
-			HoTTbinReader2.log.log(Level.WARNING, "skipped number receiver data due to package loss = " + ((RcvBinParser) HoTTbinReader2.rcvBinParser).getCountPackageLoss()); //$NON-NLS-1$
+			HoTTbinReader2.log.log(Level.WARNING, "skipped number receiver data due to package loss = " + lostPackages.getLossTotal()); //$NON-NLS-1$
 			HoTTbinReader2.log.log(Level.TIME, "read time = " + StringHelper.getFormatedTime("mm:ss:SSS", (System.nanoTime() / 1000000 - startTime))); //$NON-NLS-1$ //$NON-NLS-2$
 
 			if (GDE.isWithUi()) {
@@ -726,7 +736,8 @@ public class HoTTbinReaderD extends HoTTbinReader2 {
 		byte actualSensor = -1, lastSensor = -1;
 		int logCountVario = 0, logCountGPS = 0, logCountGAM = 0, logCountEAM = 0, logCountESC = 0;
 		EnumSet<Sensor> migrationJobs = EnumSet.noneOf(Sensor.class);
-
+		PackageLoss	lostPackages = new PackageLoss();
+		int countPackageLoss = 0;
 		boolean isSdLogFormat = Boolean.parseBoolean(header.get(HoTTAdapter.SD_FORMAT));
 		long numberDatablocks = isSdLogFormat ? fileSize - HoTTbinReaderX.headerSize - HoTTbinReaderX.footerSize : fileSize / HoTTbinReader.dataBlockSize;
 		long startTimeStamp_ms = HoTTbinReader.getStartTimeStamp(file.getName(), file.lastModified(), numberDatablocks);
@@ -908,10 +919,17 @@ public class HoTTbinReaderD extends HoTTbinReader2 {
 
 						bufCopier.copyToBuffer();
 						timeSteps_ms[BinParser.TIMESTEP_INDEX] += 10;// add default time step from log record of 10 msec
+						
+						if (countPackageLoss > 0) {
+							lostPackages.add(countPackageLoss);
+							countPackageLoss = 0;
+						}
 
 						if (i % progressIndicator == 0) GDE.getUiNotification().setProgress((int) (i * 100 / numberDatablocks));
 					} else { // skip empty block, but add time step
 						if (HoTTbinReader2.log.isLoggable(Level.FINE)) HoTTbinReader2.log.log(Level.FINE, "-->> Found tx=rx=0 dBm");
+						
+						++countPackageLoss;
 
 						((RcvBinParser) HoTTbinReader.rcvBinParser).trackPackageLoss(false);
 						HoTTbinReader2.chnBinParser.parse();
@@ -928,17 +946,18 @@ public class HoTTbinReaderD extends HoTTbinReader2 {
 			// application.openMessageDialogAsync(Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGW2405, new Object[] {
 			// HoTTbinReader.oldProtocolCount }));
 			// }
+			if (countPackageLoss > 0) lostPackages.add(countPackageLoss);
 			String packageLossPercentage = tmpRecordSet.getRecordDataSize(true) > 0
-					? String.format("%.1f", (((RcvBinParser) HoTTbinReaderD.rcvBinParser).getCountPackageLoss() * 100. / numberDatablocks))
+					? String.format("%.1f", lostPackages.getLossTotal() * 100. / numberDatablocks)
 					: "100";
 			HoTTbinReader.detectedSensors.add(Sensor.CHANNEL);
 			tmpRecordSet.setRecordSetDescription(tmpRecordSet.getRecordSetDescription()
-					+ Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] { ((RcvBinParser) HoTTbinReader2.rcvBinParser).getCountPackageLoss(), packageLossPercentage, ((RcvBinParser) HoTTbinReader.rcvBinParser).getLostPackages().getStatistics() })
+					+ Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] { lostPackages.getLossTotal(), packageLossPercentage, lostPackages.getStatistics() })
 					+ String.format(" - Sensor: %s", HoTTlogReader.detectedSensors.toString())
 					+ (HoTTAdapter2.isAltClimbSensor(HoTTbinReader2.detectedSensors)
 							? String.format(" - %s = %s", Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGT2419), Sensor.fromOrdinal(pickerParameters.altitudeClimbSensorSelection).name())
 									: ""));
-			HoTTbinReader2.log.log(Level.WARNING, "skipped number receiver data due to package loss = " + ((RcvBinParser) HoTTbinReader.rcvBinParser).getCountPackageLoss()); //$NON-NLS-1$
+			HoTTbinReader2.log.log(Level.WARNING, "skipped number receiver data due to package loss = " + lostPackages.getLossTotal()); //$NON-NLS-1$
 			HoTTbinReader2.log.log(Level.TIME, "read time = " + StringHelper.getFormatedTime("mm:ss:SSS", (System.nanoTime() / 1000000 - startTime))); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			if (menuToolBar != null) {
