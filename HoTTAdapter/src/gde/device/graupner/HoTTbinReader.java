@@ -989,14 +989,13 @@ public class HoTTbinReader {
 					HoTTbinReader.application.openMessageDialogAsync(Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGW2404));
 				}
 			}
-			if (countPackageLoss > 0) lostPackages.add(countPackageLoss);
 			String packageLossPercentage = HoTTbinReader.recordSetReceiver.getRecordDataSize(true) > 0
 					? String.format("%.1f", lostPackages.getLossTotal() * 100. / numberDatablocks)
 					: "100";
 			if (HoTTbinReader.pickerParameters.isChannelsChannelEnabled)
 				HoTTbinReader.detectedSensors.add(Sensor.CHANNEL);
 			HoTTbinReader.recordSetReceiver.setRecordSetDescription(tmpRecordSet.getRecordSetDescription() + Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] {
-					lostPackages.getLossTotal(), packageLossPercentage, lostPackages.getStatistics() }) 
+					lostPackages.getLossTotal() + countPackageLoss, lostPackages.getLossTotal(), packageLossPercentage, lostPackages.getStatistics() }) 
 					+ String.format(" - Sensor: %s", HoTTbinReader2.detectedSensors.toString()));
 			HoTTbinReader.log.logp(Level.WARNING, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, "skipped number receiver data due to package loss = " + lostPackages.getLossTotal()); //$NON-NLS-1$
 			HoTTbinReader.log.logp(Level.TIME, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, "read time = " //$NON-NLS-1$
@@ -1415,14 +1414,13 @@ public class HoTTbinReader {
 			// application.openMessageDialogAsync(Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGW2405,
 			// new Object[] { HoTTbinReader.oldProtocolCount }));
 			// }
-			if (countPackageLoss > 0) lostPackages.add(countPackageLoss);
 			String packageLossPercentage = HoTTbinReader.recordSetReceiver.getRecordDataSize(true) > 0
 					? String.format("%.1f", lostPackages.getLossTotal() * 100. / numberDatablocks)
 					: "100";
 			if (HoTTbinReader.pickerParameters.isChannelsChannelEnabled)
 				HoTTbinReader.detectedSensors.add(Sensor.CHANNEL);
 			HoTTbinReader.recordSetReceiver.setRecordSetDescription(tmpRecordSet.getRecordSetDescription() + Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] {
-					lostPackages.getLossTotal(), packageLossPercentage, lostPackages.getStatistics() }) 
+					lostPackages.getLossTotal() + countPackageLoss, lostPackages.getLossTotal(), packageLossPercentage, lostPackages.getStatistics() }) 
 					+ String.format(" - Sensor: %s", HoTTbinReader2.detectedSensors.toString()));
 			HoTTbinReader.log.logp(Level.WARNING, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, "skipped number receiver data due to package loss = " + lostPackages.getLossTotal()); //$NON-NLS-1$
 			HoTTbinReader.log.logp(Level.TIME, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, "read time = " //$NON-NLS-1$
@@ -1517,7 +1515,6 @@ public class HoTTbinReader {
 				this.pickerParameters.reverseChannelPackageLossCounter.add(0);
 				this.points[0] = this.pickerParameters.reverseChannelPackageLossCounter.getPercentage() * 1000;
 
-				++this.lostPackages.lossTotal; // add up lost packages in telemetry data
 				++this.consecutiveLossCounter;
 				// points[0] = (int) (countPackageLoss*100.0 / ((this.getTimeStep_ms()+10) / 10.0)*1000.0);
 			}
@@ -1971,7 +1968,7 @@ public class HoTTbinReader {
 				this.points[19] = ((_buf2[3] & 0xFF) - 20) * 1000;
 				this.points[20] = ((_buf2[4] & 0xFF) - 20) * 1000;
 				// 21=Speed, 22=LowestCellVoltage, 23=LowestCellNumber, 24=Pressure, 24=Event
-				this.points[21] = DataParser.parse2Short(_buf4, 1) * 1000; // Speed [km/h
+				this.points[21] = DataParser.parse2UnsignedShort(_buf4, 1) * 1000; // Speed [km/h
 				this.points[22] = (_buf4[3] & 0xFF) * 1000; // lowest cell voltage 124 = 2.48 V
 				this.points[23] = (_buf4[4] & 0xFF) * 1000; // cell number lowest cell voltage
 				this.points[24] = (_buf4[8] & 0xFF) * 1000; // Pressure

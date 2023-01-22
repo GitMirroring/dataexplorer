@@ -338,7 +338,6 @@ public class HoTTlogReader extends HoTTbinReader {
 				//	HoTTbinReader.application.openMessageDialogAsync(Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGW2404));
 				//}
 			}
-			if (countPackageLoss > 0) lostPackages.add(countPackageLoss);
 			String packageLossPercentage = HoTTbinReader.recordSetReceiver.getRecordDataSize(true) > 0
 					? String.format("%.1f", (lostPackages.getLossTotal() * 100. / numberDatablocks)) 
 					: "100";
@@ -346,7 +345,7 @@ public class HoTTlogReader extends HoTTbinReader {
 			if (HoTTbinReader.pickerParameters.isChannelsChannelEnabled)
 				HoTTbinReader.detectedSensors.add(Sensor.CHANNEL);
 			HoTTbinReader.recordSetReceiver.setRecordSetDescription(tmpRecordSet.getRecordSetDescription()
-					+ Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] { lostPackages.getLossTotal(), packageLossPercentage, lostPackages.getStatistics() })
+					+ Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] { lostPackages.getLossTotal() + countPackageLoss, lostPackages.getLossTotal(), packageLossPercentage, lostPackages.getStatistics() })
 					+ String.format(" - Sensor: %s", HoTTbinReader2.detectedSensors.toString()));
 			HoTTbinReader.log.logp(Level.WARNING, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, "skipped number receiver data due to package loss = " + lostPackages.getLossTotal()); //$NON-NLS-1$
 			HoTTbinReader.log.logp(Level.TIME, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, "read time = " //$NON-NLS-1$
@@ -721,7 +720,7 @@ public class HoTTlogReader extends HoTTbinReader {
 		values[18] = HoTTbinReader.tmpVoltage2 * 100;
 		values[19] = ((_buf[39] & 0xFF) - 20) * 1000;
 		values[20] = ((_buf[40] & 0xFF) - 20) * 1000;
-		values[21] = DataParser.parse2Short(_buf, 57) * 1000; //Speed [km/h
+		values[21] = DataParser.parse2UnsignedShort(_buf, 57) * 1000; //Speed [km/h
 		values[22] = (_buf[59] & 0xFF) * 1000; //lowest cell voltage 124 = 2.48 V
 		values[23] = (_buf[60] & 0xFF) * 1000; //cell number lowest cell voltage
 		values[24] = (_buf[64] & 0xFF) * 1000; //Pressure

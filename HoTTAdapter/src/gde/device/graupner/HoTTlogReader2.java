@@ -305,14 +305,13 @@ public class HoTTlogReader2 extends HoTTlogReader {
 				else if (isVarioData)
 					altitudeClimbSensorSelection = Sensor.VARIO;
 			}
-			if (countPackageLoss > 0) lostPackages.add(countPackageLoss);
 			String packageLossPercentage = tmpRecordSet.getRecordDataSize(true) > 0 
 					? String.format("%.1f", (lostPackages.getLossTotal() * 100. / numberDatablocks)) 
 					: "100";
 			if (channelNumber == 4) 
 				HoTTbinReader.detectedSensors.add(Sensor.CHANNEL);
 			tmpRecordSet.setRecordSetDescription(tmpRecordSet.getRecordSetDescription()
-					+ Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] { lostPackages.getLossTotal(), packageLossPercentage, lostPackages.getStatistics() })
+					+ Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] { lostPackages.getLossTotal() + countPackageLoss, lostPackages.getLossTotal(), packageLossPercentage, lostPackages.getStatistics() })
 					+ String.format(" - Sensor: %s", HoTTlogReader.detectedSensors.toString())
 					+ (altitudeClimbSensorSelection != null && (detectedSensors.contains(Sensor.fromOrdinal(pickerParameters.altitudeClimbSensorSelection)) || detectedSensors.contains(altitudeClimbSensorSelection))
 							? String.format(" - %s = %s", Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGT2419), altitudeClimbSensorSelection)

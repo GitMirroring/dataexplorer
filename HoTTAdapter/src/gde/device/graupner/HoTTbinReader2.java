@@ -372,14 +372,13 @@ public class HoTTbinReader2 extends HoTTbinReader {
 					HoTTbinReader.application.openMessageDialogAsync(Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGW2404));
 				}
 			}
-			if (countPackageLoss > 0) lostPackages.add(countPackageLoss);
 			String packageLossPercentage = tmpRecordSet.getRecordDataSize(true) > 0
 					? String.format("%.1f", lostPackages.getLossTotal() * 100. / numberDatablocks)
 					: "100";
 			if (channelNumber == 4)
 				HoTTbinReader.detectedSensors.add(Sensor.CHANNEL);
 			tmpRecordSet.setRecordSetDescription(tmpRecordSet.getRecordSetDescription()
-					+ Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] { lostPackages.getLossTotal(), packageLossPercentage, lostPackages.getStatistics() })
+					+ Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] { lostPackages.getLossTotal() + countPackageLoss, lostPackages.getLossTotal(), packageLossPercentage, lostPackages.getStatistics() })
 					+ String.format(" - Sensor: %s", HoTTbinReader2.detectedSensors.toString())
 					+ (HoTTAdapter2.isAltClimbSensor(HoTTbinReader2.detectedSensors)
 							? String.format(" - %s = %s", Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGT2419), Sensor.fromOrdinal(pickerParameters.altitudeClimbSensorSelection).name())
@@ -698,14 +697,13 @@ public class HoTTbinReader2 extends HoTTbinReader {
 			// application.openMessageDialogAsync(Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGW2405, new Object[] {
 			// HoTTbinReader.oldProtocolCount }));
 			// }
-			if (countPackageLoss > 0) lostPackages.add(countPackageLoss);
 			String packageLossPercentage = tmpRecordSet.getRecordDataSize(true) > 0
 					? String.format("%.1f", lostPackages.getLossTotal() * 100. / numberDatablocks)
 					: "100";
 			if (channelNumber == 4)
 				HoTTbinReader.detectedSensors.add(Sensor.CHANNEL);
 			tmpRecordSet.setRecordSetDescription(tmpRecordSet.getRecordSetDescription()
-					+ Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] { lostPackages.getLossTotal(), packageLossPercentage, lostPackages.getStatistics() })
+					+ Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] { lostPackages.getLossTotal() + countPackageLoss, lostPackages.getLossTotal(), packageLossPercentage, lostPackages.getStatistics() })
 					+ String.format(" - Sensor: %s", HoTTbinReader2.detectedSensors.toString())
 					+ (HoTTAdapter2.isAltClimbSensor(HoTTbinReader2.detectedSensors)
 							? String.format(" - %s = %s", Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGT2419), Sensor.fromOrdinal(pickerParameters.altitudeClimbSensorSelection).name())
@@ -869,7 +867,6 @@ public class HoTTbinReader2 extends HoTTbinReader {
 				this.pickerParameters.reverseChannelPackageLossCounter.add(0);
 				this.points[0] = this.pickerParameters.reverseChannelPackageLossCounter.getPercentage() * 1000;
 
-				++this.lostPackages.lossTotal; // add up lost packages in telemetry data
 				++this.countLostPackages;
 				// points[0] = (int) (countPackageLoss*100.0 / ((this.getTimeStep_ms()+10) / 10.0)*1000.0);
 			}
@@ -1265,7 +1262,7 @@ public class HoTTbinReader2 extends HoTTbinReader {
 				this.points[52] = this.tmpVoltage2 * 100;
 				this.points[53] = ((this._buf2[3] & 0xFF) - 20) * 1000;
 				this.points[54] = ((this._buf2[4] & 0xFF) - 20) * 1000;
-				this.points[55] = DataParser.parse2Short(this._buf4, 1) * 1000; // Speed [km/h
+				this.points[55] = DataParser.parse2UnsignedShort(this._buf4, 1) * 1000; // Speed [km/h
 				this.points[56] = (this._buf4[3] & 0xFF) * 1000; // lowest cell voltage 124 = 2.48 V
 				this.points[57] = (this._buf4[4] & 0xFF) * 1000; // cell number lowest cell voltage
 				this.points[58] = (this._buf4[8] & 0xFF) * 1000; // Pressure
