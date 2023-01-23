@@ -1,8 +1,0 @@
-# udev rule to make Junsi iCharger 308/4010 DUO USB HID device usable by users of group dialout 
-# which is required for serial communication as well              
-SUBSYSTEM=="usb", ATTRS{idVendor}=="0483", ATTRS{idProduct}=="5751", MODE="0666", GROUP="dialout"
-SUBSYSTEM=="usb_device", ATTRS{idVendor}=="0483", ATTRS{idProduct}=="5751", MODE="0666", GROUP="dialout"
-#SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device",SYSFS{idVendor}=="0483" , SYSFS{idProduct}=="5751", MODE="0666", GROUP="dialout"
-# Rule: Do not automount any partitions found on /dev/sdb* (USB) devices.
-#ACTION=="add|change", SUBSYSTEM=="block", KERNEL=="sdb*", ENV{UDISKS_AUTO}="0"
-

@@ -16,6 +16,7 @@ Device specific changes/fixes
 	* AVm4s_FV_762 synchronize file comment after edit/change
 	* Herkules III Telemetrie synchronize file comment after edit/change
 	* S32 synchronize file comment after edit/change
+	* iChargerUSB* refine udev rules to ignore HID storage
 
 Version 3.7.4 - 20 Dec 2022
 Generic changes/fixes 
