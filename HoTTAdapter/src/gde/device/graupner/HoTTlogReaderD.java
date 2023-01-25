@@ -155,7 +155,7 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 				}
 
 				if (isASCII) { //convert ASCII log data to hex
-					HoTTlogReader.convertAscii2Raw(rawDataBlockSize);
+					HoTTlogReader.convertAscii2Raw(rawDataBlockSize, HoTTbinReader.buf);
 				}
 
 				//Ph(D)[4], Evt1(H)[5], Evt2(D)[6], Fch(D)[7], TXdBm(-D)[8], RXdBm(-D)[9], RfRcvRatio(D)[10], TrnRcvRatio(D)[11]
@@ -189,8 +189,6 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 
 					switch ((byte) (HoTTbinReader.buf[26] & 0xFF)) { //actual sensor
 					case HoTTAdapter.ANSWER_SENSOR_VARIO_19200:
-						if (!detectedSensors.contains(Sensor.VARIO)) 
-							detectedSensors.add(Sensor.VARIO);
 						isVarioData = parseVario(HoTTbinReader.buf, valuesVario, true);
 						if (isVarioData && isReceiverData) {
 							migrateAddPoints(isVarioData, isGPSData, isGeneralData, isElectricData, isMotorDriverData, channelNumber, valuesVario, valuesGPS, valuesGAM, valuesEAM, valuesESC);
@@ -203,8 +201,6 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 						}
 						break;
 					case HoTTAdapter.ANSWER_SENSOR_GPS_19200:
-						if (!detectedSensors.contains(Sensor.GPS)) 
-							detectedSensors.add(Sensor.GPS);
 						isGPSData = parseGPS(HoTTbinReader.buf, valuesGPS, true);
 						if (isGPSData && isReceiverData) {
 							migrateAddPoints(isVarioData, isGPSData, isGeneralData, isElectricData, isMotorDriverData, channelNumber, valuesVario, valuesGPS, valuesGAM, valuesEAM, valuesESC);
@@ -217,8 +213,6 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 						}
 						break;
 					case HoTTAdapter.ANSWER_SENSOR_GENERAL_19200:
-						if (!detectedSensors.contains(Sensor.GAM)) 
-							detectedSensors.add(Sensor.GAM);
 						isGeneralData = parseGAM(HoTTbinReader.buf, valuesGAM, HoTTlogReaderD.recordSet, true);
 						if (isGeneralData && isReceiverData) {
 							migrateAddPoints(isVarioData, isGPSData, isGeneralData, isElectricData, isMotorDriverData, channelNumber, valuesVario, valuesGPS, valuesGAM, valuesEAM, valuesESC);
@@ -226,8 +220,6 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 						}
 						break;
 					case HoTTAdapter.ANSWER_SENSOR_ELECTRIC_19200:
-						if (!detectedSensors.contains(Sensor.EAM)) 
-							detectedSensors.add(Sensor.EAM);
 						isElectricData = parseEAM(HoTTbinReader.buf, valuesEAM, HoTTlogReaderD.recordSet, true);
 						if (isElectricData && isReceiverData) {
 							migrateAddPoints(isVarioData, isGPSData, isGeneralData, isElectricData, isMotorDriverData, channelNumber, valuesVario, valuesGPS, valuesGAM, valuesEAM, valuesESC);
@@ -235,15 +227,13 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 						}
 						break;
 					case HoTTAdapter.ANSWER_SENSOR_MOTOR_DRIVER_19200:
-						if (!detectedSensors.contains(Sensor.ESC)) 
-							detectedSensors.add(Sensor.ESC);
 						isMotorDriverData = parseESC(HoTTbinReader.buf, valuesESC, HoTTlogReaderD.recordSet);
 						if (isMotorDriverData && isReceiverData) {
 							migrateAddPoints(isVarioData, isGPSData, isGeneralData, isElectricData, isMotorDriverData, channelNumber, valuesVario, valuesGPS, valuesGAM, valuesEAM, valuesESC);
 							isReceiverData = false;
 							
 							if (!isESCdetected) {
-								HoTTAdapter2.updateEscTypeDependent((HoTTbinReader.buf[65] & 0xFF), device, HoTTlogReaderD.recordSet);
+								HoTTAdapterD.updateEscTypeDependent((HoTTbinReader.buf[65] & 0xFF), device, HoTTlogReaderD.recordSet);
 								isESCdetected = true;								
 							}
 						}
@@ -310,7 +300,7 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 			HoTTbinReader.detectedSensors.add(Sensor.CHANNEL);
 			tmpRecordSet.setRecordSetDescription(tmpRecordSet.getRecordSetDescription()
 					+ Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] { lostPackages.getLossTotal() + countPackageLoss, lostPackages.getLossTotal(), packageLossPercentage, lostPackages.getStatistics() })
-					+ String.format(" - Sensor: %s", HoTTlogReader.detectedSensors.toString())
+					+ String.format(" - Sensor: %s", HoTTlogReaderD.detectedSensors.toString())
 					+ (altitudeClimbSensorSelection != null && (detectedSensors.contains(Sensor.fromOrdinal(pickerParameters.altitudeClimbSensorSelection)) || detectedSensors.contains(altitudeClimbSensorSelection))
 							? String.format(" - %s = %s", Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGT2419), altitudeClimbSensorSelection)
 									: ""));

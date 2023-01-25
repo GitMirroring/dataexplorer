@@ -158,7 +158,7 @@ public class HoTTlogReader2 extends HoTTlogReader {
 				}
 
 				if (isASCII) { //convert ASCII log data to hex
-					HoTTlogReader.convertAscii2Raw(rawDataBlockSize);
+					HoTTlogReader.convertAscii2Raw(rawDataBlockSize, HoTTbinReader.buf);
 				}
 
 				//Ph(D)[4], Evt1(H)[5], Evt2(D)[6], Fch(D)[7], TXdBm(-D)[8], RXdBm(-D)[9], RfRcvRatio(D)[10], TrnRcvRatio(D)[11]
@@ -193,7 +193,6 @@ public class HoTTlogReader2 extends HoTTlogReader {
 
 					switch ((byte) (HoTTbinReader.buf[26] & 0xFF)) { //actual sensor
 					case HoTTAdapter.ANSWER_SENSOR_VARIO_19200:
-						if (!detectedSensors.contains(Sensor.VARIO)) detectedSensors.add(Sensor.VARIO);
 						isVarioData = parseVario(HoTTbinReader.buf, valuesVario, true);
 						if (isVarioData && isReceiverData) {
 							migrateAddPoints(isVarioData, isGPSData, isGeneralData, isElectricData, isMotorDriverData, channelNumber, valuesVario, valuesGPS, valuesGAM, valuesEAM, valuesESC);
@@ -206,7 +205,6 @@ public class HoTTlogReader2 extends HoTTlogReader {
 						}
 						break;
 					case HoTTAdapter.ANSWER_SENSOR_GPS_19200:
-						if (!detectedSensors.contains(Sensor.GPS)) detectedSensors.add(Sensor.GPS);
 						isGPSData = parseGPS(HoTTbinReader.buf, valuesGPS, true);
 						if (isGPSData && isReceiverData) {
 							migrateAddPoints(isVarioData, isGPSData, isGeneralData, isElectricData, isMotorDriverData, channelNumber, valuesVario, valuesGPS, valuesGAM, valuesEAM, valuesESC);
@@ -219,7 +217,6 @@ public class HoTTlogReader2 extends HoTTlogReader {
 						}
 						break;
 					case HoTTAdapter.ANSWER_SENSOR_GENERAL_19200:
-						if (!detectedSensors.contains(Sensor.GAM)) detectedSensors.add(Sensor.GAM);
 						isGeneralData = parseGAM(HoTTbinReader.buf, valuesGAM, HoTTlogReader2.recordSet, true);
 						if (isGeneralData && isReceiverData) {
 							migrateAddPoints(isVarioData, isGPSData, isGeneralData, isElectricData, isMotorDriverData, channelNumber, valuesVario, valuesGPS, valuesGAM, valuesEAM, valuesESC);
@@ -227,7 +224,6 @@ public class HoTTlogReader2 extends HoTTlogReader {
 						}
 						break;
 					case HoTTAdapter.ANSWER_SENSOR_ELECTRIC_19200:
-						if (!detectedSensors.contains(Sensor.EAM)) detectedSensors.add(Sensor.EAM);
 						isElectricData = parseEAM(HoTTbinReader.buf, valuesEAM, HoTTlogReader2.recordSet, true);
 						if (isElectricData && isReceiverData) {
 							migrateAddPoints(isVarioData, isGPSData, isGeneralData, isElectricData, isMotorDriverData, channelNumber, valuesVario, valuesGPS, valuesGAM, valuesEAM, valuesESC);
@@ -235,7 +231,6 @@ public class HoTTlogReader2 extends HoTTlogReader {
 						}
 						break;
 					case HoTTAdapter.ANSWER_SENSOR_MOTOR_DRIVER_19200:
-						if (!detectedSensors.contains(Sensor.ESC)) detectedSensors.add(Sensor.ESC);
 						isMotorDriverData = parseESC(HoTTbinReader.buf, valuesESC, HoTTlogReader2.recordSet);
 						if (isMotorDriverData && isReceiverData) {
 							migrateAddPoints(isVarioData, isGPSData, isGeneralData, isElectricData, isMotorDriverData, channelNumber, valuesVario, valuesGPS, valuesGAM, valuesEAM, valuesESC);

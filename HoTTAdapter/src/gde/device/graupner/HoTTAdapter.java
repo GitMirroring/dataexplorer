@@ -388,18 +388,23 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 			Sensor sensor = null;
 			switch (sensorByte) {
 			case HoTTAdapter.SENSOR_TYPE_VARIO_19200:
+			case HoTTAdapter.ANSWER_SENSOR_VARIO_19200:
 				sensor = Sensor.VARIO;
 				break;
 			case HoTTAdapter.SENSOR_TYPE_GPS_19200:
+			case HoTTAdapter.ANSWER_SENSOR_GPS_19200:
 				sensor = Sensor.GPS;
 				break;
 			case HoTTAdapter.SENSOR_TYPE_GENERAL_19200:
+			case HoTTAdapter.ANSWER_SENSOR_GENERAL_19200:
 				sensor = Sensor.GAM;
 				break;
 			case HoTTAdapter.SENSOR_TYPE_ELECTRIC_19200:
+			case HoTTAdapter.ANSWER_SENSOR_ELECTRIC_19200:
 				sensor = Sensor.EAM;
 				break;
 			case HoTTAdapter.SENSOR_TYPE_SPEED_CONTROL_19200:
+			case HoTTAdapter.ANSWER_SENSOR_MOTOR_DRIVER_19200:
 				sensor = Sensor.ESC;
 				break;
 			default:

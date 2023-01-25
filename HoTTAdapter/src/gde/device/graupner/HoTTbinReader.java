@@ -426,6 +426,7 @@ public class HoTTbinReader {
 				throws UnsupportedEncodingException, IOException {
 			HashMap<String, String> fileInfo = new HashMap<String, String>();
 			fileInfo.put(HoTTAdapter.FILE_PATH, filePath);
+			EnumSet<Sensor> sensors = EnumSet.of(Sensor.RECEIVER);
 
 			data_in.reset();
 			data_in.mark(999);
@@ -460,8 +461,41 @@ public class HoTTbinReader {
 					}
 				}
 				reader.close();
+
 				// now the input stream is closed as well
-				fileInfo.put(HoTTAdapter.LOG_COUNT, GDE.STRING_EMPTY + ((fileLength - logDataOffset) / 78));
+				try (FilterInputStream data_in1 = new BufferedInputStream(new FileInputStream(filePath))) {
+					int numberLogChannels = Integer.valueOf(fileInfo.get("LOG NOB CHANNEL"));
+					boolean isASCII = fileInfo.get("LOG TYPE").contains("ASCII");
+					int rawDataBlockSize = 66 + numberLogChannels * 2;
+					int asciiDataBlockSize = 202 + numberLogChannels * 5;
+					int dataBlockSize = isASCII ? asciiDataBlockSize : rawDataBlockSize;
+					fileInfo.put(HoTTAdapter.LOG_COUNT, GDE.STRING_EMPTY + ((fileLength - logDataOffset) / dataBlockSize));
+					
+					//TODO scan sensors since value of detected sensor may be wrong
+					buffer = new byte[dataBlockSize];
+					data_in1.skip(logDataOffset);
+	
+					for (int i = 0; i < NUMBER_LOG_RECORDS_TO_SCAN/10 && data_in1.available() >= dataBlockSize; i++) {
+						data_in1.read(buffer);
+						
+						if (isASCII) { //convert ASCII log data to hex
+							HoTTlogReader.convertAscii2Raw(rawDataBlockSize, buffer);
+						}
+						
+						if (buffer[24] != 0x1F) {
+							Sensor tmpSensor = Sensor.fromSensorByte(buffer[26]);
+							if (tmpSensor != null) {
+								sensors.add(tmpSensor);
+								if (HoTTbinReader.log.isLoggable(Level.FINE)) {
+									HoTTbinReader.log.log(Level.FINE, StringHelper.byte2Hex4CharString(buffer, buffer.length));
+									HoTTbinReader.log.log(Level.FINE, String.format("SensorByte  %02X", buffer[26]));
+								}
+							}
+						}
+					}
+					data_in1.close();
+				}
+				fileInfo.put(HoTTAdapter.DETECTED_SENSOR, Sensor.getSetAsDetected(sensors));
 			}
 			return fileInfo;
 		}

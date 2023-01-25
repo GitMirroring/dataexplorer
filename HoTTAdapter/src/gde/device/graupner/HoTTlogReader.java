@@ -148,7 +148,7 @@ public class HoTTlogReader extends HoTTbinReader {
 				}
 
 				if (isASCII) { //convert ASCII log data to hex
-					convertAscii2Raw(rawDataBlockSize);
+					convertAscii2Raw(rawDataBlockSize, HoTTbinReader.buf);
 				}
 				
 				//if (!pickerParameters.isFilterTextModus || (HoTTbinReader.buf[6] & 0x01) == 0) { // switch into text modus
@@ -341,7 +341,6 @@ public class HoTTlogReader extends HoTTbinReader {
 			String packageLossPercentage = HoTTbinReader.recordSetReceiver.getRecordDataSize(true) > 0
 					? String.format("%.1f", (lostPackages.getLossTotal() * 100. / numberDatablocks)) 
 					: "100";
-			HoTTlogReader.detectedSensors = Sensor.getSetFromSignature(HoTTbinReader.recordSets.keySet().toString().replace("[", GDE.STRING_EMPTY).replace("]", GDE.STRING_EMPTY).replace(" ", GDE.STRING_EMPTY));
 			if (HoTTbinReader.pickerParameters.isChannelsChannelEnabled)
 				HoTTbinReader.detectedSensors.add(Sensor.CHANNEL);
 			HoTTbinReader.recordSetReceiver.setRecordSetDescription(tmpRecordSet.getRecordSetDescription()
@@ -375,8 +374,8 @@ public class HoTTlogReader extends HoTTbinReader {
 	 * convert ASCII log data to raw, binary format to keep parser identically
 	 * @param rawDataBlockSize
 	 */
-	protected static void convertAscii2Raw(int rawDataBlockSize) {
-		String[] splitInput = new String(HoTTbinReader.buf).split("\\|");
+	protected static void convertAscii2Raw(int rawDataBlockSize, byte[] buffer) {
+		String[] splitInput = new String(buffer).split("\\|");
 		if (log.isLoggable(Level.FINER))
 			for (String part : splitInput)
 				log.log(Level.FINER, "'" + part + "'");
@@ -401,7 +400,7 @@ public class HoTTlogReader extends HoTTbinReader {
 		}
 		if (log.isLoggable(Level.FINER))
 			log.log(Level.FINER, StringHelper.byte2Hex4CharString(rawBuf, rawBuf.length));
-		System.arraycopy(rawBuf, 0, HoTTbinReader.buf, 0, rawBuf.length);
+		System.arraycopy(rawBuf, 0, buffer, 0, rawBuf.length);
 	}
 
 	/**
