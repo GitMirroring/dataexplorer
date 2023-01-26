@@ -568,7 +568,7 @@ public class HoTTbinReaderD extends HoTTbinReader2 {
 									HoTTbinReader2.escBinParser.parse();
 									
 									if (!isESCdetected) {
-										HoTTAdapter2.updateEscTypeDependent((HoTTbinReader.buf4[9] & 0xFF), device, HoTTbinReader2.recordSet);
+										HoTTAdapterD.updateEscTypeDependent((HoTTbinReader.buf4[9] & 0xFF), device, HoTTbinReader2.recordSet);
 										isESCdetected = true;								
 									}
 
@@ -869,7 +869,7 @@ public class HoTTbinReaderD extends HoTTbinReader2 {
 										migrationJobs.add(Sensor.ESC);
 										
 										if (!isESCdetected) {
-											HoTTAdapter2.updateEscTypeDependent((HoTTbinReader.buf4[9] & 0xFF), device, HoTTbinReader2.recordSet);
+											HoTTAdapterD.updateEscTypeDependent((HoTTbinReader.buf4[9] & 0xFF), device, HoTTbinReader2.recordSet);
 											isESCdetected = true;								
 										}
 									}
