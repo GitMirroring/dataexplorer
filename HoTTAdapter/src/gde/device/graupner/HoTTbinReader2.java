@@ -58,15 +58,15 @@ public class HoTTbinReader2 extends HoTTbinReader {
 	 * @throws Exception
 	 */
 	public static synchronized void read(String filePath, PickerParameters newPickerParameters) throws Exception {
-		HoTTbinReader.pickerParameters = newPickerParameters;
+		HoTTbinReader2.pickerParameters = newPickerParameters;
 		HashMap<String, String> header = getFileInfo(new File(filePath), newPickerParameters);
 		HoTTbinReader2.detectedSensors = Sensor.getSetFromDetected(header.get(HoTTAdapter.DETECTED_SENSOR));
 		
 		//set picker parameter setting sensor for altitude/climb usage (0=auto, 1=VARIO, 2=GPS, 3=GAM, 4=EAM)
-		HoTTbinReader.setAltitudeClimbPickeParameter(HoTTbinReader.pickerParameters, HoTTbinReader2.detectedSensors);
+		HoTTbinReader2.setAltitudeClimbPickeParameter(HoTTbinReader2.pickerParameters, HoTTbinReader2.detectedSensors);
 
 		if (HoTTbinReader2.detectedSensors.size() <= 2) {
-			HoTTbinReader.isReceiverOnly = HoTTbinReader2.detectedSensors.size() == 1;
+			HoTTbinReader2.isReceiverOnly = HoTTbinReader2.detectedSensors.size() == 1;
 			readSingle(new File(header.get(HoTTAdapter.FILE_PATH)), header);
 		} else
 			readMultiple(new File(header.get(HoTTAdapter.FILE_PATH)), header);
@@ -84,8 +84,8 @@ public class HoTTbinReader2 extends HoTTbinReader {
 		FileInputStream file_input = new FileInputStream(file);
 		DataInputStream data_in = new DataInputStream(file_input);
 		long fileSize = file.length();
-		IDevice device = HoTTbinReader.application.getActiveDevice();
-		int recordSetNumber = HoTTbinReader.channels.get(1).maxSize() + 1;
+		IDevice device = HoTTbinReader2.application.getActiveDevice();
+		int recordSetNumber = HoTTbinReader2.channels.get(1).maxSize() + 1;
 		String recordSetName = GDE.STRING_EMPTY;
 		String recordSetNameExtend = getRecordSetExtend(file);
 		Channel channel = null;
@@ -118,43 +118,41 @@ public class HoTTbinReader2 extends HoTTbinReader {
 		// 120=Speed 121=Speed_max 122=PWM 123=Throttle 124=VoltageBEC 125=VoltageBEC_max 125=CurrentBEC 127=TemperatureBEC 128=TemperatureCap 
 		// 129=Timing(empty) 130=Temperature_aux 131=Gear 132=YGEGenExt 133=MotStatEscNr 134=misc ESC_15 135=VersionESC
 		HoTTbinReader2.points = new int[device.getNumberOfMeasurements(channelNumber)];
-		HoTTbinReader.pointsGAM = HoTTbinReader.pointsEAM = HoTTbinReader.pointsESC = HoTTbinReader.pointsVario = HoTTbinReader.pointsGPS = HoTTbinReader2.points;
-		HoTTbinReader.dataBlockSize = 64;
-		HoTTbinReader.buf = new byte[HoTTbinReader.dataBlockSize];
-		HoTTbinReader.buf0 = new byte[30];
-		HoTTbinReader.buf1 = new byte[30];
-		HoTTbinReader.buf2 = new byte[30];
-		HoTTbinReader.buf3 = new byte[30];
-		HoTTbinReader.buf4 = new byte[30];
+		HoTTbinReader2.pointsGAM = HoTTbinReader2.pointsEAM = HoTTbinReader2.pointsESC = HoTTbinReader2.pointsVario = HoTTbinReader2.pointsGPS = HoTTbinReader2.points;
+		HoTTbinReader2.dataBlockSize = 64;
+		HoTTbinReader2.buf = new byte[HoTTbinReader2.dataBlockSize];
+		HoTTbinReader2.buf0 = new byte[30];
+		HoTTbinReader2.buf1 = new byte[30];
+		HoTTbinReader2.buf2 = new byte[30];
+		HoTTbinReader2.buf3 = new byte[30];
+		HoTTbinReader2.buf4 = new byte[30];
 		BufCopier bufCopier = new BufCopier(buf, buf0, buf1, buf2, buf3, buf4);
 		long[] timeSteps_ms = new long[] { 0 };
-		HoTTbinReader.rcvBinParser = Sensor.RECEIVER.createBinParser2(HoTTbinReader.pickerParameters, HoTTbinReader2.points, timeSteps_ms, new byte[][] { buf });
-		HoTTbinReader.chnBinParser = Sensor.CHANNEL.createBinParser2(HoTTbinReader.pickerParameters, HoTTbinReader2.points, timeSteps_ms, new byte[][] { buf });
-		HoTTbinReader.varBinParser = Sensor.VARIO.createBinParser2(HoTTbinReader.pickerParameters, HoTTbinReader2.points, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
-		HoTTbinReader.gpsBinParser = Sensor.GPS.createBinParser2(HoTTbinReader.pickerParameters, HoTTbinReader2.points, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
-		HoTTbinReader.gamBinParser = Sensor.GAM.createBinParser2(HoTTbinReader.pickerParameters, HoTTbinReader2.points, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
-		HoTTbinReader.eamBinParser = Sensor.EAM.createBinParser2(HoTTbinReader.pickerParameters, HoTTbinReader2.points, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
-		HoTTbinReader.escBinParser = Sensor.ESC.createBinParser2(HoTTbinReader.pickerParameters, HoTTbinReader2.points, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
-		PackageLoss	lostPackages = new PackageLoss();
-		int countPackageLoss = 0;
-		HoTTbinReader.isTextModusSignaled = false;
+		HoTTbinReader2.rcvBinParser = Sensor.RECEIVER.createBinParser2(HoTTbinReader2.pickerParameters, HoTTbinReader2.points, timeSteps_ms, new byte[][] { buf });
+		HoTTbinReader2.chnBinParser = Sensor.CHANNEL.createBinParser2(HoTTbinReader2.pickerParameters, HoTTbinReader2.points, timeSteps_ms, new byte[][] { buf });
+		HoTTbinReader2.varBinParser = Sensor.VARIO.createBinParser2(HoTTbinReader2.pickerParameters, HoTTbinReader2.points, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
+		HoTTbinReader2.gpsBinParser = Sensor.GPS.createBinParser2(HoTTbinReader2.pickerParameters, HoTTbinReader2.points, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
+		HoTTbinReader2.gamBinParser = Sensor.GAM.createBinParser2(HoTTbinReader2.pickerParameters, HoTTbinReader2.points, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
+		HoTTbinReader2.eamBinParser = Sensor.EAM.createBinParser2(HoTTbinReader2.pickerParameters, HoTTbinReader2.points, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
+		HoTTbinReader2.escBinParser = Sensor.ESC.createBinParser2(HoTTbinReader2.pickerParameters, HoTTbinReader2.points, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
+		HoTTbinReader2.isTextModusSignaled = false;
 		boolean isSdLogFormat = Boolean.parseBoolean(header.get(HoTTAdapter.SD_FORMAT));
-		long numberDatablocks = isSdLogFormat ? fileSize - HoTTbinReaderX.headerSize - HoTTbinReaderX.footerSize : fileSize / HoTTbinReader.dataBlockSize;
-		long startTimeStamp_ms = HoTTbinReader.getStartTimeStamp(file.getName(), file.lastModified(), numberDatablocks);
-		numberDatablocks = HoTTbinReader.isReceiverOnly && channelNumber != HoTTAdapter2.CHANNELS_CHANNEL_NUMBER ? numberDatablocks / 10 : numberDatablocks;
+		long numberDatablocks = isSdLogFormat ? fileSize - HoTTbinReaderX.headerSize - HoTTbinReaderX.footerSize : fileSize / HoTTbinReader2.dataBlockSize;
+		long startTimeStamp_ms = HoTTbinReader2.getStartTimeStamp(file.getName(), file.lastModified(), numberDatablocks);
+		numberDatablocks = HoTTbinReader2.isReceiverOnly && channelNumber != HoTTAdapter2.CHANNELS_CHANNEL_NUMBER ? numberDatablocks / 10 : numberDatablocks;
 		String date = new SimpleDateFormat("yyyy-MM-dd").format(startTimeStamp_ms); //$NON-NLS-1$
 		String dateTime = new SimpleDateFormat("yyyy-MM-dd, HH:mm:ss").format(startTimeStamp_ms); //$NON-NLS-1$
 		RecordSet tmpRecordSet;
-		MenuToolBar menuToolBar = HoTTbinReader.application.getMenuToolBar();
+		MenuToolBar menuToolBar = HoTTbinReader2.application.getMenuToolBar();
 		int progressIndicator = (int) (numberDatablocks / 30);
 		GDE.getUiNotification().setProgress(0);
 		if (isSdLogFormat) data_in.skip(HoTTbinReaderX.headerSize);
 
 		try {
 			// check if recordSet initialized, transmitter and receiver data always present, but not in the same data rate and signals
-			channel = HoTTbinReader.channels.get(channelNumber);
-			String newFileDescription = HoTTbinReader.application.isObjectoriented() ? date + GDE.STRING_BLANK + HoTTbinReader.application.getObjectKey()	: date;
-			if (channel.getFileDescription().length() <= newFileDescription.length() || (HoTTbinReader.application.isObjectoriented() && !channel.getFileDescription().contains(HoTTbinReader.application.getObjectKey())))
+			channel = HoTTbinReader2.channels.get(channelNumber);
+			String newFileDescription = HoTTbinReader2.application.isObjectoriented() ? date + GDE.STRING_BLANK + HoTTbinReader2.application.getObjectKey()	: date;
+			if (channel.getFileDescription().length() <= newFileDescription.length() || (HoTTbinReader2.application.isObjectoriented() && !channel.getFileDescription().contains(HoTTbinReader2.application.getObjectKey())))
 				channel.setFileDescription(newFileDescription);
 			recordSetName = recordSetNumber + device.getRecordSetStemNameReplacement() + recordSetNameExtend;
 			HoTTbinReader2.recordSet = RecordSet.createRecordSet(recordSetName, device, channelNumber, true, true, true);
@@ -166,23 +164,24 @@ public class HoTTbinReader2 extends HoTTbinReader {
 
 			// read all the data blocks from the file and parse
 			for (int i = 0; i < numberDatablocks; i++) {
-				data_in.read(HoTTbinReader.buf);
+				data_in.read(HoTTbinReader2.buf);
 				if (HoTTbinReader2.log.isLoggable(Level.FINE) && i % 10 == 0) {
-					HoTTbinReader2.log.log(Level.FINE, StringHelper.fourDigitsRunningNumber(HoTTbinReader.buf.length));
-					HoTTbinReader2.log.log(Level.FINE, StringHelper.byte2Hex4CharString(HoTTbinReader.buf, HoTTbinReader.buf.length));
+					HoTTbinReader2.log.log(Level.FINE, StringHelper.fourDigitsRunningNumber(HoTTbinReader2.buf.length));
+					HoTTbinReader2.log.log(Level.FINE, StringHelper.byte2Hex4CharString(HoTTbinReader2.buf, HoTTbinReader2.buf.length));
 				}
 
-				if (!HoTTbinReader.pickerParameters.isFilterTextModus || (HoTTbinReader.buf[6] & 0x01) == 0) { // switch into text modus
-					if (HoTTbinReader.buf[33] >= 0 && HoTTbinReader.buf[33] <= 4 && HoTTbinReader.buf[3] != 0 && HoTTbinReader.buf[4] != 0) { // buf 3, 4, tx,rx
+				if (!HoTTbinReader2.pickerParameters.isFilterTextModus || (HoTTbinReader2.buf[6] & 0x01) == 0) { // switch into text modus
+					if (HoTTbinReader2.buf[33] >= 0 && HoTTbinReader2.buf[33] <= 4 && HoTTbinReader2.buf[3] != 0 && HoTTbinReader2.buf[4] != 0) { // buf 3, 4, tx,rx
 						if (HoTTbinReader2.log.isLoggable(Level.INFO))
-							HoTTbinReader2.log.log(Level.INFO, String.format("Sensor %x Blocknummer : %d", HoTTbinReader.buf[7], HoTTbinReader.buf[33]));
+							HoTTbinReader2.log.log(Level.INFO, String.format("Sensor %x Blocknummer : %d", HoTTbinReader2.buf[7], HoTTbinReader2.buf[33]));
 
-						((RcvBinParser) HoTTbinReader.rcvBinParser).trackPackageLoss(true);
+						((RcvBinParser) HoTTbinReader2.rcvBinParser).trackPackageLoss(true);
+						
 						if (HoTTbinReader2.log.isLoggable(Level.FINER)) HoTTbinReader2.log.log(Level.FINER, StringHelper.byte2Hex2CharString(new byte[] {
-								HoTTbinReader.buf[7] }, 1) + GDE.STRING_MESSAGE_CONCAT + StringHelper.printBinary(HoTTbinReader.buf[7], false));
+								HoTTbinReader2.buf[7] }, 1) + GDE.STRING_MESSAGE_CONCAT + StringHelper.printBinary(HoTTbinReader2.buf[7], false));
 
 						// fill receiver data
-						if (HoTTbinReader.buf[33] == 0 && (HoTTbinReader.buf[38] & 0x80) != 128 && DataParser.parse2Short(HoTTbinReader.buf, 40) >= 0) {
+						if (HoTTbinReader2.buf[33] == 0 && (HoTTbinReader2.buf[38] & 0x80) != 128 && DataParser.parse2Short(HoTTbinReader2.buf, 40) >= 0) {
 							HoTTbinReader2.rcvBinParser.parse();
 							isReceiverData = true;
 						}
@@ -194,16 +193,16 @@ public class HoTTbinReader2 extends HoTTbinReader {
 						if (buf[33] == 0) {
 							bufCopier.copyToBuffer();
 						}
-						if (HoTTbinReader.isReceiverOnly && channelNumber != HoTTAdapter2.CHANNELS_CHANNEL_NUMBER) { // reduce data rate for receiver to 0.1 sec
-							for (int j = 0; j < 9; j++) {
-								data_in.read(HoTTbinReader.buf);
+						if (HoTTbinReader2.isReceiverOnly && channelNumber != HoTTAdapter2.CHANNELS_CHANNEL_NUMBER) { // reduce data rate for receiver to 0.1 sec
+							for (int j = 0; j < 9; j++) { //skip 9 data packets
+								data_in.read(HoTTbinReader2.buf);
 								timeSteps_ms[BinParser.TIMESTEP_INDEX] += 10;
 							}
 							isSensorData = true;
 						}
 
 						// create and fill sensor specific data record sets
-						switch ((byte) (HoTTbinReader.buf[7] & 0xFF)) {
+						switch ((byte) (HoTTbinReader2.buf[7] & 0xFF)) {
 						case HoTTAdapter.SENSOR_TYPE_VARIO_115200:
 						case HoTTAdapter.SENSOR_TYPE_VARIO_19200:
 							if (detectedSensors.contains(Sensor.VARIO)) {
@@ -212,7 +211,7 @@ public class HoTTbinReader2 extends HoTTbinReader {
 									HoTTbinReader2.varBinParser.parse();
 
 									if (!isVarioDetected) {
-										HoTTAdapter2.updateVarioTypeDependent((HoTTbinReader.buf4[9] & 0xFF), device, HoTTbinReader2.recordSet);
+										HoTTAdapter2.updateVarioTypeDependent((HoTTbinReader2.buf4[9] & 0xFF), device, HoTTbinReader2.recordSet);
 										isVarioDetected = true;								
 									}
 									
@@ -299,7 +298,7 @@ public class HoTTbinReader2 extends HoTTbinReader {
 									HoTTbinReader2.escBinParser.parse();
 									
 									if (!isESCdetected) {
-										HoTTAdapter2.updateEscTypeDependent((HoTTbinReader.buf4[9] & 0xFF), device, HoTTbinReader2.recordSet);
+										HoTTAdapter2.updateEscTypeDependent((HoTTbinReader2.buf4[9] & 0xFF), device, HoTTbinReader2.recordSet);
 										isESCdetected = true;								
 									}
 
@@ -334,7 +333,7 @@ public class HoTTbinReader2 extends HoTTbinReader {
 						}
 
 						if (isSensorData) {
-							((RcvBinParser) HoTTbinReader.rcvBinParser).updateLossStatistics();
+							((RcvBinParser) HoTTbinReader2.rcvBinParser).updateLossStatistics();
 						}
 
 						if (isSensorData || (isReceiverData && tmpRecordSet.get(0).realSize() > 0)) {
@@ -346,45 +345,38 @@ public class HoTTbinReader2 extends HoTTbinReader {
 
 						timeSteps_ms[BinParser.TIMESTEP_INDEX] += 10; // add default time step from device of 10 msec
 						
-						if (countPackageLoss > 0) {
-							lostPackages.add(countPackageLoss);
-							countPackageLoss = 0;
-						}
-
 						if (i % progressIndicator == 0) GDE.getUiNotification().setProgress((int) (i * 100 / numberDatablocks));
 					} else { // skip empty block, but add time step
 						if (HoTTbinReader2.log.isLoggable(Level.FINE)) HoTTbinReader2.log.log(Level.FINE, "-->> Found tx=rx=0 dBm");
 						
-						++countPackageLoss;
-
-						((RcvBinParser) HoTTbinReader.rcvBinParser).trackPackageLoss(false);
+						((RcvBinParser) HoTTbinReader2.rcvBinParser).trackPackageLoss(false);
 
 						if (channelNumber == HoTTAdapter2.CHANNELS_CHANNEL_NUMBER) {
 							HoTTbinReader2.chnBinParser.parse(); // Channels
 							tmpRecordSet.addPoints(HoTTbinReader2.points, timeSteps_ms[BinParser.TIMESTEP_INDEX]);
 						}
+						
 						timeSteps_ms[BinParser.TIMESTEP_INDEX] += 10;
-						// reset buffer to avoid mixing data >> 20 Jul 14, not any longer required due to protocol change requesting next sensor data block
-						// HoTTbinReader.buf1 = HoTTbinReader.buf2 = HoTTbinReader.buf3 = HoTTbinReader.buf4 = null;
 					}
-				} else if (!HoTTbinReader.isTextModusSignaled) {
-					HoTTbinReader.isTextModusSignaled = true;
-					HoTTbinReader.application.openMessageDialogAsync(Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGW2404));
+				} else if (!HoTTbinReader2.isTextModusSignaled) {
+					HoTTbinReader2.isTextModusSignaled = true;
+					HoTTbinReader2.application.openMessageDialogAsync(Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGW2404));
 				}
 			}
+			((RcvBinParser) HoTTbinReader2.rcvBinParser).finalUpdateLossStatistics();
 			String packageLossPercentage = tmpRecordSet.getRecordDataSize(true) > 0
-					? String.format("%.1f", lostPackages.getLossTotal() * 100. / numberDatablocks)
+					? String.format("%.1f", ((RcvBinParser) HoTTbinReader2.rcvBinParser).getLostPackages().percentage)
 					: "100";
 			if (channelNumber == 4)
-				HoTTbinReader.detectedSensors.add(Sensor.CHANNEL);
+				HoTTbinReader2.detectedSensors.add(Sensor.CHANNEL);
 			tmpRecordSet.setRecordSetDescription(tmpRecordSet.getRecordSetDescription()
-					+ Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] { lostPackages.getLossTotal() + countPackageLoss, lostPackages.getLossTotal(), packageLossPercentage, lostPackages.getStatistics() })
+					+ Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] {	((RcvBinParser) HoTTbinReader2.rcvBinParser).getLossTotal(), ((RcvBinParser) HoTTbinReader2.rcvBinParser).getLostPackages().lossTotal, packageLossPercentage, ((RcvBinParser) HoTTbinReader2.rcvBinParser).getLostPackages().getStatistics() }) 
 					+ String.format(" - Sensor: %s", HoTTbinReader2.detectedSensors.toString())
 					+ (HoTTAdapter2.isAltClimbSensor(HoTTbinReader2.detectedSensors)
 							? String.format(" - %s = %s", Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGT2419), Sensor.fromOrdinal(pickerParameters.altitudeClimbSensorSelection).name())
 									: ""));
 
-			HoTTbinReader2.log.log(Level.WARNING, "skipped number receiver data due to package loss = " + lostPackages.getLossTotal()); //$NON-NLS-1$
+			HoTTbinReader2.log.log(Level.WARNING, "skipped number receiver data due to package loss = " + ((RcvBinParser) HoTTbinReader2.rcvBinParser).getLostPackages().lossTotal); //$NON-NLS-1$
 			HoTTbinReader2.log.log(Level.TIME, "read time = " + StringHelper.getFormatedTime("mm:ss:SSS", (System.nanoTime() / 1000000 - startTime))); //$NON-NLS-1$ //$NON-NLS-2$
 
 			if (GDE.isWithUi()) {
@@ -418,8 +410,8 @@ public class HoTTbinReader2 extends HoTTbinReader {
 		FileInputStream file_input = new FileInputStream(file);
 		DataInputStream data_in = new DataInputStream(file_input);
 		long fileSize = file.length();
-		IDevice device = HoTTbinReader.application.getActiveDevice();
-		int recordSetNumber = HoTTbinReader.channels.get(1).maxSize() + 1;
+		IDevice device = HoTTbinReader2.application.getActiveDevice();
+		int recordSetNumber = HoTTbinReader2.channels.get(1).maxSize() + 1;
 		String recordSetName = GDE.STRING_EMPTY;
 		String recordSetNameExtend = getRecordSetExtend(file);
 		Channel channel = null;
@@ -451,51 +443,49 @@ public class HoTTbinReader2 extends HoTTbinReader {
 		// 120=Speed 121=Speed_max 122=PWM 123=Throttle 124=VoltageBEC 125=VoltageBEC_max 125=CurrentBEC 127=TemperatureBEC 128=TemperatureCap 
 		// 129=Timing(empty) 130=Temperature_aux 131=Gear 132=YGEGenExt 133=MotStatEscNr 134=misc ESC_15 135=VersionESC
 		HoTTbinReader2.points = new int[device.getNumberOfMeasurements(channelNumber)];
-		HoTTbinReader.pointsGAM = new int[HoTTbinReader2.points.length];
-		HoTTbinReader.pointsEAM = new int[HoTTbinReader2.points.length];
-		HoTTbinReader.pointsESC = new int[HoTTbinReader2.points.length];
-		HoTTbinReader.pointsVario = new int[HoTTbinReader2.points.length];
-		HoTTbinReader.pointsVario[2] = 100000;
-		HoTTbinReader.pointsGPS = new int[HoTTbinReader2.points.length];
-		HoTTbinReader.dataBlockSize = 64;
-		HoTTbinReader.buf = new byte[HoTTbinReader.dataBlockSize];
-		HoTTbinReader.buf0 = new byte[30];
-		HoTTbinReader.buf1 = new byte[30];
-		HoTTbinReader.buf2 = new byte[30];
-		HoTTbinReader.buf3 = new byte[30];
-		HoTTbinReader.buf4 = new byte[30];
+		HoTTbinReader2.pointsGAM = new int[HoTTbinReader2.points.length];
+		HoTTbinReader2.pointsEAM = new int[HoTTbinReader2.points.length];
+		HoTTbinReader2.pointsESC = new int[HoTTbinReader2.points.length];
+		HoTTbinReader2.pointsVario = new int[HoTTbinReader2.points.length];
+		HoTTbinReader2.pointsVario[2] = 100000;
+		HoTTbinReader2.pointsGPS = new int[HoTTbinReader2.points.length];
+		HoTTbinReader2.dataBlockSize = 64;
+		HoTTbinReader2.buf = new byte[HoTTbinReader2.dataBlockSize];
+		HoTTbinReader2.buf0 = new byte[30];
+		HoTTbinReader2.buf1 = new byte[30];
+		HoTTbinReader2.buf2 = new byte[30];
+		HoTTbinReader2.buf3 = new byte[30];
+		HoTTbinReader2.buf4 = new byte[30];
 		BufCopier bufCopier = new BufCopier(buf, buf0, buf1, buf2, buf3, buf4);
 		long[] timeSteps_ms = new long[] { 0 };
 		// parse in situ for receiver and channel
-		HoTTbinReader.rcvBinParser = Sensor.RECEIVER.createBinParser2(HoTTbinReader.pickerParameters, HoTTbinReader2.points, timeSteps_ms, new byte[][] { buf });
-		HoTTbinReader.chnBinParser = Sensor.CHANNEL.createBinParser2(HoTTbinReader.pickerParameters, HoTTbinReader2.points, timeSteps_ms, new byte[][] { buf });
+		HoTTbinReader2.rcvBinParser = Sensor.RECEIVER.createBinParser2(HoTTbinReader2.pickerParameters, HoTTbinReader2.points, timeSteps_ms, new byte[][] { buf });
+		HoTTbinReader2.chnBinParser = Sensor.CHANNEL.createBinParser2(HoTTbinReader2.pickerParameters, HoTTbinReader2.points, timeSteps_ms, new byte[][] { buf });
 		// use parser points objects
-		HoTTbinReader.varBinParser = Sensor.VARIO.createBinParser2(HoTTbinReader.pickerParameters, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
-		HoTTbinReader.gpsBinParser = Sensor.GPS.createBinParser2(HoTTbinReader.pickerParameters, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
-		HoTTbinReader.gamBinParser = Sensor.GAM.createBinParser2(HoTTbinReader.pickerParameters, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
-		HoTTbinReader.eamBinParser = Sensor.EAM.createBinParser2(HoTTbinReader.pickerParameters, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
-		HoTTbinReader.escBinParser = Sensor.ESC.createBinParser2(HoTTbinReader.pickerParameters, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
+		HoTTbinReader2.varBinParser = Sensor.VARIO.createBinParser2(HoTTbinReader2.pickerParameters, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
+		HoTTbinReader2.gpsBinParser = Sensor.GPS.createBinParser2(HoTTbinReader2.pickerParameters, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
+		HoTTbinReader2.gamBinParser = Sensor.GAM.createBinParser2(HoTTbinReader2.pickerParameters, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
+		HoTTbinReader2.eamBinParser = Sensor.EAM.createBinParser2(HoTTbinReader2.pickerParameters, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
+		HoTTbinReader2.escBinParser = Sensor.ESC.createBinParser2(HoTTbinReader2.pickerParameters, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
 		byte actualSensor = -1, lastSensor = -1;
 		int logCountVario = 0, logCountGPS = 0, logCountGAM = 0, logCountEAM = 0, logCountESC = 0;
 		EnumSet<Sensor> migrationJobs = EnumSet.noneOf(Sensor.class);
-		PackageLoss	lostPackages = new PackageLoss();
-		int countPackageLoss = 0;
 		boolean isSdLogFormat = Boolean.parseBoolean(header.get(HoTTAdapter.SD_FORMAT));
-		long numberDatablocks = isSdLogFormat ? fileSize - HoTTbinReaderX.headerSize - HoTTbinReaderX.footerSize : fileSize / HoTTbinReader.dataBlockSize;
-		long startTimeStamp_ms = HoTTbinReader.getStartTimeStamp(file.getName(), file.lastModified(), numberDatablocks);
+		long numberDatablocks = isSdLogFormat ? fileSize - HoTTbinReaderX.headerSize - HoTTbinReaderX.footerSize : fileSize / HoTTbinReader2.dataBlockSize;
+		long startTimeStamp_ms = HoTTbinReader2.getStartTimeStamp(file.getName(), file.lastModified(), numberDatablocks);
 		String date = new SimpleDateFormat("yyyy-MM-dd").format(startTimeStamp_ms); //$NON-NLS-1$
 		String dateTime = new SimpleDateFormat("yyyy-MM-dd, HH:mm:ss").format(startTimeStamp_ms); //$NON-NLS-1$
 		RecordSet tmpRecordSet;
-		MenuToolBar menuToolBar = HoTTbinReader.application.getMenuToolBar();
+		MenuToolBar menuToolBar = HoTTbinReader2.application.getMenuToolBar();
 		int progressIndicator = (int) (numberDatablocks / 30);
 		GDE.getUiNotification().setProgress(0);
 		if (isSdLogFormat) data_in.skip(HoTTbinReaderX.headerSize);
 
 		try {
 			// receiver data are always contained
-			channel = HoTTbinReader.channels.get(channelNumber);
-			String newFileDescription = HoTTbinReader.application.isObjectoriented() ? date + GDE.STRING_BLANK + HoTTbinReader.application.getObjectKey()	: date;
-			if (channel.getFileDescription().length() <= newFileDescription.length() || (HoTTbinReader.application.isObjectoriented() && !channel.getFileDescription().contains(HoTTbinReader.application.getObjectKey())))
+			channel = HoTTbinReader2.channels.get(channelNumber);
+			String newFileDescription = HoTTbinReader2.application.isObjectoriented() ? date + GDE.STRING_BLANK + HoTTbinReader2.application.getObjectKey()	: date;
+			if (channel.getFileDescription().length() <= newFileDescription.length() || (HoTTbinReader2.application.isObjectoriented() && !channel.getFileDescription().contains(HoTTbinReader2.application.getObjectKey())))
 				channel.setFileDescription(newFileDescription);
 			recordSetName = recordSetNumber + device.getRecordSetStemNameReplacement() + recordSetNameExtend;
 			HoTTbinReader2.recordSet = RecordSet.createRecordSet(recordSetName, device, channelNumber, true, true, true);
@@ -507,22 +497,23 @@ public class HoTTbinReader2 extends HoTTbinReader {
 
 			// read all the data blocks from the file and parse
 			for (int i = 0; i < numberDatablocks; i++) {
-				data_in.read(HoTTbinReader.buf);
+				data_in.read(HoTTbinReader2.buf);
 				if (HoTTbinReader2.log.isLoggable(Level.FINEST)) {
-					HoTTbinReader2.log.log(Level.FINEST, StringHelper.byte2Hex4CharString(HoTTbinReader.buf, HoTTbinReader.buf.length));
+					HoTTbinReader2.log.log(Level.FINEST, StringHelper.byte2Hex4CharString(HoTTbinReader2.buf, HoTTbinReader2.buf.length));
 				}
 
-				if (!HoTTbinReader.pickerParameters.isFilterTextModus || (HoTTbinReader.buf[6] & 0x01) == 0) { // switch into text modus
-					if (HoTTbinReader.buf[33] >= 0 && HoTTbinReader.buf[33] <= 4 && HoTTbinReader.buf[3] != 0 && HoTTbinReader.buf[4] != 0) { // buf 3, 4, tx,rx
+				if (!HoTTbinReader2.pickerParameters.isFilterTextModus || (HoTTbinReader2.buf[6] & 0x01) == 0) { // switch into text modus
+					if (HoTTbinReader2.buf[33] >= 0 && HoTTbinReader2.buf[33] <= 4 && HoTTbinReader2.buf[3] != 0 && HoTTbinReader2.buf[4] != 0) { // buf 3, 4, tx,rx
 						if (HoTTbinReader2.log.isLoggable(Level.INFO))
-							HoTTbinReader2.log.log(Level.INFO, String.format("Sensor %x Blocknummer : %d", HoTTbinReader.buf[7], HoTTbinReader.buf[33]));
+							HoTTbinReader2.log.log(Level.INFO, String.format("Sensor %x Blocknummer : %d", HoTTbinReader2.buf[7], HoTTbinReader2.buf[33]));
 
-						((RcvBinParser) HoTTbinReader.rcvBinParser).trackPackageLoss(true);
+						((RcvBinParser) HoTTbinReader2.rcvBinParser).trackPackageLoss(true);
+						
 						if (HoTTbinReader2.log.isLoggable(Level.FINEST)) HoTTbinReader2.log.log(Level.FINEST, StringHelper.byte2Hex2CharString(new byte[] {
-								HoTTbinReader.buf[7] }, 1) + GDE.STRING_MESSAGE_CONCAT + StringHelper.printBinary(HoTTbinReader.buf[7], false));
+								HoTTbinReader2.buf[7] }, 1) + GDE.STRING_MESSAGE_CONCAT + StringHelper.printBinary(HoTTbinReader2.buf[7], false));
 
 						// fill receiver data
-						if (HoTTbinReader.buf[33] == 0 && (HoTTbinReader.buf[38] & 0x80) != 128 && DataParser.parse2Short(HoTTbinReader.buf, 40) >= 0) {
+						if (HoTTbinReader2.buf[33] == 0 && (HoTTbinReader2.buf[38] & 0x80) != 128 && DataParser.parse2Short(HoTTbinReader2.buf, 40) >= 0) {
 							HoTTbinReader2.rcvBinParser.parse();
 							isReceiverData = true;
 						}
@@ -531,9 +522,9 @@ public class HoTTbinReader2 extends HoTTbinReader {
 						}
 
 						if (actualSensor == -1)
-							lastSensor = actualSensor = (byte) (HoTTbinReader.buf[7] & 0xFF);
+							lastSensor = actualSensor = (byte) (HoTTbinReader2.buf[7] & 0xFF);
 						else
-							actualSensor = (byte) (HoTTbinReader.buf[7] & 0xFF);
+							actualSensor = (byte) (HoTTbinReader2.buf[7] & 0xFF);
 
 						if (actualSensor != lastSensor) {
 							if (logCountVario >= 5 || logCountGPS >= 5 || logCountGAM >= 5 || logCountEAM >= 5 || logCountESC >= 5) {
@@ -550,7 +541,7 @@ public class HoTTbinReader2 extends HoTTbinReader {
 										migrationJobs.add(Sensor.VARIO);
 										
 										if (!isVarioDetected) {
-											HoTTAdapter2.updateVarioTypeDependent((HoTTbinReader.buf4[9] & 0xFF), device, HoTTbinReader2.recordSet);
+											HoTTAdapter2.updateVarioTypeDependent((HoTTbinReader2.buf4[9] & 0xFF), device, HoTTbinReader2.recordSet);
 											isVarioDetected = true;								
 										}
 									}
@@ -614,7 +605,7 @@ public class HoTTbinReader2 extends HoTTbinReader {
 										migrationJobs.add(Sensor.ESC);
 										
 										if (!isESCdetected) {
-											HoTTAdapter2.updateEscTypeDependent((HoTTbinReader.buf4[9] & 0xFF), device, HoTTbinReader2.recordSet);
+											HoTTAdapter2.updateEscTypeDependent((HoTTbinReader2.buf4[9] & 0xFF), device, HoTTbinReader2.recordSet);
 											isESCdetected = true;								
 										}
 									}
@@ -654,7 +645,7 @@ public class HoTTbinReader2 extends HoTTbinReader {
 						}
 
 						if (isJustMigrated) {
-							((RcvBinParser) HoTTbinReader.rcvBinParser).updateLossStatistics();
+							((RcvBinParser) HoTTbinReader2.rcvBinParser).updateLossStatistics();
 						}
 
 						if (isReceiverData && (logCountVario > 0 || logCountGPS > 0 || logCountGAM > 0 || logCountEAM > 0 || logCountESC > 0)) {
@@ -667,48 +658,44 @@ public class HoTTbinReader2 extends HoTTbinReader {
 						isJustMigrated = false;
 
 						bufCopier.copyToBuffer();
+						
 						timeSteps_ms[BinParser.TIMESTEP_INDEX] += 10;// add default time step from log record of 10 msec
-
-						if (countPackageLoss > 0) {
-							lostPackages.add(countPackageLoss);
-							countPackageLoss = 0;
-						}
 
 						if (i % progressIndicator == 0) GDE.getUiNotification().setProgress((int) (i * 100 / numberDatablocks));
 					} else { // skip empty block, but add time step
 						if (HoTTbinReader2.log.isLoggable(Level.FINE)) HoTTbinReader2.log.log(Level.FINE, "-->> Found tx=rx=0 dBm");
 						
-						++countPackageLoss;
-
-						((RcvBinParser) HoTTbinReader.rcvBinParser).trackPackageLoss(false);
+						((RcvBinParser) HoTTbinReader2.rcvBinParser).trackPackageLoss(false);
+						
 						if (channelNumber == HoTTAdapter2.CHANNELS_CHANNEL_NUMBER) {
 							HoTTbinReader2.chnBinParser.parse();
 							tmpRecordSet.addPoints(HoTTbinReader2.points, timeSteps_ms[BinParser.TIMESTEP_INDEX]);
 						}
+						
 						timeSteps_ms[BinParser.TIMESTEP_INDEX] += 10;
-						// reset buffer to avoid mixing data >> 20 Jul 14, not any longer required due to protocol change requesting next sensor data block
 					}
-				} else if (!HoTTbinReader.isTextModusSignaled) {
-					HoTTbinReader.isTextModusSignaled = true;
-					HoTTbinReader.application.openMessageDialogAsync(Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGW2404));
+				} else if (!HoTTbinReader2.isTextModusSignaled) {
+					HoTTbinReader2.isTextModusSignaled = true;
+					HoTTbinReader2.application.openMessageDialogAsync(Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGW2404));
 				}
 			}
-			// if (HoTTbinReader.oldProtocolCount > 2) {
+			// if (HoTTbinReader2.oldProtocolCount > 2) {
 			// application.openMessageDialogAsync(Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGW2405, new Object[] {
-			// HoTTbinReader.oldProtocolCount }));
+			// HoTTbinReader2.oldProtocolCount }));
 			// }
+			((RcvBinParser) HoTTbinReader2.rcvBinParser).finalUpdateLossStatistics();
 			String packageLossPercentage = tmpRecordSet.getRecordDataSize(true) > 0
-					? String.format("%.1f", lostPackages.getLossTotal() * 100. / numberDatablocks)
+					? String.format("%.1f", ((RcvBinParser) HoTTbinReader2.rcvBinParser).getLostPackages().percentage)
 					: "100";
 			if (channelNumber == 4)
-				HoTTbinReader.detectedSensors.add(Sensor.CHANNEL);
+				HoTTbinReader2.detectedSensors.add(Sensor.CHANNEL);
 			tmpRecordSet.setRecordSetDescription(tmpRecordSet.getRecordSetDescription()
-					+ Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] { lostPackages.getLossTotal() + countPackageLoss, lostPackages.getLossTotal(), packageLossPercentage, lostPackages.getStatistics() })
+					+ Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] {	((RcvBinParser) HoTTbinReader2.rcvBinParser).getLossTotal(), ((RcvBinParser) HoTTbinReader2.rcvBinParser).getLostPackages().lossTotal, packageLossPercentage, ((RcvBinParser) HoTTbinReader2.rcvBinParser).getLostPackages().getStatistics() }) 
 					+ String.format(" - Sensor: %s", HoTTbinReader2.detectedSensors.toString())
 					+ (HoTTAdapter2.isAltClimbSensor(HoTTbinReader2.detectedSensors)
 							? String.format(" - %s = %s", Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGT2419), Sensor.fromOrdinal(pickerParameters.altitudeClimbSensorSelection).name())
 									: ""));
-			HoTTbinReader2.log.log(Level.WARNING, "skipped number receiver data due to package loss = " + lostPackages.getLossTotal()); //$NON-NLS-1$
+			HoTTbinReader2.log.log(Level.WARNING, "skipped number receiver data due to package loss = " + ((RcvBinParser) HoTTbinReader2.rcvBinParser).getLossTotal()); //$NON-NLS-1$
 			HoTTbinReader2.log.log(Level.TIME, "read time = " + StringHelper.getFormatedTime("mm:ss:SSS", (System.nanoTime() / 1000000 - startTime))); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			if (menuToolBar != null) {
@@ -807,7 +794,7 @@ public class HoTTbinReader2 extends HoTTbinReader {
 		private int							tmpVoltageRx			= 0;
 		private int							tmpTemperatureRx	= 0;
 
-		private int							countLostPackages	= 0;
+		private int							consecutiveLossCounter	= 0;
 
 		private PackageLoss			lostPackages			= new PackageLoss();
 
@@ -867,18 +854,18 @@ public class HoTTbinReader2 extends HoTTbinReader {
 				this.pickerParameters.reverseChannelPackageLossCounter.add(0);
 				this.points[0] = this.pickerParameters.reverseChannelPackageLossCounter.getPercentage() * 1000;
 
-				++this.countLostPackages;
-				// points[0] = (int) (countPackageLoss*100.0 / ((this.getTimeStep_ms()+10) / 10.0)*1000.0);
+				++this.consecutiveLossCounter;
 			}
+			++this.lostPackages.numberTrackedSamples;
 		}
 
 		/**
 		 * @return true if the lost packages count is transferred into the loss statistics
 		 */
 		public boolean updateLossStatistics() {
-			if (this.countLostPackages > 0) {
-				this.lostPackages.add(this.countLostPackages);
-				this.countLostPackages = 0;
+			if (this.consecutiveLossCounter > 0) {
+				this.lostPackages.add(this.consecutiveLossCounter);
+				this.consecutiveLossCounter = 0;
 				return true;
 			} else {
 				return false;
@@ -886,10 +873,19 @@ public class HoTTbinReader2 extends HoTTbinReader {
 		}
 
 		/**
-		 * @return the lost packages count (is the current number of lost packages since the last valid package)
+		 * update packets loss statistics before reading statistics values
 		 */
-		public int getCountPackageLoss() {
-			return this.lostPackages.lossTotal;
+		public void finalUpdateLossStatistics() {
+			this.lostPackages.percentage = this.lostPackages.lossTotal * 100. / (this.lostPackages.numberTrackedSamples - this.consecutiveLossCounter);
+			log.log(Level.INFO, String.format("lostPackages = (%d) %d of %d percentage = %3.1f", this.lostPackages.lossTotal + this.consecutiveLossCounter,
+					this.lostPackages.lossTotal, this.lostPackages.numberTrackedSamples, this.lostPackages.percentage ));
+		}
+
+		/**
+		 * @return the total number of lost packages (is summed up while reading the log)
+		 */
+		public int getLossTotal() {
+			return this.lostPackages.lossTotal + this.consecutiveLossCounter;
 		}
 
 		public PackageLoss getLostPackages() {
@@ -897,7 +893,7 @@ public class HoTTbinReader2 extends HoTTbinReader {
 		}
 
 		private boolean isPointsValid() {
-			// WB !this.pickerParameters.isFilterEnabled || this.tmpVoltageRx > -1 && this.tmpVoltageRx < 100 && this.tmpTemperatureRx < 120; from HottbinReader
+			// WB !this.pickerParameters.isFilterEnabled || this.tmpVoltageRx > -1 && this.tmpVoltageRx < 100 && this.tmpTemperatureRx < 120; from HoTTbinReader2
 			return !this.pickerParameters.isFilterEnabled || this.tmpVoltageRx > -1 && this.tmpVoltageRx < 100 && this.tmpTemperatureRx < 100;
 		}
 
@@ -911,7 +907,7 @@ public class HoTTbinReader2 extends HoTTbinReader {
 
 		@Override
 		public String toString() {
-			return super.toString() + "  [countPackageLoss=" + this.lostPackages.lossTotal + ", countLostPackages=" + this.countLostPackages + "]";
+			return super.toString() + "  [countPackageLoss=" + this.lostPackages.lossTotal + ", consecutiveLossCounter=" + this.consecutiveLossCounter + "]";
 		}
 
 	}
@@ -1276,7 +1272,7 @@ public class HoTTbinReader2 extends HoTTbinReader {
 		}
 
 		private boolean isPointsValid() {
-			// WB !this.pickerParameters.isFilterEnabled || (this.tmpClimb3 > 30 && this.tmpHeight > 10 && this.tmpHeight < 5000 && Math.abs(this.tmpVoltage1) < 600 && Math.abs(this.tmpVoltage2) < 600); from HottbinReader
+			// WB !this.pickerParameters.isFilterEnabled || (this.tmpClimb3 > 30 && this.tmpHeight > 10 && this.tmpHeight < 5000 && Math.abs(this.tmpVoltage1) < 600 && Math.abs(this.tmpVoltage2) < 600); from HoTTbinReader2
 			return !this.pickerParameters.isFilterEnabled || (this.tmpClimb3 > -90 && this.tmpHeight >= -490 && this.tmpHeight < 5000 && Math.abs(this.tmpVoltage1) < 600 && Math.abs(this.tmpVoltage2) < 600);
 		}
 
@@ -1384,7 +1380,7 @@ public class HoTTbinReader2 extends HoTTbinReader {
 		}
 
 		private boolean isPointsValid() {
-			// WB !this.pickerParameters.isFilterEnabled || (this.tmpClimb3 > 30 && this.tmpHeight > 10 && this.tmpHeight < 5000 && Math.abs(this.tmpVoltage1) < 600 && Math.abs(this.tmpVoltage2) < 600); from HottbinReader
+			// WB !this.pickerParameters.isFilterEnabled || (this.tmpClimb3 > 30 && this.tmpHeight > 10 && this.tmpHeight < 5000 && Math.abs(this.tmpVoltage1) < 600 && Math.abs(this.tmpVoltage2) < 600); from HoTTbinReader2
 			return !this.pickerParameters.isFilterEnabled || (this.tmpClimb3 > -90 && this.tmpHeight >= -490 && this.tmpHeight < 5000 && Math.abs(this.tmpVoltage1) < 600 && Math.abs(this.tmpVoltage2) < 600);
 		}
 

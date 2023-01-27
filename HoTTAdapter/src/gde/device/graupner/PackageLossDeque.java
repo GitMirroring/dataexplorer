@@ -54,6 +54,6 @@ public class PackageLossDeque extends Vector<Integer> {
 	}
 
 	public int getPercentage() {
-		return this.lossCounter * 100 / this.size();
+		return (int) (this.lossCounter * 100. / this.size());
 	}
 }

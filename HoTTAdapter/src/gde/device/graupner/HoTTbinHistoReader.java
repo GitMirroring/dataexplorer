@@ -408,6 +408,7 @@ public class HoTTbinHistoReader {
 			}
 		}
 		if (doFullRead) {
+			((RcvBinParser) binParser).finalUpdateLossStatistics();
 			PackageLoss lostPackages  = binParser instanceof RcvBinParser ? ((RcvBinParser) binParser).getLostPackages() : null;
 			Integer[] scores = getScores(lostPackages, histoRandomSample,  truss.getVault());
 			HoTTAdapter device = (HoTTAdapter) analyzer.getActiveDevice();
@@ -610,6 +611,7 @@ public class HoTTbinHistoReader {
 			}
 		}
 		if (doFullRead) {
+			((RcvBinParser) binParser).finalUpdateLossStatistics();
 			PackageLoss lostPackages  = binParser instanceof RcvBinParser ? ((RcvBinParser) binParser).getLostPackages() : null;
 			Integer[] scores = getScores(lostPackages, histoRandomSample,  truss.getVault());
 			HoTTAdapter device = (HoTTAdapter) analyzer.getActiveDevice();
@@ -636,13 +638,14 @@ public class HoTTbinHistoReader {
 		scores[ScoreLabelTypes.TOTAL_READINGS.ordinal()] = histoRandomSample.getReadingCount();
 		scores[ScoreLabelTypes.TOTAL_PACKAGES.ordinal()] = (int) vault.getLogFileLength() / HoTTbinHistoReader.DATA_BLOCK_SIZE;
 		scores[ScoreLabelTypes.LOST_PACKAGES.ordinal()] = lossTotal;
-		scores[ScoreLabelTypes.LOST_PACKAGES_PER_MILLE.ordinal()] = (int) (lossTotal / tmpRecordSet.getMaxTime_ms() * 1000. * RECORD_TIMESPAN_MS) * 1000;
 		if (lostPackages != null) {
+			scores[ScoreLabelTypes.LOST_PACKAGES_PER_MILLE.ordinal()] = (int) (lostPackages.percentage * 10000.);
 			scores[ScoreLabelTypes.LOST_PACKAGES_AVG_MS.ordinal()] = (int) lostPackages.getAvgValue() * RECORD_TIMESPAN_MS * 1000;
 			scores[ScoreLabelTypes.LOST_PACKAGES_MAX_MS.ordinal()] = lostPackages.getMaxValue() * RECORD_TIMESPAN_MS * 1000;
 			scores[ScoreLabelTypes.LOST_PACKAGES_MIN_MS.ordinal()] = lostPackages.getMinValue() * RECORD_TIMESPAN_MS * 1000;
 			scores[ScoreLabelTypes.LOST_PACKAGES_SIGMA_MS.ordinal()] = (int) lostPackages.getSigmaValue() * RECORD_TIMESPAN_MS * 1000;
 		} else {
+			scores[ScoreLabelTypes.LOST_PACKAGES_PER_MILLE.ordinal()] = 0;
 			scores[ScoreLabelTypes.LOST_PACKAGES_AVG_MS.ordinal()] = 0;
 			scores[ScoreLabelTypes.LOST_PACKAGES_MAX_MS.ordinal()] = 0;
 			scores[ScoreLabelTypes.LOST_PACKAGES_MIN_MS.ordinal()] = 0;

@@ -361,6 +361,7 @@ public class HoTTbinHistoReader2 extends HoTTbinHistoReader {
 			}
 		}
 		if (doFullRead) {
+			((RcvBinParser) rcvBinParser).finalUpdateLossStatistics();
 			PackageLoss lostPackages  = ((RcvBinParser) rcvBinParser).getLostPackages();
 			Integer[] scores = getScores(lostPackages, histoRandomSample,  truss.getVault());
 			device.calculateInactiveRecords(tmpRecordSet);
@@ -677,6 +678,7 @@ public class HoTTbinHistoReader2 extends HoTTbinHistoReader {
 		}
 
 		if (doFullRead) {
+			((RcvBinParser) rcvBinParser).finalUpdateLossStatistics();
 			PackageLoss lostPackages  = ((RcvBinParser) rcvBinParser).getLostPackages();
 			Integer[] scores = getScores(lostPackages, histoRandomSample,  truss.getVault());
 			device.calculateInactiveRecords(tmpRecordSet);

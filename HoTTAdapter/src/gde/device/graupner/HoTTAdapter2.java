@@ -18,6 +18,7 @@
 ****************************************************************************************/
 package gde.device.graupner;
 
+import java.io.BufferedInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,6 +53,7 @@ import gde.device.DeviceConfiguration;
 import gde.device.IDevice;
 import gde.device.MeasurementPropertyTypes;
 import gde.device.StatisticsType;
+import gde.device.graupner.HoTTbinReader.InfoParser;
 import gde.device.graupner.hott.MessageIds;
 import gde.exception.DataInconsitsentException;
 import gde.exception.DataTypeException;
@@ -2598,9 +2600,22 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 		String fileEnding = PathUtils.getFileExtention(truss.getVault().getLoadFilePath());
 		if (GDE.FILE_ENDING_DOT_BIN.equals(fileEnding)) {
 			new HoTTbinHistoReader2(new PickerParameters(analyzer)).read(inputStream, truss);
-		} else if (GDE.FILE_ENDING_DOT_LOG.equals(fileEnding)) {
-			// todo implement HoTTlogHistoReader
-		} else {
+		}
+		else if (GDE.FILE_ENDING_DOT_LOG.equals(fileEnding)) {
+			HashMap<String, String> infoHeader = null;
+			try (BufferedInputStream info_in = new BufferedInputStream(inputStream.get())) {
+				infoHeader = new InfoParser((s) -> {
+				}).getFileInfo(info_in, truss.getVault().getLoadFilePath(), truss.getVault().getLogFileLength());
+				if (infoHeader == null || infoHeader.isEmpty()) return;
+
+				if (Integer.parseInt(infoHeader.get(HoTTAdapter.LOG_COUNT)) <= HoTTbinReader.NUMBER_LOG_RECORDS_MIN / 5) 
+					return;
+
+				HoTTlogHistoReader2 histoReader = new HoTTlogHistoReader2(new PickerParameters(analyzer), infoHeader);
+				histoReader.read(inputStream, truss);
+			}
+		}
+		else {
 			throw new UnsupportedOperationException(truss.getVault().getLoadFilePath());
 		}
 	}

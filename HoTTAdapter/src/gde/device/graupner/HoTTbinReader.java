@@ -467,9 +467,12 @@ public class HoTTbinReader {
 					int numberLogChannels = Integer.valueOf(fileInfo.get("LOG NOB CHANNEL"));
 					boolean isASCII = fileInfo.get("LOG TYPE").contains("ASCII");
 					int rawDataBlockSize = 66 + numberLogChannels * 2;
+					fileInfo.put(HoTTAdapter.RAW_LOG_SIZE, GDE.STRING_EMPTY + rawDataBlockSize);
 					int asciiDataBlockSize = 202 + numberLogChannels * 5;
+					fileInfo.put(HoTTAdapter.ASCII_LOG_SIZE, GDE.STRING_EMPTY + asciiDataBlockSize);
 					int dataBlockSize = isASCII ? asciiDataBlockSize : rawDataBlockSize;
-					fileInfo.put(HoTTAdapter.LOG_COUNT, GDE.STRING_EMPTY + ((fileLength - logDataOffset) / dataBlockSize));
+					fileInfo.put(HoTTAdapter.LOG_COUNT, GDE.STRING_EMPTY + (((fileLength - logDataOffset) / dataBlockSize) - 1));
+					fileInfo.put(HoTTAdapter.DATA_BLOCK_SIZE, GDE.STRING_EMPTY + dataBlockSize);
 					
 					//TODO scan sensors since value of detected sensor may be wrong
 					buffer = new byte[dataBlockSize];
@@ -726,8 +729,6 @@ public class HoTTbinReader {
 		HoTTbinReader.escBinParser = Sensor.ESC.createBinParser(HoTTbinReader.pickerParameters, new int[30], timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
 		int version = -1;
 		HoTTbinReader.isJustParsed = false;
-		PackageLoss	lostPackages = new PackageLoss();
-		int countPackageLoss = 0;
 		HoTTbinReader.isTextModusSignaled = false;
 		boolean isVarioDetected = false;
 		boolean isGPSdetected = false;
@@ -812,7 +813,7 @@ public class HoTTbinReader {
 							parseAddChannel(HoTTbinReader.buf);
 						}
 						if (HoTTbinReader.isReceiverOnly && !HoTTbinReader.pickerParameters.isChannelsChannelEnabled) {
-							for (int j = 0; j < 9; j++) {
+							for (int j = 0; j < 9; j++) { //skip 9 data packets
 								data_in.read(HoTTbinReader.buf);
 								timeSteps_ms[BinParser.TIMESTEP_INDEX] += 10;
 							}
@@ -821,7 +822,7 @@ public class HoTTbinReader {
 						if (HoTTbinReader.buf[33] == 0) {
 							bufCopier.copyToBuffer();
 						}
-						timeSteps_ms[BinParser.TIMESTEP_INDEX] += 10;// add default time step from device of 10 msec
+						
 						// log.log(Level.INFO, "sensor type ID = " + StringHelper.byte2Hex2CharString(new byte[] {(byte) (HoTTbinReader.buf[7] & 0xFF)}, 1));
 						if (HoTTbinReader.buf[33] >= 0 && HoTTbinReader.buf[33] <= 4) { // expected data block number
 							switch ((byte) (HoTTbinReader.buf[7] & 0xFF)) {
@@ -993,29 +994,24 @@ public class HoTTbinReader {
 							}
 							HoTTbinReader.isJustParsed = true;
 						}
-						if (i % progressIndicator == 0) GDE.getUiNotification().setProgress((int) (i * 100 / numberDatablocks));
 						
-						if (countPackageLoss > 0) {
-							lostPackages.add(countPackageLoss);
-							countPackageLoss = 0;
-						}
-
 						if (HoTTbinReader.isJustParsed) {
 							HoTTbinReader.isJustParsed = !((RcvBinParser) HoTTbinReader.rcvBinParser).updateLossStatistics();
 						}
+						
+						timeSteps_ms[BinParser.TIMESTEP_INDEX] += 10;// add default time step from device of 10 msec
+						
+						if (i % progressIndicator == 0) GDE.getUiNotification().setProgress((int) (i * 100 / numberDatablocks));
 					}
 					else { // skip empty block, but add time step
 						if (HoTTbinReader.log.isLoggable(Level.FINE)) HoTTbinReader.log.log(Level.FINE, "-->> Found tx=rx=0 dBm");
 						
-						++countPackageLoss;
-
 						((RcvBinParser) HoTTbinReader.rcvBinParser).trackPackageLoss(false);
 						if (HoTTbinReader.pickerParameters.isChannelsChannelEnabled) {
 							parseAddChannel(HoTTbinReader.buf);
 						}
+						
 						timeSteps_ms[BinParser.TIMESTEP_INDEX] += 10;
-						// reset buffer to avoid mixing data >> 20 Jul 14, not any longer required due to protocol change requesting next sensor data block
-						// HoTTbinReader.buf1 = HoTTbinReader.buf2 = HoTTbinReader.buf3 = HoTTbinReader.buf4 = null;
 					}
 				}
 				else if (!HoTTbinReader.isTextModusSignaled) {
@@ -1023,15 +1019,16 @@ public class HoTTbinReader {
 					HoTTbinReader.application.openMessageDialogAsync(Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGW2404));
 				}
 			}
+			((RcvBinParser) HoTTbinReader.rcvBinParser).finalUpdateLossStatistics();
 			String packageLossPercentage = HoTTbinReader.recordSetReceiver.getRecordDataSize(true) > 0
-					? String.format("%.1f", lostPackages.getLossTotal() * 100. / numberDatablocks)
+					? String.format("%.1f", ((RcvBinParser) HoTTbinReader.rcvBinParser).getLostPackages().percentage)
 					: "100";
 			if (HoTTbinReader.pickerParameters.isChannelsChannelEnabled)
 				HoTTbinReader.detectedSensors.add(Sensor.CHANNEL);
-			HoTTbinReader.recordSetReceiver.setRecordSetDescription(tmpRecordSet.getRecordSetDescription() + Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] {
-					lostPackages.getLossTotal() + countPackageLoss, lostPackages.getLossTotal(), packageLossPercentage, lostPackages.getStatistics() }) 
+			HoTTbinReader.recordSetReceiver.setRecordSetDescription(tmpRecordSet.getRecordSetDescription() 
+					+ Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] {	((RcvBinParser) HoTTbinReader.rcvBinParser).getLossTotal(), ((RcvBinParser) HoTTbinReader.rcvBinParser).getLostPackages().lossTotal, packageLossPercentage, ((RcvBinParser) HoTTbinReader.rcvBinParser).getLostPackages().getStatistics() }) 
 					+ String.format(" - Sensor: %s", HoTTbinReader2.detectedSensors.toString()));
-			HoTTbinReader.log.logp(Level.WARNING, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, "skipped number receiver data due to package loss = " + lostPackages.getLossTotal()); //$NON-NLS-1$
+			HoTTbinReader.log.logp(Level.WARNING, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, "skipped number receiver data due to package loss = " + ((RcvBinParser) HoTTbinReader.rcvBinParser).getLostPackages().lossTotal); //$NON-NLS-1$
 			HoTTbinReader.log.logp(Level.TIME, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, "read time = " //$NON-NLS-1$
 					+ StringHelper.getFormatedTime("mm:ss:SSS", (System.nanoTime() / 1000000 - startTime))); //$NON-NLS-1$
 
@@ -1141,8 +1138,6 @@ public class HoTTbinReader {
 		byte actualSensor = -1, lastSensor = -1;
 		int logCountVario = 0, logCountGPS = 0, logCountGeneral = 0, logCountElectric = 0, logCountSpeedControl = 0;
 		HoTTbinReader.isJustParsed = false;
-		PackageLoss	lostPackages = new PackageLoss();
-		int countPackageLoss = 0;
 		HoTTbinReader.isTextModusSignaled = false;
 		boolean isVarioDetected = false;
 		boolean isGPSdetected = false;
@@ -1213,6 +1208,7 @@ public class HoTTbinReader {
 							HoTTbinReader.log.log(Level.INFO, String.format("Sensor %x Blocknummer : %d", HoTTbinReader.buf[7], HoTTbinReader.buf[33]));
 
 						((RcvBinParser) HoTTbinReader.rcvBinParser).trackPackageLoss(true);
+						
 						// create and fill sensor specific data record sets
 						if (HoTTbinReader.log.isLoggable(Level.FINEST)) HoTTbinReader.log.logp(Level.FINEST, HoTTbinReader.$CLASS_NAME, $METHOD_NAME,
 								StringHelper.byte2Hex2CharString(new byte[] { HoTTbinReader.buf[7] }, 1) + GDE.STRING_MESSAGE_CONCAT + StringHelper.printBinary(HoTTbinReader.buf[7], false));
@@ -1224,8 +1220,6 @@ public class HoTTbinReader {
 						if (HoTTbinReader.pickerParameters.isChannelsChannelEnabled) {
 							parseAddChannel(HoTTbinReader.buf);
 						}
-
-						timeSteps_ms[BinParser.TIMESTEP_INDEX] += 10;// add default time step from log record of 10 msec
 
 						// detect sensor switch
 						if (actualSensor == -1)
@@ -1413,30 +1407,24 @@ public class HoTTbinReader {
 
 						bufCopier.copyToBuffer();
 
-						if (i % progressIndicator == 0)
-							GDE.getUiNotification().setProgress((int) (i * 100 / numberDatablocks));
-
-						if (countPackageLoss > 0) {
-							lostPackages.add(countPackageLoss);
-							countPackageLoss = 0;
-						}
-
 						if (HoTTbinReader.isJustParsed) {
 							HoTTbinReader.isJustParsed = !((RcvBinParser) HoTTbinReader.rcvBinParser).updateLossStatistics();
 						}
+
+						timeSteps_ms[BinParser.TIMESTEP_INDEX] += 10;// add default time step from log record of 10 msec
+
+						if (i % progressIndicator == 0)
+							GDE.getUiNotification().setProgress((int) (i * 100 / numberDatablocks));
 					}
 					else { // tx,rx == 0
 						if (HoTTbinReader.log.isLoggable(Level.FINE)) HoTTbinReader.log.log(Level.FINE, "-->> Found tx=rx=0 dBm");
 						
-						++countPackageLoss;
-
 						((RcvBinParser) HoTTbinReader.rcvBinParser).trackPackageLoss(false);
 						if (HoTTbinReader.pickerParameters.isChannelsChannelEnabled) {
 							parseAddChannel(HoTTbinReader.buf);
 						}
+						
 						timeSteps_ms[BinParser.TIMESTEP_INDEX] += 10;
-						// reset buffer to avoid mixing data
-						// logCountVario = logCountGPS = logCountGeneral = logCountElectric = logCountSpeedControl = 0;
 					}
 				}
 				else if (!HoTTbinReader.isTextModusSignaled) {
@@ -1448,15 +1436,16 @@ public class HoTTbinReader {
 			// application.openMessageDialogAsync(Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGW2405,
 			// new Object[] { HoTTbinReader.oldProtocolCount }));
 			// }
+			((RcvBinParser) HoTTbinReader.rcvBinParser).finalUpdateLossStatistics();
 			String packageLossPercentage = HoTTbinReader.recordSetReceiver.getRecordDataSize(true) > 0
-					? String.format("%.1f", lostPackages.getLossTotal() * 100. / numberDatablocks)
+					? String.format("%.1f", ((RcvBinParser) HoTTbinReader.rcvBinParser).getLostPackages().percentage)
 					: "100";
 			if (HoTTbinReader.pickerParameters.isChannelsChannelEnabled)
 				HoTTbinReader.detectedSensors.add(Sensor.CHANNEL);
-			HoTTbinReader.recordSetReceiver.setRecordSetDescription(tmpRecordSet.getRecordSetDescription() + Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] {
-					lostPackages.getLossTotal() + countPackageLoss, lostPackages.getLossTotal(), packageLossPercentage, lostPackages.getStatistics() }) 
+			HoTTbinReader.recordSetReceiver.setRecordSetDescription(tmpRecordSet.getRecordSetDescription() 
+					+ Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] {	((RcvBinParser) HoTTbinReader.rcvBinParser).getLossTotal(), ((RcvBinParser) HoTTbinReader.rcvBinParser).getLostPackages().lossTotal, packageLossPercentage, ((RcvBinParser) HoTTbinReader.rcvBinParser).getLostPackages().getStatistics() }) 
 					+ String.format(" - Sensor: %s", HoTTbinReader2.detectedSensors.toString()));
-			HoTTbinReader.log.logp(Level.WARNING, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, "skipped number receiver data due to package loss = " + lostPackages.getLossTotal()); //$NON-NLS-1$
+			HoTTbinReader.log.logp(Level.WARNING, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, "skipped number receiver data due to package loss = " + ((RcvBinParser) HoTTbinReader.rcvBinParser).getLostPackages().lossTotal); //$NON-NLS-1$
 			HoTTbinReader.log.logp(Level.TIME, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, "read time = " //$NON-NLS-1$
 					+ StringHelper.getFormatedTime("mm:ss:SSS", (System.nanoTime() / 1000000 - startTime))); //$NON-NLS-1$
 
@@ -1550,8 +1539,8 @@ public class HoTTbinReader {
 				this.points[0] = this.pickerParameters.reverseChannelPackageLossCounter.getPercentage() * 1000;
 
 				++this.consecutiveLossCounter;
-				// points[0] = (int) (countPackageLoss*100.0 / ((this.getTimeStep_ms()+10) / 10.0)*1000.0);
 			}
+			++this.lostPackages.numberTrackedSamples;
 		}
 
 		/**
@@ -1568,10 +1557,19 @@ public class HoTTbinReader {
 		}
 
 		/**
+		 * update packets loss statistics before reading statistics values
+		 */
+		public void finalUpdateLossStatistics() {
+			this.lostPackages.percentage = this.lostPackages.lossTotal * 100. / (this.lostPackages.numberTrackedSamples - this.consecutiveLossCounter);
+			log.log(Level.INFO, String.format("lostPackages = (%d) %d of %d percentage = %3.1f", this.lostPackages.lossTotal + this.consecutiveLossCounter,
+					this.lostPackages.lossTotal, this.lostPackages.numberTrackedSamples, this.lostPackages.percentage ));
+		}
+
+		/**
 		 * @return the total number of lost packages (is summed up while reading the log)
 		 */
 		public int getLossTotal() {
-			return this.lostPackages.lossTotal;
+			return this.lostPackages.lossTotal - this.consecutiveLossCounter;
 		}
 
 		public PackageLoss getLostPackages() {

@@ -28,16 +28,16 @@ import gde.GDE;
  * @author brueg
  */
 public class PackageLoss extends Vector<Integer> {
-	private static final long	serialVersionUID	= -1434896150654661385L;
+	private static final long	serialVersionUID			= -1434896150654661385L;
 
-	/**
-	 * the total number of lost packages (is summed up while reading the log)
-	 */
-	int												lossTotal					= 0;
-	int												minValue					= 0;
-	int												maxValue					= 0;
-	double										avgValue					= 0;
-	double										sigmaValue				= 0;
+	int												lossTotal							= 0;	//total number of lost packages (is summed up while reading the log
+	int												minValue							= 0;
+	int												maxValue							= 0;
+	double										avgValue							= 0;
+	double										sigmaValue						= 0;
+
+	int												numberTrackedSamples	= 0;	//number of total packages used to track package loss
+	double										percentage						= 100.;
 
 	/**
 	 * add value and detect min/max value

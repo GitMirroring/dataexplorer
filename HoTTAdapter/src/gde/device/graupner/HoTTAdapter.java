@@ -18,6 +18,7 @@
 ****************************************************************************************/
 package gde.device.graupner;
 
+import java.io.BufferedInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -71,6 +72,8 @@ import gde.device.MeasurementPropertyTypes;
 import gde.device.MeasurementType;
 import gde.device.StatisticsType;
 import gde.device.graupner.HoTTbinReader.BinParser;
+import gde.device.graupner.HoTTbinReader.InfoParser;
+import gde.device.graupner.HoTTlogReader.LogParser;
 import gde.device.graupner.hott.MessageIds;
 import gde.device.resource.DeviceXmlResource;
 import gde.exception.DataInconsitsentException;
@@ -100,10 +103,14 @@ import gde.utils.WaitTimer;
 public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoDevice {
 	final static Logger		log																= Logger.getLogger(HoTTAdapter.class.getName());
 
-	final static String		LOG_COUNT													= "LogCount";																																						//$NON-NLS-1$
-	final static String		FILE_PATH													= "FilePath";																																						//$NON-NLS-1$
-	final static String		SD_FORMAT													= "SD_FORMAT";																																					//$NON-NLS-1$
-	final static String		DETECTED_SENSOR										= "DETECTED SENSOR";																																		//$NON-NLS-1$
+	final static String		LOG_COUNT													= "LogCount";						//number of log entries
+	final static String		FILE_PATH													= "FilePath";						//file path
+	final static String		SD_FORMAT													= "SD_FORMAT";					//special SD log format car radio
+	final static String		DETECTED_SENSOR										= "DETECTED SENSOR";		//detected sensor set
+	final static String		ASCII_LOG_SIZE										= "ASCII_LOG_SIZE";			//size of log entry in ASCII format
+	final static String		RAW_LOG_SIZE											= "RAW_LOG_SIZE";				//size of log entry in RAW format
+	final static String		DATA_BLOCK_SIZE										= "DATA_BLOCK_SIZE";		//resulting size of log entry 		
+	final static String		LOG_DATA_OFFSET										= "LOG DATA OFFSET"; 		//log header length
 
 	// HoTT sensor bytes 19200 Baud protocol
 	static boolean				IS_SLAVE_MODE											= false;
@@ -146,6 +153,11 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 			}
 
 			@Override
+			public LogParser createLogParser(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[] buffer, int numberUsedChannels) {
+				return new HoTTlogReader.RcvLogParser(pickerParameters, points, timeSteps_ms, buffer);
+			}
+
+			@Override
 			public BinParser createBinParser2(PickerParameters pickerParameters, long[] timeSteps_ms, byte[][] buffers) {
 				return new HoTTbinReader2.RcvBinParser(pickerParameters, timeSteps_ms, buffers);
 			}
@@ -164,11 +176,21 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 			public BinParser createBinParserD(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[][] buffers) {
 				return new HoTTbinReaderD.RcvBinParser(pickerParameters, points, timeSteps_ms, buffers);
 			}
+
+			@Override
+			public LogParser createLogParserD(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[] buffer, int numberUsedChannels) {
+				return new HoTTlogReader.RcvLogParser(pickerParameters, points, timeSteps_ms, buffer);
+			}
 		},
 		VARIO(2, "Vario", "VARIO") { //$NON-NLS-1$
 			@Override
 			public BinParser createBinParser(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[][] buffers) {
 				return new HoTTbinReader.VarBinParser(pickerParameters, points, timeSteps_ms, buffers);
+			}
+
+			@Override
+			public LogParser createLogParser(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[] buffer, int numberUsedChannels) {
+				return new HoTTlogReader.VarLogParser(pickerParameters, points, timeSteps_ms, buffer);
 			}
 
 			@Override
@@ -183,18 +205,28 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 
 			@Override
 			public BinParser createBinParserD(PickerParameters pickerParameters, long[] timeSteps_ms, byte[][] buffers) {
-				return new HoTTbinReaderD.VarBinParser(pickerParameters, timeSteps_ms, buffers);
+				return new HoTTbinReaderD.VarBinParserD(pickerParameters, timeSteps_ms, buffers);
 			}
 
 			@Override
 			public BinParser createBinParserD(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[][] buffers) {
-				return new HoTTbinReaderD.VarBinParser(pickerParameters, points, timeSteps_ms, buffers);
+				return new HoTTbinReaderD.VarBinParserD(pickerParameters, points, timeSteps_ms, buffers);
+			}
+
+			@Override
+			public LogParser createLogParserD(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[] buffer, int numberUsedChannels) {
+				return new HoTTlogReaderD.VarLogParserD(pickerParameters, points, timeSteps_ms, buffer);
 			}
 		},
 		GPS(3, "GPS", "GPS") { //$NON-NLS-1$
 			@Override
 			public BinParser createBinParser(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[][] buffers) {
 				return new HoTTbinReader.GpsBinParser(pickerParameters, points, timeSteps_ms, buffers);
+			}
+
+			@Override
+			public LogParser createLogParser(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[] buffer, int numberUsedChannels) {
+				return new HoTTlogReader.GpsLogParser(pickerParameters, points, timeSteps_ms, buffer);
 			}
 
 			@Override
@@ -216,11 +248,21 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 			public BinParser createBinParserD(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[][] buffers) {
 				return new HoTTbinReaderD.GpsBinParser(pickerParameters, points, timeSteps_ms, buffers);
 			}
+
+			@Override
+			public LogParser createLogParserD(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[] buffer, int numberUsedChannels) {
+				return new HoTTlogReaderD.GpsLogParser(pickerParameters, points, timeSteps_ms, buffer);
+			}
 		},
 		GAM(4, "GAM", "GENERAL") { //$NON-NLS-1$
 			@Override
 			public BinParser createBinParser(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[][] buffers) {
 				return new HoTTbinReader.GamBinParser(pickerParameters, points, timeSteps_ms, buffers);
+			}
+
+			@Override
+			public LogParser createLogParser(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[] buffer, int numberUsedChannels) {
+				return new HoTTlogReader.GamLogParser(pickerParameters, points, timeSteps_ms, buffer);
 			}
 
 			@Override
@@ -242,11 +284,21 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 			public BinParser createBinParserD(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[][] buffers) {
 				return new HoTTbinReaderD.GamBinParser(pickerParameters, points, timeSteps_ms, buffers);
 			}
+
+			@Override
+			public LogParser createLogParserD(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[] buffer, int numberUsedChannels) {
+				return new HoTTlogReaderD.GamLogParser(pickerParameters, points, timeSteps_ms, buffer);
+			}
 		},
 		EAM(5, "EAM", "ELECTRIC") {//$NON-NLS-1$
 			@Override
 			public BinParser createBinParser(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[][] buffers) {
 				return new HoTTbinReader.EamBinParser(pickerParameters, points, timeSteps_ms, buffers);
+			}
+
+			@Override
+			public LogParser createLogParser(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[] buffer, int numberUsedChannels) {
+				return new HoTTlogReader.EamLogParser(pickerParameters, points, timeSteps_ms, buffer);
 			}
 
 			@Override
@@ -268,11 +320,21 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 			public BinParser createBinParserD(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[][] buffers) {
 				return new HoTTbinReaderD.EamBinParser(pickerParameters, points, timeSteps_ms, buffers);
 			}
+
+			@Override
+			public LogParser createLogParserD(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[] buffer, int numberUsedChannels) {
+				return new HoTTlogReaderD.EamLogParser(pickerParameters, points, timeSteps_ms, buffer);
+			}
 		},
 		ESC(7, "ESC", "AIR_ESC") { //$NON-NLS-1$
 			@Override
 			public BinParser createBinParser(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[][] buffers) {
 				return new HoTTbinReader.EscBinParser(pickerParameters, points, timeSteps_ms, buffers);
+			}
+
+			@Override
+			public LogParser createLogParser(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[] buffer, int numberUsedChannels) {
+				return new HoTTlogReader.EscLogParser(pickerParameters, points, timeSteps_ms, buffer);
 			}
 
 			@Override
@@ -294,11 +356,21 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 			public BinParser createBinParserD(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[][] buffers) {
 				return new HoTTbinReaderD.EscBinParser(pickerParameters, points, timeSteps_ms, buffers);
 			}
+
+			@Override
+			public LogParser createLogParserD(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[] buffer, int numberUsedChannels) {
+				return new HoTTlogReaderD.EscLogParser(pickerParameters, points, timeSteps_ms, buffer);
+			}
 		},
 		CHANNEL(6, "Channel", "N/A") { //$NON-NLS-1$
 			@Override
 			public BinParser createBinParser(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[][] buffers) {
 				return new HoTTbinReader.ChnBinParser(pickerParameters, points, timeSteps_ms, buffers);
+			}
+
+			@Override
+			public LogParser createLogParser(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[] buffer, int numberUsedChannels) {
+				return new HoTTlogReader.ChnLogParser(pickerParameters, points, timeSteps_ms, buffer, numberUsedChannels);
 			}
 
 			@Override
@@ -319,6 +391,11 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 			@Override
 			public BinParser createBinParserD(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[][] buffers) {
 				return new HoTTbinReaderD.ChnBinParser(pickerParameters, points, timeSteps_ms, buffers);
+			}
+			
+			@Override
+			public LogParser createLogParserD(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[] buffer, int numberUsedChannels) {
+				return new HoTTlogReaderD.ChnLogParser(pickerParameters, points, timeSteps_ms, buffer, numberUsedChannels);
 			}
 		};
 
@@ -344,6 +421,14 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 		 * @param buffers are the required input buffers for parsing (the first dimension corresponds to the buffers count)
 		 */
 		public abstract BinParser createBinParser(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[][] buffers);
+
+		/**
+		 * Takes the parsing input objects in order to avoid parsing method parameters for better performance.
+		 * @param points is the output object
+		 * @param timeSteps_ms is the wrapper object holding the current timestep
+		 * @param buffers are the required input buffers for parsing (the first dimension corresponds to the buffers count)
+		 */
+		public abstract LogParser createLogParser(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[] buffer, int numberUsedChannels);
 
 		/**
 		 * Parse for HoTTAdapter2.
@@ -378,6 +463,15 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 		 * @param buffers are the required input buffers for parsing (the first dimension corresponds to the buffers count)
 		 */
 		public abstract BinParser createBinParserD(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[][] buffers);
+
+		/**
+		 * Parse in situ for HoTTAdapterD without the need to migrate the points.
+		 * Takes the parsing input objects as well as the parsing output object.
+		 * @param points is the output object which might be on single commonly used object for all parser subclasses
+		 * @param timeSteps_ms is the wrapper object holding the current timestep
+		 * @param buffers are the required input buffers for parsing (the first dimension corresponds to the buffers count)
+		 */
+		public abstract LogParser createLogParserD(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[] buffers, int numberUsedChannels);
 
 		public static Sensor fromOrdinal(int ordinal) {
 			return Sensor.VALUES[ordinal];
@@ -1501,9 +1595,24 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 		if (GDE.FILE_ENDING_DOT_BIN.equals(fileEnding)) {
 			HoTTbinHistoReader histoReader = new HoTTbinHistoReader(new PickerParameters(analyzer));
 			histoReader.read(inputStream, truss);
-		} else if (GDE.FILE_ENDING_DOT_LOG.equals(fileEnding)) {
-			// todo implement HoTTlogHistoReader
-		} else {
+		}
+		else if (GDE.FILE_ENDING_DOT_LOG.equals(fileEnding)) {
+			HashMap<String, String> infoHeader = null;
+			try (BufferedInputStream info_in = new BufferedInputStream(inputStream.get())) {
+				infoHeader = new InfoParser((s) -> {
+				}).getFileInfo(info_in, truss.getVault().getLoadFilePath(), truss.getVault().getLogFileLength());
+				if (infoHeader == null || infoHeader.isEmpty()) return;
+
+				EnumSet<Sensor> detectedSensors = Sensor.getSetFromDetected(infoHeader.get(HoTTAdapter.DETECTED_SENSOR));
+				if (!Sensor.getChannelNumbers(detectedSensors).contains(truss.getVault().getVaultChannelNumber())) return;
+
+				if (Integer.parseInt(infoHeader.get(HoTTAdapter.LOG_COUNT)) <= HoTTbinReader.NUMBER_LOG_RECORDS_MIN / 5) return;
+
+				HoTTlogHistoReader histoReader = new HoTTlogHistoReader(new PickerParameters(analyzer), infoHeader);
+				histoReader.read(inputStream, truss);
+			}
+		}
+		else {
 			throw new UnsupportedOperationException(truss.getVault().getLoadFilePath());
 		}
 	}
@@ -1879,18 +1988,39 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 
 						try {
 							// use a copy of the picker parameters to avoid changes by the reader
-							if (HoTTAdapter.this.getClass().equals(HoTTAdapter.class))
-								HoTTbinReader.read(filePath.toString(), new PickerParameters(HoTTAdapter.this.pickerParameters));
-							else if (HoTTAdapter.this.getClass().equals(HoTTAdapter2.class))
-								HoTTbinReader2.read(filePath.toString(), new PickerParameters(HoTTAdapter.this.pickerParameters));
-							else if (HoTTAdapter.this.getClass().equals(HoTTAdapter2M.class))
-								HoTTbinReader2.read(filePath.toString(), new PickerParameters(HoTTAdapter.this.pickerParameters));
-							else if (HoTTAdapter.this.getClass().equals(HoTTAdapterD.class))
-								HoTTbinReaderD.read(filePath.toString(), new PickerParameters(HoTTAdapter.this.pickerParameters));
-							else if (HoTTAdapter.this.getClass().equals(HoTTAdapterM.class))
-								HoTTbinReader.read(filePath.toString(), new PickerParameters(HoTTAdapter.this.pickerParameters));
-							else if (HoTTAdapter.this.getClass().equals(HoTTAdapterX.class))
+							if (HoTTAdapter.this.getClass().equals(HoTTAdapter.class)) {
+								if (filePath.getFileName().toString().endsWith(GDE.FILE_ENDING_BIN))
+									HoTTbinReader.read(filePath.toString(), new PickerParameters(HoTTAdapter.this.pickerParameters));
+								else if (filePath.getFileName().toString().endsWith(GDE.FILE_ENDING_LOG)) 
+									HoTTlogReader.read(filePath.toString(), new PickerParameters(HoTTAdapter.this.pickerParameters));
+							}
+							else if (HoTTAdapter.this.getClass().equals(HoTTAdapter2.class)) {
+								if (filePath.getFileName().toString().endsWith(GDE.FILE_ENDING_BIN))
+									HoTTbinReader2.read(filePath.toString(), new PickerParameters(HoTTAdapter.this.pickerParameters));
+								else if (filePath.getFileName().toString().endsWith(GDE.FILE_ENDING_LOG)) 
+									HoTTlogReader2.read(filePath.toString(), new PickerParameters(HoTTAdapter.this.pickerParameters));
+							}
+							else if (HoTTAdapter.this.getClass().equals(HoTTAdapter2M.class)) {
+								if (filePath.getFileName().toString().endsWith(GDE.FILE_ENDING_BIN))
+									HoTTbinReader2.read(filePath.toString(), new PickerParameters(HoTTAdapter.this.pickerParameters));
+								else if (filePath.getFileName().toString().endsWith(GDE.FILE_ENDING_LOG)) 
+									HoTTlogReader2.read(filePath.toString(), new PickerParameters(HoTTAdapter.this.pickerParameters));
+							}
+							else if (HoTTAdapter.this.getClass().equals(HoTTAdapterD.class)) {
+								if (filePath.getFileName().toString().endsWith(GDE.FILE_ENDING_BIN))
+									HoTTbinReaderD.read(filePath.toString(), new PickerParameters(HoTTAdapter.this.pickerParameters));
+								else if (filePath.getFileName().toString().endsWith(GDE.FILE_ENDING_LOG)) 
+									HoTTlogReaderD.read(filePath.toString(), new PickerParameters(HoTTAdapter.this.pickerParameters));
+							}
+							else if (HoTTAdapter.this.getClass().equals(HoTTAdapterM.class)) {
+								if (filePath.getFileName().toString().endsWith(GDE.FILE_ENDING_BIN))
+									HoTTbinReader.read(filePath.toString(), new PickerParameters(HoTTAdapter.this.pickerParameters));
+								else if (filePath.getFileName().toString().endsWith(GDE.FILE_ENDING_LOG)) 
+									HoTTlogReader.read(filePath.toString(), new PickerParameters(HoTTAdapter.this.pickerParameters));
+							}
+							else if (HoTTAdapter.this.getClass().equals(HoTTAdapterX.class)) {
 								HoTTbinReaderX.read(filePath.toString(), new PickerParameters(HoTTAdapter.this.pickerParameters));
+							}
 							else
 								throw new UnsupportedOperationException();
 
@@ -1898,13 +2028,22 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 								Channel selectedChannel = Settings.getInstance().isFirstRecordSetChoice() ? HoTTAdapter.this.channels.get(1) : HoTTAdapter.this.application.getActiveChannel();
 								if (HoTTAdapter.this.getClass().equals(HoTTAdapter.class) || HoTTAdapter.this.getClass().equals(HoTTAdapterM.class) || HoTTAdapter.this.getClass().equals(HoTTAdapterX.class)) {
 									HoTTbinReader.channels.switchChannel(selectedChannel.getName());
-								} else if (HoTTAdapter.this.getClass().equals(HoTTAdapter2.class) || HoTTAdapter.this.getClass().equals(HoTTAdapter2M.class)) {
+								}
+								else if (HoTTAdapter.this.getClass().equals(HoTTAdapter2.class) || HoTTAdapter.this.getClass().equals(HoTTAdapter2M.class)) {
 									HoTTbinReader.channels.switchChannel(selectedChannel.getName());
-									selectedChannel.switchRecordSet(HoTTbinReader2.recordSet.getName());
-								} else if (HoTTAdapter.this.getClass().equals(HoTTAdapterD.class)) {
+									if (filePath.getFileName().toString().endsWith(GDE.FILE_ENDING_BIN))
+										selectedChannel.switchRecordSet(HoTTbinReader2.recordSet.getName());
+									else if (filePath.getFileName().toString().endsWith(GDE.FILE_ENDING_LOG)) 
+										selectedChannel.switchRecordSet(HoTTlogReader2.recordSet.getName());						
+								}
+								else if (HoTTAdapter.this.getClass().equals(HoTTAdapterD.class)) {
 									HoTTbinReader.channels.switchChannel(selectedChannel.getName());
-									selectedChannel.switchRecordSet(HoTTbinReaderD.recordSet.getName());
-								} else
+									if (filePath.getFileName().toString().endsWith(GDE.FILE_ENDING_BIN))
+										selectedChannel.switchRecordSet(HoTTbinReaderD.recordSet.getName());
+									else if (filePath.getFileName().toString().endsWith(GDE.FILE_ENDING_LOG)) 
+										selectedChannel.switchRecordSet(HoTTlogReaderD.recordSet.getName());						
+								}
+								else
 									throw new UnsupportedOperationException();
 								isInitialSwitched = true;
 							}

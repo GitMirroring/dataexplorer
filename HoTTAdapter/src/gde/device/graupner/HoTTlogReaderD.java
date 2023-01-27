@@ -58,16 +58,16 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 	*/
 	public static synchronized void read(String filePath, PickerParameters newPickerParameters) throws Exception {
 		final String $METHOD_NAME = "read";
-		HoTTlogReader.pickerParameters = newPickerParameters;
+		HoTTlogReaderD.pickerParameters = newPickerParameters;
 		HashMap<String, String> fileInfoHeader = getFileInfo(new File(filePath), newPickerParameters);
-		HoTTlogReader.detectedSensors = Sensor.getSetFromDetected(fileInfoHeader.get(HoTTAdapter.DETECTED_SENSOR));
+		HoTTlogReaderD.detectedSensors = Sensor.getSetFromDetected(fileInfoHeader.get(HoTTAdapter.DETECTED_SENSOR));
 
 		final File file = new File(fileInfoHeader.get(HoTTAdapter.FILE_PATH));
 		long startTime = System.nanoTime() / 1000000;
 		FileInputStream file_input = new FileInputStream(file);
 		DataInputStream data_in = new DataInputStream(file_input);
-		long fileSize = file.length();
-		HoTTAdapterD device = (HoTTAdapterD) HoTTbinReader.application.getActiveDevice();
+		HoTTAdapter2 device = (HoTTAdapter2) HoTTbinReader.application.getActiveDevice();
+		HoTTlogReaderD.isHoTTAdapter2 = HoTTlogReaderD.application.getActiveDevice() instanceof HoTTAdapter2;
 		int recordSetNumber = HoTTbinReader.channels.get(1).maxSize() + 1;
 		String recordSetName = GDE.STRING_EMPTY;
 		String recordSetNameExtend = getRecordSetExtend(file);
@@ -79,9 +79,6 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 		boolean isGeneralData = false;
 		boolean isElectricData = false;
 		boolean isMotorDriverData = false;
-		boolean isVarioDetected = false;
-		boolean isGPSdetected = false;
-		boolean isESCdetected = false;
 		HoTTlogReaderD.recordSet = null;
 		HoTTlogReaderD.isJustMigrated = false;
 		// 0=RX-TX-VPacks, 1=RXSQ, 2=Strength, 3=VPacks, 4=Tx, 5=Rx, 6=VoltageRx, 7=TemperatureRx 8=VoltageRxMin 9=EventRx
@@ -100,28 +97,34 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 		// 129=Timing(empty) 130=Temperature_aux 131=Gear 132=YGEGenExt 133=MotStatEscNr 134=misc ESC_15 135=VersionESC
 		// 136=Test 00 137=Test 01.. 149=Test 12
 		HoTTlogReaderD.points = new int[device.getNumberOfMeasurements(channelNumber)];
-		HoTTbinReader.timeStep_ms = 0;
+		long[] timeSteps_ms = new long[] {0};
 		int numberLogChannels = Integer.valueOf(fileInfoHeader.get("LOG NOB CHANNEL"));
 		boolean isASCII = fileInfoHeader.get("LOG TYPE").contains("ASCII");
-		int rawDataBlockSize = 66 + numberLogChannels * 2;
-		int asciiDataBlockSize = 202 + numberLogChannels * 5;
-		HoTTbinReader.dataBlockSize = isASCII ? asciiDataBlockSize : rawDataBlockSize;
-		HoTTbinReader.buf = new byte[HoTTbinReader.dataBlockSize];
-		int[] valuesChannel = new int[23];
-		int[] valuesVario = new int[27];
-		valuesVario[2] = 100000;
-		int[] valuesGPS = new int[24];
-		int[] valuesGAM = new int[26];
-		int[] valuesEAM = new int[31];
-		int[] valuesESC = new int[30];
-		int logTimeStep = 1000/Integer.valueOf(fileInfoHeader.get("COUNTER").split("/")[1].split(GDE.STRING_BLANK)[0]);
-		PackageLossDeque reverseChannelPackageLossCounter = new PackageLossDeque(logTimeStep);
-		PackageLoss	lostPackages = new PackageLoss();
-		int countPackageLoss = 0;
-		HoTTbinReader.isTextModusSignaled = false;
+		int rawDataBlockSize = Integer.parseInt(fileInfoHeader.get(HoTTAdapter.RAW_LOG_SIZE));
+		int asciiDataBlockSize = Integer.parseInt(fileInfoHeader.get(HoTTAdapter.ASCII_LOG_SIZE));
+    int[] valuesRec = new int[10];
+    int[] valuesChn = new int[23];
+    int[] valuesVar = new int[27];
+    int[] valuesGPS = new int[24];
+    int[] valuesGAM = new int[26];
+    int[] valuesEAM = new int[31];
+    int[] valuesESC = new int[30];
+		HoTTlogReaderD.dataBlockSize = isASCII ? asciiDataBlockSize : rawDataBlockSize;
+		HoTTlogReaderD.buf = new byte[HoTTbinReader.dataBlockSize];
+		HoTTlogReaderD.rcvLogParser = (RcvLogParser) Sensor.RECEIVER.createLogParser(HoTTbinReader.pickerParameters, valuesRec, timeSteps_ms, buf, numberLogChannels);
+		HoTTlogReaderD.chnLogParser = (ChnLogParser) Sensor.CHANNEL.createLogParser(HoTTbinReader.pickerParameters, valuesChn, timeSteps_ms, buf, numberLogChannels);
+		HoTTlogReaderD.varLogParser = (VarLogParserD) Sensor.VARIO.createLogParserD(HoTTbinReader.pickerParameters, valuesVar, timeSteps_ms, buf, numberLogChannels);
+		HoTTlogReaderD.gpsLogParser = (GpsLogParser) Sensor.GPS.createLogParser(HoTTbinReader.pickerParameters, valuesGPS, timeSteps_ms, buf, numberLogChannels);
+		HoTTlogReaderD.gamLogParser = (GamLogParser) Sensor.GAM.createLogParser(HoTTbinReader.pickerParameters, valuesGAM, timeSteps_ms, buf, numberLogChannels);
+		HoTTlogReaderD.eamLogParser = (EamLogParser) Sensor.EAM.createLogParser(HoTTbinReader.pickerParameters, valuesEAM, timeSteps_ms, buf, numberLogChannels);
+		HoTTlogReaderD.escLogParser = (EscLogParser) Sensor.ESC.createLogParser(HoTTbinReader.pickerParameters, valuesESC, timeSteps_ms, buf, numberLogChannels);
+		int logTimeStep_ms = 1000/Integer.valueOf(fileInfoHeader.get("COUNTER").split("/")[1].split(GDE.STRING_BLANK)[0]);
+		boolean isVarioDetected = false;
+		boolean isGPSdetected = false;
+		boolean isESCdetected = false;
 		int logDataOffset = Integer.valueOf(fileInfoHeader.get("LOG DATA OFFSET"));
-		long numberDatablocks = (fileSize - logDataOffset) / HoTTlogReaderD.dataBlockSize;
-		long startTimeStamp_ms = getStartTimeStamp(fileInfoHeader.get("LOG START TIME"), getStartTimeStamp(file.getName(), file.lastModified(), numberDatablocks));
+		long numberDatablocks = Long.parseLong(fileInfoHeader.get(HoTTAdapter.LOG_COUNT));
+		long startTimeStamp_ms = HoTTbinReader.getStartTimeStamp(fileInfoHeader.get("LOG START TIME"), HoTTbinReader.getStartTimeStamp(file.getName(), file.lastModified(), numberDatablocks));
 		String date = new SimpleDateFormat("yyyy-MM-dd").format(startTimeStamp_ms); //$NON-NLS-1$
 		String dateTime = new SimpleDateFormat("yyyy-MM-dd, HH:mm:ss").format(startTimeStamp_ms); //$NON-NLS-1$
 		RecordSet tmpRecordSet;
@@ -145,12 +148,25 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 
 			//read all the data blocks from the file and parse
 			data_in.skip(logDataOffset);
-			for (int i = 0; i < numberDatablocks; i++) {
+			int i = 0;
+			for (; i < numberDatablocks; i++) { //skip log entries before transmitter active
+				data_in.read(HoTTbinReader.buf);
+				if (isASCII) { //convert ASCII log data to hex
+					HoTTlogReader.convertAscii2Raw(rawDataBlockSize, HoTTbinReader.buf);
+				}
+				//log.logp(Level.OFF, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, StringHelper.byte2Hex4CharString(HoTTbinReader.buf, rawDataBlockSize));
+				if (HoTTbinReader.buf[8] == 0 || HoTTbinReader.buf[9] == 0 || HoTTbinReader.buf[24] == 0x1F) { // tx, rx, rx sensitivity data
+					continue;
+				}
+				break;
+			}
+			
+			for (; i < numberDatablocks; i++) {
 				data_in.read(HoTTbinReader.buf);
 				if (log.isLoggable(Level.FINE)) {
 					if (isASCII)
 						log.logp(Level.FINE, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, new String(HoTTbinReader.buf));
-					else 
+					else
 						log.logp(Level.FINE, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, StringHelper.byte2Hex4CharString(HoTTbinReader.buf, HoTTbinReader.buf.length));
 				}
 
@@ -168,8 +184,8 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 							log.log(Level.INFO, String.format("Sensor %02X", HoTTbinReader.buf[26]));
 						}
 					}
-					reverseChannelPackageLossCounter.add(1);
-					HoTTlogReaderD.points[0] = reverseChannelPackageLossCounter.getPercentage() * 1000;
+					HoTTlogReaderD.rcvLogParser.trackPackageLoss(true);
+
 					//create and fill sensor specific data record sets
 					if (log.isLoggable(Level.FINEST)) {
 						log.logp(Level.FINEST, HoTTbinReader.$CLASS_NAME, $METHOD_NAME,
@@ -179,62 +195,63 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 					//fill receiver data
 					if (HoTTbinReader.buf[24] != 0x1F) { //receiver sensitive data
 						//in 0=RX-TX-VPacks, 1=RXSQ, 2=Strength, 3=VPacks, 4=Tx, 5=Rx, 6=VoltageRx, 7=TemperatureRx 8=VoltageRxMin 9=EventRx
-						isReceiverData = parseReceiver(HoTTbinReader.buf, HoTTlogReaderD.points);
+						isReceiverData = HoTTlogReaderD.rcvLogParser.parse();
+						System.arraycopy(valuesRec, 0, HoTTlogReaderD.points, 0, 10); //migrate/copy receiver points
 					}
 
-					parseChannel(HoTTbinReader.buf, valuesChannel, numberLogChannels);
+					HoTTlogReaderD.chnLogParser.parse();
 					//in 0=FreCh, 1=Tx, 2=Rx, 3=Ch 1, 4=Ch 2 .. 18=Ch 16 19=PowerOff 20=BattLow 21=Reset 22=Warning
 					//out 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=PowerOff, 104=BatterieLow, 105=Reset, 106=reserv
-					System.arraycopy(valuesChannel, 3, HoTTlogReaderD.points, 87, 20); //copy channel data and events, warning
+					System.arraycopy(valuesChn, 3, HoTTlogReaderD.points, 87, 20); //copy channel data and events, warning
 
 					switch ((byte) (HoTTbinReader.buf[26] & 0xFF)) { //actual sensor
 					case HoTTAdapter.ANSWER_SENSOR_VARIO_19200:
-						isVarioData = parseVario(HoTTbinReader.buf, valuesVario, true);
+						isVarioData = HoTTlogReaderD.varLogParser.parse();
 						if (isVarioData && isReceiverData) {
-							migrateAddPoints(isVarioData, isGPSData, isGeneralData, isElectricData, isMotorDriverData, channelNumber, valuesVario, valuesGPS, valuesGAM, valuesEAM, valuesESC);
+							migrateAddPoints(HoTTlogReaderD.varLogParser.getTimeStep_ms(), isVarioData, isGPSData, isGeneralData, isElectricData, isMotorDriverData, channelNumber, valuesVar, valuesGPS, valuesGAM, valuesEAM, valuesESC);
 							isReceiverData = false;
-							
+
 							if (!isVarioDetected) {
 								HoTTAdapter2.updateVarioTypeDependent((HoTTbinReader.buf[65] & 0xFF), device, HoTTlogReaderD.recordSet);
-								isVarioDetected = true;								
+								isVarioDetected = true;
 							}
 						}
 						break;
 					case HoTTAdapter.ANSWER_SENSOR_GPS_19200:
-						isGPSData = parseGPS(HoTTbinReader.buf, valuesGPS, true);
+						isGPSData = HoTTlogReaderD.gpsLogParser.parse();
 						if (isGPSData && isReceiverData) {
-							migrateAddPoints(isVarioData, isGPSData, isGeneralData, isElectricData, isMotorDriverData, channelNumber, valuesVario, valuesGPS, valuesGAM, valuesEAM, valuesESC);
+							migrateAddPoints(HoTTlogReaderD.gpsLogParser.getTimeStep_ms(), isVarioData, isGPSData, isGeneralData, isElectricData, isMotorDriverData, channelNumber, valuesVar, valuesGPS, valuesGAM, valuesEAM, valuesESC);
 							isReceiverData = false;
 
 							if (!isGPSdetected) {
 								HoTTAdapter2.updateGpsTypeDependent((HoTTbinReader.buf[65] & 0xFF), device, HoTTlogReaderD.recordSet, 0);
-								isGPSdetected = true;					
+								isGPSdetected = true;
 							}
 						}
 						break;
 					case HoTTAdapter.ANSWER_SENSOR_GENERAL_19200:
-						isGeneralData = parseGAM(HoTTbinReader.buf, valuesGAM, HoTTlogReaderD.recordSet, true);
+						isGeneralData = HoTTlogReaderD.gamLogParser.parse();
 						if (isGeneralData && isReceiverData) {
-							migrateAddPoints(isVarioData, isGPSData, isGeneralData, isElectricData, isMotorDriverData, channelNumber, valuesVario, valuesGPS, valuesGAM, valuesEAM, valuesESC);
+							migrateAddPoints(HoTTlogReaderD.gamLogParser.getTimeStep_ms(), isVarioData, isGPSData, isGeneralData, isElectricData, isMotorDriverData, channelNumber, valuesVar, valuesGPS, valuesGAM, valuesEAM, valuesESC);
 							isReceiverData = false;
 						}
 						break;
 					case HoTTAdapter.ANSWER_SENSOR_ELECTRIC_19200:
-						isElectricData = parseEAM(HoTTbinReader.buf, valuesEAM, HoTTlogReaderD.recordSet, true);
+						isElectricData = HoTTlogReaderD.eamLogParser.parse();
 						if (isElectricData && isReceiverData) {
-							migrateAddPoints(isVarioData, isGPSData, isGeneralData, isElectricData, isMotorDriverData, channelNumber, valuesVario, valuesGPS, valuesGAM, valuesEAM, valuesESC);
+							migrateAddPoints(HoTTlogReaderD.eamLogParser.getTimeStep_ms(), isVarioData, isGPSData, isGeneralData, isElectricData, isMotorDriverData, channelNumber, valuesVar, valuesGPS, valuesGAM, valuesEAM, valuesESC);
 							isReceiverData = false;
 						}
 						break;
 					case HoTTAdapter.ANSWER_SENSOR_MOTOR_DRIVER_19200:
-						isMotorDriverData = parseESC(HoTTbinReader.buf, valuesESC, HoTTlogReaderD.recordSet);
+						isMotorDriverData = HoTTlogReaderD.escLogParser.parse(HoTTlogReaderD.recordSet, HoTTlogReaderD.escLogParser.getTimeStep_ms());
 						if (isMotorDriverData && isReceiverData) {
-							migrateAddPoints(isVarioData, isGPSData, isGeneralData, isElectricData, isMotorDriverData, channelNumber, valuesVario, valuesGPS, valuesGAM, valuesEAM, valuesESC);
+							migrateAddPoints(HoTTlogReaderD.escLogParser.getTimeStep_ms(), isVarioData, isGPSData, isGeneralData, isElectricData, isMotorDriverData, channelNumber, valuesVar, valuesGPS, valuesGAM, valuesEAM, valuesESC);
 							isReceiverData = false;
-							
+
 							if (!isESCdetected) {
 								HoTTAdapterD.updateEscTypeDependent((HoTTbinReader.buf[65] & 0xFF), device, HoTTlogReaderD.recordSet);
-								isESCdetected = true;								
+								isESCdetected = true;
 							}
 						}
 						break;
@@ -243,45 +260,35 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 						break;
 					}
 
-					if (HoTTlogReaderD.isJustMigrated && countPackageLoss > 0) {
-						lostPackages.add(countPackageLoss);
-						countPackageLoss = 0;
-					}
-
 					if (isReceiverData) { //this will only be true if no other sensor is connected
-						HoTTlogReaderD.recordSet.addPoints(HoTTlogReaderD.points, HoTTbinReader.timeStep_ms);
+						HoTTlogReaderD.recordSet.addPoints(HoTTlogReaderD.points, HoTTlogReaderD.rcvLogParser.getTimeStep_ms());
 						isReceiverData = false;
 					}
-					else if (!HoTTlogReaderD.isJustMigrated) { //this will only be true if no other sensor is connected and channel 4
-						HoTTlogReaderD.recordSet.addPoints(HoTTlogReaderD.points, HoTTbinReader.timeStep_ms);
+					else if (!HoTTlogReaderD.isJustMigrated) { //this will only be true if no other sensor is connected
+						HoTTlogReaderD.recordSet.addPoints(HoTTlogReaderD.points, HoTTlogReaderD.chnLogParser.getTimeStep_ms());
+					}
+
+					timeSteps_ms[BinParser.TIMESTEP_INDEX] += logTimeStep_ms;// add default time step given by log msec
+
+					if (HoTTlogReaderD.isJustMigrated) {
+						HoTTlogReaderD.isJustMigrated = !HoTTlogReaderD.rcvLogParser.updateLossStatistics();
 					}
 					HoTTlogReaderD.isJustMigrated = false;
 
-					HoTTbinReader.timeStep_ms += logTimeStep;// add default time step from log record of 100 msec
-
 					if (i % progressIndicator == 0) GDE.getUiNotification().setProgress((int) (i * 100 / numberDatablocks));
 				}
-					else { //skip empty block, but add time step
-						if (log.isLoggable(Level.FINE)) log.log(Level.FINE, "-->> Found tx=rx=0 dBm");
+				else { //skip empty block, but add time step
+					if (log.isLoggable(Level.FINE)) log.log(Level.FINE, "-->> Found tx=rx=0 dBm");
 
-						reverseChannelPackageLossCounter.add(0);
-						HoTTlogReaderD.points[0] = reverseChannelPackageLossCounter.getPercentage() * 1000;
-						++countPackageLoss; // add up lost packages in telemetry data
+					HoTTlogReaderD.rcvLogParser.trackPackageLoss(false);
 
-						parseChannel(HoTTbinReader.buf, valuesChannel, numberLogChannels);
-						//in 0=FreCh, 1=Tx, 2=Rx, 3=Ch 1, 4=Ch 2 .. 18=Ch 16 19=PowerOff 20=BattLow 21=Reset 22=Warning
-						System.arraycopy(valuesChannel, 3, HoTTlogReaderD.points, 87, 20); //copy channel data and events, warning
-						HoTTlogReaderD.recordSet.addPoints(HoTTlogReaderD.points, HoTTbinReader.timeStep_ms);
+					HoTTlogReaderD.chnLogParser.parse();
+					//in 0=FreCh, 1=Tx, 2=Rx, 3=Ch 1, 4=Ch 2 .. 18=Ch 16 19=PowerOff 20=BattLow 21=Reset 22=Warning
+					System.arraycopy(valuesChn, 3, HoTTlogReaderD.points, 87, 20); //copy channel data and events, warning
+					HoTTlogReaderD.recordSet.addPoints(HoTTlogReaderD.points, HoTTlogReaderD.chnLogParser.getTimeStep_ms());
 
-						HoTTbinReader.timeStep_ms += logTimeStep;
-						//reset buffer to avoid mixing data >> 20 Jul 14, not any longer required due to protocol change requesting next sensor data block
-						//logCountVario = logCountGPS = logCountGeneral = logCountElectric = logCountMotorDriver = 0;
-					}
-//				} //switch into text modus - telemetry menu
-//				else if (!HoTTbinReader.isTextModusSignaled) {
-//					HoTTbinReader.isTextModusSignaled = true;
-//					HoTTbinReader.application.openMessageDialogAsync(Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGW2404));
-//				}
+					timeSteps_ms[BinParser.TIMESTEP_INDEX] += logTimeStep_ms;
+				}
 			}
 			Sensor altitudeClimbSensorSelection = pickerParameters.altitudeClimbSensorSelection == 0 ? null : Sensor.fromOrdinal(pickerParameters.altitudeClimbSensorSelection);
 			if (pickerParameters.altitudeClimbSensorSelection == 0 || !detectedSensors.contains(Sensor.fromOrdinal(pickerParameters.altitudeClimbSensorSelection))) { //auto
@@ -294,17 +301,18 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 				else if (isVarioData)
 					altitudeClimbSensorSelection = Sensor.VARIO;
 			}
+			HoTTlogReaderD.rcvLogParser.finalUpdateLossStatistics();
 			String packageLossPercentage = tmpRecordSet.getRecordDataSize(true) > 0 
-					? String.format("%.1f", (lostPackages.getLossTotal() * 100. / numberDatablocks)) 
+					? String.format("%.1f", HoTTlogReaderD.rcvLogParser.getLostPackages().percentage) 
 					: "100";
 			HoTTbinReader.detectedSensors.add(Sensor.CHANNEL);
 			tmpRecordSet.setRecordSetDescription(tmpRecordSet.getRecordSetDescription()
-					+ Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] { lostPackages.getLossTotal() + countPackageLoss, lostPackages.getLossTotal(), packageLossPercentage, lostPackages.getStatistics() })
+					+ Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] { HoTTlogReaderD.rcvLogParser.getLossTotal(), HoTTlogReader.rcvLogParser.getLostPackages().lossTotal, packageLossPercentage, HoTTlogReader.rcvLogParser.getLostPackages().getStatistics() })
 					+ String.format(" - Sensor: %s", HoTTlogReaderD.detectedSensors.toString())
 					+ (altitudeClimbSensorSelection != null && (detectedSensors.contains(Sensor.fromOrdinal(pickerParameters.altitudeClimbSensorSelection)) || detectedSensors.contains(altitudeClimbSensorSelection))
 							? String.format(" - %s = %s", Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGT2419), altitudeClimbSensorSelection)
-									: ""));
-			log.logp(Level.WARNING, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, "skipped number receiver data due to package loss = " + lostPackages.getLossTotal()); //$NON-NLS-1$
+							: ""));
+			log.logp(Level.WARNING, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, "skipped number receiver data due to package loss = " + HoTTlogReaderD.rcvLogParser.getLostPackages().lossTotal); //$NON-NLS-1$
 			log.logp(Level.TIME, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, "read time = " + StringHelper.getFormatedTime("mm:ss:SSS", (System.nanoTime() / 1000000 - startTime))); //$NON-NLS-1$ //$NON-NLS-2$
 
 			if (GDE.isWithUi()) {
@@ -327,27 +335,28 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 		}
 	}
 
-	/**
-	 * parse the buffered data to vario values
-	 * @param _buf
-	 */
-	protected static boolean parseVario(byte[] _buf, int[] values, boolean isHoTTAdapter2) {
-		//0=RXSQ, 1=Altitude, 2=Climb 1, 3=Climb 3, 4=Climb 10, 5=VoltageRx, 6=TemperatureRx 7=EventVario
-		//10=Altitude, 11=Climb 1, 12=Climb 3, 13=Climb 10 14=EventVario 15=misc Vario_1 16=misc Vario_2 17=misc Vario_3 18=misc Vario_4 19=misc Vario_5
-		//sensor byte: 26=sensor byte
-		//27=inverseBits 28,29=altitude 30,31=altitude_max 32,33=altitude_min 34,35=climb1 36,37=climb3 38,39=climb10
-		HoTTlogReader.parseVario(_buf, values, isHoTTAdapter2);
+	public static class VarLogParserD extends VarLogParser {
 
-		//if ((_buf[40] & 0xFF) == 0xFF) { // gyro receiver
-		// 136=Test 00 137=Test 01.. 149=Test 12
-			for (int i = 0, j = 0; i < 13; i++, j += 2) {
-				values[i + 14] = DataParser.parse2Short(_buf, 40 + j) * 1000;
-			}
-		//}
-		if (log.isLoggable(Level.FINER)) {
-			printSensorValues(_buf, values, 21);
+		protected VarLogParserD(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[] buffer) {
+			super(pickerParameters, points, timeSteps_ms, buffer);
 		}
-		return true;
+
+		@Override
+		protected boolean parse() {
+			super.parse();
+
+			//if ((_buf[40] & 0xFF) == 0xFF) { // gyro receiver
+			// 136=Test 00 137=Test 01.. 149=Test 12
+				for (int i = 0, j = 0; i < 13; i++, j += 2) {
+					this.points[i + 14] = DataParser.parse2Short(buf, 40 + j) * 1000;
+				}
+			//}
+			if (log.isLoggable(Level.FINER)) {
+				printSensorValues(buf, this.points, 21);
+			}
+			return true;
+		}
+
 	}
 
 	/**
@@ -360,7 +369,7 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 	 * @param channelNumber
 	 * @throws DataInconsitsentException
 	 */
-	public static void migrateAddPoints(boolean isVarioData, boolean isGPSData, boolean isGeneralData, boolean isElectricData, boolean isMotorDriverData, int channelNumber,
+	public static void migrateAddPoints(long timeStep_ms, boolean isVarioData, boolean isGPSData, boolean isGeneralData, boolean isElectricData, boolean isMotorDriverData, int channelNumber,
 			int[] valuesVario, int[] valuesGPS, int[] valuesGAM, int[] valuesEAM, int[] valuesESC)
 			throws DataInconsitsentException {
 		// 0=RX-TX-VPacks, 1=RXSQ, 2=Strength, 3=VPacks, 4=Tx, 5=Rx, 6=VoltageRx, 7=TemperatureRx 8=VoltageRxMin 9=EventRx
@@ -496,7 +505,7 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 			break;
 		}
 
-		HoTTlogReaderD.recordSet.addPoints(HoTTlogReaderD.points, HoTTbinReader.timeStep_ms);
+		HoTTlogReaderD.recordSet.addPoints(HoTTlogReaderD.points, timeStep_ms);
 		HoTTlogReaderD.isJustMigrated = true;
 	}
 }
