@@ -118,7 +118,7 @@ public class iChargerDX8 extends iChargerUsb {
 	 */
 	@Override
 	public int[] getChargePowerMax() {
-		return new int[] {1600, 1600};
+		return new int[] {1100, 1100};
 	}
 
 	/**
