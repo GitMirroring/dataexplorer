@@ -492,12 +492,15 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 			});
 
 			if (!this.settings.isUpdateChecked()) {
-				GDE.display.asyncExec(new Runnable() {
+				//use extra thread since GDE.display.asyncExec seam blocking UI
+				new Thread(new Runnable() {
 					@Override
 					public void run() {
+						long startTime = new Date().getTime();
 						check4update();
+						if (log.isLoggable(Level.TIME)) log.log(Level.TIME, "check4update time = " + StringHelper.getFormatedTime("ss:SSS", (new Date().getTime() - startTime)));
 					}
-				});
+				}, "check4update").start();
 			}
 			this.enableWritingTmpFiles(this.settings.getUsageWritingTmpFiles());
 			log.logp(Level.TIME, DataExplorer.$CLASS_NAME, $METHOD_NAME, "total init time = " + StringHelper.getFormatedTime("ss:SSS", (new Date().getTime() - GDE.StartTime))); //$NON-NLS-1$ //$NON-NLS-2$

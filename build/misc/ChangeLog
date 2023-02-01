@@ -4,6 +4,7 @@ Version 3.7.5 - xx yyy 2023
 Generic changes/fixes 
 	* extend IDevice interface to enable device individual file comment synchronization
 	* enable file comment synchronization
+	* put check for update in a separate thread to avoid blocking UI while download URL not available
 		
 Device specific changes/fixes
 	* HoTTAdapter* change "ServoImpuls GPS" received from SM GPS-Logger to %
