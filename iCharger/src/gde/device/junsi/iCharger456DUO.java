@@ -113,13 +113,20 @@ public class iCharger456DUO extends iChargerUsb {
 	public int getChargeCurrentMaxSyncChannels() {
 		return 700; //*0.1 A
 	}
+	
+	/**
+	 * @return the maximal charge power of device
+	 */
+	public int getDeviceChargePowerMax() {
+		return 2200;
+	}
 
 	/**
 	 * @return the maximal charge power
 	 */
 	@Override
 	public int[] getChargePowerMax() {
-		return new int[] {1500, 1500};
+		return new int[] {1400, 1400};
 	}
 
 	/**

@@ -133,6 +133,13 @@ public class iChargerX6 extends iChargerUsb {
 	 * @return the maximal charge current for channels in sync
 	 */
 	public int getChargeCurrentMaxSyncChannels() { return 0;};
+	
+	/**
+	 * @return the maximal charge power of device
+	 */
+	public int getDeviceChargePowerMax() {
+		return 800;
+	}
 
 	/**
 	 * @return the maximal charge power

@@ -2317,8 +2317,8 @@ public class ChargerDialog extends DeviceDialog {
 		//21 Charge power 
 		this.systemParameters[21] = new ParameterConfigControl(this.grpInputPowerLimits, this.systemValues, 21, GDE.STRING_EMPTY, 
 				Messages.getString(MessageIds.GDE_MSGI2633), 175,  //$NON-NLS-1$
-				String.format("5W - %dW", device.getChargePowerMax()[0]), 280, //$NON-NLS-1$
-				true, 50, 200, 5, device.getChargePowerMax()[0], -5, false);
+				String.format("5W - %dW", device.getDeviceChargePowerMax()), 280, //$NON-NLS-1$
+				true, 50, 200, 5, device.getDeviceChargePowerMax(), -5, false);
 		//22 regEnable
 		this.systemParameters[22] = new ParameterConfigControl(this.grpInputPowerLimits, this.systemValues, 22, 
 				Messages.getString(MessageIds.GDE_MSGT2674), 175, 

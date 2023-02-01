@@ -112,6 +112,13 @@ public class iChargerDX8 extends iChargerUsb {
 	public int getChargeCurrentMaxSyncChannels() {
 		return 500; //*0.1 A
 	}
+	
+	/**
+	 * @return the maximal charge power of device
+	 */
+	public int getDeviceChargePowerMax() {
+		return 1600;
+	}
 
 	/**
 	 * @return the maximal charge power

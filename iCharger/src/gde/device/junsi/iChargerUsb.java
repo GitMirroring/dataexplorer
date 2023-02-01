@@ -832,6 +832,11 @@ public abstract class iChargerUsb extends iCharger implements IDevice {
 	public abstract int getChargeCurrentMaxSyncChannels();
 	
 	/**
+	 * @return the maximal charge power of device
+	 */
+	public abstract int getDeviceChargePowerMax();
+	
+	/**
 	 * @return the maximal charge power
 	 */
 	public abstract int[] getChargePowerMax();

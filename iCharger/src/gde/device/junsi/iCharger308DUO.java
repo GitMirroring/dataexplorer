@@ -110,6 +110,13 @@ public class iCharger308DUO extends iChargerUsb {
 	public int getChargeCurrentMaxSyncChannels() {
 		return 500; //*0.1 A
 	}
+	
+	/**
+	 * @return the maximal charge power of device
+	 */
+	public int getDeviceChargePowerMax() {
+		return 800;
+	}
 
 	/**
 	 * @return the maximal charge power
