@@ -16,6 +16,7 @@ Device specific changes/fixes
 	* HoTTAdapter* harmonize detecting sensors *.log with *.bin
 	* HoTTAdapter* detect transmitter initialize time *.log before data analyze 
 	* HoTTAdapter* support history analyze direct from *.log
+	* HoTTAdapter* correct sigma calculation Rx->Tx PLoss
 	* iChargerUSB* enhance displaying error in configuration dialog 
 	* AVm4s_FV_762 synchronize file comment after edit/change
 	* Herkules III Telemetrie synchronize file comment after edit/change

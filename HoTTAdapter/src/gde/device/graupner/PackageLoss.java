@@ -98,7 +98,7 @@ public class PackageLoss extends Vector<Integer> {
 				for (Integer xi : this) {
 					sumPoweredValues += Math.pow(xi / 1000.0 - average, 2);
 				}
-				this.sigmaValue = Double.valueOf(Math.sqrt(sumPoweredValues / (this.size() - 1)) * 1000).intValue();
+				this.sigmaValue = Math.sqrt(sumPoweredValues / (this.size() - 1)) * 1000;
 			}
 		}
 		return this.sigmaValue;
