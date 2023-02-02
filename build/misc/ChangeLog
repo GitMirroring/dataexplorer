@@ -1,6 +1,6 @@
 Development history / change log, please read from bottom up
 
-Version 3.7.5 - xx yyy 2023
+Version 3.7.5 - 05 Feb 2023
 Generic changes/fixes 
 	* extend IDevice interface to enable device individual file comment synchronization
 	* enable file comment synchronization
