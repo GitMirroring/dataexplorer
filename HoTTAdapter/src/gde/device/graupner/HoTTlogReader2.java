@@ -274,9 +274,7 @@ public class HoTTlogReader2 extends HoTTlogReader {
 
 					timeSteps_ms[BinParser.TIMESTEP_INDEX] += logTimeStep_ms;// add default time step given by log msec
 					
-					if (HoTTlogReader2.isJustMigrated) {
-						HoTTlogReader2.isJustMigrated = !HoTTlogReader2.rcvLogParser.updateLossStatistics();
-					}
+					HoTTlogReader2.isJustMigrated = !HoTTlogReader2.rcvLogParser.updateLossStatistics();
 					HoTTlogReader2.isJustMigrated = false;
 
 

@@ -270,9 +270,7 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 
 					timeSteps_ms[BinParser.TIMESTEP_INDEX] += logTimeStep_ms;// add default time step given by log msec
 
-					if (HoTTlogReaderD.isJustMigrated) {
-						HoTTlogReaderD.isJustMigrated = !HoTTlogReaderD.rcvLogParser.updateLossStatistics();
-					}
+					HoTTlogReaderD.isJustMigrated = !HoTTlogReaderD.rcvLogParser.updateLossStatistics();
 					HoTTlogReaderD.isJustMigrated = false;
 
 					if (i % progressIndicator == 0) GDE.getUiNotification().setProgress((int) (i * 100 / numberDatablocks));

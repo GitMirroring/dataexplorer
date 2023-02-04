@@ -275,8 +275,8 @@ public class HoTTlogHistoReader {
 
 		// read all the data blocks from the file, parse only for the active channel
 		boolean doFullRead = initializeBlocks <= 0;
-		boolean doDataSkip = detectedSensors.size() == 1 && !isChannelsChannelEnabled;
-		int datablocksLimit = (doFullRead ? (int) this.logEntryCount : initializeBlocks) / (doDataSkip ? 10 : 1);
+		//boolean doDataSkip = detectedSensors.size() == 1 && !isChannelsChannelEnabled;
+		int datablocksLimit = doFullRead ? (int) this.logEntryCount : initializeBlocks;
 		int i = 0;
 		for (; i < datablocksLimit; i++) { //skip log entries before transmitter active
 			if (buf.length != data_in.read(buf))
@@ -345,13 +345,14 @@ public class HoTTlogHistoReader {
 						pointsAdder.invoke();
 					}
 				}
+				/*
 				if (doDataSkip) {
 					for (int j = 0; j < 9; j++) {
 						data_in.read(buf);
 						timeSteps_ms[LogParser.TIMESTEP_INDEX] += RECORD_TIMESPAN_MS;
 					}
 				}
-
+				*/
 				timeSteps_ms[LogParser.TIMESTEP_INDEX] += RECORD_TIMESPAN_MS;
 
 			}

@@ -195,8 +195,8 @@ public class HoTTlogHistoReader2 extends HoTTlogHistoReader {
 
 		// read all the data blocks from the file, parse only for the active channel
 		boolean doFullRead = initializeBlocks <= 0;
-		boolean doDataSkip = detectedSensors.size() == 1 && isChannelsEnabled;
-		int datablocksLimit = (doFullRead ? (int) this.logEntryCount : initializeBlocks) / (doDataSkip ? 10 : 1);
+		//boolean doDataSkip = detectedSensors.size() == 1 && !isChannelsEnabled;
+		int datablocksLimit = doFullRead ? (int) this.logEntryCount : initializeBlocks;
 		int i = 0;
 		for (; i < datablocksLimit; i++) { //skip log entries before transmitter active
 			if (buf.length != data_in.read(buf))
@@ -317,20 +317,20 @@ public class HoTTlogHistoReader2 extends HoTTlogHistoReader {
 				else if (isChannelsEnabled && !isJustMigrated) { //this will only be true if no other sensor is connected and channel 4
 					pointsAdder.invoke();
 				}
-				
+				/*
 				if (doDataSkip) {
 					for (int j = 0; j < 9; j++) {
 						data_in.read(buf);
 						timeSteps_ms[LogParser.TIMESTEP_INDEX] += RECORD_TIMESPAN_MS;
 					}
 				}
-
+				*/
 				timeSteps_ms[LogParser.TIMESTEP_INDEX] += RECORD_TIMESPAN_MS;
 				
 				if (isJustMigrated) {
 					pointsAdder.invoke();
-					isJustMigrated = !rcvLogParser.updateLossStatistics();
 				}
+				isJustMigrated = !rcvLogParser.updateLossStatistics();
 				isJustMigrated = false;
 			}
 			else { //skip empty block, but add time step

@@ -321,9 +321,7 @@ public class HoTTlogReader extends HoTTbinReader {
 
 						timeSteps_ms[BinParser.TIMESTEP_INDEX] += logTimeStep_ms;// add time step from log record given in info header
 
-						if (HoTTbinReader.isJustParsed) {
-							HoTTbinReader.isJustParsed = !HoTTlogReader.rcvLogParser.updateLossStatistics();
-						}
+						HoTTbinReader.isJustParsed = !HoTTlogReader.rcvLogParser.updateLossStatistics();
 						
 						if (i % progressIndicator == 0)
 							GDE.getUiNotification().setProgress((int) (i * 100 / numberDatablocks));
