@@ -1,67 +1,51 @@
-GNU DataExplorer - News - comes with Version 3.7.4 - 20 Dec 2022
+GNU DataExplorer - News - comes with Version 3.7.5 - 05 Feb 2023
 
 Generic changes/fixes 
-	* add missing update while switch visibility of record comment in graphics composite
-	* fix scale synchronization problem while synchronization master record contains only zero values
+	* extend IDevice interface to enable device individual file comment synchronization
+	* enable file comment synchronization
+	* put check for update in a separate thread to avoid blocking UI while download URL not available
 		
 Device specific changes/fixes
-	* HoTTAdapter2 - *.log import, correct dependency migrating GAM data
-	* HoTTAdapter* - *.log import, display detected sensors independent of log entry
-	* HoTTAdapter2* - import, add altitude/climb selected sensor to dataset comment
-	* HoTTAdapter* - live-data, add capability recording channel data, add used protocol to description
-	* HoTTAdapter2 - live-data, suppress curve selector update while number of display able records doesn't changed
-	* HoTTAdapter* - fix persistence of channel unit selection
-	* HoTTAdapter* - add Channel as sensor to sensor list, while import or live-date 115200 Baud
-	* HoTTAdapter* - fix visibility of Channels, display all as long as values available
-	* HoTTAdapter* - harmonize RPM parsing to unsigned short value
-	* iChargerUSB* - fix missing update switching async/sync dual channel devices
-	* iChargerUSB* - update some adjustment limit values to latest specification
-	* iCharger458/456DUO - add initial implementation 
-	* iCharger* - suppress curve selector update while number of display records doesn't changed
-	* Ultramat* - suppress curve selector update while number of display records doesn't changed
-	* UltraDuoPlus* - suppress curve selector update while number of display records doesn't changed
-	* Polaron* - suppress curve selector update while number of display records doesn't changed
-	* Akkumatik* - suppress curve selector update while number of display records doesn't changed
-	* eStation* - suppress curve selector update while number of display records doesn't changed
-	* Pulsar3 - suppress curve selector update while number of display records doesn't changed
-	* 4D-Akkumonitor - suppress curve selector update while number of display records doesn't changed
-	* AV4ms_FV_762 - suppress curve selector update while number of display records doesn't changed
-	* CSVSerial* - suppress curve selector update while number of display records doesn't changed
-	* Herkules_III_Telemetry - suppress curve selector update while number of display records doesn't changed
-	* *SpeedMeter - replace device picture to avoid legal problems
-	
-	
-	
-
-Grundlegende Korrekturen/Änderungen
-    * fehlenden Update beim EEin- oder Aus-Blenden des Datensatz Kommentar hinzugefügt
-    * Behebung des Problems der Skalensynchronisation, wenn der Synchronisationsstammdatensatz nur Nullwerte enthält
-    
-Geräte-spezifische Korrekturen/Änderungen
-    * HoTTAdapter2 - *.log Import, Korrektur beim Migrieren von GAM Daten
-    * HoTTAdapter* - *.log Import, zeige erkannte Sensoren unabhängig vom Eintrag im Log selbst an
-    * HoTTAdapter2* - Import, zeige verwendeten Sensor Höhe/Steigen im Datensatzkommentar an
-    * HoTTAdapter* - Live-Daten, Möglichkeit der Kanaldatenaufnahme hinzugefügt, verwendetes Protokoll wird angezeigt
-    * HoTTAdapter2 - Live-Daten, unterdrücke unnötigen Kurvenselektor Update
-    * HoTTAdapter* - Persistenz der Kanal-Einheit korrigiert
-    * HoTTAdapter* - Channel als Sensor beim Import oder Live-Datenaufnahme hinzugefügt
-    * HoTTAdapter* - Korrektur der Sichtbarkeit von Kanälen durchgeführt, solange Werte ungleich Null vorhanden sind
-	* HoTTAdapter* - Harmonisierung des RPM-Parsing auf vorzeichenlosen 2 Byte Wert
-    * iChargerUSB* - Fehlender Update beim Umschalten der Ausgangskonfiguration Sync/async
-    * iChargerUSB* - Update einiger Konfigurationswerte analog zur aktuellen Spezifikation
-    * iCharger458/456DUO - Initiale Implementierung
-    * iCharger* - unterdrücke unnötigen Kurvenselektor Update
-    * Ultramat* - unterdrücke unnötigen Kurvenselektor Update
-    * UltraDuoPlus* - unterdrücke unnötigen Kurvenselektor Update
-    * Polaron* - unterdrücke unnötigen Kurvenselektor Update
-    * Akkumatik* - unterdrücke unnötigen Kurvenselektor Update
-    * eStation* - unterdrücke unnötigen Kurvenselektor Update
-    * Pulsar3 - unterdrücke unnötigen Kurvenselektor Update
-    * 4D-Akkumonitor - unterdrücke unnötigen Kurvenselektor Update
-    * AV4ms_FV_762 - unterdrücke unnötigen Kurvenselektor Update
-    * CSVSerial* - unterdrücke unnötigen Kurvenselektor Update
-    * Herkules_III_Telemetry - unterdrücke unnötigen Kurvenselektor Update
-    * *SpeedMeter - Austausch der Gerätebilder, um rechtliche Probleme zu vermeiden
+	* HoTTAdapter* change "ServoImpuls GPS" received from SM GPS-Logger to %
+	* HoTTAdapter* synchronize initial file comment date with start time stamp of log
+	* HoTTAdapter* synchronize file comment after edit/change
+	* HoTTAdapter* tune Lat/Long initial filter, fix wrong speed reference
+	* HoTTAdapter* lost reverse channel packets calculation correction
+	* HoTTAdapter* support ASCII log import (MZ-16/32)
+	* HoTTAdapter* harmonize detecting sensors *.log with *.bin
+	* HoTTAdapter* detect transmitter initialize time *.log before data analyze 
+	* HoTTAdapter* support history analyze direct from *.log
+	* HoTTAdapter* correct sigma calculation Rx->Tx PLoss
+	* iChargerUSB* enhance displaying error in configuration dialog 
+	* AVm4s_FV_762 synchronize file comment after edit/change
+	* Herkules III Telemetrie synchronize file comment after edit/change
+	* S32 synchronize file comment after edit/change
+	* iChargerUSB* refine udev rules to ignore HID storage
+	* iChargerDX* correct max charge power per channel
+	* iChargerUSB* add interface to differentiate between power per channel and total device power
 
 
+Allgemeine Änderungen/Korrekturen
+    * Erweiterung der IDevice-Schnittstelle, um die Synchronisation einzelner Dateikommentare zu ermöglichen
+    * Ermögliche Synchronisation von Dateikommentaren
+    * separaten Thread für Aktualisierung-Prüfung, um ein Blockieren der Benutzeroberfläche zu vermeiden
+       
+Gerätespezifische Änderungen/Korrekturen
+    * HoTTAdapter* Änderung der Einheit vom SM GPS-Logger empfangener "ServoImpuls GPS" in %
+    * HoTTAdapter* synchronisiert das Datum des anfänglichen Dateikommentars mit dem Startzeitstempel des Logs
+    * HoTTAdapter* Synchronisation Dateikommentar nach Bearbeitung/Änderung
+    * HoTTAdapter* Abstimmen des Lat/Long Initialfilters, falsche Geschwindigkeitsreferenz korrigiert
+    * HoTTAdapter* Korrektur der Berechnung verlorener Rückkanalpakete
+    * HoTTAdapter* Unterstütztung ASCII-Log-Import (MZ-16/32)
+    * HoTTAdapter* Harmonisierung der Sensoren-Erkennung *.log mit *.bin
+    * HoTTAdapter* Erkennung der Initialisierungszeit des Senders *.log Dateien
+    * HoTTAdapter* Unterstütztung der Historien-Analyse direkt aus *.log Dateien
+    * HoTTAdapter* Korrektur der Sigma Berechnung Rx->Tx PLoss
+    * iChargerUSB* Verbesserung der Fehleranzeige im Konfigurationsdialog
+    * AVm4s_FV_762 Synchronisation Dateikommentar nach Bearbeitung/Änderung
+    * Herkules III Telemetrie Synchronisation Dateikommentar nach Bearbeitung/Änderung
+    * S32 Synchronisation Dateikommentar nach Bearbeitung/Änderung
+    * iChargerUSB* Verfeinerung der udev-Regeln, um USB HID-Speicher zu ignorieren
+    * iChargerDX* Maximale Ladeleistung Gerät und pro Kanal korrigiert
+    * iChargerUSB* Methode hinzugefügt, um zwischen der Leistung pro Kanal und der gesamten Geräteleistung zu unterscheiden
 		
