@@ -3192,11 +3192,7 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 	public void check4update() {
 		final String[] versionCheck = FileUtils.isUpdateAvailable();
 		if (Boolean.valueOf(versionCheck[0])) {
-			// if (true) {
-			MessageBox messageDialog = new MessageBox(GDE.shell, SWT.YES | SWT.NO | SWT.ICON_QUESTION);
-			messageDialog.setText(GDE.NAME_LONG);
-			messageDialog.setMessage(Messages.getString(MessageIds.GDE_MSGI0052));
-			if (SWT.YES == messageDialog.open()) {
+			if (SWT.YES == DataExplorer.getInstance().openYesNoMessageDialogSync(Messages.getString(MessageIds.GDE_MSGI0052))) {
 				new Thread("Download") {
 					@Override
 					public void run() {
