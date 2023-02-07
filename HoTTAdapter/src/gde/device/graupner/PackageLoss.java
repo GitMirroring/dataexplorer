@@ -20,6 +20,7 @@ package gde.device.graupner;
 
 import java.util.Locale;
 import java.util.Vector;
+import java.util.logging.Logger;
 
 import gde.GDE;
 
@@ -29,6 +30,7 @@ import gde.GDE;
  */
 public class PackageLoss extends Vector<Integer> {
 	private static final long	serialVersionUID			= -1434896150654661385L;
+	final static Logger														log													= Logger.getLogger(PackageLoss.class.getSimpleName());
 
 	int												lossTotal							= 0;	//total number of lost packages (is summed up while reading the log
 	int												minValue							= 0;
@@ -49,8 +51,10 @@ public class PackageLoss extends Vector<Integer> {
 			this.minValue = this.maxValue = value;
 		}
 		else {
-			if (value > this.maxValue)
+			if (value > this.maxValue) {
 				this.maxValue = value;
+				//log.log(Level.OFF, "this.maxValue = " + value);
+			}
 			else if (value < this.minValue) this.minValue = value;
 		}
 		

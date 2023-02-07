@@ -1569,7 +1569,7 @@ public class HoTTbinReader {
 		 * @return the total number of lost packages (is summed up while reading the log)
 		 */
 		public int getLossTotal() {
-			return this.lostPackages.lossTotal - this.consecutiveLossCounter;
+			return this.lostPackages.lossTotal + this.consecutiveLossCounter;
 		}
 
 		public PackageLoss getLostPackages() {
