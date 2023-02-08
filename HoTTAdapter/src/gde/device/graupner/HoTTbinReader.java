@@ -108,8 +108,6 @@ public class HoTTbinReader {
 	static int																		tmpLongitudeDelta						= 0;
 	static double																	longitudeTolerance					= 1;
 	static long																		lastLongitudeTimeStep				= 0;
-	static int																		countLostPackages						= 0;
-	static PackageLoss														lostPackages								= new PackageLoss();
 
 	static boolean																isJustParsed								= false;
 	static boolean																isReceiverOnly							= false;

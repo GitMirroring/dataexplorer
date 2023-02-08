@@ -6,6 +6,7 @@ Generic changes/fixes
 	
 Device specific changes/fixes
 	* HoTTAdapter correct total package loss calculation
+	* HoTTAdapterX update package loss calculation
 		
 Version 3.7.5 - 05 Feb 2023
 Generic changes/fixes 

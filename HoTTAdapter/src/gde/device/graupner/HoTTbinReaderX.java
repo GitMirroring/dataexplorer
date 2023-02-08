@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.EnumSet;
 import java.util.logging.Logger;
 
 import gde.GDE;
@@ -50,10 +51,6 @@ public class HoTTbinReaderX extends HoTTbinReader {
 	final static int								headerSize			= 27;
 	final static int								footerSize			= 323;
 
-	protected static final boolean	isSensorType[]	= { false, false, false, false, false, false };
-
-	protected static StringBuilder	sensorSignature;
-
 	/**
 	 * convert from RF_RXSQ to strength using lookup table
 	 * @param inValue
@@ -76,7 +73,6 @@ public class HoTTbinReaderX extends HoTTbinReader {
 	 */
 	public static synchronized void read(String filePath, PickerParameters newPickerParameters) throws Exception {
 		HoTTbinReader.pickerParameters = newPickerParameters;
-		HoTTbinReaderX.sensorSignature = new StringBuilder().append(GDE.STRING_LEFT_BRACKET).append(HoTTAdapter.Sensor.RECEIVER.name()).append(GDE.STRING_COMMA);
 		boolean isHoTTV2 = true;
 
 		File inputFile = new File(filePath);
@@ -162,9 +158,8 @@ public class HoTTbinReaderX extends HoTTbinReader {
 		HoTTbinReaderX.bufB = null;
 		HoTTbinReaderX.bufC = null;
 		HoTTbinReaderX.bufD = null;
-		pickerParameters.reverseChannelPackageLossCounter.clear();
-		HoTTbinReaderX.lostPackages.clear();
-		HoTTbinReaderX.countLostPackages = 0;
+		BackChannelPackageLoss rcvBackChnPkgLoss = new BackChannelPackageLoss();
+		HoTTbinReaderX.detectedSensors = EnumSet.of(HoTTAdapter.Sensor.RECEIVER);
 		pickerParameters.isChannelsChannelEnabled = false;
 		int lastCounter = 0x00;
 		int lapTimes = 99;
@@ -181,6 +176,7 @@ public class HoTTbinReaderX extends HoTTbinReader {
 			HoTTbinReader.recordSets.clear();
 
 			//channel data are always contained
+			HoTTbinReaderX.detectedSensors.add(HoTTAdapter.Sensor.CHANNEL);
 			//check if recordSetChannel initialized, transmitter and receiver data always present, but not in the same data rate and signals
 			channel = HoTTbinReaderX.channels.get(2);
 			channel.setFileDescription(HoTTbinReaderX.application.isObjectoriented() ? date + GDE.STRING_BLANK + HoTTbinReaderX.application.getObjectKey() : date);
@@ -222,8 +218,7 @@ public class HoTTbinReaderX extends HoTTbinReader {
 
 				if (lastCounter == 0x00 || lastCounter == ((HoTTbinReaderX.buf[0] & 0xFF) - 1) || (lastCounter == 255 && HoTTbinReaderX.buf[0] == 0)) {
 					if (HoTTbinReaderX.buf[3] != 0 && HoTTbinReaderX.buf[4] != 0) { //buf 3, 4, tx,rx
-						pickerParameters.reverseChannelPackageLossCounter.add(1);
-						HoTTbinReaderX.points_1[0] = pickerParameters.reverseChannelPackageLossCounter.getPercentage() * 1000;
+						rcvBackChnPkgLoss.trackPackageLoss(true, HoTTbinReaderX.points_1);
 						//create and fill sensor specific data record sets
 						if (HoTTbinReaderX.logx.isLoggable(Level.FINER))
 							HoTTbinReaderX.logx.logp(Level.FINER, HoTTbinReaderX.$CLASS_NAMEX, $METHOD_NAME, StringHelper.byte2Hex2CharString(new byte[] { HoTTbinReaderX.buf[7] }, 1) + GDE.STRING_MESSAGE_CONCAT
@@ -315,9 +310,8 @@ public class HoTTbinReaderX extends HoTTbinReader {
 								parseAddReceiver(HoTTbinReaderX.buf1, HoTTbinReaderX.buf2, HoTTbinReaderX.buf4, HoTTbinReaderX.bufD);
 								break;
 							case 02: //ESC 1
-								if (HoTTbinReaderX.isSensorType[HoTTAdapter.Sensor.ESC.ordinal()] == false)
-									HoTTbinReaderX.sensorSignature.append(HoTTAdapter.Sensor.ESC.name()).append(GDE.STRING_COMMA);
-								HoTTbinReaderX.isSensorType[HoTTAdapter.Sensor.ESC.ordinal()] = true;
+								if (!HoTTbinReaderX.detectedSensors.contains(HoTTAdapter.Sensor.ESC))
+									HoTTbinReaderX.detectedSensors.add(HoTTAdapter.Sensor.ESC);
 								parseESC(HoTTbinReaderX.buf3, HoTTbinReaderX.buf4, HoTTbinReaderX.buf5, HoTTbinReaderX.buf6, HoTTbinReaderX.buf7, HoTTbinReaderX.buf8, HoTTbinReaderX.buf9, HoTTbinReaderX.bufA);
 								break;
 							}
@@ -328,19 +322,12 @@ public class HoTTbinReaderX extends HoTTbinReader {
 
 						if (i % progressIndicator == 0) GDE.getUiNotification().setProgress((int) (i * 100 / numberDatablocks));
 
-						if (HoTTbinReaderX.countLostPackages > 0) {
-							HoTTbinReaderX.lostPackages.add(HoTTbinReaderX.countLostPackages);
-							HoTTbinReaderX.countLostPackages = 0;
-						}
+						rcvBackChnPkgLoss.updateLossStatistics();
 					}
 					else { //skip empty block, but add time step
 						if (HoTTbinReaderX.logx.isLoggable(Level.FINE)) HoTTbinReaderX.logx.log(Level.FINE, "-->> Found tx=rx=0 dBm");
 
-						pickerParameters.reverseChannelPackageLossCounter.add(0);
-						HoTTbinReaderX.points_1[0] = pickerParameters.reverseChannelPackageLossCounter.getPercentage() * 1000;
-
-						++HoTTbinReaderX.countLostPackages; // add up lost packages in telemetry data
-						//HoTTbinReaderX.points_1[0] = (int) (countPackageLoss*100.0 / ((HoTTbinReader2.timeStep_ms+10) / 10.0)*1000.0);
+						rcvBackChnPkgLoss.trackPackageLoss(false, HoTTbinReaderX.points_1);
 
 						if (pickerParameters.isChannelsChannelEnabled) {
 							parseAddChannel(HoTTbinReaderX.buf);
@@ -356,13 +343,14 @@ public class HoTTbinReaderX extends HoTTbinReader {
 					HoTTbinReaderX.logx.log(Level.WARNING, new String(HoTTbinReaderX.buf));
 				}
 			}
+			rcvBackChnPkgLoss.finalUpdateLossStatistics();
 			String packageLossPercentage = HoTTbinReaderX.recordSetReceiver.getRecordDataSize(true) > 0 
-					? String.format("%.1f",	(HoTTbinReaderX.lostPackages.getLossTotal() * 100. / numberDatablocks)) 
+					? String.format("%.1f",	rcvBackChnPkgLoss.getLostPackages().percentage) 
 					: "100";
 			HoTTbinReaderX.recordSetReceiver.setRecordSetDescription(tmpRecordSet.getRecordSetDescription()
-					+ Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] { HoTTbinReaderX.lostPackages.getLossTotal() + HoTTbinReaderX.countLostPackages, HoTTbinReaderX.lostPackages.getLossTotal(), packageLossPercentage, HoTTbinReaderX.lostPackages.getStatistics() })
-					+ HoTTbinReaderX.sensorSignature);
-			HoTTbinReaderX.logx.logp(Level.WARNING, HoTTbinReaderX.$CLASS_NAMEX, $METHOD_NAME, "skipped number receiver data due to package loss = " + HoTTbinReaderX.lostPackages.getLossTotal()); //$NON-NLS-1$
+					+ Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGI2404, new Object[] { rcvBackChnPkgLoss.getLossTotal(), rcvBackChnPkgLoss.getLostPackages().lossTotal, packageLossPercentage, rcvBackChnPkgLoss.getLostPackages().getStatistics() })
+					+ String.format(" - Sensor: %s \n", HoTTlogReader.detectedSensors.toString()));
+			HoTTbinReaderX.logx.logp(Level.WARNING, HoTTbinReaderX.$CLASS_NAMEX, $METHOD_NAME, "skipped number receiver data due to package loss = " + rcvBackChnPkgLoss.getLostPackages().lossTotal); //$NON-NLS-1$
 			HoTTbinReaderX.buf = new byte[footerSize];
 			HoTTbinReaderX.buf0 = new byte[lapTimes]; //min
 			HoTTbinReaderX.buf1 = new byte[lapTimes]; //sec
