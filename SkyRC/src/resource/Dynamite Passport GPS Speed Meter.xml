@@ -6,7 +6,7 @@
         <manufacturerURL>https://www.horizonhobby.com/dynamite/</manufacturerURL>
         <group>logger</group>
         <image>Dynamite Passport GPS Speed Meter.jpg</image>
-        <usage>true</usage>
+        <usage>false</usage>
     </Device>
     <TimeBase>
         <name>time</name>
