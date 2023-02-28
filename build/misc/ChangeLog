@@ -2,7 +2,7 @@ Development history / change log, please read from bottom up
 
 Version 3.7.6 - xx yyy 2023
 Generic changes/fixes 
-	*
+	* fix missing scale of another synchronized record in history graphics 
 	
 Device specific changes/fixes
 	* HoTTAdapter correct total package loss calculation

@@ -595,7 +595,8 @@ public final class TrailRecordSet extends AbstractRecordSet {
 				if (record.isScaleSyncMaster()) {
 					resultRecords.add(record);
 				} else if (record.isScaleSynced() && record.getSyncMasterRecordOrdinal() >= 0
-						&& !resultRecords.contains(record.getParent().get(record.getSyncMasterRecordOrdinal())) && record.getParent().isOneSyncableVisible(record.getSyncMasterRecordOrdinal())) {
+						&& !resultRecords.stream().anyMatch(x -> x.getOrdinal() == record.getSyncMasterRecordOrdinal())
+						&& record.getParent().isOneSyncableVisible(record.getSyncMasterRecordOrdinal())) {
 					resultRecords.add(record.getParent().get(record.getSyncMasterRecordOrdinal()));
 				}
 			}

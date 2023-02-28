@@ -499,8 +499,9 @@ public final class GraphicsComposite extends AbstractChartComposite {
 		}
 		// sync scales are used for suites (e.g. boxplot) AND synced records
 		trailRecordSet.updateSyncGraphicsScale(this);
-		for (int i = 0; i < trailRecordSet.getRecordsSortedForDisplay().length; i++) {
-			TrailRecord actualRecord = trailRecordSet.getRecordsSortedForDisplay()[i];
+		TrailRecord[] trailRecordsSortedForDisplay = trailRecordSet.getRecordsSortedForDisplay();
+		for (int i = 0; i < trailRecordsSortedForDisplay.length; i++) {
+			TrailRecord actualRecord = trailRecordsSortedForDisplay[i];
 			boolean isActualRecordEnabled = actualRecord.isVisible() && actualRecord.isDisplayable();
 			if (isActualRecordEnabled) log.fine(() -> String.format("record=%s  isVisible=%b isDisplayable=%b isScaleVisible=%b", //$NON-NLS-1$
 					actualRecord.getName(), actualRecord.isVisible(), actualRecord.isDisplayable(), actualRecord.isScaleSynced(), actualRecord.isScaleVisible()));
@@ -525,8 +526,9 @@ public final class GraphicsComposite extends AbstractChartComposite {
 		boolean isDrawNameInRecordColor = settings.isDrawNameInRecordColor();
 		boolean isDrawNumbersInRecordColor = settings.isDrawNumbersInRecordColor();
 
-		for (int i = 0; i < trailRecordSet.getRecordsSortedForDisplay().length; i++) {
-			TrailRecord actualRecord = trailRecordSet.getRecordsSortedForDisplay()[i];
+		TrailRecord[] trailRecordsSortedForDisplay = trailRecordSet.getRecordsSortedForDisplay();
+		for (int i = 0; i < trailRecordsSortedForDisplay.length; i++) {
+			TrailRecord actualRecord = trailRecordsSortedForDisplay[i];
 			boolean isActualRecordEnabled = actualRecord.isVisible() && actualRecord.isDisplayable();
 			if (isActualRecordEnabled) log.fine(() -> String.format("record=%s  isVisible=%b isDisplayable=%b isScaleSynced=%b isScaleVisible=%b", //$NON-NLS-1$
 					actualRecord.getName(), actualRecord.isVisible(), actualRecord.isDisplayable(), actualRecord.isScaleSynced(), actualRecord.isScaleVisible()));
@@ -557,8 +559,9 @@ public final class GraphicsComposite extends AbstractChartComposite {
 		int numberCurvesRight = 0;
 		int numberCurvesLeft = 0;
 		TrailRecordSet trailRecordSet = retrieveTrailRecordSet();
-		for (int i = 0; i < trailRecordSet.getRecordsSortedForDisplay().length; i++) {
-			TrailRecord tmpRecord = trailRecordSet.getRecordsSortedForDisplay()[i];
+		TrailRecord[] trailRecordsSortedForDisplay = trailRecordSet.getRecordsSortedForDisplay();
+		for (int i = 0; i < trailRecordsSortedForDisplay.length; i++) {
+			TrailRecord tmpRecord = trailRecordsSortedForDisplay[i];
 			if (tmpRecord != null && tmpRecord.isScaleVisible()) {
 				log.finer(() -> "==>> " + tmpRecord.getName() + " isScaleVisible = " + tmpRecord.isScaleVisible()); //$NON-NLS-1$ //$NON-NLS-2$
 				if (tmpRecord.isPositionLeft())

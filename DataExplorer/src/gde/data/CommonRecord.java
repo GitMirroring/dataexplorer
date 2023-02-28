@@ -395,7 +395,7 @@ public abstract class CommonRecord extends AbstractRecord {
 	 * @return the isScaleSynced
 	 */
 	public boolean isScaleSynced() {
-		return this.getAbstractParent().isOneOfSyncableRecord(getName());
+		return this.getAbstractParent().isOneOfSyncableRecord(this.name);
 	}
 
 	/**
