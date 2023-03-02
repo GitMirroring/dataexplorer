@@ -1081,18 +1081,7 @@ public class Record extends AbstractRecord implements IRecord {
 	 */
 	@Override
 	public synchronized Integer get(int index) {
-		if (this.parent.isZoomMode) {
-			index = index + this.zoomOffset;
-			index = index > (elementCount - 1) ? (elementCount - 1) : index;
-			index = index < 0 ? 0 : index;
-		} else if (this.parent.isScopeMode) {
-			index = index + this.parent.scopeModeOffset;
-			index = index > (elementCount - 1) ? (elementCount - 1) : index;
-			index = index < 0 ? 0 : index;
-		} else {
-			index = index > (elementCount - 1) ? (elementCount - 1) : index;
-			index = index < 0 ? 0 : index;
-		}
+		index = getIndex(index);
 		int returnValue = super.get(index);
 		// log.log(Level.INFO, "index=" + index);
 		if (elementCount != 0) {
@@ -1124,6 +1113,26 @@ public class Record extends AbstractRecord implements IRecord {
 			return returnValue;
 		}
 		return 0;
+	}
+
+	/**
+	 * @param index
+	 * @return the index in dependency of zoom mode
+	 */
+	public int getIndex(int index) {
+		if (this.parent.isZoomMode) {
+			index = index + this.zoomOffset;
+			index = index > (elementCount - 1) ? (elementCount - 1) : index;
+			index = index < 0 ? 0 : index;
+		} else if (this.parent.isScopeMode) {
+			index = index + this.parent.scopeModeOffset;
+			index = index > (elementCount - 1) ? (elementCount - 1) : index;
+			index = index < 0 ? 0 : index;
+		} else {
+			index = index > (elementCount - 1) ? (elementCount - 1) : index;
+			index = index < 0 ? 0 : index;
+		}
+		return index;
 	}
 
 	/**

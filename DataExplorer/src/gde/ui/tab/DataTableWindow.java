@@ -361,7 +361,7 @@ public class DataTableWindow extends CTabItem {
 				Channel activeChannel = DataTableWindow.this.channels.getActiveChannel();
 				if (activeChannel != null) {
 					RecordSet activeRecordSet = activeChannel.getActiveRecordSet();
-					if (activeRecordSet != null && activeRecordSet.getRecordDataSize(true) > 0) {
+					if (activeRecordSet != null && activeRecordSet.getRecordDataSize(false) > 0) {
 						TableItem item = (TableItem) event.item;
 						int index = DataTableWindow.this.dataTable.indexOf(item);
 						item.setText(activeRecordSet.getDataTableRow(index, DataTableWindow.this.isAbsoluteDateTime));

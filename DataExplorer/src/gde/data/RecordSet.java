@@ -497,6 +497,7 @@ public final class RecordSet extends AbstractRecordSet {
 	 * @return formatted values as string array including time
 	 */
 	public String[] getDataTableRow(int index, boolean isAbsolute) {
+		index = this.get(0).getIndex(index);
 		String[] dataTableRow = new String[this.size() + 1]; // add time column
 		dataTableRow[0] = this.getFormatedTime_sec(index, isAbsolute);
 		this.device.prepareDataTableRow(this, dataTableRow, index);

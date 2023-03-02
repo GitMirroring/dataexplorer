@@ -756,6 +756,13 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 							DataExplorer.this.menuToolBar.enableScopePointsCombo(false);
 							DataExplorer.this.enableZoomMenuButtons(false);
 							DataExplorer.this.updateGraphicsWindow();
+						} else if ((DataExplorer.this.displayTab.getItem(tabSelectionIndex) instanceof DataTableWindow)) {
+							final Channel activeChannel = Analyzer.getInstance().getActiveChannel();
+							final RecordSet activeRecordSet = activeChannel != null ? activeChannel.getActiveRecordSet() : null;
+							if (activeRecordSet != null) {
+								DataExplorer.this.dataTableTabItem.cleanTable();
+								DataExplorer.this.dataTableTabItem.setRowCount(activeRecordSet.getRecordDataSize(false));
+							}
 						} else {
 							DataExplorer.this.histoExplorer.ifPresent(h -> h.updateVisibleTab(evt));
 						}
@@ -956,7 +963,8 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 
 	/**
 	 * updates the data table with current record set data
-	 * @param requestingRecordSetName
+	 * @param requestingRecordSetName name of the active record set
+	 * @param forceClean true|false clean the table
 	 */
 	public synchronized void updateDataTable(String requestingRecordSetName, final boolean forceClean) {
 		final Channel activeChannel = this.analyzer.getActiveChannel();
@@ -968,7 +976,7 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 					// DataExplorer.this.dataTableTabItem.setAbsoluteDateTime(false);
 					DataExplorer.this.dataTableTabItem.setHeader();
 				}
-				DataExplorer.this.dataTableTabItem.setRowCount(activeRecordSet.getRecordDataSize(true));
+				DataExplorer.this.dataTableTabItem.setRowCount(activeRecordSet.getRecordDataSize(false));
 				DataExplorer.this.dataTableTabItem.updateTopIndex();
 			} else {
 				GDE.display.asyncExec(new Runnable() {
@@ -978,7 +986,7 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 							// DataExplorer.this.dataTableTabItem.setAbsoluteDateTime(false);
 							DataExplorer.this.dataTableTabItem.setHeader();
 						}
-						DataExplorer.this.dataTableTabItem.setRowCount(activeRecordSet.getRecordDataSize(true));
+						DataExplorer.this.dataTableTabItem.setRowCount(activeRecordSet.getRecordDataSize(false));
 						DataExplorer.this.dataTableTabItem.updateTopIndex();
 					}
 				});
@@ -2853,7 +2861,7 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 		Channel activeChannel = this.analyzer.getActiveChannel();
 		RecordSet activeRecordSet = activeChannel != null ? activeChannel.getActiveRecordSet() : null;
 		if (activeRecordSet != null) {
-			this.dataTableTabItem.setRowCount(activeRecordSet.getRecordDataSize(true));
+			this.dataTableTabItem.setRowCount(activeRecordSet.getRecordDataSize(false));
 		}
 	}
 
