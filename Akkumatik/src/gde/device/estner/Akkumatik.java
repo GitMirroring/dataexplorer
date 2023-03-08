@@ -42,6 +42,7 @@ import gde.exception.SerialPortException;
 import gde.io.LogViewReader;
 import gde.messages.Messages;
 import gde.ui.DataExplorer;
+import gde.utils.StringHelper;
 
 /**
  * Akkumatik base device class
@@ -170,7 +171,12 @@ public class Akkumatik extends DeviceConfiguration implements IDevice {
 			System.arraycopy(dataBuffer, offset, sizeBuffer, 0, sizeBuffer.length);
 			lovDataSize = 4 + LogViewReader.parse2Int(sizeBuffer);
 			System.arraycopy(dataBuffer, offset + 4, convertBuffer, 0, lovDataSize);
-			String [] data = new String(convertBuffer).split("�");
+			if (log.isLoggable(java.util.logging.Level.FINE)) {
+				log.log(java.util.logging.Level.FINE, "  Read : " + StringHelper.byte2Hex2CharString(convertBuffer, convertBuffer.length));
+				log.log(java.util.logging.Level.FINE, "0123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789");
+				log.log(java.util.logging.Level.FINE, new String(convertBuffer));
+			}
+			String [] data = new String(convertBuffer).split(new String(new byte[] {(byte) 0xFF}));
 			if (startCycleTime == 0) startCycleTime = this.getProcessingTime(data);
 			timeStep = this.getProcessingTime(data) - startCycleTime;
 			if (lastCycleTime < timeStep) {

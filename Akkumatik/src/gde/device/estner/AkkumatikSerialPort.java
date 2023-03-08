@@ -105,6 +105,6 @@ public class AkkumatikSerialPort extends DeviceCommPort {
 	 * @return
 	 */
 	public String[] getDataArray(byte[] buffer) {
-		return new String(buffer).split("�");
+		return new String(buffer).split(new String(new byte[] {(byte) 0xFF}));
 	}
 }
