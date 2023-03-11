@@ -18,14 +18,15 @@
 ****************************************************************************************/
 package gde.device.estner;
 
+import java.io.IOException;
+import java.util.logging.Logger;
+
 import gde.comm.DeviceCommPort;
 import gde.device.IDevice;
 import gde.device.InputTypes;
 import gde.exception.TimeOutException;
 import gde.ui.DataExplorer;
-
-import java.io.IOException;
-import java.util.logging.Logger;
+import gde.utils.StringHelper;
 
 /**
  * PowerLab8 serial port implementation
@@ -105,6 +106,23 @@ public class AkkumatikSerialPort extends DeviceCommPort {
 	 * @return
 	 */
 	public String[] getDataArray(byte[] buffer) {
-		return new String(buffer).split(new String(new byte[] {(byte) 0xFF}));
+		if (log.isLoggable(java.util.logging.Level.FINE)) {
+			log.log(java.util.logging.Level.FINE, "  Read : " + StringHelper.byte2Hex2CharString(buffer, buffer.length));
+			log.log(java.util.logging.Level.FINE, "0123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789");
+			log.log(java.util.logging.Level.FINE, "splitter = " + new String(new byte[] {(byte) 0xFF}) + " - " + new String(buffer));
+		}
+		String[] dataArray = new String(buffer).split(new String(new byte[] {(byte) 0xFF}));
+		if (dataArray.length < 15) {
+			log.log(java.util.logging.Level.SEVERE, "array size = " + dataArray.length + " splitter = " + new String(new byte[] {(byte) 0xFF}) + " - " + new String(buffer));
+			log.log(java.util.logging.Level.SEVERE, "splitter = " + new String(new byte[] {(byte) 0xFF}) + " - " + new String(buffer));
+		}
+		if (dataArray.length < 15) {
+			for (int i = 0; i<buffer.length; ++i) {
+				if (buffer[i] == 0xFF) buffer[i] = 0x21;
+			}
+			log.log(java.util.logging.Level.WARNING, "array size = " + dataArray.length + " splitter = " + new String(new byte[] {(byte) 0x21}) + " - " + new String(buffer));
+			dataArray = new String(buffer).split(new String(new byte[] {(byte) 0x21}));
+		}
+		return dataArray;
 	}
 }

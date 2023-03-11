@@ -9,7 +9,7 @@
         <usage>false</usage>
     </Device>
     <SerialPort>
-        <port>/dev/tty.usbserial</port>
+        <port>-</port>
         <baudeRate>9600</baudeRate>
         <dataBits>DATABITS_8</dataBits>
         <stopBits>STOPBITS_1</stopBits>

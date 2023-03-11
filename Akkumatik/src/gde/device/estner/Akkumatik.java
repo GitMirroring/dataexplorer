@@ -218,7 +218,7 @@ public class Akkumatik extends DeviceConfiguration implements IDevice {
 		//System.out.println("dataBuffer.length = " + dataBuffer.length);
 		if (dataBuffer.length > 19) { //data contains Lithium cells
 			final int numCells = this.getNumberOfLithiumCells(dataBuffer);
-			if (numCells > 0 && dataBuffer.length >= (19 + numCells)) {
+			if (numCells > 1 && dataBuffer.length >= (19 + numCells)) {
 				// 10=CellVoltage1 11=CellVoltage2 12=CellVoltage3 13=CellVoltage4 14=CellVoltage5 15=CellVoltage6 16=CellVoltage7 17=CellVoltage8
 				for (int i = 0; i < numCells; ++i) {
 					points[i + 10] = Integer.valueOf(dataBuffer[i + 18]);
