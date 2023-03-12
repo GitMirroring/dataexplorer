@@ -87,7 +87,7 @@ public class iCharger458DUO extends iChargerUsb {
 	 */
 	@Override
 	public int getRegInputVoltMin() {
-		return 90; //*0.1V
+		return 110; //*0.1V
 	}
 	
 	/**
@@ -95,7 +95,7 @@ public class iCharger458DUO extends iChargerUsb {
 	 */
 	@Override
 	public int getRegInputVoltMax() {
-		return 490; //*0.1 V
+		return 480; //*0.1 V
 	}
 
 	/**
@@ -149,6 +149,6 @@ public class iCharger458DUO extends iChargerUsb {
 	 */
 	@Override
 	public int[] getRegChannelCurrentLimits() {
-		return new int[] {5, 3000};
+		return new int[] {5, 4500};
 	}
 }

@@ -64,7 +64,7 @@ public class iCharger456DUO extends iChargerUsb {
 	 */
 	@Override
 	public int getDcInputVoltMin() {
-		return 90; //*0.1V
+		return 110; //*0.1V
 	}
 	
 	/**
@@ -72,7 +72,7 @@ public class iCharger456DUO extends iChargerUsb {
 	 */
 	@Override
 	public int getDcInputVoltMax() {
-		return 330; //*0.1 V
+		return 480; //*0.1 V
 	}
 	
 	/**
@@ -96,7 +96,7 @@ public class iCharger456DUO extends iChargerUsb {
 	 */
 	@Override
 	public int getRegInputVoltMax() {
-		return 330; //*0.1 V
+		return 480; //*0.1 V
 	}
 
 	/**
@@ -134,7 +134,7 @@ public class iCharger456DUO extends iChargerUsb {
 	 */
 	@Override
 	public int[] getDischargePowerMax() {
-		return new int[] {40, 40};
+		return new int[] {80, 80};
 	}
 	
 	/**
@@ -142,7 +142,7 @@ public class iCharger456DUO extends iChargerUsb {
 	 */
 	@Override
 	public int[] getRegChannelVoltageLimits() {
-		return new int[] {2000, 28000};
+		return new int[] {2000, 32000};
 	}
 
 	/**
@@ -150,6 +150,6 @@ public class iCharger456DUO extends iChargerUsb {
 	 */
 	@Override
 	public int[] getRegChannelCurrentLimits() {
-		return new int[] {10, 3200};
+		return new int[] {5, 4500};
 	}
 }
