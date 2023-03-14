@@ -412,6 +412,7 @@ public class Akkumatik extends DeviceConfiguration implements IDevice {
 			if (doUpdateProgressBar && i % 50 == 0) this.application.setProgress(((++progressCycle * 2500) / recordDataSize), sThreadId);
 		}
 		if (doUpdateProgressBar) this.application.setProgress(100, sThreadId);
+		updateVisibilityStatus(recordSet, true);
 		recordSet.syncScaleOfSyncableRecords();
 	}
 
@@ -495,10 +496,10 @@ public class Akkumatik extends DeviceConfiguration implements IDevice {
 		for (String recordKey : recordSet.getNoneCalculationRecordNames()) {
 			recordSet.get(recordKey).setActive(true);
 		}
-		for (int i = 9; i < recordSet.size(); ++i) {
+		for (int i = 0; i < recordSet.size(); ++i) {
 			Record record = recordSet.get(i);
 			record.setDisplayable(record.hasReasonableData());
-			if (Akkumatik.log.isLoggable(java.util.logging.Level.FINER)) Akkumatik.log.log(java.util.logging.Level.FINER, record.getName() + " setDisplayable=" + record.hasReasonableData());
+			if (Akkumatik.log.isLoggable(java.util.logging.Level.OFF)) Akkumatik.log.log(java.util.logging.Level.OFF, record.getName() + " setDisplayable=" + record.hasReasonableData());
 
 			if (record.isActive() && record.isDisplayable()) {
 				++displayableCounter;

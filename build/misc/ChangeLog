@@ -10,6 +10,7 @@ Device specific changes/fixes
 	* HoTTAdapterX update package loss calculation
 	* Dynamite Passport Speed Meter - usage property corrected
 	* Akkumatik fix encoding problem splitter string ended in index out of bounds on Windows
+	* Akkumatik fix update visibility status suppressing measurement which has no reasonable data
 	* iCharger 456/8DUO correct regenerative to channel voltage and current limits
 		
 Version 3.7.5 - 05 Feb 2023
