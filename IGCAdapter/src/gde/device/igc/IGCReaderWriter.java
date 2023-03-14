@@ -125,7 +125,7 @@ public class IGCReaderWriter {
 		int lineNumber = 1;
 		int activeChannelConfigNumber = 1; // at least each device needs to have one channelConfig to place record sets
 		String recordSetNameExtend = device.getRecordSetStemNameReplacement();
-		long timeStamp = -1, actualTimeStamp = -1, startTimeStamp = -1;
+		long timeStamp = -1, actualTimeStamp = -1, startTimeStamp = -1, lastTimeStamp = -1;
 		StringBuilder header = new StringBuilder();
 		StringBuilder triangles = new StringBuilder();
 		StringBuilder error = new StringBuilder();
@@ -350,9 +350,13 @@ public class IGCReaderWriter {
 							//I04 36 38 FXA 39 40 SIU 4143TDS 4446ENL
 							//1234567 89012345 678901234 5 67890 12345 678 90 123 456
 							//B114643 4752040N 01109779E A 00522 00555 035 09 227 225
-							if (timeStamp > 0 && actualTimeStamp - timeStamp > 1500) {
+							if (timeStamp > 0 && actualTimeStamp - timeStamp > 2000) { // 2 sec
 								log.log(Level.WARNING, String.format(Locale.getDefault(), "High time\t deviation at line %d %s %2d", lineNumber-1, line.substring(1, 7), actualTimeStamp - timeStamp));
-								if (timeStamp > 0 && actualTimeStamp - timeStamp > 20000) {
+								boolean isHighTimeDeviation = actualTimeStamp - timeStamp > 20000; // 20 sec
+								boolean isToNextLowDeviation = lastTimeStamp > 0 && lastTimeStamp - timeStamp < 2000; // 2 sec
+								log.log(Level.OFF, "isHighTimeDeviation = " + isHighTimeDeviation + " isToNextLowDeviation = " + isToNextLowDeviation);
+								if (isHighTimeDeviation && !isToNextLowDeviation) {
+									lastTimeStamp = timeStamp;
 									log.log(Level.SEVERE, String.format(Locale.getDefault(), "High time\t deviation at line %d %s", lineNumber - 1, line));
 									error.append(String.format(Locale.getDefault(), "High time deviation %dms at line %d %s", actualTimeStamp - timeStamp, lineNumber - 1, line)).append(GDE.LINE_SEPARATOR);
 									if (hour == 23) 
@@ -383,8 +387,11 @@ public class IGCReaderWriter {
 							}
 							try {
 								altBaro = Integer.valueOf(line.substring(25, 30));
-								if (lastAltBaro != 0 && Math.abs(lastAltBaro - altBaro) > 30)
+								if (lastAltBaro != 0 && Math.abs(lastAltBaro - altBaro) > 30) {
 									log.log(Level.WARNING, String.format(Locale.getDefault(), "High altBaro\t deviation at line %d %s %2d", lineNumber-1, line.substring(1, 7), altBaro - lastAltBaro));
+									if (Math.abs(lastAltBaro - altBaro) > 200)
+										continue;
+								}
 								lastAltBaro = altBaro;
 							}
 							catch (Exception e) {
@@ -392,8 +399,11 @@ public class IGCReaderWriter {
 							}
 							try {
 								altGPS = Integer.valueOf(line.substring(31, 35));
-								if (lastAltGPS != 0 && Math.abs(lastAltGPS - altGPS) > 30)
+								if (lastAltGPS != 0 && Math.abs(lastAltGPS - altGPS) > 30) {
 									log.log(Level.WARNING, String.format(Locale.getDefault(), "High altGPS\t deviation at line %d %s %2d", lineNumber-1, line.substring(1, 7), altGPS - lastAltGPS));
+									if (Math.abs(lastAltGPS - altGPS) > 200)
+										continue;
+								}
 								lastAltGPS = altGPS;
 							}
 							catch (Exception e) {

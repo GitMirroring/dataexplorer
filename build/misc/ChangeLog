@@ -12,6 +12,7 @@ Device specific changes/fixes
 	* Akkumatik fix encoding problem splitter string ended in index out of bounds on Windows
 	* Akkumatik fix update visibility status suppressing measurement which has no reasonable data
 	* iCharger 456/8DUO correct regenerative to channel voltage and current limits
+	* IGCAdapter tolerate big time step once
 		
 Version 3.7.5 - 05 Feb 2023
 Generic changes/fixes 
