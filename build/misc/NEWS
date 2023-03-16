@@ -1,51 +1,28 @@
-GNU DataExplorer - News - comes with Version 3.7.5 - 05 Feb 2023
+GNU DataExplorer - News - comes with Version 3.7.6 - 19 Mar 2023
 
 Generic changes/fixes 
-	* extend IDevice interface to enable device individual file comment synchronization
-	* enable file comment synchronization
-	* put check for update in a separate thread to avoid blocking UI while download URL not available
-		
+	* fix missing scale of another synchronized record in history graphics
+	* update data table according zoomed data
+	
 Device specific changes/fixes
-	* HoTTAdapter* change "ServoImpuls GPS" received from SM GPS-Logger to %
-	* HoTTAdapter* synchronize initial file comment date with start time stamp of log
-	* HoTTAdapter* synchronize file comment after edit/change
-	* HoTTAdapter* tune Lat/Long initial filter, fix wrong speed reference
-	* HoTTAdapter* lost reverse channel packets calculation correction
-	* HoTTAdapter* support ASCII log import (MZ-16/32)
-	* HoTTAdapter* harmonize detecting sensors *.log with *.bin
-	* HoTTAdapter* detect transmitter initialize time *.log before data analyze 
-	* HoTTAdapter* support history analyze direct from *.log
-	* HoTTAdapter* correct sigma calculation Rx->Tx PLoss
-	* iChargerUSB* enhance displaying error in configuration dialog 
-	* AVm4s_FV_762 synchronize file comment after edit/change
-	* Herkules III Telemetrie synchronize file comment after edit/change
-	* S32 synchronize file comment after edit/change
-	* iChargerUSB* refine udev rules to ignore HID storage
-	* iChargerDX* correct max charge power per channel
-	* iChargerUSB* add interface to differentiate between power per channel and total device power
+	* HoTTAdapter correct total package loss calculation
+	* HoTTAdapterX update package loss calculation
+	* Dynamite Passport Speed Meter - usage property corrected
+	* Akkumatik fix encoding problem splitter string ended in index out of bounds on Windows
+	* Akkumatik fix update visibility status suppressing measurement which has no reasonable data
+	* iCharger 456/8DUO correct regenerative to channel voltage and current limits
+	* IGCAdapter tolerate big time step once
 
 
 Allgemeine Änderungen/Korrekturen
-    * Erweiterung der IDevice-Schnittstelle, um die Synchronisation einzelner Dateikommentare zu ermöglichen
-    * Ermögliche Synchronisation von Dateikommentaren
-    * separaten Thread für Aktualisierung-Prüfung, um ein Blockieren der Benutzeroberfläche zu vermeiden
+    * Fehlende Skala eines anderen synchronisierten Datensatzes in derHistorien_Grafik behoben
+	* Aktualisierung der Datentabelle entsprechend der gezoomten Daten
        
 Gerätespezifische Änderungen/Korrekturen
-    * HoTTAdapter* Änderung der Einheit vom SM GPS-Logger empfangener "ServoImpuls GPS" in %
-    * HoTTAdapter* synchronisiert das Datum des anfänglichen Dateikommentars mit dem Startzeitstempel des Logs
-    * HoTTAdapter* Synchronisation Dateikommentar nach Bearbeitung/Änderung
-    * HoTTAdapter* Abstimmen des Lat/Long Initialfilters, falsche Geschwindigkeitsreferenz korrigiert
-    * HoTTAdapter* Korrektur der Berechnung verlorener Rückkanalpakete
-    * HoTTAdapter* Unterstütztung ASCII-Log-Import (MZ-16/32)
-    * HoTTAdapter* Harmonisierung der Sensoren-Erkennung *.log mit *.bin
-    * HoTTAdapter* Erkennung der Initialisierungszeit des Senders *.log Dateien
-    * HoTTAdapter* Unterstütztung der Historien-Analyse direkt aus *.log Dateien
-    * HoTTAdapter* Korrektur der Sigma Berechnung Rx->Tx PLoss
-    * iChargerUSB* Verbesserung der Fehleranzeige im Konfigurationsdialog
-    * AVm4s_FV_762 Synchronisation Dateikommentar nach Bearbeitung/Änderung
-    * Herkules III Telemetrie Synchronisation Dateikommentar nach Bearbeitung/Änderung
-    * S32 Synchronisation Dateikommentar nach Bearbeitung/Änderung
-    * iChargerUSB* Verfeinerung der udev-Regeln, um USB HID-Speicher zu ignorieren
-    * iChargerDX* Maximale Ladeleistung Gerät und pro Kanal korrigiert
-    * iChargerUSB* Methode hinzugefügt, um zwischen der Leistung pro Kanal und der gesamten Geräteleistung zu unterscheiden
-		
+    * HoTTAdapter korrigierte die Berechnung des Gesamtpaketverlustes
+	* HoTTAdapterX aktualisierte Paketverlustberechnung
+	* Dynamite Passport Speed Meter - Nutzungseigenschaft korrigiert
+	* Akkumatik Kodierungsproblem behoben
+	* Akkumatik Sichtbarkeitsstatus unterdrückt Messung, die keine sinnvollen Daten hat, behoben
+	* iCharger 456/8DUO Korrektur regenerative Werte zu Kanal Spannungs- und Stromgrenzen
+	* IGCAdapter toleriert einmalig großen Zeitschritt
