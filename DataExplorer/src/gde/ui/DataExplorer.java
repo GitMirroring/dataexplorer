@@ -496,6 +496,12 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 				new Thread(new Runnable() {
 					@Override
 					public void run() {
+						try {
+							Thread.sleep(10000);
+						}
+						catch (InterruptedException e) {
+							log.log(Level.WARNING, e.getMessage(), e);
+						}
 						long startTime = new Date().getTime();
 						check4update();
 						if (log.isLoggable(Level.TIME)) log.log(Level.TIME, "check4update time = " + StringHelper.getFormatedTime("ss:SSS", (new Date().getTime() - startTime)));
