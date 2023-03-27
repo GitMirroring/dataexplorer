@@ -3,6 +3,7 @@ Development history / change log, please read from bottom up
 Version 3.7.7 - xx yyy 2023
 Generic changes/fixes 
 	* delay update check to make sure UI is set up
+	* Java runtime update 17.0.6+9-LTS-190
 	
 Device specific changes/fixes
 	* 

@@ -1050,7 +1050,7 @@
 			<arg value="--output" />
 			<arg value="runtime" />
 			<arg value="--module-path" />
-			<arg value="C:\Program Files\Java\jdk-17.0.5\jmods" />
+			<arg value="C:\Program Files\Java\jdk-17\jmods" />
 			<arg value="--add-modules" />
 			<arg value="java.se,jdk.xml.dom" />
 		</exec>
