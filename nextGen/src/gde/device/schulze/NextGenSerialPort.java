@@ -29,6 +29,7 @@ import gde.exception.TimeOutException;
 import gde.log.Level;
 import gde.ui.DataExplorer;
 import gde.utils.Checksum;
+import gde.utils.StringHelper;
 
 /**
  * nextGeneration serial port implementation
@@ -85,7 +86,7 @@ public class NextGenSerialPort extends DeviceCommPort implements IDeviceCommPort
 			//receive data while needed
 			this.isDataReceived = false;
 			readNewData();
-			//log.log(Level.INFO, "'" + new String(answer) + "'");
+			log.log(Level.OFF, "'" + new String(answer) + "'");
 
 			//find start index
 			while (this.answer.length >= this.tmpDataLength && this.index < this.answer.length-1 && (this.answer[this.index] != this.startByte1 || this.answer[this.index] != this.startByte2) && this.answer[this.index+1] != this.startByteTrailer)
@@ -111,7 +112,9 @@ public class NextGenSerialPort extends DeviceCommPort implements IDeviceCommPort
 			}
 			throw e;
 		}
-		//log.log(Level.INFO, StringHelper.byte2Hex2CharString(this.data, this.data.length));
+		this.data[0] = 0x32;
+		log.log(Level.OFF, StringHelper.byte2Hex2CharString(this.data, this.data.length));
+		log.log(Level.OFF, "'" + new String(this.data) + "'");
 		return this.data;
 	}
 

@@ -100,7 +100,7 @@ public class DataParserNext extends DataParser {
 		this.values[3] = (int) (this.values[0]/1000. * this.values[1]/1000. * 1000.); //power
 		
 
-		if (cellValues.length > 0) {
+		if (cellValues.length > 0 && this.values.length > 5) {
 			int minCellValue = Integer.MAX_VALUE, maxCellValue = Integer.MIN_VALUE;
 			for (int i = 0; i < cellValues.length && i < this.device.getNumberOfLithiumCells(); ++i) {
 				this.values[6 + i] = Integer.parseInt(cellValues[i].trim());
