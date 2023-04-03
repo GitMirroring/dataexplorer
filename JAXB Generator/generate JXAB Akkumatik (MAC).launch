@@ -2,7 +2,7 @@
 <launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
     <booleanAttribute key="org.eclipse.debug.core.ATTR_FORCE_SYSTEM_CONSOLE_ENCODING" value="false"/>
     <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
-        <listEntry value="/DataExplorer/src/gde/tools/BuildMessageIds.java"/>
+        <listEntry value="/JAXB Generator/jaxb-ri-20070917/lib/jaxb-xjc.jar"/>
     </listAttribute>
     <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
         <listEntry value="1"/>
@@ -12,8 +12,9 @@
     <booleanAttribute key="org.eclipse.jdt.launching.ATTR_SHOW_CODEDETAILS_IN_EXCEPTION_MESSAGES" value="true"/>
     <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_CLASSPATH_ONLY_JAR" value="false"/>
     <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD" value="true"/>
-    <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="gde.tools.BuildMessageIds"/>
-    <stringAttribute key="org.eclipse.jdt.launching.MODULE_NAME" value="DataExplorer"/>
-    <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="&quot;gde.device.estner&quot;&#13;&#10;&quot;../Akkumatik/src/gde/device/estner/messages.properties&quot;&#13;&#10;&quot;../Akkumatik/src/gde/device/estner/MessageIds.java&quot;"/>
-    <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="DataExplorer"/>
+    <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="com.sun.tools.xjc.XJCFacade"/>
+    <stringAttribute key="org.eclipse.jdt.launching.MODULE_NAME" value="JAXB Generator"/>
+    <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="&quot;/Users/brueg/git/dataexplorer/Akkumatik/src/resource/Akkumatik_Settings_V01.xsd&quot; &#13;&#10;-d &quot;/Users/brueg/git/dataexplorer/Akkumatik/src/&quot; &#13;&#10;-p gde.device.estner"/>
+    <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="JAXB Generator"/>
+    <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-DJAXB_HOME=&quot;/Users/brueg/Documents/workspace/gnu/JAXB Generator/jaxb-ri-20070917&quot;"/>
 </launchConfiguration>

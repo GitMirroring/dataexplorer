@@ -51,11 +51,18 @@ import gde.utils.StringHelper;
 public class Akkumatik extends DeviceConfiguration implements IDevice {
 	final static Logger									log								= Logger.getLogger(Akkumatik.class.getName());
 
-	public final String[]								PROCESS_MODE;
-	public final String[]								ACCU_TYPES;
-	public final String[]								PROCESS_TYPE;
+	public static String[]				PROCESS_MODE_LI = new String[8];
+	public static String[]				PROCESS_MODE_NI = new String[7];
+	public static String[]				PROCESS_MODE_PB = new String[7];
+	public static String[]				PROCESS_MODE;
+	public static String[]				ACCU_TYPES;
+	public static String[]				CHARGE_MODE;
+	public static String[]				CHARGE_MODE_LI;
+	public static String[]				CHARGE_MODE_NI;
+	public static String[]				CHARGE_MODE_PB;
 
 	protected final DataExplorer				application;
+	protected final AkkumatikDialog			dialog;
 	protected final AkkumatikSerialPort	serialPort;
 	protected final Channels						channels;
 	protected GathererThread						dataGatherThread	= null;
@@ -70,15 +77,24 @@ public class Akkumatik extends DeviceConfiguration implements IDevice {
 		super(deviceProperties);
 		// initializing the resource bundle for this device
 		Messages.setDeviceResourceBundle("gde.device.estner.messages", Settings.getInstance().getLocale(), this.getClass().getClassLoader()); //$NON-NLS-1$
-		this.PROCESS_MODE = new String[] { Messages.getString(MessageIds.GDE_MSGT3400), Messages.getString(MessageIds.GDE_MSGT3401), Messages.getString(MessageIds.GDE_MSGT3402),
-				Messages.getString(MessageIds.GDE_MSGT3403), Messages.getString(MessageIds.GDE_MSGT3404), Messages.getString(MessageIds.GDE_MSGT3405), Messages.getString(MessageIds.GDE_MSGT3406) };
-		this.ACCU_TYPES = new String[] { Messages.getString(MessageIds.GDE_MSGT3430), Messages.getString(MessageIds.GDE_MSGT3431), Messages.getString(MessageIds.GDE_MSGT3432),
+		PROCESS_MODE = new String[] { Messages.getString(MessageIds.GDE_MSGT3400), Messages.getString(MessageIds.GDE_MSGT3401), Messages.getString(MessageIds.GDE_MSGT3402),
+				Messages.getString(MessageIds.GDE_MSGT3403), Messages.getString(MessageIds.GDE_MSGT3404), Messages.getString(MessageIds.GDE_MSGT3405), Messages.getString(MessageIds.GDE_MSGT3406), Messages.getString(MessageIds.GDE_MSGT3407) };
+		ACCU_TYPES = new String[] { Messages.getString(MessageIds.GDE_MSGT3430), Messages.getString(MessageIds.GDE_MSGT3431), Messages.getString(MessageIds.GDE_MSGT3432),
 				Messages.getString(MessageIds.GDE_MSGT3433), Messages.getString(MessageIds.GDE_MSGT3434), Messages.getString(MessageIds.GDE_MSGT3435), Messages.getString(MessageIds.GDE_MSGT3436),
 				Messages.getString(MessageIds.GDE_MSGT3437) };
-		this.PROCESS_TYPE = new String[] { Messages.getString(MessageIds.GDE_MSGT3410), Messages.getString(MessageIds.GDE_MSGT3411), Messages.getString(MessageIds.GDE_MSGT3412),
+		CHARGE_MODE = new String[] { Messages.getString(MessageIds.GDE_MSGT3410), Messages.getString(MessageIds.GDE_MSGT3411), Messages.getString(MessageIds.GDE_MSGT3412),
 				Messages.getString(MessageIds.GDE_MSGT3413) };
 
+		System.arraycopy(PROCESS_MODE, 0, PROCESS_MODE_LI, 0, PROCESS_MODE.length);
+		System.arraycopy(PROCESS_MODE, 0, PROCESS_MODE_NI, 0, PROCESS_MODE.length - 1);
+		System.arraycopy(PROCESS_MODE, 0, PROCESS_MODE_PB, 0, PROCESS_MODE.length - 1);
+		
+		CHARGE_MODE_LI = new String[] { Messages.getString(MessageIds.GDE_MSGT3410), Messages.getString(MessageIds.GDE_MSGT3413) };
+		CHARGE_MODE_NI = new String[] { Messages.getString(MessageIds.GDE_MSGT3410), Messages.getString(MessageIds.GDE_MSGT3411), Messages.getString(MessageIds.GDE_MSGT3412) };
+		CHARGE_MODE_PB = new String[] { Messages.getString(MessageIds.GDE_MSGT3410) };
+
 		this.application = DataExplorer.getInstance();
+		this.dialog = new AkkumatikDialog(this.application.getShell(), this);
 		this.serialPort = new AkkumatikSerialPort(this, this.application);
 		this.channels = Channels.getInstance();
 		if (this.application.getMenuToolBar() != null) this.configureSerialPortMenu(DeviceCommPort.ICON_SET_START_STOP, GDE.STRING_EMPTY, GDE.STRING_EMPTY);
@@ -92,15 +108,24 @@ public class Akkumatik extends DeviceConfiguration implements IDevice {
 		super(deviceConfig);
 		// initializing the resource bundle for this device
 		Messages.setDeviceResourceBundle("gde.device.estner.messages", Settings.getInstance().getLocale(), this.getClass().getClassLoader()); //$NON-NLS-1$
-		this.PROCESS_MODE = new String[] { Messages.getString(MessageIds.GDE_MSGT3400), Messages.getString(MessageIds.GDE_MSGT3401), Messages.getString(MessageIds.GDE_MSGT3402),
-				Messages.getString(MessageIds.GDE_MSGT3403), Messages.getString(MessageIds.GDE_MSGT3404), Messages.getString(MessageIds.GDE_MSGT3405), Messages.getString(MessageIds.GDE_MSGT3406) };
-		this.ACCU_TYPES = new String[] { Messages.getString(MessageIds.GDE_MSGT3430), Messages.getString(MessageIds.GDE_MSGT3431), Messages.getString(MessageIds.GDE_MSGT3432),
+		PROCESS_MODE = new String[] { Messages.getString(MessageIds.GDE_MSGT3400), Messages.getString(MessageIds.GDE_MSGT3401), Messages.getString(MessageIds.GDE_MSGT3402),
+				Messages.getString(MessageIds.GDE_MSGT3403), Messages.getString(MessageIds.GDE_MSGT3404), Messages.getString(MessageIds.GDE_MSGT3405), Messages.getString(MessageIds.GDE_MSGT3406), Messages.getString(MessageIds.GDE_MSGT3407) };
+		ACCU_TYPES = new String[] { Messages.getString(MessageIds.GDE_MSGT3430), Messages.getString(MessageIds.GDE_MSGT3431), Messages.getString(MessageIds.GDE_MSGT3432),
 				Messages.getString(MessageIds.GDE_MSGT3433), Messages.getString(MessageIds.GDE_MSGT3434), Messages.getString(MessageIds.GDE_MSGT3435), Messages.getString(MessageIds.GDE_MSGT3436),
 				Messages.getString(MessageIds.GDE_MSGT3437) };
-		this.PROCESS_TYPE = new String[] { Messages.getString(MessageIds.GDE_MSGT3410), Messages.getString(MessageIds.GDE_MSGT3411), Messages.getString(MessageIds.GDE_MSGT3412),
+		CHARGE_MODE = new String[] { Messages.getString(MessageIds.GDE_MSGT3410), Messages.getString(MessageIds.GDE_MSGT3411), Messages.getString(MessageIds.GDE_MSGT3412),
 				Messages.getString(MessageIds.GDE_MSGT3413) };
 
+		System.arraycopy(PROCESS_MODE, 0, PROCESS_MODE_LI, 0, PROCESS_MODE.length);
+		System.arraycopy(PROCESS_MODE, 0, PROCESS_MODE_NI, 0, PROCESS_MODE.length - 1);
+		System.arraycopy(PROCESS_MODE, 0, PROCESS_MODE_PB, 0, PROCESS_MODE.length - 1);
+		
+		CHARGE_MODE_LI = new String[] { Messages.getString(MessageIds.GDE_MSGT3410), Messages.getString(MessageIds.GDE_MSGT3413) };
+		CHARGE_MODE_NI = new String[] { Messages.getString(MessageIds.GDE_MSGT3410), Messages.getString(MessageIds.GDE_MSGT3411), Messages.getString(MessageIds.GDE_MSGT3412) };
+		CHARGE_MODE_PB = new String[] { Messages.getString(MessageIds.GDE_MSGT3410) };
+
 		this.application = DataExplorer.getInstance();
+		this.dialog = new AkkumatikDialog(this.application.getShell(), this);
 		this.serialPort = new AkkumatikSerialPort(this, this.application);
 		this.channels = Channels.getInstance();
 		this.configureSerialPortMenu(DeviceCommPort.ICON_SET_START_STOP, GDE.STRING_EMPTY, GDE.STRING_EMPTY);
@@ -582,7 +607,7 @@ public class Akkumatik extends DeviceConfiguration implements IDevice {
 	 */
 	@Override
 	public DeviceDialog getDialog() {
-		return null;
+		return this.dialog;
 	}
 
 	/**

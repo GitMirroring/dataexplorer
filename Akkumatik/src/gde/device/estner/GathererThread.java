@@ -115,8 +115,8 @@ public class GathererThread extends Thread {
 				// check if device is ready for data capturing, discharge or charge allowed only
 				final String processName = this.device.isCycleMode(data) 
 						? data[4].startsWith(GDE.STRING_MINUS) ?  Messages.getString(MessageIds.GDE_MSGT3401) :  Messages.getString(MessageIds.GDE_MSGT3400)
-						: this.device.PROCESS_MODE[this.device.getProcessingMode(data)];
-				final String processType = this.device.getProcessingPhase(data) == 10 ? Messages.getString(MessageIds.GDE_MSGT3420) : this.device.PROCESS_TYPE[this.device.getProcessingType(data)];
+						: Akkumatik.PROCESS_MODE[this.device.getProcessingMode(data)];
+				final String processType = this.device.getProcessingPhase(data) == 10 ? Messages.getString(MessageIds.GDE_MSGT3420) : Akkumatik.CHARGE_MODE[this.device.getProcessingType(data)];
 
 				switch (data != null ? Integer.valueOf(data[0]) : 0) { // device outlet 1 or 2
 				case 1:
@@ -136,7 +136,7 @@ public class GathererThread extends Thread {
 							this.application.setStatusMessage(""); //$NON-NLS-1$
 							// record set does not exist or is outdated, build a new name and create
 							int akkuType = this.device.getAccuCellType(data);
-							this.recordSetKey1 = this.channel.getNextRecordSetNumber() + GDE.STRING_RIGHT_PARENTHESIS_BLANK + processName + GDE.STRING_BLANK_LEFT_BRACKET + this.device.ACCU_TYPES[akkuType];
+							this.recordSetKey1 = this.channel.getNextRecordSetNumber() + GDE.STRING_RIGHT_PARENTHESIS_BLANK + processName + GDE.STRING_BLANK_LEFT_BRACKET + Akkumatik.ACCU_TYPES[akkuType];
 							if (isCycleMode1) this.recordSetKey1 = this.recordSetKey1 + GDE.STRING_BLANK + Messages.getString(MessageIds.GDE_MSGT3421, new Object[] { cycleCount1 });
 							this.recordSetKey1 = this.recordSetKey1 + GDE.STRING_RIGHT_BRACKET;
 							if (processType.length() > 0) this.recordSetKey1 = this.recordSetKey1 + GDE.STRING_MESSAGE_CONCAT + processType;
@@ -195,7 +195,7 @@ public class GathererThread extends Thread {
 							this.application.setStatusMessage(""); //$NON-NLS-1$
 							// record set does not exist or is outdated, build a new name and create
 							int akkuType = this.device.getAccuCellType(data);
-							this.recordSetKey2 = this.channel.getNextRecordSetNumber() + GDE.STRING_RIGHT_PARENTHESIS_BLANK + processName + GDE.STRING_BLANK_LEFT_BRACKET + this.device.ACCU_TYPES[akkuType];
+							this.recordSetKey2 = this.channel.getNextRecordSetNumber() + GDE.STRING_RIGHT_PARENTHESIS_BLANK + processName + GDE.STRING_BLANK_LEFT_BRACKET + Akkumatik.ACCU_TYPES[akkuType];
 							if (isCycleMode2) this.recordSetKey2 = this.recordSetKey2 + GDE.STRING_BLANK + Messages.getString(MessageIds.GDE_MSGT3421, new Object[] { cycleCount2 });
 							this.recordSetKey2 = this.recordSetKey2 + GDE.STRING_RIGHT_BRACKET;
 							if (processType.length() > 0) this.recordSetKey2 = this.recordSetKey2 + GDE.STRING_MESSAGE_CONCAT + processType;

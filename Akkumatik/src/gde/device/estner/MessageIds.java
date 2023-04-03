@@ -28,6 +28,7 @@ public class MessageIds {
 	public final static String	GDE_MSGW3401 = "GDE_MSGW3401";
 	public final static String	GDE_MSGI3400 = "GDE_MSGI3400";
 	public final static String	GDE_MSGI3401 = "GDE_MSGI3401";
+	public final static String	GDE_MSGI3402 = "GDE_MSGI3402";
 	public final static String	GDE_MSGT3400 = "GDE_MSGT3400";
 	public final static String	GDE_MSGT3401 = "GDE_MSGT3401";
 	public final static String	GDE_MSGT3402 = "GDE_MSGT3402";
@@ -50,6 +51,21 @@ public class MessageIds {
 	public final static String	GDE_MSGT3435 = "GDE_MSGT3435";
 	public final static String	GDE_MSGT3436 = "GDE_MSGT3436";
 	public final static String	GDE_MSGT3437 = "GDE_MSGT3437";
+	public final static String	GDE_MSGT3450 = "GDE_MSGT3450";
+	public final static String	GDE_MSGT3451 = "GDE_MSGT3451";
+	public final static String	GDE_MSGT3452 = "GDE_MSGT3452";
+	public final static String	GDE_MSGT3453 = "GDE_MSGT3453";
+	public final static String	GDE_MSGT3454 = "GDE_MSGT3454";
+	public final static String	GDE_MSGT3455 = "GDE_MSGT3455";
+	public final static String	GDE_MSGT3456 = "GDE_MSGT3456";
+	public final static String	GDE_MSGT3457 = "GDE_MSGT3457";
+	public final static String	GDE_MSGT3458 = "GDE_MSGT3458";
+	public final static String	GDE_MSGT3459 = "GDE_MSGT3459";
+	public final static String	GDE_MSGT3460 = "GDE_MSGT3460";
+	public final static String	GDE_MSGT3461 = "GDE_MSGT3461";
+	public final static String	GDE_MSGT3462 = "GDE_MSGT3462";
+	public final static String	GDE_MSGT3463 = "GDE_MSGT3463";
+	public final static String	GDE_MSGT3464 = "GDE_MSGT3464";
 	public final static String	GDE_MSGT3499 = "GDE_MSGT3499";
 
  }
