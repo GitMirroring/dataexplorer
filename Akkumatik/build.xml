@@ -77,6 +77,7 @@
     	</manifest>
 	    <jar manifest="src/META-INF/MANIFEST.MF" jarfile="build/${ant.project.name}.jar" compress="true" index="true" >
 	       	<fileset dir="${module.output}" includes="**/*.class"/>
+	    	<fileset dir="src" includes="**/*.xsd"/>
 	    	<fileset dir="src" includes="**/*.xml"/>
 	    	<fileset dir="src" includes="**/*.jpg"/>
  	    	<fileset dir="src" includes="**/*.properties"/>

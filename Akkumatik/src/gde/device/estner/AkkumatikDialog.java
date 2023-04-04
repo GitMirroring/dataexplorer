@@ -93,20 +93,20 @@ public class AkkumatikDialog extends DeviceDialog {
 	Label statusLabel;
 	int programSelectionIndex = 0;
 
-	/**
-	 * Create the dialog.
-	 * @param parent
-	 * @param style
-	 */
-	public AkkumatikDialog(Shell parent, int style) {
-		super(parent, style);
-		setText("Akkumatik Dialog");
-		this.serialPort = null;
-		this.device = null;
-		this.channels = Channels.getInstance();
-		this.settings = Settings.getInstance();
-		this.akkumatikSettings = null;
-	}
+//	/**
+//	 * Create the dialog.
+//	 * @param parent
+//	 * @param style
+//	 */
+//	public AkkumatikDialog(Shell parent, int style) {
+//		super(parent, style);
+//		setText("Akkumatik Dialog");
+//		this.serialPort = null;
+//		this.device = null;
+//		this.channels = Channels.getInstance();
+//		this.settings = Settings.getInstance();
+//		this.akkumatikSettings = null;
+//	}
 	
 	/**
 	 * default constructor initialize all variables required
@@ -337,11 +337,13 @@ public class AkkumatikDialog extends DeviceDialog {
 			gd_programSelection.heightHint = GDE.IS_LINUX ? 18 : GDE.IS_MAC ? 16 : 16;
 			programNameSelection.setLayoutData(gd_programSelection);
 			programNameSelection.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE-1, SWT.NORMAL));
+			AkkumatikDialog.log.log(Level.OFF, String.format("this.akkumatikSettings.getAkkuSettings() != null -> %b", this.akkumatikSettings.getAkkuSettings() != null));
 			if (this.akkumatikSettings.getAkkuSettings() != null) {
 				akkuSettings = this.akkumatikSettings.getAkkuSettings().setting;
 				String[] programNames = new String[this.akkumatikSettings.getAkkuSettings().setting.size()];
 				for (int i = 0; i < akkuSettings.size(); ++i) {
 					programNames[i] = akkuSettings.get(i).getName();
+					AkkumatikDialog.log.log(Level.OFF, String.format("add prrogram name -> %s", akkuSettings.get(i).getName()));
 				}
 				programNameSelection.setItems(programNames);
 				programNameSelection.select(getActiveChannelProgram());
@@ -838,7 +840,7 @@ public class AkkumatikDialog extends DeviceDialog {
 					log.log(Level.OFF, actualAkkuSetting.toString());
 				}
 			});
-			btnTransfer.setLayoutData(new RowData(GDE.IS_WINDOWS ? 115 : 120, SWT.DEFAULT));
+			btnTransfer.setLayoutData(new RowData(115, SWT.DEFAULT));
 			btnTransfer.setText(Messages.getString(MessageIds.GDE_MSGT3462));
 
 			btnStart = new Button(composite_5, SWT.NONE);
@@ -849,7 +851,7 @@ public class AkkumatikDialog extends DeviceDialog {
 				public void widgetSelected(SelectionEvent e) {
 				}
 			});
-			btnStart.setLayoutData(new RowData(GDE.IS_WINDOWS ? 115 : 120, SWT.DEFAULT));
+			btnStart.setLayoutData(new RowData(115, SWT.DEFAULT));
 			btnStart.setText("Start");
 
 			btnStop = new Button(composite_5, SWT.NONE);
@@ -860,7 +862,7 @@ public class AkkumatikDialog extends DeviceDialog {
 				public void widgetSelected(SelectionEvent e) {
 				}
 			});
-			btnStop.setLayoutData(new RowData(GDE.IS_WINDOWS ? 115 : 120, SWT.DEFAULT));
+			btnStop.setLayoutData(new RowData(115, SWT.DEFAULT));
 			btnStop.setText("Stop");
 
 			Button btnClose = new Button(composite_5, SWT.NONE);
