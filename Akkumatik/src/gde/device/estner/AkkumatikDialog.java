@@ -335,7 +335,7 @@ public class AkkumatikDialog extends DeviceDialog {
 			});
 			GridData gd_programSelection = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 			gd_programSelection.widthHint = 210;
-			gd_programSelection.heightHint = comboHeight;
+			gd_programSelection.heightHint = GDE.IS_WINDOWS ? SWT.DEFAULT : comboHeight;
 			programNameSelection.setLayoutData(gd_programSelection);
 			programNameSelection.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE-1, SWT.NORMAL));
 			AkkumatikDialog.log.log(Level.OFF, String.format("this.akkumatikSettings.getAkkuSettings() != null -> %b", this.akkumatikSettings.getAkkuSettings() != null));
@@ -354,7 +354,7 @@ public class AkkumatikDialog extends DeviceDialog {
 			Button addEntry = new Button(composite_1, SWT.NONE);
 			GridData gdButton = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 			gdButton.widthHint = 45;
-			gdButton.heightHint = comboHeight;
+			gdButton.heightHint = GDE.IS_WINDOWS ? SWT.DEFAULT : comboHeight;
 			addEntry.setLayoutData(gdButton);
 			addEntry.setText("+");
 			addEntry.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.BOLD));
@@ -842,7 +842,7 @@ public class AkkumatikDialog extends DeviceDialog {
 					log.log(Level.OFF, actualAkkuSetting.toString());
 				}
 			});
-			btnTransfer.setLayoutData(new RowData(115, comboHeight));
+			btnTransfer.setLayoutData(new RowData(115, GDE.IS_WINDOWS ? SWT.DEFAULT : comboHeight));
 			btnTransfer.setText(Messages.getString(MessageIds.GDE_MSGT3462));
 
 			btnStart = new Button(composite_5, SWT.NONE);
@@ -854,7 +854,7 @@ public class AkkumatikDialog extends DeviceDialog {
 					AkkumatikDialog.log.log(Level.OFF, "TODO");
 				}
 			});
-			btnStart.setLayoutData(new RowData(115, comboHeight));
+			btnStart.setLayoutData(new RowData(115, GDE.IS_WINDOWS ? SWT.DEFAULT : comboHeight));
 			btnStart.setText("Start");
 
 			btnStop = new Button(composite_5, SWT.NONE);
@@ -866,7 +866,7 @@ public class AkkumatikDialog extends DeviceDialog {
 					AkkumatikDialog.log.log(Level.OFF, "TODO");
 				}
 			});
-			btnStop.setLayoutData(new RowData(115, comboHeight));
+			btnStop.setLayoutData(new RowData(115, GDE.IS_WINDOWS ? SWT.DEFAULT : comboHeight));
 			btnStop.setText("Stop");
 
 			Button btnClose = new Button(composite_5, SWT.NONE);
@@ -877,7 +877,7 @@ public class AkkumatikDialog extends DeviceDialog {
 					AkkumatikDialog.this.dialogShell.dispose();
 				}
 			});
-			btnClose.setLayoutData(new RowData(GDE.IS_LINUX ? 355 : GDE.IS_WINDOWS ? 353 : 363, comboHeight));
+			btnClose.setLayoutData(new RowData(GDE.IS_LINUX ? 355 : GDE.IS_WINDOWS ? 353 : 363, GDE.IS_WINDOWS ? SWT.DEFAULT : comboHeight));
 			btnClose.setText(Messages.getString(MessageIds.GDE_MSGT3463));
 			
 			//update combo entries according selected battery type and output channel
