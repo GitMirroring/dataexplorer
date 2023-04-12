@@ -111,6 +111,12 @@ public class GathererThread extends Thread {
 			try {
 				// get data from device
 				data = this.serialPort.getDataArray(this.serialPort.getData());
+				
+				//check if dialog prepared data to write
+				byte[] data2Write = AkkumatikDialog.getData2Write();
+				if (data2Write != null && data2Write.length > 0) {
+					this.serialPort.write(data2Write, 200);
+				}
 
 				// check if device is ready for data capturing, discharge or charge allowed only
 				final String processName = this.device.isCycleMode(data) 

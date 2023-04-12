@@ -8,6 +8,9 @@
 
 package gde.device.estner;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -17,6 +20,8 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import gde.GDE;
 
 
 /**
@@ -454,5 +459,32 @@ public class Setting {
 
     	return String.format("3 %d %02d %02d %02d %02d %02d %02d %05d %04d %04d %04d %02d 00 B", getChannel(), getAccuTyp(), getProgram(), getChargeMode(), getCurrentMode(), 
     			getChargeStopMode(), getCellCount(), getCapacity(), getChargeCurrent(), getDisChargeCurrent(), getAmount(), getCycle());
+    }
+    
+    public byte[] getBytes2Write() {
+//    <Channel>1</Channel>
+//    <AccuTyp>0</AccuTyp>
+//    <CurrentMode>2</CurrentMode>
+//    <Amount>0</Amount>
+//    <Capacity>1000</Capacity>
+//    <CellCount>34</CellCount>
+//    <Program>2</Program>
+//    <Cycle>0</Cycle>
+//    <ChargeMode>0</ChargeMode>
+//    <ChargeStopMode>0</ChargeStopMode>
+//    <ChargeCurrent>100</ChargeCurrent>
+//    <DisChargeCurrent>100</DisChargeCurrent>
+    	List<Byte> bytes2Write = new ArrayList<>();
+    	bytes2Write.add((byte) 0x02);
+    	for (String token : this.toString().split(GDE.STRING_BLANK))
+    		for (Byte b : token.getBytes())
+    			bytes2Write.add(b);   	
+    	bytes2Write.add((byte) 0x03);
+    	
+    	byte[] bytes = new byte[bytes2Write.size()];
+    	for (int i = 0; i < bytes2Write.size(); ++i)
+    		bytes[i] = bytes2Write.get(i);
+
+    	return bytes;
     }
 }

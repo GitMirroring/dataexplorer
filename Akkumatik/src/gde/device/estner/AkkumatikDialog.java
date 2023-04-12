@@ -25,6 +25,8 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.VerifyEvent;
@@ -38,6 +40,7 @@ import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
@@ -72,6 +75,12 @@ public class AkkumatikDialog extends DeviceDialog {
 	final static String[] CHARGE_CURRENT_TYPE_PB = {"Fix"};
 	final static String[] CHARGE_CURRENT_TYPE_LI = {"Fix"};
 	
+	final static byte[] A2Z = {0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4A, 0x4B, 0x4C, 0x4D, 0x4E, 0x4F, 0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5A};
+	final static byte[] OPEN_DIALOG = {0x02, 0x33, 0x30, 0x41, 0x03};
+	final static byte[] CLOSE_DIALOG = {0x02, 0x33, 0x30, 0x41, 0x03};
+	final static byte[] START_COM = {0x02, 0x34, 0x34, 0x42, 0x03};
+	final static byte[] STOP_COM = {0x02, 0x34, 0x31, 0x47, 0x03};
+	
 	static Handler										logHandler;
 	static Logger											rootLogger;
 
@@ -89,24 +98,13 @@ public class AkkumatikDialog extends DeviceDialog {
 	CCombo capacityCombo, chargeStopModeCombo, currentModeCombo, chargeAmountCombo, dischargeCurrentCombo;
 	Button btnChannel1, btnChannel2, btnTransfer, btnStart, btnStop, removeEntry, editEntry;
 	Label statusLabel;
+	Group grpCharge, grpDischarge;
+	Composite composite_3;
 	int 	programSelectionIndex = 0;
 	int		comboHeight						= GDE.IS_LINUX ? 22 : GDE.IS_MAC ? 20 : 18; //(int) (GDE.WIDGET_FONT_SIZE * (GDE.IS_LINUX ? 2.5 : 1.8));
 
-
-//	/**
-//	 * Create the dialog.
-//	 * @param parent
-//	 * @param style
-//	 */
-//	public AkkumatikDialog(Shell parent, int style) {
-//		super(parent, style);
-//		setText("Akkumatik Dialog");
-//		this.serialPort = null;
-//		this.device = null;
-//		this.channels = Channels.getInstance();
-//		this.settings = Settings.getInstance();
-//		this.akkumatikSettings = null;
-//	}
+	static boolean isDataAvailable = false;
+	static byte[] data2Write = new byte[0];
 	
 	/**
 	 * default constructor initialize all variables required
@@ -116,8 +114,8 @@ public class AkkumatikDialog extends DeviceDialog {
 	public AkkumatikDialog(Shell parent, Akkumatik useDevice) {
 		super(parent);
 		setText("Akkumatik Dialog");
-		this.serialPort = useDevice.getCommunicationPort();
 		this.device = useDevice;
+		this.serialPort = this.device.getCommunicationPort();
 		this.channels = Channels.getInstance();
 		this.settings = Settings.getInstance();
 		String basePath = Settings.getApplHomePath();
@@ -209,7 +207,33 @@ public class AkkumatikDialog extends DeviceDialog {
 	 */
 	@Override	
 	public void open() {
+		//check if gatherer thread is running, if not start to enable writing data
+		GathererThread dataGathererThread = this.device.getDataGathererThread();
+		if (this.serialPort != null && dataGathererThread == null || dataGathererThread.isCollectDataStopped) {
+			this.device.open_closeCommPort();
+		}
+		if (this.serialPort != null && this.serialPort.isConnected())
+			AkkumatikDialog.setData2Write(AkkumatikDialog.OPEN_DIALOG);
+		
 		createContents();
+		dialogShell.addMouseTrackListener(new MouseTrackAdapter() {
+			@Override
+			public void mouseEnter(MouseEvent evt) {
+				AkkumatikDialog.log.log(Level.FINE, "boundsComposite.mouseEnter, event=" + evt); //$NON-NLS-1$
+				fadeOutAplhaBlending(evt, dialogShell.getSize(), 10, 10, 10, 15);
+			}
+
+			@Override
+			public void mouseHover(MouseEvent evt) {
+				AkkumatikDialog.log.log(Level.FINEST, "boundsComposite.mouseHover, event=" + evt); //$NON-NLS-1$
+			}
+
+			@Override
+			public void mouseExit(MouseEvent evt) {
+				AkkumatikDialog.log.log(Level.FINE, "boundsComposite.mouseExit, event=" + evt); //$NON-NLS-1$
+				fadeInAlpaBlending(evt, dialogShell.getSize(), 10, 10, -10, 15);
+			}
+		});
 		dialogShell.open();
 		dialogShell.layout();
 		Display display = getParent().getDisplay();
@@ -218,6 +242,10 @@ public class AkkumatikDialog extends DeviceDialog {
 				display.sleep();
 			}
 		}
+		
+		if (this.serialPort != null && this.serialPort.isConnected())
+			AkkumatikDialog.setData2Write(AkkumatikDialog.CLOSE_DIALOG);
+		
 		try {
 			Long time = new Date().getTime();
 			String basePath = Settings.getApplHomePath();
@@ -242,7 +270,7 @@ public class AkkumatikDialog extends DeviceDialog {
 		this.shellAlpha = Settings.getInstance().getDialogAlphaValue();
 		this.isAlphaEnabled = Settings.getInstance().isDeviceDialogAlphaEnabled();
 
-		AkkumatikDialog_.log.log(Level.FINE, "dialogShell.isDisposed() " + ((this.dialogShell == null) ? "null" : this.dialogShell.isDisposed())); //$NON-NLS-1$ //$NON-NLS-2$
+		AkkumatikDialog.log.log(Level.FINE, "dialogShell.isDisposed() " + ((this.dialogShell == null) ? "null" : this.dialogShell.isDisposed())); //$NON-NLS-1$ //$NON-NLS-2$
 		if (this.dialogShell == null || this.dialogShell.isDisposed()) {
 			if (this.settings.isDeviceDialogsModal())
 				this.dialogShell = new Shell(this.application.getShell(), SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL);
@@ -344,7 +372,7 @@ public class AkkumatikDialog extends DeviceDialog {
 				String[] programNames = new String[this.akkumatikSettings.getAkkuSettings().setting.size()];
 				for (int i = 0; i < akkuSettings.size(); ++i) {
 					programNames[i] = akkuSettings.get(i).getName();
-					AkkumatikDialog.log.log(Level.OFF, String.format("add prrogram name -> %s", akkuSettings.get(i).getName()));
+					AkkumatikDialog.log.log(Level.INFO, String.format("add prrogram name -> %s", akkuSettings.get(i).getName()));
 				}
 				programNameSelection.setItems(programNames);
 				programNameSelection.select(getActiveChannelProgram());
@@ -421,7 +449,7 @@ public class AkkumatikDialog extends DeviceDialog {
 
 			Group grpBattery = new Group(composite, SWT.NONE);
 			grpBattery.setLayout(new RowLayout(SWT.HORIZONTAL));
-			grpBattery.setLayoutData(new RowData(170, GDE.IS_LINUX ? 115 : 100));
+			grpBattery.setLayoutData(new RowData(170, GDE.IS_LINUX ? 135 : 120));
 			grpBattery.setText(Messages.getString(MessageIds.GDE_MSGT3451));
 			grpBattery.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE-1, SWT.NORMAL));
 			
@@ -445,6 +473,7 @@ public class AkkumatikDialog extends DeviceDialog {
 					//update combo entries according selected battery type and output channel
 					update(batteryTypeCombo.getText(), btnChannel1.getSelection() ? 1 : 2);
 					actualAkkuSetting.setAccuTyp(batteryTypeCombo.getSelectionIndex());
+					currentModeCombo.select(0); //NiXX -> auto, Pb, Li -> Fix
 				}
 			});
 			batteryTypeCombo.setLayoutData(new RowData(70, comboHeight));
@@ -518,7 +547,7 @@ public class AkkumatikDialog extends DeviceDialog {
 
 			Composite composite_2 = new Composite(composite, SWT.NONE);
 			composite_2.setLayout(new RowLayout(SWT.HORIZONTAL));
-			composite_2.setLayoutData(new RowData(178, GDE.IS_MAC ? 145 : 135));
+			composite_2.setLayoutData(new RowData(178, GDE.IS_MAC ? 150 : 135));
 
 			Group grpChannel = new Group(composite_2, SWT.NONE);
 			grpChannel.setLayoutData(new RowData(165, GDE.IS_LINUX ? 30 : GDE.IS_MAC ? 25 : 20));
@@ -554,7 +583,7 @@ public class AkkumatikDialog extends DeviceDialog {
 
 			
 			Group grpProgramm = new Group(composite_2, SWT.NONE);
-			grpProgramm.setLayoutData(new RowData(165, GDE.IS_LINUX ? 70 : 60));
+			grpProgramm.setLayoutData(new RowData(165, GDE.IS_LINUX ? 68 : 58));
 			grpProgramm.setLayout(new RowLayout(SWT.HORIZONTAL));
 			grpProgramm.setText(Messages.getString(MessageIds.GDE_MSGT3456));
 			grpProgramm.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE-1, SWT.NORMAL));
@@ -580,6 +609,7 @@ public class AkkumatikDialog extends DeviceDialog {
 						cycleCountCombo.setEnabled(false);
 					}
 					actualAkkuSetting.setProgram(findIndexByName(Akkumatik.PROCESS_MODE, programCombo.getText())); 
+					updateChargeDischarge();
 				}
 			});
 			programCombo.setLayoutData(new RowData(90, comboHeight));
@@ -609,7 +639,7 @@ public class AkkumatikDialog extends DeviceDialog {
 			});
 			cycleCountCombo.setLayoutData(new RowData(90, comboHeight));
 
-			Group grpCharge = new Group(composite, SWT.NONE);
+			grpCharge = new Group(composite, SWT.NONE);
 			grpCharge.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE-1, SWT.NORMAL));
 			grpCharge.setLayout(new RowLayout(SWT.HORIZONTAL));
 			grpCharge.setLayoutData(new RowData(170, GDE.IS_LINUX ? 100 : 90));
@@ -699,7 +729,7 @@ public class AkkumatikDialog extends DeviceDialog {
 			});
 			chargeStopModeCombo.setLayoutData(new RowData(80, comboHeight));
 
-			Composite composite_3 = new Composite(composite, SWT.NONE);
+			composite_3 = new Composite(composite, SWT.NONE);
 			composite_3.setLayout(new RowLayout(SWT.HORIZONTAL));
 			composite_3.setLayoutData(new RowData(170, GDE.IS_LINUX ? 95 : GDE.IS_WINDOWS ? 85 : 75));
 
@@ -768,7 +798,7 @@ public class AkkumatikDialog extends DeviceDialog {
 				}
 			});
 
-			Group grpDischarge = new Group(composite, SWT.NONE);
+			grpDischarge = new Group(composite, SWT.NONE);
 			grpDischarge.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE-1, SWT.NORMAL));
 			grpDischarge.setLayout(new RowLayout(SWT.HORIZONTAL));
 			grpDischarge.setLayoutData(new RowData(170, GDE.IS_LINUX ? 40 : GDE.IS_WINDOWS ? 35 : 25));
@@ -838,8 +868,12 @@ public class AkkumatikDialog extends DeviceDialog {
 			btnTransfer.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					statusLabel.setText(actualAkkuSetting.toString());
+					statusLabel.setText(new String(actualAkkuSetting.toString()));
 					log.log(Level.OFF, actualAkkuSetting.toString());
+					log.log(Level.OFF, StringHelper.byte2Hex2CharString(actualAkkuSetting.getBytes2Write(), actualAkkuSetting.getBytes2Write().length));
+					btnTransfer.setEnabled(false);
+					btnStart.setEnabled(true);
+					btnStop.setEnabled(false);
 				}
 			});
 			btnTransfer.setLayoutData(new RowData(GDE.IS_MAC ? 118 : 115, GDE.IS_WINDOWS ? SWT.DEFAULT : comboHeight));
@@ -851,7 +885,16 @@ public class AkkumatikDialog extends DeviceDialog {
 			btnStart.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					AkkumatikDialog.log.log(Level.OFF, "TODO");
+//					byte[] program2Write = actualAkkuSetting.getBytes2Write();
+//					byte[] writeBuffer = new byte[START_COM.length + program2Write.length];
+//					System.arraycopy(program2Write, 0, writeBuffer, 0, program2Write.length);
+//					System.arraycopy(START_COM, 0, writeBuffer, program2Write.length, START_COM.length);
+					if (serialPort != null && serialPort.isConnected())
+						setData2Write(START_COM);
+					AkkumatikDialog.log.log(Level.OFF, StringHelper.byte2Hex2CharString(START_COM, START_COM.length));
+					btnTransfer.setEnabled(false);
+					btnStart.setEnabled(false);
+					btnStop.setEnabled(true);
 				}
 			});
 			btnStart.setLayoutData(new RowData(GDE.IS_MAC ? 118 : 115, GDE.IS_WINDOWS ? SWT.DEFAULT : comboHeight));
@@ -863,7 +906,12 @@ public class AkkumatikDialog extends DeviceDialog {
 			btnStop.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					AkkumatikDialog.log.log(Level.OFF, "TODO");
+					if (serialPort != null && serialPort.isConnected())
+						setData2Write(STOP_COM);
+					AkkumatikDialog.log.log(Level.OFF, StringHelper.byte2Hex2CharString(STOP_COM, STOP_COM.length));
+					btnTransfer.setEnabled(true);
+					btnStart.setEnabled(false);
+					btnStop.setEnabled(false);
 				}
 			});
 			btnStop.setLayoutData(new RowData(GDE.IS_MAC ? 118 : 115, GDE.IS_WINDOWS ? SWT.DEFAULT : comboHeight));
@@ -882,6 +930,7 @@ public class AkkumatikDialog extends DeviceDialog {
 			
 			//update combo entries according selected battery type and output channel
 			update(Akkumatik.ACCU_TYPES[akkuSettings.get(programNameSelection.getSelectionIndex()).getAccuTyp()], akkuSettings.get(getActiveChannelProgram()).getChannel());
+			updateChargeDischarge();
 		}
 	}
 
@@ -925,6 +974,7 @@ public class AkkumatikDialog extends DeviceDialog {
 			chargeStopModeCombo.setItems(STOP_MODE_NI);
 			chargeStopModeCombo.select(findIndexByName(STOP_MODE_NI, STOP_MODE[actualAkkuSetting.getChargeStopMode()]));
 			break;
+		case "Blei":
 		case "Pb":
 			batteryTypeCombo.select(2);
 			programCombo.setItems(Akkumatik.PROCESS_MODE_PB);
@@ -936,6 +986,7 @@ public class AkkumatikDialog extends DeviceDialog {
 			chargeStopModeCombo.setItems(STOP_MODE_PB);
 			chargeStopModeCombo.select(findIndexByName(STOP_MODE_PB, STOP_MODE[actualAkkuSetting.getChargeStopMode()]));
 			break;
+		case "BGel":
 		case "PbGel":
 			batteryTypeCombo.select(3);
 			programCombo.setItems(Akkumatik.PROCESS_MODE_PB);
@@ -1000,6 +1051,8 @@ public class AkkumatikDialog extends DeviceDialog {
 		case 1:
 			btnChannel1.setSelection(true);
 			btnChannel2.setSelection(false);
+			grpDischarge.setEnabled(true);
+			grpDischarge.setForeground(this.application.COLOR_BLACK);
 			//		Zellenzahl bei NiCd, NiMh         1...34
 			//		Zellenzahl bei Blei, Blei-Gel      1...20
 			//		Zellenzahl bei Li-Ionen, Li-Po   1...12
@@ -1041,6 +1094,8 @@ public class AkkumatikDialog extends DeviceDialog {
 		case 2:
 			btnChannel1.setSelection(false);
 			btnChannel2.setSelection(true);
+			grpDischarge.setEnabled(false);
+			grpDischarge.setForeground(this.application.COLOR_GREY);
 			//			Zellenzahl bei NiCd, NiMh 1...8 abhängig von der Versorgungsspannung
 			//			Zellenzahl bei Blei, Blei-Gel 1...4 abhängig von der Versorgungsspannung
 			//			Zellenzahl bei Li-Ionen, Li-Polymer 1…3 abhängig von der Versorgungsspannung
@@ -1077,6 +1132,8 @@ public class AkkumatikDialog extends DeviceDialog {
 			cellCountCombo.select(cellCountCombo.getItemCount() - 1);
 		else
 			cellCountCombo.select(cellsSelection);
+		
+		updateChargeDischarge();
 		
 		if (this.serialPort != null && this.serialPort.isConnected()) {
 			//btnTransfer.setEnabled(true);
@@ -1119,6 +1176,68 @@ public class AkkumatikDialog extends DeviceDialog {
 		return 0;
 	}
 	
+	/**
+	 * Programm (0= LADE, 1= ENTL, 2= E+L, 3= L+E, 4= (L)E+L, 5= (E)L+E, 6= SENDER, LAGERN wird mit 0 oder 1 gemeldet)
+	 */
+	private void updateChargeDischarge() {
+		switch (programCombo.getSelectionIndex()) {
+		case 0: //charge
+			grpCharge.setEnabled(true);
+			for (Control child : grpCharge.getChildren()) {
+				child.setEnabled(true);
+				child.setForeground(this.application.COLOR_BLACK);
+			}
+			composite_3.setEnabled(true);
+			for (Control child : composite_3.getChildren()) {
+				child.setEnabled(true);
+				child.setForeground(this.application.COLOR_BLACK);
+			}
+			grpDischarge.setEnabled(false);
+			grpDischarge.setForeground(this.application.COLOR_GREY);
+			for (Control child : grpDischarge.getChildren()) {
+				child.setEnabled(false);
+				child.setForeground(this.application.COLOR_GREY);
+			}
+			break;
+		case 1: //discharge
+			grpCharge.setEnabled(false);
+			for (Control child : grpCharge.getChildren()) {
+				child.setEnabled(false);
+				child.setForeground(this.application.COLOR_GREY);
+			}
+			composite_3.setEnabled(false);
+			for (Control child : composite_3.getChildren()) {
+				child.setEnabled(false);
+				child.setForeground(this.application.COLOR_GREY);
+			}
+			grpDischarge.setEnabled(true);
+			grpDischarge.setForeground(this.application.COLOR_BLACK);
+			for (Control child : grpDischarge.getChildren()) {
+				child.setEnabled(true);
+				child.setForeground(this.application.COLOR_BLACK);
+			}
+			break;
+		default:
+			grpCharge.setEnabled(true);
+			for (Control child : grpCharge.getChildren()) {
+				child.setEnabled(true);
+				child.setForeground(this.application.COLOR_BLACK);
+			}
+			composite_3.setEnabled(true);
+			for (Control child : composite_3.getChildren()) {
+				child.setEnabled(true);
+				child.setForeground(this.application.COLOR_BLACK);
+			}
+			grpDischarge.setEnabled(true);
+			grpDischarge.setForeground(this.application.COLOR_BLACK);
+			for (Control child : grpDischarge.getChildren()) {
+				child.setEnabled(true);
+				child.setForeground(this.application.COLOR_BLACK);
+			}
+			break;
+		}
+	}
+
 	/**
 	 * method to test this class
 	 * @param args
@@ -1179,12 +1298,6 @@ public class AkkumatikDialog extends DeviceDialog {
 			AkkumatikDialog.log.log(Level.SEVERE, e.getMessage(), e);
 			return;
 		}
-		finally {
-			//		if (serialPort.isConnected()) {
-			//			serialPort.write(UltramatSerialPort.RESET);
-			//			serialPort.close();
-			//		}
-		}
 	}
 	
 	private static void initLogger() {
@@ -1201,4 +1314,23 @@ public class AkkumatikDialog extends DeviceDialog {
 		AkkumatikDialog.rootLogger.addHandler(AkkumatikDialog.logHandler);
 	}
 
+	public static void setData2Write(byte[] newData2Write) {
+		synchronized(data2Write) {
+			data2Write = new byte[newData2Write.length];
+			System.arraycopy(newData2Write, 0, data2Write, 0, data2Write.length);
+			isDataAvailable = true;
+		}
+	}
+	
+	public static byte[] getData2Write() {
+		synchronized(data2Write) {
+			byte[] retData2Write = null;
+			if (isDataAvailable) {
+				retData2Write = new byte[data2Write.length];
+				System.arraycopy(data2Write, 0, retData2Write, 0, retData2Write.length);
+				isDataAvailable = false;
+			}
+			return retData2Write;
+		}
+	}
 }

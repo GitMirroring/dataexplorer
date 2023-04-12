@@ -94,9 +94,9 @@ public class Akkumatik extends DeviceConfiguration implements IDevice {
 		CHARGE_MODE_PB = new String[] { Messages.getString(MessageIds.GDE_MSGT3410) };
 
 		this.application = DataExplorer.getInstance();
-		this.dialog = new AkkumatikDialog(this.application.getShell(), this);
-		this.serialPort = new AkkumatikSerialPort(this, this.application);
 		this.channels = Channels.getInstance();
+		this.serialPort = new AkkumatikSerialPort(this, this.application);
+		this.dialog = new AkkumatikDialog(this.application.getShell(), this);
 		if (this.application.getMenuToolBar() != null) this.configureSerialPortMenu(DeviceCommPort.ICON_SET_START_STOP, GDE.STRING_EMPTY, GDE.STRING_EMPTY);
 	}
 
@@ -125,9 +125,9 @@ public class Akkumatik extends DeviceConfiguration implements IDevice {
 		CHARGE_MODE_PB = new String[] { Messages.getString(MessageIds.GDE_MSGT3410) };
 
 		this.application = DataExplorer.getInstance();
-		this.dialog = new AkkumatikDialog(this.application.getShell(), this);
-		this.serialPort = new AkkumatikSerialPort(this, this.application);
 		this.channels = Channels.getInstance();
+		this.serialPort = new AkkumatikSerialPort(this, this.application);
+		this.dialog = new AkkumatikDialog(this.application.getShell(), this);
 		this.configureSerialPortMenu(DeviceCommPort.ICON_SET_START_STOP, GDE.STRING_EMPTY, GDE.STRING_EMPTY);
 	}
 
@@ -687,5 +687,12 @@ public class Akkumatik extends DeviceConfiguration implements IDevice {
 	@Override
 	public int	getCurrentSmoothIndex() {
 		return 1;
+	}
+	
+	/**
+	 * @return reference to gatherer thread
+	 */
+	public GathererThread getDataGathererThread() {
+		return this.dataGatherThread;
 	}
 }
