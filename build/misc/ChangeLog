@@ -6,7 +6,9 @@ Generic changes/fixes
 	* Java runtime update 17.0.6+9-LTS-190
 	
 Device specific changes/fixes
-	* Akkumatik add configuration dialog
+	* Akkumatik - add configuration dialog
+	* GPS-Logger* - correct method comment, add exception log, tolerate wrong position of speed with glide ratio
+	* HoTTAdapter* - use SM GPS logger servo pulse as unsigned value
 
 Version 3.7.6 - 19 Mar 2023
 Generic changes/fixes 

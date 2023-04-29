@@ -797,7 +797,7 @@ public class HoTTlogReader extends HoTTbinReader {
 			if ((buf[65] & 0xFF) > 100) { //SM GPS-Logger
 				//52=Roll 53=Pitch 54=Yaw
 				//16=ServoPulse 17=AirSpeeed 18=n/a
-				this.points[16] = buf[52] * 1000;
+				this.points[16] = (buf[52] & 0xFF) * 1000;
 				this.points[17] = DataParser.parse2UnsignedShort(buf, 53) * 1000;
 				//19=GyroX 20=GyroY 21=GyroZ 	
 				//55,56=GyroX 57,58=GyroY 59,60=GyroZ
@@ -810,7 +810,7 @@ public class HoTTlogReader extends HoTTbinReader {
 			}
 			else if ((buf[65] & 0xFF) == 4) { //RCE Sparrow
 				//16=servoPulse 17=fixed 18=Voltage 19=GPS hh:mm 20=GPS sss.SSS 21=MSL Altitude 22=ENL 23=Version	
-				this.points[16] = buf[60] * 1000;
+				this.points[16] = (buf[60] & 0xFF) * 1000;
 				this.points[17] = 0;
 				this.points[18] = buf[54] * 100; 
 				//19=GPS hh:mm:sss.SSS 20=GPS sss.SSS 21=MSL Altitude 	

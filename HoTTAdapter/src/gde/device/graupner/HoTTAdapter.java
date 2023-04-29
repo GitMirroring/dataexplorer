@@ -2733,7 +2733,7 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 	 */
 	protected static void updateVarioTypeDependent(int version, IDevice device, RecordSet tmpRecordSet) {
 		if (version > 100 && version < 120) { //SM MicroVario
-			//8=accX 9=accY 10=accZ 11=reserved 12=version
+			//8=accX 9=accY 10=accZ 11=air-speed 12=version
 			tmpRecordSet.get(8).setName(device.getMeasurementReplacement("acceleration") + " X");
 			tmpRecordSet.get(8).setUnit("g");
 			tmpRecordSet.get(9).setName(device.getMeasurementReplacement("acceleration") + " Y");
