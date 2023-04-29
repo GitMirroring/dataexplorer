@@ -8,7 +8,6 @@ Generic changes/fixes
 Device specific changes/fixes
 	* Akkumatik - add configuration dialog
 	* GPS-Logger* - correct method comment, add exception log, tolerate wrong position of speed with glide ratio
-	* HoTTAdapter* - use SM GPS logger servo pulse as unsigned value
 
 Version 3.7.6 - 19 Mar 2023
 Generic changes/fixes 
