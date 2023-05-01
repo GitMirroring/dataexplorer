@@ -1212,7 +1212,13 @@ public class NMEAParser implements IDataParser {
 						if (!this.device.getMeasurement(this.channelConfigNumber, 8 + i + 1).getUnit().equals("m/1")) {
 							this.device.getMeasurement(this.channelConfigNumber, 8 + i + 1).setUnit("m/1");
 						}
-						this.values[8 + i + 2] = (int) (Double.parseDouble(tmpValues[3]) * 1000.0);
+						if (tmpValues[2].equals("(")) {
+							this.values[8 + i + 2] = (int) (Double.parseDouble(tmpValues[3]) * 1000.0);
+						}
+						else if (tmpValues[2].startsWith("(")) {
+							tmpValues[2] = tmpValues[2].substring(1);
+							this.values[8 + i + 2] = (int) (Double.parseDouble(tmpValues[2]) * 1000.0);
+						}					
 						if (!this.device.getMeasurement(this.channelConfigNumber, 8 + i + 2).getUnit().equals("km/h")) {
 							this.device.getMeasurement(this.channelConfigNumber, 8 + i + 2).setUnit("km/h");
 						} 
@@ -1232,6 +1238,7 @@ public class NMEAParser implements IDataParser {
 				}
 			}
 			catch (Exception e) {
+				log.log(Level.WARNING, e.getMessage(), e);
 				// ignore and leave value unchanged
 			}
 		}
@@ -1341,7 +1348,7 @@ public class NMEAParser implements IDataParser {
 			if (this.values[22] >= 39500 && this.values[22] <= 40500) {
 				vcAirSpeed40.add(this.values[22], this.values[24]);
 			}
-			//build sum of ∆TEC pressure values between 0,95 and 1,05 km/h as well as sum of matching ∆TEC pressure
+			//build sum of ∆TEC pressure values between 0,95 and 1,05 hPa as well as sum of matching ∆TEC pressure
 			if (this.values[24] >= 950 && this.values[24] <= 1050) {
 				vcAirSpeedDp1.add(this.values[22], this.values[24]);
 			}
