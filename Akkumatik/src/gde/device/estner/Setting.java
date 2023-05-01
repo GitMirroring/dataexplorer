@@ -8,9 +8,6 @@
 
 package gde.device.estner;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -20,8 +17,6 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import gde.GDE;
 
 
 /**
@@ -90,7 +85,7 @@ public class Setting {
     @XmlElement(name = "Capacity", required = true)
     protected Integer capacity;
     @XmlElement(name = "CellCount", required = true)
-    protected Integer cellCount;
+    protected Short cellCount;
     @XmlElement(name = "Program", required = true)
     protected Integer program;
     @XmlElement(name = "Cycle", required = true)
@@ -107,6 +102,8 @@ public class Setting {
     @XmlSchemaType(name = "anySimpleType")
     protected String name;
 
+    private static String[] tnsTbl = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ":", ";", "<", "=", ">", "?"};
+    
     /**
      * Gets the value of the settingType property.
      * 
@@ -216,6 +213,18 @@ public class Setting {
     }
 
     /**
+     * Gets the value of the amount property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
+     */
+    public String getAmountPrepared() {
+      return String.format("%s%s%s%s", tnsTbl[(amount & 0x00F0) >> 4], tnsTbl[amount & 0x000F], tnsTbl[(amount & 0xF000) >> 12], tnsTbl[(amount & 0x0F00) >> 8]);
+    }
+
+    /**
      * Sets the value of the amount property.
      * 
      * @param value
@@ -240,6 +249,18 @@ public class Setting {
     }
 
     /**
+     * Gets the value of the capacity property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
+     */
+    public String getCapacityPrepared() {
+        return String.format("%s%s%s%s", tnsTbl[(capacity & 0x00F0) >> 4], tnsTbl[capacity & 0x000F], tnsTbl[(capacity & 0xF000) >> 12], tnsTbl[(capacity & 0x0F00) >> 8]);
+    }
+
+    /**
      * Sets the value of the capacity property.
      * 
      * @param value
@@ -259,8 +280,20 @@ public class Setting {
      *     {@link Integer }
      *     
      */
-    public Integer getCellCount() {
+    public Short getCellCount() {
         return cellCount;
+    }
+
+    /**
+     * Gets the value of the cellCount property prepared for transfer.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
+     */
+    public String getCellCountPrepared() {
+    	return String.format("%s%s", tnsTbl[cellCount & 0x0F], tnsTbl[(cellCount & 0xF0) >> 4]);
     }
 
     /**
@@ -271,7 +304,7 @@ public class Setting {
      *     {@link Integer }
      *     
      */
-    public void setCellCount(Integer value) {
+    public void setCellCount(Short value) {
         this.cellCount = value;
     }
 
@@ -384,6 +417,18 @@ public class Setting {
     }
 
     /**
+     * Gets the value of the chargeCurrent property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
+     */
+    public String getChargeCurrentPrepared() {
+      return String.format("%s%s%s%s", tnsTbl[(chargeCurrent & 0x00F0) >> 4], tnsTbl[chargeCurrent & 0x000F], tnsTbl[(chargeCurrent & 0xF000) >> 12], tnsTbl[(chargeCurrent & 0x0F00) >> 8]);
+    }
+
+    /**
      * Sets the value of the chargeCurrent property.
      * 
      * @param value
@@ -405,6 +450,18 @@ public class Setting {
      */
     public Integer getDisChargeCurrent() {
         return disChargeCurrent;
+    }
+
+    /**
+     * Gets the value of the disChargeCurrent property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
+     */
+    public String getDisChargeCurrentPrepared() {
+      return String.format("%s%s%s%s", tnsTbl[(disChargeCurrent & 0x00F0) >> 4], tnsTbl[disChargeCurrent & 0x000F], tnsTbl[(disChargeCurrent & 0xF000) >> 12], tnsTbl[(disChargeCurrent & 0x0F00) >> 8]);
     }
 
     /**
@@ -456,35 +513,22 @@ public class Setting {
 //    <ChargeStopMode>0</ChargeStopMode>
 //    <ChargeCurrent>100</ChargeCurrent>
 //    <DisChargeCurrent>100</DisChargeCurrent>
-
-    	return String.format("3 %d %02d %02d %02d %02d %02d %02d %05d %04d %04d %04d %02d 00 B", getChannel(), getAccuTyp(), getProgram(), getChargeMode(), getCurrentMode(), 
-    			getChargeStopMode(), getCellCount(), getCapacity(), getChargeCurrent(), getDisChargeCurrent(), getAmount(), getCycle());
-    }
-    
-    public byte[] getBytes2Write() {
-//    <Channel>1</Channel>
-//    <AccuTyp>0</AccuTyp>
-//    <CurrentMode>2</CurrentMode>
-//    <Amount>0</Amount>
-//    <Capacity>1000</Capacity>
-//    <CellCount>34</CellCount>
-//    <Program>2</Program>
-//    <Cycle>0</Cycle>
-//    <ChargeMode>0</ChargeMode>
-//    <ChargeStopMode>0</ChargeStopMode>
-//    <ChargeCurrent>100</ChargeCurrent>
-//    <DisChargeCurrent>100</DisChargeCurrent>
-    	List<Byte> bytes2Write = new ArrayList<>();
-    	bytes2Write.add((byte) 0x02);
-    	for (String token : this.toString().split(GDE.STRING_BLANK))
-    		for (Byte b : token.getBytes())
-    			bytes2Write.add(b);   	
-    	bytes2Write.add((byte) 0x03);
     	
-    	byte[] bytes = new byte[bytes2Write.size()];
-    	for (int i = 0; i < bytes2Write.size(); ++i)
-    		bytes[i] = bytes2Write.get(i);
+			//3 1 00 00 00 02 03 04 00>80 3<80 0?:0 0000 0 01 00 @
+    	//  Kanal 1,2
+    	//    AkkuType 0-7
+    	//       Programm 0-6
+    	//          Ladeart 0-7
+    	//             Stromwahl 0-2
+    	//                StopMode 0-4
+    	//									 ZellenAnzahl 1-34
+    	//                      Kapazität 
+    	//                            Ladestrom
+    	//                                 Entladestrom
+    	//                                      Lademenge
+    	//                                           Zyklusanzahl
 
-    	return bytes;
+    	return String.format("3 %d %02d %02d %02d %02d %02d %s 00 %s %s %s %s %02d 00", getChannel(), getAccuTyp(), getProgram(), getChargeMode(), getCurrentMode(), 
+    			getChargeStopMode(), getCellCountPrepared(), getCapacityPrepared(), getChargeCurrentPrepared(), getDisChargeCurrentPrepared(), getAmountPrepared(), getCycle());
     }
-}
+ }

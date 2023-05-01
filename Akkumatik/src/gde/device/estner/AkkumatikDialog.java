@@ -75,11 +75,13 @@ public class AkkumatikDialog extends DeviceDialog {
 	final static String[] CHARGE_CURRENT_TYPE_PB = {"Fix"};
 	final static String[] CHARGE_CURRENT_TYPE_LI = {"Fix"};
 	
-	final static byte[] A2Z = {0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4A, 0x4B, 0x4C, 0x4D, 0x4E, 0x4F, 0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5A};
-	final static byte[] OPEN_DIALOG = {0x02, 0x33, 0x30, 0x41, 0x03};
-	final static byte[] CLOSE_DIALOG = {0x02, 0x33, 0x30, 0x41, 0x03};
-	final static byte[] START_COM = {0x02, 0x34, 0x34, 0x42, 0x03};
-	final static byte[] STOP_COM = {0x02, 0x34, 0x31, 0x47, 0x03};
+	final static byte[] OPEN_DIALOG = {0x02, 0x33, 0x30, 0x41, 0x03}; //A
+	
+	final static byte[] START_CH_1 = 	{0x02, 0x34, 0x34, 0x42, 0x03}; //B
+	final static byte[] START_CH_2 = 	{0x02, 0x34, 0x38, 0x4E, 0x03}; //N
+	
+	final static byte[] STOP_CH_1 = 	{0x02, 0x34, 0x31, 0x47, 0x03}; //G
+	final static byte[] STOP_CH_2 = 	{0x02, 0x34, 0x32, 0x44, 0x03}; //D
 	
 	static Handler										logHandler;
 	static Logger											rootLogger;
@@ -97,9 +99,9 @@ public class AkkumatikDialog extends DeviceDialog {
 	CCombo batteryTypeCombo, cellCountCombo, programCombo, cycleCountCombo, chargeModeCombo, chargeCurrentCombo;
 	CCombo capacityCombo, chargeStopModeCombo, currentModeCombo, chargeAmountCombo, dischargeCurrentCombo;
 	Button btnChannel1, btnChannel2, btnTransfer, btnStart, btnStop, removeEntry, editEntry;
-	Label statusLabel;
+	Label statusLabel, lblChargeMode, lblCurrentMode, lblCycleCount;
 	Group grpCharge, grpDischarge;
-	Composite composite_3;
+	Composite currentTypeAmountGrp;
 	int 	programSelectionIndex = 0;
 	int		comboHeight						= GDE.IS_LINUX ? 22 : GDE.IS_MAC ? 20 : 18; //(int) (GDE.WIDGET_FONT_SIZE * (GDE.IS_LINUX ? 2.5 : 1.8));
 
@@ -191,7 +193,7 @@ public class AkkumatikDialog extends DeviceDialog {
 		akkuSetting.setCurrentMode(currentMode);
 		akkuSetting.setAmount(amount);
 		akkuSetting.setCapacity(capacity);
-		akkuSetting.setCellCount(cellCount);
+		akkuSetting.setCellCount((short) cellCount);
 		akkuSetting.setProgram(program);
 		akkuSetting.setCycle(cycle);
 		akkuSetting.setChargeMode(chargeMode);
@@ -212,8 +214,10 @@ public class AkkumatikDialog extends DeviceDialog {
 		if (this.serialPort != null && dataGathererThread == null || dataGathererThread.isCollectDataStopped) {
 			this.device.open_closeCommPort();
 		}
-		if (this.serialPort != null && this.serialPort.isConnected())
+		AkkumatikSerialPort.getChecksum(AkkumatikDialog.OPEN_DIALOG);
+		if (this.serialPort != null && this.serialPort.isConnected()) {
 			AkkumatikDialog.setData2Write(AkkumatikDialog.OPEN_DIALOG);
+		}
 		
 		createContents();
 		dialogShell.addMouseTrackListener(new MouseTrackAdapter() {
@@ -236,15 +240,16 @@ public class AkkumatikDialog extends DeviceDialog {
 		});
 		dialogShell.open();
 		dialogShell.layout();
+		if (this.serialPort == null || dataGathererThread == null) {
+			statusLabel.setText(Messages.getString(MessageIds.GDE_MSGI3403));
+		}
+
 		Display display = getParent().getDisplay();
 		while (!dialogShell.isDisposed()) {
 			if (!display.readAndDispatch()) {
 				display.sleep();
 			}
 		}
-		
-		if (this.serialPort != null && this.serialPort.isConnected())
-			AkkumatikDialog.setData2Write(AkkumatikDialog.CLOSE_DIALOG);
 		
 		try {
 			Long time = new Date().getTime();
@@ -329,6 +334,7 @@ public class AkkumatikDialog extends DeviceDialog {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					actualAkkuSetting = akkuSettings.get(programNameSelection.getSelectionIndex());
+					log.log(Level.FINE, "ProgramName = " + actualAkkuSetting.getName());
 					//update combo entries according selected battery type and output channel
 					update(Akkumatik.ACCU_TYPES[akkuSettings.get(programNameSelection.getSelectionIndex()).getAccuTyp()], akkuSettings.get(programNameSelection.getSelectionIndex()).getChannel());
 					akkumatikSettings.getDialogSettings().setActiveChannel(btnChannel1.getSelection() ? 1 : 2);
@@ -348,6 +354,7 @@ public class AkkumatikDialog extends DeviceDialog {
 					if (evt.character == SWT.CR) {
 						programNameSelection.setEditable(false);
 						actualAkkuSetting.setName(programNameSelection.getText());
+						log.log(Level.FINE, "ProgramName = " + actualAkkuSetting.getName());
 						//actualAkkuSetting = akkuSettings.get(programSelectionIndex);
 						if (akkumatikSettings.getAkkuSettings() != null) {
 							akkuSettings = akkumatikSettings.getAkkuSettings().setting;
@@ -366,7 +373,7 @@ public class AkkumatikDialog extends DeviceDialog {
 			gd_programSelection.heightHint = GDE.IS_WINDOWS ? SWT.DEFAULT : comboHeight;
 			programNameSelection.setLayoutData(gd_programSelection);
 			programNameSelection.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE-1, SWT.NORMAL));
-			AkkumatikDialog.log.log(Level.OFF, String.format("this.akkumatikSettings.getAkkuSettings() != null -> %b", this.akkumatikSettings.getAkkuSettings() != null));
+			AkkumatikDialog.log.log(Level.FINE, String.format("this.akkumatikSettings.getAkkuSettings() != null -> %b", this.akkumatikSettings.getAkkuSettings() != null));
 			if (this.akkumatikSettings.getAkkuSettings() != null) {
 				akkuSettings = this.akkumatikSettings.getAkkuSettings().setting;
 				String[] programNames = new String[this.akkumatikSettings.getAkkuSettings().setting.size()];
@@ -386,6 +393,7 @@ public class AkkumatikDialog extends DeviceDialog {
 			addEntry.setLayoutData(gdButton);
 			addEntry.setText("+");
 			addEntry.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.BOLD));
+			addEntry.setToolTipText(Messages.getString(MessageIds.GDE_MSGT3467));
 			addEntry.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -409,6 +417,7 @@ public class AkkumatikDialog extends DeviceDialog {
 			removeEntry.setLayoutData(gdButton);
 			removeEntry.setText("-");
 			removeEntry.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.BOLD));
+			removeEntry.setToolTipText(Messages.getString(MessageIds.GDE_MSGT3468));
 			removeEntry.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -438,6 +447,7 @@ public class AkkumatikDialog extends DeviceDialog {
 			editEntry.setLayoutData(gdButton);
 			editEntry.setText(Messages.getString(MessageIds.GDE_MSGT3450));
 			editEntry.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE-1, SWT.NORMAL));
+			editEntry.setToolTipText(Messages.getString(MessageIds.GDE_MSGT3469));
 			editEntry.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -460,6 +470,7 @@ public class AkkumatikDialog extends DeviceDialog {
 			lblBatteryType.setLayoutData(new RowData(90, comboHeight));
 			lblBatteryType.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE-1, SWT.NORMAL));
 			lblBatteryType.setText(Messages.getString(MessageIds.GDE_MSGT3452));
+			lblBatteryType.setToolTipText(Messages.getString(MessageIds.GDE_MSGT3470));
 
 			batteryTypeCombo = new CCombo(grpBattery, SWT.BORDER);
 			batteryTypeCombo.setEditable(false);
@@ -467,12 +478,14 @@ public class AkkumatikDialog extends DeviceDialog {
 			batteryTypeCombo.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE-1, SWT.NORMAL));
 			batteryTypeCombo.setItems(Akkumatik.ACCU_TYPES);
 			batteryTypeCombo.select(akkuSettings.get(getActiveChannelProgram()).getAccuTyp());
+			batteryTypeCombo.setToolTipText(Messages.getString(MessageIds.GDE_MSGT3470));
 			batteryTypeCombo.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					//update combo entries according selected battery type and output channel
 					update(batteryTypeCombo.getText(), btnChannel1.getSelection() ? 1 : 2);
 					actualAkkuSetting.setAccuTyp(batteryTypeCombo.getSelectionIndex());
+					log.log(Level.FINE, "AccuTyp = " + actualAkkuSetting.getAccuTyp());
 					currentModeCombo.select(0); //NiXX -> auto, Pb, Li -> Fix
 				}
 			});
@@ -485,6 +498,7 @@ public class AkkumatikDialog extends DeviceDialog {
 			lblCapacity.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE-1, SWT.NORMAL));
 			lblCapacity.setLayoutData(new RowData(90, comboHeight));
 			lblCapacity.setText(Messages.getString(MessageIds.GDE_MSGT3453));
+			lblCapacity.setToolTipText(Messages.getString(MessageIds.GDE_MSGT3471));
 
 			capacityCombo = new CCombo(grpBattery, SWT.BORDER);
 			capacityCombo.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE-1, SWT.NORMAL));
@@ -493,10 +507,12 @@ public class AkkumatikDialog extends DeviceDialog {
 				capa.add("" + (100 * i));
 			capacityCombo.setItems(capa.toArray(new String[0]));
 			capacityCombo.select(akkuSettings.get(getActiveChannelProgram()).getCapacity()/100 - 1);
+			capacityCombo.setToolTipText(Messages.getString(MessageIds.GDE_MSGT3471));
 			capacityCombo.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					actualAkkuSetting.setCapacity(Integer.parseInt(capacityCombo.getText()));
+					log.log(Level.FINE, "Capacity = " + actualAkkuSetting.getCapacity());
 				}
 			});
 			capacityCombo.addKeyListener(new KeyAdapter() {
@@ -504,11 +520,15 @@ public class AkkumatikDialog extends DeviceDialog {
 				public void keyPressed(KeyEvent evt) {
 					if (evt.character == SWT.CR) {
 						int value = Integer.parseInt(capacityCombo.getText());
-						if (value > 65525) {
-							value = 65525;
-							capacityCombo.setText(""+value);
+						if (value > 65535) {
+							value = 65535;
 						}
+						else if (value < 100) {
+							value = 100;
+						}
+						capacityCombo.setText(""+ value);
 						actualAkkuSetting.setCapacity(value);
+						log.log(Level.FINE, "Capacity = " + actualAkkuSetting.getCapacity());
 					}
 				}
 			});
@@ -527,20 +547,23 @@ public class AkkumatikDialog extends DeviceDialog {
 			lblNumberCells.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE-1, SWT.NORMAL));
 			lblNumberCells.setLayoutData(new RowData(90, comboHeight));
 			lblNumberCells.setText(Messages.getString(MessageIds.GDE_MSGT3454));
+			lblNumberCells.setToolTipText(Messages.getString(MessageIds.GDE_MSGT3472));
 
 			cellCountCombo = new CCombo(grpBattery, SWT.BORDER);
-			batteryTypeCombo.setEditable(false);
-			batteryTypeCombo.setBackground(this.application.COLOR_WHITE);
+			cellCountCombo.setEditable(false);
+			cellCountCombo.setBackground(this.application.COLOR_WHITE);
 			cellCountCombo.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE-1, SWT.NORMAL));
 			ArrayList<String> cells = new ArrayList<>();
 			for (int i = 1; i < 35; ++i)
 				cells.add("" + i);
 			cellCountCombo.setItems(cells.toArray(new String[0]));
 			cellCountCombo.select(akkuSettings.get(getActiveChannelProgram()).getCellCount()-1);
+			cellCountCombo.setToolTipText(Messages.getString(MessageIds.GDE_MSGT3472));
 			cellCountCombo.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					actualAkkuSetting.setCellCount(cellCountCombo.getSelectionIndex()+1);
+					actualAkkuSetting.setCellCount((short) (cellCountCombo.getSelectionIndex()+1));
+					log.log(Level.FINE, "CellCount = " + actualAkkuSetting.getCellCount());
 				}
 			});
 			cellCountCombo.setLayoutData(new RowData(70, comboHeight));
@@ -558,11 +581,13 @@ public class AkkumatikDialog extends DeviceDialog {
 			btnChannel1 = new Button(grpChannel, SWT.RADIO);
 			btnChannel1.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE-1, SWT.NORMAL));
 			btnChannel1.setSelection(false);
+			btnChannel1.setToolTipText(Messages.getString(MessageIds.GDE_MSGT3473));
 			btnChannel1.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					update(batteryTypeCombo.getText(), btnChannel1.getSelection() ? 1 : 2);
 					actualAkkuSetting.setChannel(btnChannel1.getSelection() ? 1 : 2);
+					log.log(Level.FINE, "Channel = " + actualAkkuSetting.getChannel());
 				}
 			});
 			btnChannel1.setLayoutData(new RowData(75, comboHeight));
@@ -571,11 +596,13 @@ public class AkkumatikDialog extends DeviceDialog {
 			btnChannel2 = new Button(grpChannel, SWT.RADIO);
 			btnChannel2.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE-1, SWT.NORMAL));
 			btnChannel2.setSelection(false);
+			btnChannel2.setToolTipText(Messages.getString(MessageIds.GDE_MSGT3473));
 			btnChannel2.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					update(batteryTypeCombo.getText(), btnChannel1.getSelection() ? 1 : 2);
 					actualAkkuSetting.setChannel(btnChannel1.getSelection() ? 1 : 2);
+					log.log(Level.FINE, "Channel = " + actualAkkuSetting.getChannel());
 				}
 			});
 			btnChannel2.setLayoutData(new RowData(75, comboHeight));
@@ -592,6 +619,7 @@ public class AkkumatikDialog extends DeviceDialog {
 			lblName.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE-1, SWT.NORMAL));
 			lblName.setLayoutData(new RowData(60, comboHeight));
 			lblName.setText("Name");
+			lblName.setToolTipText(Messages.getString(MessageIds.GDE_MSGT3474));
 
 			programCombo = new CCombo(grpProgramm, SWT.BORDER);
 			programCombo.setEditable(false);
@@ -599,6 +627,7 @@ public class AkkumatikDialog extends DeviceDialog {
 			programCombo.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE-1, SWT.NORMAL));
 			programCombo.setItems(Akkumatik.PROCESS_MODE);
 			programCombo.select(akkuSettings.get(getActiveChannelProgram()).getProgram());
+			programCombo.setToolTipText(Messages.getString(MessageIds.GDE_MSGT3474));
 			programCombo.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -609,6 +638,7 @@ public class AkkumatikDialog extends DeviceDialog {
 						cycleCountCombo.setEnabled(false);
 					}
 					actualAkkuSetting.setProgram(findIndexByName(Akkumatik.PROCESS_MODE, programCombo.getText())); 
+					log.log(Level.FINE, "Program = " + actualAkkuSetting.getProgram());
 					updateChargeDischarge();
 				}
 			});
@@ -617,10 +647,11 @@ public class AkkumatikDialog extends DeviceDialog {
 			filler = new Composite(grpProgramm, SWT.NONE);
 			filler.setLayoutData(new RowData(120, 2));
 
-			Label lblCycleCount = new Label(grpProgramm, SWT.NONE);
+			lblCycleCount = new Label(grpProgramm, SWT.NONE);
 			lblCycleCount.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE-1, SWT.NORMAL));
 			lblCycleCount.setLayoutData(new RowData(60, comboHeight));
 			lblCycleCount.setText(Messages.getString(MessageIds.GDE_MSGT3457));
+			lblCycleCount.setToolTipText(Messages.getString(MessageIds.GDE_MSGT3475));
 
 			cycleCountCombo = new CCombo(grpProgramm, SWT.BORDER);
 			cycleCountCombo.setEditable(false);
@@ -631,10 +662,12 @@ public class AkkumatikDialog extends DeviceDialog {
 			cycleCountCombo.setItems(counts.toArray(new String[0]));
 			cycleCountCombo.select(akkuSettings.get(getActiveChannelProgram()).getCycle());
 			cycleCountCombo.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE-1, SWT.NORMAL));
+			cycleCountCombo.setToolTipText(Messages.getString(MessageIds.GDE_MSGT3475));
 			cycleCountCombo.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					actualAkkuSetting.setCycle(cycleCountCombo.getSelectionIndex()); 
+					log.log(Level.FINE, "Cycle = " + actualAkkuSetting.getCycle());
 				}
 			});
 			cycleCountCombo.setLayoutData(new RowData(90, comboHeight));
@@ -645,10 +678,11 @@ public class AkkumatikDialog extends DeviceDialog {
 			grpCharge.setLayoutData(new RowData(170, GDE.IS_LINUX ? 100 : 90));
 			grpCharge.setText(Messages.getString(MessageIds.GDE_MSGT3400));
 
-			Label lblChargeType = new Label(grpCharge, SWT.NONE);
-			lblChargeType.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE-1, SWT.NORMAL));
-			lblChargeType.setLayoutData(new RowData(80, comboHeight));
-			lblChargeType.setText(Messages.getString(MessageIds.GDE_MSGT3458));
+			lblChargeMode = new Label(grpCharge, SWT.NONE);
+			lblChargeMode.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE-1, SWT.NORMAL));
+			lblChargeMode.setLayoutData(new RowData(80, comboHeight));
+			lblChargeMode.setText(Messages.getString(MessageIds.GDE_MSGT3458));
+			lblChargeMode.setToolTipText(Messages.getString(MessageIds.GDE_MSGT3476));
 
 			chargeModeCombo = new CCombo(grpCharge, SWT.BORDER);
 			chargeModeCombo.setEditable(false);
@@ -656,10 +690,12 @@ public class AkkumatikDialog extends DeviceDialog {
 			chargeModeCombo.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE-1, SWT.NORMAL));
 			chargeModeCombo.setItems(Akkumatik.CHARGE_MODE);
 			chargeModeCombo.select(akkuSettings.get(getActiveChannelProgram()).getChargeMode());
+			chargeModeCombo.setToolTipText(Messages.getString(MessageIds.GDE_MSGT3476));
 			chargeModeCombo.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					actualAkkuSetting.setProgram(findIndexByName(Akkumatik.CHARGE_MODE, chargeModeCombo.getText()));
+					actualAkkuSetting.setChargeMode(findIndexByName(Akkumatik.CHARGE_MODE, chargeModeCombo.getText()));
+					log.log(Level.FINE, "ChargeMode = " + actualAkkuSetting.getChargeMode());
 				}
 			});
 			chargeModeCombo.setLayoutData(new RowData(80, comboHeight));
@@ -671,6 +707,7 @@ public class AkkumatikDialog extends DeviceDialog {
 			lblChargeCurrent.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE-1, SWT.NORMAL));
 			lblChargeCurrent.setLayoutData(new RowData(80, comboHeight));
 			lblChargeCurrent.setText(Messages.getString(MessageIds.GDE_MSGT3459));
+			lblChargeCurrent.setToolTipText(Messages.getString(MessageIds.GDE_MSGT3477));
 
 			chargeCurrentCombo = new CCombo(grpCharge, SWT.BORDER);
 			chargeCurrentCombo.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE-1, SWT.NORMAL));
@@ -679,10 +716,12 @@ public class AkkumatikDialog extends DeviceDialog {
 				chargeCurrentList.add("" + (50 * i));
 			chargeCurrentCombo.setItems(chargeCurrentList.toArray(new String[0]));
 			chargeCurrentCombo.select(akkuSettings.get(getActiveChannelProgram()).getChargeCurrent()/50 - 1);
+			chargeCurrentCombo.setToolTipText(Messages.getString(MessageIds.GDE_MSGT3477));
 			chargeCurrentCombo.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					actualAkkuSetting.setChargeCurrent(Integer.parseInt(chargeCurrentCombo.getText())); 
+					log.log(Level.FINE, "ChargeCurrent = " + actualAkkuSetting.getChargeCurrent());
 				}
 			});
 			chargeCurrentCombo.setLayoutData(new RowData(80, comboHeight));
@@ -690,13 +729,16 @@ public class AkkumatikDialog extends DeviceDialog {
 				@Override
 				public void keyPressed(KeyEvent evt) {
 					if (evt.character == SWT.CR) {
-						int value = Integer.parseInt(capacityCombo.getText());
+						int value = Integer.parseInt(chargeCurrentCombo.getText());
 						if (value > 9999) {
 							value = 9999;
-							chargeCurrentCombo.setText(""+ value);
 						}
-						value = value > 9999 ? 9999 : value;
+						else if (value < 50) {
+							value = 50;
+						}
+						chargeCurrentCombo.setText(""+ value);
 						actualAkkuSetting.setChargeCurrent(value); 
+						log.log(Level.FINE, "ChargeCurrent = " + actualAkkuSetting.getChargeCurrent());
 					}
 				}
 			});
@@ -714,6 +756,7 @@ public class AkkumatikDialog extends DeviceDialog {
 			lblStopMode.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE-1, SWT.NORMAL));
 			lblStopMode.setLayoutData(new RowData(80, comboHeight));
 			lblStopMode.setText("Stop Mode");
+			lblStopMode.setToolTipText(Messages.getString(MessageIds.GDE_MSGT3478));
 
 			chargeStopModeCombo = new CCombo(grpCharge, SWT.BORDER);
 			chargeStopModeCombo.setEditable(false);
@@ -721,49 +764,55 @@ public class AkkumatikDialog extends DeviceDialog {
 			chargeStopModeCombo.setItems(AkkumatikDialog.STOP_MODE);
 			chargeStopModeCombo.select(akkuSettings.get(getActiveChannelProgram()).getChargeStopMode());
 			chargeStopModeCombo.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE-1, SWT.NORMAL));
+			chargeStopModeCombo.setToolTipText(Messages.getString(MessageIds.GDE_MSGT3478));
 			chargeStopModeCombo.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					actualAkkuSetting.setChargeStopMode(findIndexByName(AkkumatikDialog.STOP_MODE, chargeStopModeCombo.getText())); 
+					log.log(Level.FINE, "ChargeStopMode = " + actualAkkuSetting.getChargeStopMode());
 				}
 			});
 			chargeStopModeCombo.setLayoutData(new RowData(80, comboHeight));
 
-			composite_3 = new Composite(composite, SWT.NONE);
-			composite_3.setLayout(new RowLayout(SWT.HORIZONTAL));
-			composite_3.setLayoutData(new RowData(170, GDE.IS_LINUX ? 95 : GDE.IS_WINDOWS ? 85 : 75));
+			currentTypeAmountGrp = new Composite(composite, SWT.NONE);
+			currentTypeAmountGrp.setLayout(new RowLayout(SWT.HORIZONTAL));
+			currentTypeAmountGrp.setLayoutData(new RowData(170, GDE.IS_LINUX ? 95 : GDE.IS_WINDOWS ? 85 : 75));
 
-			Composite composite_4 = new Composite(composite_3, SWT.NONE);
+			Composite composite_4 = new Composite(currentTypeAmountGrp, SWT.NONE);
 			composite_4.setLayoutData(new RowData(150, 20));
 
-			Label lblCurrentType = new Label(composite_3, SWT.NONE);
-			lblCurrentType.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE-1, SWT.NORMAL));
-			lblCurrentType.setLayoutData(new RowData(75, comboHeight));
-			lblCurrentType.setText(Messages.getString(MessageIds.GDE_MSGT3460));
+			lblCurrentMode = new Label(currentTypeAmountGrp, SWT.NONE);
+			lblCurrentMode.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE-1, SWT.NORMAL));
+			lblCurrentMode.setLayoutData(new RowData(75, comboHeight));
+			lblCurrentMode.setText(Messages.getString(MessageIds.GDE_MSGT3460));
+			lblCurrentMode.setToolTipText(Messages.getString(MessageIds.GDE_MSGT3479));
 
-			currentModeCombo = new CCombo(composite_3, SWT.BORDER);
+			currentModeCombo = new CCombo(currentTypeAmountGrp, SWT.BORDER);
 			currentModeCombo.setEditable(false);
 			currentModeCombo.setBackground(this.application.COLOR_WHITE);
 			currentModeCombo.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE-1, SWT.NORMAL));
 			currentModeCombo.setItems(CHARGE_CURRENT_TYPE);
 			currentModeCombo.select(akkuSettings.get(getActiveChannelProgram()).getCurrentMode());
+			currentModeCombo.setToolTipText(Messages.getString(MessageIds.GDE_MSGT3479));
 			currentModeCombo.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					actualAkkuSetting.setCurrentMode(findIndexByName(CHARGE_CURRENT_TYPE, currentModeCombo.getText())); 
+					log.log(Level.FINE, "CurrentMode = " + actualAkkuSetting.getCurrentMode());
 				}
 			});
 			currentModeCombo.setLayoutData(new RowData(70, comboHeight));
 
-			filler = new Composite(composite_3, SWT.NONE);
+			filler = new Composite(currentTypeAmountGrp, SWT.NONE);
 			filler.setLayoutData(new RowData(120, GDE.IS_MAC ? 4 : 2));
 
-			Label lblCapacityAmount = new Label(composite_3, SWT.NONE);
+			Label lblCapacityAmount = new Label(currentTypeAmountGrp, SWT.NONE);
 			lblCapacityAmount.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE-1, SWT.NORMAL));
 			lblCapacityAmount.setLayoutData(new RowData(75, comboHeight));
 			lblCapacityAmount.setText(Messages.getString(MessageIds.GDE_MSGT3461));
+			lblCapacityAmount.setToolTipText(Messages.getString(MessageIds.GDE_MSGT3480));
 
-			chargeAmountCombo = new CCombo(composite_3, SWT.BORDER);
+			chargeAmountCombo = new CCombo(currentTypeAmountGrp, SWT.BORDER);
 			chargeAmountCombo.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE-1, SWT.NORMAL));
 			ArrayList<String> capaAmount = new ArrayList<>();
 			for (int i = 1; i < 100; ++i)
@@ -771,10 +820,12 @@ public class AkkumatikDialog extends DeviceDialog {
 			capaAmount.add(0, "0");
 			chargeAmountCombo.setItems(capaAmount.toArray(new String[0]));
 			chargeAmountCombo.select(akkuSettings.get(getActiveChannelProgram()).getAmount()/100);
+			chargeAmountCombo.setToolTipText(Messages.getString(MessageIds.GDE_MSGT3480));
 			chargeAmountCombo.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					actualAkkuSetting.setAmount(Integer.parseInt(chargeAmountCombo.getText())); 
+					log.log(Level.FINE, "Amount = " + actualAkkuSetting.getAmount());
 				}
 			});
 			chargeAmountCombo.setLayoutData(new RowData(70, comboHeight));
@@ -783,11 +834,12 @@ public class AkkumatikDialog extends DeviceDialog {
 				public void keyPressed(KeyEvent evt) {
 					if (evt.character == SWT.CR) {
 						int value = Integer.parseInt(chargeAmountCombo.getText());
-						if (value > 9999) {
-							value = 9999;
-							chargeAmountCombo.setText(""+ value);
+						if (value > 65535) {
+							value = 65535;
 						}
+						chargeAmountCombo.setText(""+ value);
 						actualAkkuSetting.setAmount(value); 
+						log.log(Level.FINE, "Amount = " + actualAkkuSetting.getAmount());
 					}
 				}
 			});
@@ -808,6 +860,7 @@ public class AkkumatikDialog extends DeviceDialog {
 			lblDischargeCurrent.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE-1, SWT.NORMAL));
 			lblDischargeCurrent.setLayoutData(new RowData(80, comboHeight));
 			lblDischargeCurrent.setText(Messages.getString(MessageIds.GDE_MSGT3459));
+			lblDischargeCurrent.setToolTipText(Messages.getString(MessageIds.GDE_MSGT3481));
 
 			dischargeCurrentCombo = new CCombo(grpDischarge, SWT.BORDER);
 			dischargeCurrentCombo.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE-1, SWT.NORMAL));
@@ -816,10 +869,12 @@ public class AkkumatikDialog extends DeviceDialog {
 				dischargeCurrentList.add("" + (50 * i));
 			dischargeCurrentCombo.setItems(dischargeCurrentList.toArray(new String[0]));
 			dischargeCurrentCombo.select(akkuSettings.get(getActiveChannelProgram()).getDisChargeCurrent()/50 - 1);
+			dischargeCurrentCombo.setToolTipText(Messages.getString(MessageIds.GDE_MSGT3481));
 			dischargeCurrentCombo.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					actualAkkuSetting.setDisChargeCurrent(Integer.parseInt(dischargeCurrentCombo.getText())); 
+					log.log(Level.FINE, "DisChargeCurrent = " + actualAkkuSetting.getDisChargeCurrent());
 				}
 			});
 			dischargeCurrentCombo.setLayoutData(new RowData(80, comboHeight));
@@ -830,9 +885,13 @@ public class AkkumatikDialog extends DeviceDialog {
 						int value = Integer.parseInt(dischargeCurrentCombo.getText());
 						if (value > 5000) {
 							value = 5000;
-							dischargeCurrentCombo.setText(""+value);
 						}
+						else if (value < 50) {
+							value = 50;
+						}
+						dischargeCurrentCombo.setText(""+value);
 						actualAkkuSetting.setDisChargeCurrent(value); 
+						log.log(Level.FINE, "DisChargeCurrent = " + actualAkkuSetting.getDisChargeCurrent());
 					}
 				}
 			});
@@ -851,7 +910,6 @@ public class AkkumatikDialog extends DeviceDialog {
 			fd_statusLabel.top = new FormAttachment(composite, 2);
 			fd_statusLabel.right = new FormAttachment(composite, -10, SWT.RIGHT);
 			statusLabel.setLayoutData(fd_statusLabel);
-			statusLabel.setText(Messages.getString(MessageIds.GDE_MSGI3402));
 
 			Composite composite_5 = new Composite(dialogShell, SWT.NONE);
 			composite_5.setLayout(new RowLayout(SWT.HORIZONTAL));
@@ -865,15 +923,18 @@ public class AkkumatikDialog extends DeviceDialog {
 			btnTransfer = new Button(composite_5, SWT.NONE);
 			btnTransfer.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE-1, SWT.NORMAL));
 			btnTransfer.setEnabled(true);
+			btnTransfer.setToolTipText(Messages.getString(MessageIds.GDE_MSGT3482));
 			btnTransfer.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					statusLabel.setText(new String(actualAkkuSetting.toString()));
-					log.log(Level.OFF, actualAkkuSetting.toString());
-					log.log(Level.OFF, StringHelper.byte2Hex2CharString(actualAkkuSetting.getBytes2Write(), actualAkkuSetting.getBytes2Write().length));
-					btnTransfer.setEnabled(false);
-					btnStart.setEnabled(true);
-					btnStop.setEnabled(false);
+					byte[] prg = AkkumatikSerialPort.getBytes2Write(actualAkkuSetting.toString());
+					statusLabel.setText("<STX>" + new String(prg) + "<ETX>");
+					log.log(Level.INFO, new String(prg));
+					if (serialPort != null && serialPort.isConnected())
+						setData2Write(prg);
+//					btnTransfer.setEnabled(false);
+//					btnStart.setEnabled(true);
+//					btnStop.setEnabled(false);
 				}
 			});
 			btnTransfer.setLayoutData(new RowData(GDE.IS_MAC ? 118 : 115, GDE.IS_WINDOWS ? SWT.DEFAULT : comboHeight));
@@ -881,7 +942,8 @@ public class AkkumatikDialog extends DeviceDialog {
 
 			btnStart = new Button(composite_5, SWT.NONE);
 			btnStart.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE-1, SWT.NORMAL));
-			btnStart.setEnabled(false);
+			btnStart.setEnabled(true);
+			btnStart.setToolTipText(Messages.getString(MessageIds.GDE_MSGT3483));
 			btnStart.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -889,12 +951,16 @@ public class AkkumatikDialog extends DeviceDialog {
 //					byte[] writeBuffer = new byte[START_COM.length + program2Write.length];
 //					System.arraycopy(program2Write, 0, writeBuffer, 0, program2Write.length);
 //					System.arraycopy(START_COM, 0, writeBuffer, program2Write.length, START_COM.length);
-					if (serialPort != null && serialPort.isConnected())
-						setData2Write(START_COM);
-					AkkumatikDialog.log.log(Level.OFF, StringHelper.byte2Hex2CharString(START_COM, START_COM.length));
-					btnTransfer.setEnabled(false);
-					btnStart.setEnabled(false);
-					btnStop.setEnabled(true);
+					statusLabel.setText("<STX>" + "44B" + "<ETX>");
+					if (serialPort != null && serialPort.isConnected()) {
+						if (btnChannel1.getSelection())
+							setData2Write(START_CH_1);
+						else if (btnChannel2.getSelection())
+							setData2Write(START_CH_2);
+					}
+//					btnTransfer.setEnabled(false);
+//					btnStart.setEnabled(false);
+//					btnStop.setEnabled(true);
 				}
 			});
 			btnStart.setLayoutData(new RowData(GDE.IS_MAC ? 118 : 115, GDE.IS_WINDOWS ? SWT.DEFAULT : comboHeight));
@@ -902,16 +968,21 @@ public class AkkumatikDialog extends DeviceDialog {
 
 			btnStop = new Button(composite_5, SWT.NONE);
 			btnStop.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE-1, SWT.NORMAL));
-			btnStop.setEnabled(false);
+			btnStop.setEnabled(true);
+			btnStop.setToolTipText(Messages.getString(MessageIds.GDE_MSGT3483));
 			btnStop.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					if (serialPort != null && serialPort.isConnected())
-						setData2Write(STOP_COM);
-					AkkumatikDialog.log.log(Level.OFF, StringHelper.byte2Hex2CharString(STOP_COM, STOP_COM.length));
-					btnTransfer.setEnabled(true);
-					btnStart.setEnabled(false);
-					btnStop.setEnabled(false);
+					statusLabel.setText("<STX>" + "41G" + "<ETX>");
+					if (serialPort != null && serialPort.isConnected()) {
+						if (btnChannel1.getSelection())
+							setData2Write(STOP_CH_1);
+						else if (btnChannel2.getSelection())
+							setData2Write(STOP_CH_2);
+					}
+//					btnTransfer.setEnabled(true);
+//					btnStart.setEnabled(false);
+//					btnStop.setEnabled(false);
 				}
 			});
 			btnStop.setLayoutData(new RowData(GDE.IS_MAC ? 118 : 115, GDE.IS_WINDOWS ? SWT.DEFAULT : comboHeight));
@@ -930,7 +1001,6 @@ public class AkkumatikDialog extends DeviceDialog {
 			
 			//update combo entries according selected battery type and output channel
 			update(Akkumatik.ACCU_TYPES[akkuSettings.get(programNameSelection.getSelectionIndex()).getAccuTyp()], akkuSettings.get(getActiveChannelProgram()).getChannel());
-			updateChargeDischarge();
 		}
 	}
 
@@ -1043,6 +1113,8 @@ public class AkkumatikDialog extends DeviceDialog {
 			chargeStopModeCombo.select(findIndexByName(STOP_MODE_LI, STOP_MODE[actualAkkuSetting.getChargeStopMode()]));
 			break;			
 		}
+		
+		updateChargeDischarge();
 
 		ArrayList<String> cells = new ArrayList<>();
 		
@@ -1051,8 +1123,6 @@ public class AkkumatikDialog extends DeviceDialog {
 		case 1:
 			btnChannel1.setSelection(true);
 			btnChannel2.setSelection(false);
-			grpDischarge.setEnabled(true);
-			grpDischarge.setForeground(this.application.COLOR_BLACK);
 			//		Zellenzahl bei NiCd, NiMh         1...34
 			//		Zellenzahl bei Blei, Blei-Gel      1...20
 			//		Zellenzahl bei Li-Ionen, Li-Po   1...12
@@ -1094,8 +1164,17 @@ public class AkkumatikDialog extends DeviceDialog {
 		case 2:
 			btnChannel1.setSelection(false);
 			btnChannel2.setSelection(true);
-			grpDischarge.setEnabled(false);
-			grpDischarge.setForeground(this.application.COLOR_GREY);
+			programCombo.setItems(Akkumatik.PROCESS_MODE_CH2);
+			programCombo.select(0);
+			actualAkkuSetting.setProgram(0);
+			lblChargeMode.setForeground(this.application.COLOR_GREY);
+			chargeModeCombo.select(0);
+			chargeModeCombo.setEnabled(false);
+			actualAkkuSetting.setChargeMode(0);
+			lblCurrentMode.setForeground(this.application.COLOR_GREY);
+			currentModeCombo.select(2);
+			currentModeCombo.setEnabled(false);
+			actualAkkuSetting.setCurrentMode(2);
 			//			Zellenzahl bei NiCd, NiMh 1...8 abhängig von der Versorgungsspannung
 			//			Zellenzahl bei Blei, Blei-Gel 1...4 abhängig von der Versorgungsspannung
 			//			Zellenzahl bei Li-Ionen, Li-Polymer 1…3 abhängig von der Versorgungsspannung
@@ -1133,18 +1212,17 @@ public class AkkumatikDialog extends DeviceDialog {
 		else
 			cellCountCombo.select(cellsSelection);
 		
-		updateChargeDischarge();
-		
-		if (this.serialPort != null && this.serialPort.isConnected()) {
-			//btnTransfer.setEnabled(true);
-			btnStart.setEnabled(true);
-			btnStop.setEnabled(false);
-		}
-		else {
-			//btnTransfer.setEnabled(false);
-			btnStart.setEnabled(false);
-			btnStop.setEnabled(false);
-		}
+				
+//		if (this.serialPort != null && this.serialPort.isConnected()) {
+//			//btnTransfer.setEnabled(true);
+//			btnStart.setEnabled(true);
+//			btnStop.setEnabled(false);
+//		}
+//		else {
+//			//btnTransfer.setEnabled(false);
+//			btnStart.setEnabled(false);
+//			btnStop.setEnabled(false);
+//		}
 	}
 	
 	/**
@@ -1160,6 +1238,7 @@ public class AkkumatikDialog extends DeviceDialog {
 				isMatchFound = true;
 				break;
 			}
+		log.log(Level.FINE, String.format("%s - isMatchFound %b return %d", searchString, isMatchFound, isMatchFound ? index : -1));
 		return isMatchFound ? index : -1;
 	}
 	
@@ -1187,26 +1266,92 @@ public class AkkumatikDialog extends DeviceDialog {
 				child.setEnabled(true);
 				child.setForeground(this.application.COLOR_BLACK);
 			}
-			composite_3.setEnabled(true);
-			for (Control child : composite_3.getChildren()) {
+			currentTypeAmountGrp.setEnabled(true);
+			for (Control child : currentTypeAmountGrp.getChildren()) {
 				child.setEnabled(true);
 				child.setForeground(this.application.COLOR_BLACK);
 			}
+			grpDischarge.setEnabled(false);
+			dischargeCurrentCombo.setText("0");
+			actualAkkuSetting.setDisChargeCurrent(0);
+			grpDischarge.setForeground(this.application.COLOR_GREY);
+			for (Control child : grpDischarge.getChildren()) {
+				child.setEnabled(false);
+				child.setForeground(this.application.COLOR_GREY);
+			}
+			//cycleCountCombo.setItems(new String[] {"0"});
+			cycleCountCombo.select(1);
+			cycleCountCombo.setEnabled(false);
+			actualAkkuSetting.setCycle(1);
+			break;
+			
+		case 1: //discharge
+			grpCharge.setEnabled(false);
+			chargeCurrentCombo.setText("0");
+			actualAkkuSetting.setChargeCurrent(0);
+			for (Control child : grpCharge.getChildren()) {
+				child.setEnabled(false);
+				child.setForeground(this.application.COLOR_GREY);
+			}
+			currentTypeAmountGrp.setEnabled(false);
+			for (Control child : currentTypeAmountGrp.getChildren()) {
+				child.setEnabled(false);
+				child.setForeground(this.application.COLOR_GREY);
+			}
+			grpDischarge.setEnabled(true);
+			grpDischarge.setForeground(this.application.COLOR_BLACK);
+			for (Control child : grpDischarge.getChildren()) {
+				child.setEnabled(true);
+				child.setForeground(this.application.COLOR_BLACK);
+			}
+			cycleCountCombo.select(1);
+			cycleCountCombo.setEnabled(false);
+			actualAkkuSetting.setCycle(1);
+			break;
+			
+		case 6: //SENDER
+			grpCharge.setEnabled(true);
+			for (Control child : grpCharge.getChildren()) {
+				child.setEnabled(true);
+				child.setForeground(this.application.COLOR_BLACK);
+			}
+			lblChargeMode.setForeground(this.application.COLOR_GREY);
+			chargeModeCombo.setEnabled(false);
+			chargeModeCombo.setForeground(this.application.COLOR_GREY);
+			chargeModeCombo.select(0);
+			actualAkkuSetting.setChargeMode(0);
+			
+			currentTypeAmountGrp.setEnabled(true);
+			for (Control child : currentTypeAmountGrp.getChildren()) {
+				child.setEnabled(true);
+				child.setForeground(this.application.COLOR_BLACK);
+			}
+			lblCurrentMode.setForeground(this.application.COLOR_GREY);
+			currentModeCombo.select(2);
+			currentModeCombo.setEnabled(false);
+			currentModeCombo.setForeground(this.application.COLOR_GREY);
+			actualAkkuSetting.setCurrentMode(2);
+			
 			grpDischarge.setEnabled(false);
 			grpDischarge.setForeground(this.application.COLOR_GREY);
 			for (Control child : grpDischarge.getChildren()) {
 				child.setEnabled(false);
 				child.setForeground(this.application.COLOR_GREY);
 			}
+			lblCycleCount.setForeground(this.application.COLOR_GREY);
+			cycleCountCombo.select(1);
+			cycleCountCombo.setEnabled(false);
+			actualAkkuSetting.setCycle(1); 
 			break;
-		case 1: //discharge
-			grpCharge.setEnabled(false);
+			
+		case 7: //storage
+			grpCharge.setEnabled(true);
 			for (Control child : grpCharge.getChildren()) {
-				child.setEnabled(false);
-				child.setForeground(this.application.COLOR_GREY);
+				child.setEnabled(true);
+				child.setForeground(this.application.COLOR_BLACK);
 			}
-			composite_3.setEnabled(false);
-			for (Control child : composite_3.getChildren()) {
+			currentTypeAmountGrp.setEnabled(false);
+			for (Control child : currentTypeAmountGrp.getChildren()) {
 				child.setEnabled(false);
 				child.setForeground(this.application.COLOR_GREY);
 			}
@@ -1216,15 +1361,20 @@ public class AkkumatikDialog extends DeviceDialog {
 				child.setEnabled(true);
 				child.setForeground(this.application.COLOR_BLACK);
 			}
+			lblCycleCount.setForeground(this.application.COLOR_GREY);
+			cycleCountCombo.select(1);
+			cycleCountCombo.setEnabled(false);
+			actualAkkuSetting.setCycle(1); 
 			break;
+			
 		default:
 			grpCharge.setEnabled(true);
 			for (Control child : grpCharge.getChildren()) {
 				child.setEnabled(true);
 				child.setForeground(this.application.COLOR_BLACK);
 			}
-			composite_3.setEnabled(true);
-			for (Control child : composite_3.getChildren()) {
+			currentTypeAmountGrp.setEnabled(true);
+			for (Control child : currentTypeAmountGrp.getChildren()) {
 				child.setEnabled(true);
 				child.setForeground(this.application.COLOR_BLACK);
 			}
@@ -1234,6 +1384,9 @@ public class AkkumatikDialog extends DeviceDialog {
 				child.setEnabled(true);
 				child.setForeground(this.application.COLOR_BLACK);
 			}
+			cycleCountCombo.select(1);
+			cycleCountCombo.setEnabled(true);
+			actualAkkuSetting.setCycle(1); 
 			break;
 		}
 	}
@@ -1268,15 +1421,15 @@ public class AkkumatikDialog extends DeviceDialog {
 				AkkumatikDialog.log.log(Level.TIME, "read setup XML time = " + StringHelper.getFormatedTime("ss:SSS", (new Date().getTime() - time))); //$NON-NLS-1$ //$NON-NLS-2$
 			
 				if (akkumatikSettings.getDialogSettings() != null) {
-					AkkumatikDialog.log.log(Level.OFF, "active channel = " + akkumatikSettings.getDialogSettings().getActiveChannel());
-					AkkumatikDialog.log.log(Level.OFF, "active setting channel 1, aktive entry = " + akkumatikSettings.getDialogSettings().getChannel1().getActiveSetting());
-					AkkumatikDialog.log.log(Level.OFF, "active setting channel 2, aktive entry = " + akkumatikSettings.getDialogSettings().getChannel2().getActiveSetting());
+					AkkumatikDialog.log.log(Level.FINE, "active channel = " + akkumatikSettings.getDialogSettings().getActiveChannel());
+					AkkumatikDialog.log.log(Level.FINE, "active setting channel 1, aktive entry = " + akkumatikSettings.getDialogSettings().getChannel1().getActiveSetting());
+					AkkumatikDialog.log.log(Level.FINE, "active setting channel 2, aktive entry = " + akkumatikSettings.getDialogSettings().getChannel2().getActiveSetting());
 				}
 			
 				if (akkumatikSettings.getAkkuSettings() != null) {
 					List<Setting> akkuSettings = akkumatikSettings.getAkkuSettings().setting;
 					for (Setting setting : akkuSettings)
-						AkkumatikDialog.log.log(Level.OFF, "Akku Setting Name = " + setting.getName());
+						AkkumatikDialog.log.log(Level.FINE, "Akku Setting Name = " + setting.getName());
 						
 				}
 								
@@ -1299,8 +1452,8 @@ public class AkkumatikDialog extends DeviceDialog {
 			return;
 		}
 	}
-	
-	private static void initLogger() {
+		
+	public static void initLogger() {
 		AkkumatikDialog.logHandler = new ConsoleHandler();
 		AkkumatikDialog.logHandler.setFormatter(new LogFormatter());
 		AkkumatikDialog.logHandler.setLevel(Level.INFO);

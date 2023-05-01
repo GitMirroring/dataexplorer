@@ -60,6 +60,7 @@ public class Akkumatik extends DeviceConfiguration implements IDevice {
 	public static String[]				CHARGE_MODE_LI;
 	public static String[]				CHARGE_MODE_NI;
 	public static String[]				CHARGE_MODE_PB;
+	public static String[]				PROCESS_MODE_CH2;
 
 	protected final DataExplorer				application;
 	protected final AkkumatikDialog			dialog;
@@ -88,6 +89,7 @@ public class Akkumatik extends DeviceConfiguration implements IDevice {
 		System.arraycopy(PROCESS_MODE, 0, PROCESS_MODE_LI, 0, PROCESS_MODE.length);
 		System.arraycopy(PROCESS_MODE, 0, PROCESS_MODE_NI, 0, PROCESS_MODE.length - 1);
 		System.arraycopy(PROCESS_MODE, 0, PROCESS_MODE_PB, 0, PROCESS_MODE.length - 1);
+		PROCESS_MODE_CH2 = new String[] { PROCESS_MODE[0] };
 		
 		CHARGE_MODE_LI = new String[] { Messages.getString(MessageIds.GDE_MSGT3410), Messages.getString(MessageIds.GDE_MSGT3413) };
 		CHARGE_MODE_NI = new String[] { Messages.getString(MessageIds.GDE_MSGT3410), Messages.getString(MessageIds.GDE_MSGT3411), Messages.getString(MessageIds.GDE_MSGT3412) };
@@ -119,6 +121,7 @@ public class Akkumatik extends DeviceConfiguration implements IDevice {
 		System.arraycopy(PROCESS_MODE, 0, PROCESS_MODE_LI, 0, PROCESS_MODE.length);
 		System.arraycopy(PROCESS_MODE, 0, PROCESS_MODE_NI, 0, PROCESS_MODE.length - 1);
 		System.arraycopy(PROCESS_MODE, 0, PROCESS_MODE_PB, 0, PROCESS_MODE.length - 1);
+		PROCESS_MODE_CH2 = new String[] { PROCESS_MODE[0] };
 		
 		CHARGE_MODE_LI = new String[] { Messages.getString(MessageIds.GDE_MSGT3410), Messages.getString(MessageIds.GDE_MSGT3413) };
 		CHARGE_MODE_NI = new String[] { Messages.getString(MessageIds.GDE_MSGT3410), Messages.getString(MessageIds.GDE_MSGT3411), Messages.getString(MessageIds.GDE_MSGT3412) };
@@ -241,7 +244,7 @@ public class Akkumatik extends DeviceConfiguration implements IDevice {
 		points[9] = 0;
 
 		//System.out.println("dataBuffer.length = " + dataBuffer.length);
-		if (dataBuffer.length > 19) { //data contains Lithium cells
+		if ( this.getAccuCellType(dataBuffer) > 3) { //Akkutyp (0=NICD, 1=NIMH, 2=BLEI, 3=BGEL, 4=LIIO, 5=LIPO, 6=LiFe, 7=IUxx)
 			final int numCells = this.getNumberOfLithiumCells(dataBuffer);
 			if (numCells > 1 && dataBuffer.length >= (19 + numCells)) {
 				// 10=CellVoltage1 11=CellVoltage2 12=CellVoltage3 13=CellVoltage4 14=CellVoltage5 15=CellVoltage6 16=CellVoltage7 17=CellVoltage8
@@ -278,12 +281,21 @@ public class Akkumatik extends DeviceConfiguration implements IDevice {
 	}
 
 	/**
-	 * query the number of Lithium cells if any
+	 * query the number of Lithium cells if any (after processing is stopped a status word replace cell count) 
 	 * @param specificData
 	 * @return cell count if any
 	 */
 	public int getNumberOfLithiumCells(String[] dataBuffer) {
-		return Integer.valueOf(dataBuffer[8]); //this.getAccuCellType(buffer) >= 4 && this.getAccuCellType(buffer) <= 6 ? (buffer[44] - 48) * 10 + (buffer[45] - 48) : 0;
+		return Integer.valueOf(dataBuffer[8]); 
+	}
+
+	/**
+	 * query the number of Lithium cells if any (after processing is stopped a status word replace cell count) 
+	 * @param specificData
+	 * @return Status number
+	 */
+	public int getNumberStatus(String[] dataBuffer) {
+		return Integer.valueOf(dataBuffer[8]); 
 	}
 
 	/**
@@ -306,7 +318,7 @@ public class Akkumatik extends DeviceConfiguration implements IDevice {
 			return this.getProcessingPhase(dataBuffer) != 0 && this.getProcessingPhase(dataBuffer) != 10;
 		return this.getProcessingPhase(dataBuffer) != 0;
 	}
-
+	
 	/**
 	 * get processing mode
 	 * (0= LADE, 1= ENTL, 2= E+L, 3= L+E, 4= (L)E+L, 5= (E)L+E, 6= SENDER, LAGERN wird mit 0 oder 1 gemeldet)
@@ -524,7 +536,7 @@ public class Akkumatik extends DeviceConfiguration implements IDevice {
 		for (int i = 0; i < recordSet.size(); ++i) {
 			Record record = recordSet.get(i);
 			record.setDisplayable(record.hasReasonableData());
-			if (Akkumatik.log.isLoggable(java.util.logging.Level.OFF)) Akkumatik.log.log(java.util.logging.Level.OFF, record.getName() + " setDisplayable=" + record.hasReasonableData());
+			if (Akkumatik.log.isLoggable(java.util.logging.Level.FINE)) Akkumatik.log.log(java.util.logging.Level.FINE, record.getName() + " setDisplayable=" + record.hasReasonableData());
 
 			if (record.isActive() && record.isDisplayable()) {
 				++displayableCounter;

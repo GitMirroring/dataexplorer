@@ -53,8 +53,8 @@ public class GathererThread extends Thread {
 	String										recordSetKey1								= Messages.getString(gde.messages.MessageIds.GDE_MSGT0272);
 	String										recordSetKey2								= Messages.getString(gde.messages.MessageIds.GDE_MSGT0272);
 	boolean										isPortOpenedByLiveGatherer	= false;
-	int												numberBatteryCells1					= 0;
-	int												numberBatteryCells2					= 0;
+	int												statusNumberCh1							= 0;
+	int												statusNUmberCh2						= 0;
 	int												retryCounter								= GathererThread.WAIT_TIME_RETRYS;
 	boolean										isCollectDataStopped				= false;
 	int												lastNumberDisplayableRecords1	= 0;
@@ -115,7 +115,7 @@ public class GathererThread extends Thread {
 				//check if dialog prepared data to write
 				byte[] data2Write = AkkumatikDialog.getData2Write();
 				if (data2Write != null && data2Write.length > 0) {
-					this.serialPort.write(data2Write, 200);
+					this.serialPort.write(data2Write);
 				}
 
 				// check if device is ready for data capturing, discharge or charge allowed only
@@ -126,7 +126,6 @@ public class GathererThread extends Thread {
 
 				switch (data != null ? Integer.valueOf(data[0]) : 0) { // device outlet 1 or 2
 				case 1:
-					this.numberBatteryCells1 = this.device.getNumberOfLithiumCells(data);
 					isProgrammExecuting1 = this.device.isProcessing(data);
 					isCycleMode1 = this.device.isCycleMode(data);
 					cycleCount1 = GDE.STRING_EMPTY + (isCycleMode1 ? "#" + this.device.getNumberOfCycle(data) : GDE.STRING_BLANK);
@@ -181,11 +180,12 @@ public class GathererThread extends Thread {
 							GathererThread.this.application.updateAllTabs(false, this.lastNumberDisplayableRecords1 != recordSet1.getConfiguredDisplayable());
 							this.lastNumberDisplayableRecords1 = recordSet1.getConfiguredDisplayable();
 						}
+						this.statusNumberCh1 = 0;
 					}
+					this.statusNumberCh1 = this.device.getNumberStatus(data);
 					break;
 
 				case 2:
-					this.numberBatteryCells2 = this.device.getNumberOfLithiumCells(data);
 					isProgrammExecuting2 = this.device.isProcessing(data);
 					isCycleMode2 = this.device.isCycleMode(data);
 					cycleCount2 = GDE.STRING_EMPTY + (isCycleMode2 ? "#" + this.device.getNumberOfCycle(data) : GDE.STRING_BLANK);
@@ -241,7 +241,9 @@ public class GathererThread extends Thread {
 							GathererThread.this.application.updateAllTabs(false, this.lastNumberDisplayableRecords2 != recordSet2.getConfiguredDisplayable());
 							this.lastNumberDisplayableRecords2 = recordSet2.getConfiguredDisplayable();
 						}
+						this.statusNUmberCh2 = 0;
 					}
+					this.statusNUmberCh2 = this.device.getNumberStatus(data);
 					break;
 
 				default:
@@ -249,8 +251,12 @@ public class GathererThread extends Thread {
 					break;
 				}
 
+
+				if (!isProgrammExecuting1 || !isProgrammExecuting2)
+					setProcessingStatus(statusNumberCh1, statusNUmberCh2);
+
 				if (!isProgrammExecuting1 && !isProgrammExecuting2) { // no Akkumatik program is executing, wait for 180 seconds max. for actions
-					this.application.setStatusMessage(Messages.getString(MessageIds.GDE_MSGI3400));
+					//this.application.setStatusMessage(Messages.getString(MessageIds.GDE_MSGI3400));
 					GathererThread.log.logp(java.util.logging.Level.FINE, GathererThread.$CLASS_NAME, $METHOD_NAME, "wait for Akkumatik activation"); //$NON-NLS-1$
 
 					if (recordSet1 != null && recordSet1.getRecordDataSize(true) > 5) { // record set has data points, save data and wait
@@ -415,5 +421,97 @@ public class GathererThread extends Thread {
 	 */
 	int setRetryCounter(int newRetryCounter) {
 		return this.retryCounter = newRetryCounter;
+	}
+	
+	/**
+	 * build a status message covering both gathered stati
+	 * @param statusCh1
+	 * @param statusCh2
+	 */
+	void setProcessingStatus(int statusCh1, int statusCh2) {	
+		this.application.setStatusMessage(Messages.getString(MessageIds.GDE_MSGT3466, new String[] {getStatusMessage(statusCh1), getStatusMessage(statusCh2)}));
+	}
+	
+	/**
+	 * @param status
+	 * @return corresponding message
+	 */
+	String getStatusMessage(int status) {
+		String statusMsg = GDE.STRING_EMPTY;
+		switch (status) {
+		case 50: //AKKU STOP
+			statusMsg = Messages.getString(MessageIds.GDE_MSGI3450);
+			break;
+			
+		case 51: //AKKU VOLL
+			statusMsg = Messages.getString(MessageIds.GDE_MSGI3451);
+			break;
+			
+		case 52: //AKKU LEER
+			statusMsg = Messages.getString(MessageIds.GDE_MSGI3452);
+			break;
+			
+		case 54: //FEHLER TIMEOUT
+			statusMsg = Messages.getString(MessageIds.GDE_MSGI3454);
+			break;
+			
+		case 55: //FEHLER LADE-MENGE
+			statusMsg = Messages.getString(MessageIds.GDE_MSGI3455);
+			break;
+			
+		case 56: //FEHLER AKKU ZU HEISS
+			statusMsg = Messages.getString(MessageIds.GDE_MSGI3456);
+			break;
+			
+		case 57: //FEHLER VERSORGUNGSSPANNUNG
+			statusMsg = Messages.getString(MessageIds.GDE_MSGI3457);
+			break;
+			
+		case 58: //FEHLER AKKUSPANNUNG
+			statusMsg = Messages.getString(MessageIds.GDE_MSGI3458);
+			break;
+			
+		case 59: //FEHLER ZELLENSPANNUNG
+			statusMsg = Messages.getString(MessageIds.GDE_MSGI3459);
+			break;
+			
+		case 60: //FEHLER ALARMEINGANG
+			statusMsg = Messages.getString(MessageIds.GDE_MSGI3460);
+			break;
+			
+		case 61: //FEHLER STROMREGLER
+			statusMsg = Messages.getString(MessageIds.GDE_MSGI3461);
+			break;
+			
+		case 62: //FEHLER POLUNG/KURZSCHLUSS
+			statusMsg = Messages.getString(MessageIds.GDE_MSGI3462);
+			break;
+			
+		case 63: //FEHLER REGELFENSTER
+			statusMsg = Messages.getString(MessageIds.GDE_MSGI3463);
+			break;
+			
+		case 64: //FEHLER MESSFENSTER
+			statusMsg = Messages.getString(MessageIds.GDE_MSGI3464);
+			break;
+			
+		case 65: //FEHLER TEMPERATUR
+			statusMsg = Messages.getString(MessageIds.GDE_MSGI3465);
+			break;
+			
+		case 66: //FEHLER TEMPSENS
+			statusMsg = Messages.getString(MessageIds.GDE_MSGI3466);
+			break;
+			
+		case 67: //FEHLER HARDWARE
+			statusMsg = Messages.getString(MessageIds.GDE_MSGI3467);
+			break;
+			
+		default:
+			statusMsg = Messages.getString(MessageIds.GDE_MSGI3468);
+			break;
+		}
+		
+		return statusMsg;
 	}
 }
