@@ -22,32 +22,44 @@
 <HTML>
 <HEAD>
 	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
-	<TITLE></TITLE>
-	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Win32)">
-	<META NAME="AUTHOR" CONTENT="Winfried Br&uuml;gmann">
-	<META NAME="CREATED" CONTENT="0;0">
-	<META NAME="CHANGEDBY" CONTENT="Winfried Br&uuml;gmann">
-	<META NAME="CHANGED" CONTENT="20080718;18370398">
+	<TITLE>Akkumatik-Ger&auml;tedialog</TITLE>
 </HEAD>
 <BODY LANG="de-DE" DIR="LTR">
 <DIV TYPE=HEADER>
-	<H2><A NAME="einleitung"></A><FONT FACE="Arial"><FONT SIZE=4><I>eStation-Ger&auml;tedialog</I></FONT></FONT></H2>
+	<H2><A NAME="einleitung"></A><FONT FACE="Arial"><FONT SIZE=4><I>Akkumatik-Ger&auml;tedialog</I></FONT></FONT></H2>
 </DIV>
-<P>Der eStation-Ger&auml;tedialog dient zum Auslesen der verf&uuml;gbaren
-Daten, die bei einem Lade- bzw. Entladevorgang gemessen werden. 
+<P>Der Akkumatik-Ger&auml;tedialog dient zum Erstellen und verwalten von Ladeprogrammen in beliebiger Anzahl. 
+</BR>
+Die Programmdaten werden in einer Datei mit dem Namen Akkumatik_Settings.xml abgelegt. 
+Diese Datei wird auch erzeugt, wenn sie noch nicht vorhanden ist.
+Bitte in der allgemeinen Hilfe unter "Verwendete Verzeichnisse" nachsehen, wie das Basisverzeichnis der Einstellungen für das verwendete Betriebssystem definiert ist.
+</BR>
+Bei jedem Schliessen des Dialoges werden alle vorgenommenen Änderungen, ohne zu fragen, abgespeichert.
+Das zuletzt sichtbare Programm wird beim nächsten Öffnen wieder angezeigt.
 </P>
 <H2><FONT FACE="Arial"><FONT SIZE=4><I>Bedienung</I></FONT></FONT></H2>
 <P>Nachdem die serielle Schnittstelle &uuml;ber den
 Ger&auml;teauswahldialog eingestellt ist und dieser Ger&auml;tedialog
-aufgerufen wurde, können durch dr&uuml;cken von „Start“ zyklisch
-Werte aus dem Ger&auml;t abgerufen und angezeigt werden. 
+aufgerufen wurde, können durch "Übertragen" das aktuell im Dialog sichtbare Programm an das Gerät für den gewählten Kanal übergeben werden.
+</BR>
+Wird kein Programm übertragen und dennoch Start gedrückt, startet das Gerät den aktuellen Programmspeicher für den ausgewählten Kanal.
+</BR>
+Mit Stop wird ein mögliches laufendes Programm auf dem gewählten Kanal gestoppt. 
 </P>
-<P ALIGN=CENTER><IMG SRC="HelpInfo_Bild_1.png" NAME="Bild1" ALT="Bild1" ALIGN=BOTTOM WIDTH=350 HEIGHT=465 BORDER=0>
+<P ALIGN=CENTER><IMG SRC="HelpInfo_Bild_1.png" NAME="Bild1" ALT="Bild1" ALIGN=BOTTOM WIDTH=378 HEIGHT=490 BORDER=0>
 </P>
-<P>Die Umschaltung der Lade- bzw. Entladekurven erfolgt automatisch,
-da die vom Ger&auml;t gelieferten Daten diese Information enthalten.
-Ist das Ger&auml;t &uuml;ber einen gewissen Zeitraum inaktiv, wird
-der serielle Port geschlossen. 
+<P>
+Beim Anlegen eines neuen Ladeprogramms, "Plus", wird ein fortlaufender generischer Name vergeben. 
+Dieser Name kann über "Ändern" frei verändert werden. Eine Namensänderung ist mit der Entertaste zu bestätigen. 
+Mit "Minus" wird das angezeigte Ladeprogramm gelöscht und aus der Akkumatik_Settings.xml entfernt.
+</BR>
+Einzelne Felder mit Zahlen, wie Kapazität, Ströme und Lademenge können schnell über die Drop-Down-Auswahl gewählt werden.
+Man kann diese Felder auch überschreiben, wobei hier das Ende der Eingabe mit Enter zu bestätigen ist.
+Hierbei findet aktuell lediglich eine Überprüfung auf minimale und maximale Werte statt.
+Es gibt keine Plausibilitätsprüfung, ob der eingegebene Wert überhaupt sinnvoll auf den angeschlossenen Akku angewendet werden kann.
+</P>
+<P>
+Über das Fragezeichen erreicht man einen Hilfetext als Kurzanleitung.
 </P>
 </BODY>
 </HTML>

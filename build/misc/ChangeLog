@@ -7,6 +7,7 @@ Generic changes/fixes
 	
 Device specific changes/fixes
 	* Akkumatik - add configuration dialog
+	* Akkumatik - add help page with short dialog introduction
 	* GPS-Logger* - correct method comment, add exception log, tolerate wrong position of speed with glide ratio
 
 Version 3.7.6 - 19 Mar 2023
