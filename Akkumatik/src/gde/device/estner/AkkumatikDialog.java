@@ -996,7 +996,7 @@ public class AkkumatikDialog extends DeviceDialog {
 					AkkumatikDialog.this.dialogShell.dispose();
 				}
 			});
-			btnClose.setLayoutData(new RowData(GDE.IS_LINUX ? 305 : GDE.IS_WINDOWS ? 300 : 303, GDE.IS_WINDOWS ? SWT.DEFAULT : comboHeight));
+			btnClose.setLayoutData(new RowData(GDE.IS_LINUX ? 300 : GDE.IS_WINDOWS ? 300 : 303, GDE.IS_WINDOWS ? SWT.DEFAULT : comboHeight));
 			btnClose.setText(Messages.getString(MessageIds.GDE_MSGT3463));
 
 			Button btnHelp = new Button(composite_5, SWT.NONE);
