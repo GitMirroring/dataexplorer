@@ -996,7 +996,7 @@ public class AkkumatikDialog extends DeviceDialog {
 					AkkumatikDialog.this.dialogShell.dispose();
 				}
 			});
-			btnClose.setLayoutData(new RowData(GDE.IS_LINUX ? 255 : GDE.IS_WINDOWS ? 253 : 303, GDE.IS_WINDOWS ? SWT.DEFAULT : comboHeight));
+			btnClose.setLayoutData(new RowData(GDE.IS_LINUX ? 305 : GDE.IS_WINDOWS ? 300 : 303, GDE.IS_WINDOWS ? SWT.DEFAULT : comboHeight));
 			btnClose.setText(Messages.getString(MessageIds.GDE_MSGT3463));
 
 			Button btnHelp = new Button(composite_5, SWT.NONE);
@@ -1007,7 +1007,7 @@ public class AkkumatikDialog extends DeviceDialog {
 					application.openHelpDialog("Akkumatik", "HelpInfo.html");  //$NON-NLS-1$
 				}
 			});
-			btnHelp.setLayoutData(new RowData(GDE.IS_LINUX ? 50 : GDE.IS_WINDOWS ? 48 : 53, GDE.IS_WINDOWS ? SWT.DEFAULT : comboHeight));
+			btnHelp.setLayoutData(new RowData(GDE.IS_LINUX ? 50 : GDE.IS_WINDOWS ? 48 : 53, GDE.IS_WINDOWS ? comboHeight+6 : comboHeight));
 			btnHelp.setImage(SWTResourceManager.getImage("gde/resource/QuestionHot.gif"));
 			
 			//update combo entries according selected battery type and output channel
