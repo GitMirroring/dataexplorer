@@ -58,7 +58,7 @@ import gde.ui.DataExplorer;
 import gde.utils.FileUtils;
 
 /**
- * Futaba telemetry data adapter device implementation class
+ * OpenTx/Ethos telemetry data adapter device implementation class
  */
 public class OpenTxAdapter extends DeviceConfiguration implements IDevice {
 	final static Logger				log					= Logger.getLogger(OpenTxAdapter.class.getName());
@@ -331,6 +331,28 @@ public class OpenTxAdapter extends DeviceConfiguration implements IDevice {
 	}
 
 	/**
+	 * @param timeValue
+	 * @return formatted time HH:mm:ss
+	 */
+	public static String getFormattedTime(final int timeValue) {
+		int tmpHH = timeValue/10000000;
+		int tmpMM = timeValue/100000 - tmpHH*100;
+		int tmpSS = timeValue/1000 - tmpMM*100 - tmpHH*10000;
+		return String.format("%02d:%02d:%02d", tmpHH, tmpMM, tmpSS); //$NON-NLS-1$;
+	}
+
+	/**
+	 * @param dateValue
+	 * @return formatted date yy-MM-dd
+	 */
+	public static String getFormattedDate(int dateValue) {
+		int tmpYY = dateValue/1000000;
+		int tmpMM = dateValue/10000 - tmpYY*100;
+		int tmpDD = dateValue/100 - tmpMM*100 - tmpYY*10000;
+		return String.format("%02d-%02d-%02d", tmpYY, tmpMM, tmpDD); //$NON-NLS-1$
+	}
+
+	/**
 	 * function to prepare a data table row of record set while translating available measurement values
 	 * @return pointer to filled data table row with formated values
 	 */
@@ -339,7 +361,12 @@ public class OpenTxAdapter extends DeviceConfiguration implements IDevice {
 		try {
 			int index = 0;
 			for (final Record record : recordSet.getVisibleAndDisplayableRecordsForTable()) {
-				dataTableRow[index + 1] = record.getFormattedTableValue(rowIndex);
+				if (record.getUnit().startsWith("yy-mm-dd"))
+					dataTableRow[index + 1] = OpenTxAdapter.getFormattedDate(record.realGet(rowIndex)/10);
+				else if (record.getUnit().startsWith("HH:mm:ss"))
+					dataTableRow[index + 1] = OpenTxAdapter.getFormattedTime(record.realGet(rowIndex));
+				else
+					dataTableRow[index + 1] = record.getFormattedTableValue(rowIndex);
 				++index;
 			}
 		}
