@@ -306,7 +306,7 @@ public class AkkumatikDialog extends DeviceDialog {
 					}
 				}
 			});
-			this.dialogShell.setSize(390, GDE.IS_LINUX ? 460 : 490);
+			this.dialogShell.setSize(390, GDE.IS_LINUX ? 475 : 490);
 			this.dialogShell.setLayout(new FormLayout());
 			this.dialogShell.setLocation(getParent().toDisplay(getParent().getSize().x / 2 - 175, 100));
 
