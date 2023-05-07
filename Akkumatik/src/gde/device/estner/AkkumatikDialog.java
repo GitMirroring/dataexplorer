@@ -1288,12 +1288,10 @@ public class AkkumatikDialog extends DeviceDialog {
 			grpDischarge.setEnabled(false);
 			dischargeCurrentCombo.setText("0");
 			actualAkkuSetting.setDisChargeCurrent(0);
-			grpDischarge.setForeground(this.application.COLOR_GREY);
 			for (Control child : grpDischarge.getChildren()) {
 				child.setEnabled(false);
 				child.setForeground(this.application.COLOR_GREY);
 			}
-			//cycleCountCombo.setItems(new String[] {"0"});
 			cycleCountCombo.select(1);
 			cycleCountCombo.setEnabled(false);
 			actualAkkuSetting.setCycle(1);
@@ -1313,7 +1311,6 @@ public class AkkumatikDialog extends DeviceDialog {
 				child.setForeground(this.application.COLOR_GREY);
 			}
 			grpDischarge.setEnabled(true);
-			grpDischarge.setForeground(this.application.COLOR_BLACK);
 			for (Control child : grpDischarge.getChildren()) {
 				child.setEnabled(true);
 				child.setForeground(this.application.COLOR_BLACK);
@@ -1347,7 +1344,6 @@ public class AkkumatikDialog extends DeviceDialog {
 			actualAkkuSetting.setCurrentMode(2);
 			
 			grpDischarge.setEnabled(false);
-			grpDischarge.setForeground(this.application.COLOR_GREY);
 			for (Control child : grpDischarge.getChildren()) {
 				child.setEnabled(false);
 				child.setForeground(this.application.COLOR_GREY);
@@ -1370,7 +1366,6 @@ public class AkkumatikDialog extends DeviceDialog {
 				child.setForeground(this.application.COLOR_GREY);
 			}
 			grpDischarge.setEnabled(true);
-			grpDischarge.setForeground(this.application.COLOR_BLACK);
 			for (Control child : grpDischarge.getChildren()) {
 				child.setEnabled(true);
 				child.setForeground(this.application.COLOR_BLACK);
@@ -1393,7 +1388,6 @@ public class AkkumatikDialog extends DeviceDialog {
 				child.setForeground(this.application.COLOR_BLACK);
 			}
 			grpDischarge.setEnabled(true);
-			grpDischarge.setForeground(this.application.COLOR_BLACK);
 			for (Control child : grpDischarge.getChildren()) {
 				child.setEnabled(true);
 				child.setForeground(this.application.COLOR_BLACK);
