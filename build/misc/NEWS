@@ -1,28 +1,22 @@
-GNU DataExplorer - News - comes with Version 3.7.6 - 19 Mar 2023
+GNU DataExplorer - News - comes with Version 3.7.7 - 10 May 2023
 
 Generic changes/fixes 
-	* fix missing scale of another synchronized record in history graphics
-	* update data table according zoomed data
+	* delay update check to make sure UI is set up
+	* Java runtime update 17.0.6+9-LTS-190
 	
 Device specific changes/fixes
-	* HoTTAdapter correct total package loss calculation
-	* HoTTAdapterX update package loss calculation
-	* Dynamite Passport Speed Meter - usage property corrected
-	* Akkumatik fix encoding problem splitter string ended in index out of bounds on Windows
-	* Akkumatik fix update visibility status suppressing measurement which has no reasonable data
-	* iCharger 456/8DUO correct regenerative to channel voltage and current limits
-	* IGCAdapter tolerate big time step once
+	* Akkumatik - add configuration dialog
+	* Akkumatik - add help page with short dialog introduction
+	* GPS-Logger* - correct method comment, add exception log, tolerate wrong position of speed with glide ratio
+	* OpenTx-Telemetry - update to tolerate Ethos logs
 
 
 Allgemeine Änderungen/Korrekturen
-    * Fehlende Skala eines anderen synchronisierten Datensatzes in derHistorien_Grafik behoben
-	* Aktualisierung der Datentabelle entsprechend der gezoomten Daten
+    * Update-Check verzögert, um Aufbau der Bedienoberfläche sicher zu stellen
+	* Aktualisierung der Java runtime 17.0.6+9-LTS-190
        
 Gerätespezifische Änderungen/Korrekturen
-    * HoTTAdapter korrigierte die Berechnung des Gesamtpaketverlustes
-	* HoTTAdapterX aktualisierte Paketverlustberechnung
-	* Dynamite Passport Speed Meter - Nutzungseigenschaft korrigiert
-	* Akkumatik Kodierungsproblem behoben
-	* Akkumatik Sichtbarkeitsstatus unterdrückt Messung, die keine sinnvollen Daten hat, behoben
-	* iCharger 456/8DUO Korrektur regenerative Werte zu Kanal Spannungs- und Stromgrenzen
-	* IGCAdapter toleriert einmalig großen Zeitschritt
+	* Akkumatik - Konfigurationsdialog hinzu gefügt
+	* Akkumatik - Hilfe und Kurzerklärung hinzu gefügt
+	* GPS-Logger* - Methodenkommentar korrigiert, Fehler Ausgabe hinzu gefügt, toleriere falsche Position von Geschwindigkeit bei Gleitwinkelwerten
+	* OpenTx-Telemetry - Toleriere Änderungen der Ethos Logs gegenüber OpenTx

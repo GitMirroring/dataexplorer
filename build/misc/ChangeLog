@@ -1,6 +1,6 @@
 Development history / change log, please read from bottom up
 
-Version 3.7.7 - xx yyy 2023
+Version 3.7.7 - 10 May 2023
 Generic changes/fixes 
 	* delay update check to make sure UI is set up
 	* Java runtime update 17.0.6+9-LTS-190
@@ -9,7 +9,7 @@ Device specific changes/fixes
 	* Akkumatik - add configuration dialog
 	* Akkumatik - add help page with short dialog introduction
 	* GPS-Logger* - correct method comment, add exception log, tolerate wrong position of speed with glide ratio
-	* OpenTx-Telemetry - update to tolerate Ethos logs changes
+	* OpenTx-Telemetry - update to tolerate Ethos logs
 
 Version 3.7.6 - 19 Mar 2023
 Generic changes/fixes 
