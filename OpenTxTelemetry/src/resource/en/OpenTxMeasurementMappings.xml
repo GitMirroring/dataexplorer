@@ -17,6 +17,8 @@ if this file need more mapping just add the mapping and please provide this info
   <entry key="Course">Course [°]</entry>
   <entry key="GPS Speed">GPS Speed [km/h]</entry>
   <entry key="GPS Alt">GPS Altitude [m]</entry>
+  <entry key="GPS Date">GPS Date [yy-mm-dd]</entry>
+  <entry key="GPS Time">GPS Time [HH:mm:ss]</entry>
   <entry key="GPS.date">GPS Date [yy-mm-dd]</entry>
   <entry key="GPS.time">GPS Time [HH:mm:ss]</entry>
   <entry key="Baro Alt">Altitude [m]</entry>

@@ -182,7 +182,7 @@ public class CSVReaderWriter {
 					continue;
 				}
 			}
-			CSVReaderWriter.log.log(Level.WARNING, "corrected mappedMeasurement = " + mappedMeasurement);
+			CSVReaderWriter.log.log(Level.INFO, "corrected mappedMeasurement = " + mappedMeasurement);
 
 			String[] inHeaderMeasurement = mappedMeasurement.trim().split("\\[|]"); //$NON-NLS-1$
 			String inMeasurement = inHeaderMeasurement.length >= 1 ? inHeaderMeasurement[0].trim() : Settings.EMPTY;
@@ -195,7 +195,7 @@ public class CSVReaderWriter {
 				sb_units.append("°").append(GDE.STRING_SEMICOLON);
 				++j;
 			}
-			else if (inMeasurement.startsWith("GPS") && (inMeasurement.toLowerCase().contains("zeit")	|| inMeasurement.toLowerCase().contains("date") || inMeasurement.toLowerCase().contains("time"))) {
+			else if ((inMeasurement.startsWith("GPS") && inMeasurement.toLowerCase().contains("zeit")) && !(sb_measurements.toString().toLowerCase().contains("gps datum") || sb_measurements.toString().toLowerCase().contains("gps time"))) {
 				mappedMeasurement = OpenTxAdapter.properties.getProperty("GPS.date");
 				if (mappedMeasurement != null) {
 					sb_measurements.append(mappedMeasurement.split("\\[|]")[0].trim()).append(GDE.STRING_SEMICOLON);
@@ -215,7 +215,7 @@ public class CSVReaderWriter {
 					sb_units.append("HH:mm:ss").append(GDE.STRING_SEMICOLON);
 				}
 			}
-			else if (inMeasurement.toLowerCase().startsWith("date") || inMeasurement.toLowerCase().startsWith("time") || inMeasurement.toLowerCase().startsWith("zeit") ) {
+			else if (inMeasurement.toLowerCase().startsWith("date")) {
 				mappedMeasurement = OpenTxAdapter.properties.getProperty("GPS.date");
 				if (mappedMeasurement != null) {
 					sb_measurements.append(mappedMeasurement.split("\\[|]")[0].trim()).append(GDE.STRING_SEMICOLON);

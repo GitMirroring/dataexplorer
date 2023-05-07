@@ -18,6 +18,8 @@ fehlende Mappings einfach ergaenzen, bitte informieren Sie den Entwickler
   <entry key="Course">Kurswinkel [°]</entry>
   <entry key="GPS Speed">GPS Speed [km/h]</entry>
   <entry key="GPS Alt">GPS Höhe [m]</entry>
+  <entry key="GPS Date">GPS Datum [yy-mm-dd]</entry>
+  <entry key="GPS Time">GPS Zeit [HH:mm:ss]</entry>
   <entry key="GPS.date">GPS Datum [yy-mm-dd]</entry>
   <entry key="GPS.time">GPS Zeit [HH:mm:ss]</entry>
   <entry key="Baro Alt">Höhe [m]</entry>
