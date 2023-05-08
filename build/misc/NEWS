@@ -9,6 +9,7 @@ Device specific changes/fixes
 	* Akkumatik - add help page with short dialog introduction
 	* GPS-Logger* - correct method comment, add exception log, tolerate wrong position of speed with glide ratio
 	* OpenTx-Telemetry - update to tolerate Ethos logs
+	* Snipe - add capability to read Snipe CSV log files
 
 
 Allgemeine Änderungen/Korrekturen
@@ -20,3 +21,4 @@ Gerätespezifische Änderungen/Korrekturen
 	* Akkumatik - Hilfe und Kurzerklärung hinzu gefügt
 	* GPS-Logger* - Methodenkommentar korrigiert, Fehler Ausgabe hinzu gefügt, toleriere falsche Position von Geschwindigkeit bei Gleitwinkelwerten
 	* OpenTx-Telemetry - Toleriere Änderungen der Ethos Logs gegenüber OpenTx
+	* Snipe - Möglichkeit zum Lesen der CSV Log-Dateien

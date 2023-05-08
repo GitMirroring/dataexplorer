@@ -90,6 +90,7 @@ public class TestFileReaderOsdWriter extends TestSuperClass {
 						&& !(file.getPath().toLowerCase().contains("csv2serialadapter")
 								|| file.getPath().toLowerCase().contains("gigalogger")
 								|| file.getPath().toLowerCase().contains("tesla")
+								|| file.getPath().toLowerCase().contains("snipe")
 								|| file.getPath().toLowerCase().contains("mc3000")
 								|| file.getPath().toLowerCase().contains("space pro")
 								|| file.getPath().toLowerCase().contains("asw")
@@ -442,12 +443,12 @@ public class TestFileReaderOsdWriter extends TestSuperClass {
 
 			for (File file : files) {
 				if (file.getAbsolutePath().toLowerCase().endsWith(".csv") 
-						&& (file.getPath().toLowerCase().contains("tesla") || file.getPath().toLowerCase().contains("spektrum"))) {
+						&& (file.getPath().toLowerCase().contains("tesla") || file.getPath().toLowerCase().contains("spektrum") || file.getPath().toLowerCase().contains("snipe"))) {
 					System.out.println("working with : " + file);
 
 					try {
 						//System.out.println("file.getPath() = " + file.getPath());
-						String deviceName = file.getPath().toLowerCase().contains("tesla") ? "Tesla" : "SpektrumCSV";
+						String deviceName = file.getPath().toLowerCase().contains("tesla") ? "Tesla" : file.getPath().toLowerCase().contains("spektrum") ? "SpektrumCSV" : "Snipe";
 						//System.out.println("deviceName = " + deviceName);
 						DeviceConfiguration deviceConfig = this.deviceConfigurations.get(deviceName);
 						if (deviceConfig == null) throw new NotSupportedException("device = " + deviceName + " is not supported or in list of active devices");

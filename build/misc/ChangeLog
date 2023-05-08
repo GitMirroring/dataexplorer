@@ -10,6 +10,7 @@ Device specific changes/fixes
 	* Akkumatik - add help page with short dialog introduction
 	* GPS-Logger* - correct method comment, add exception log, tolerate wrong position of speed with glide ratio
 	* OpenTx-Telemetry - update to tolerate Ethos logs
+	* Snipe - add capability to read Snipe CSV log files
 
 Version 3.7.6 - 19 Mar 2023
 Generic changes/fixes 

@@ -160,7 +160,7 @@ public class CSVReaderWriter {
 		CSVReaderWriter.log.log(Level.FINE, GDE.CHANNEL_CONFIG_NAME + header.get(GDE.CHANNEL_CONFIG_NUMBER) + " : " + header.get(GDE.CHANNEL_CONFIG_NAME));
 
 		for (int i = 1; i < headerLineArray.length; i++) {
-			String mappedMeasurement = ImportAdapter.properties.getProperty(headerLineArray[i]);
+			String mappedMeasurement = ImportAdapter.properties.getProperty(headerLineArray[i].trim());
 			String[] splitMappedMeasurement = headerLineArray[i].split("\\(|\\)");
 			if (mappedMeasurement == null && splitMappedMeasurement.length == 2) {
 				header.put(TRANSMITTER_TYPE, TRANSMITTER_TYPE_SPEKTRUM);
@@ -294,12 +294,29 @@ public class CSVReaderWriter {
 							recordSet.setRecordSetDescription(recordSet.getRecordSetDescription() + line.replace('#', GDE.CHAR_BLANK) + GDE.LINE_SEPARATOR);
 						continue;
 					}
+					else if (line.startsWith("Finish") || line.startsWith("0Hz-10Hz") || line.startsWith("Total")) {
+						if (recordSet.getRecordSetDescription().endsWith(GDE.LINE_SEPARATOR))
+							recordSet.setRecordSetDescription(recordSet.getRecordSetDescription() + line + GDE.LINE_SEPARATOR);
+						else
+							recordSet.setRecordSetDescription(recordSet.getRecordSetDescription() + GDE.CHAR_BLANK + line + GDE.LINE_SEPARATOR);
+						continue;
+					}
 					String[] dataStr = line.split(GDE.STRING_EMPTY + separator);
 					String data = dataStr[0].trim().replace(GDE.CHAR_COMMA, GDE.CHAR_DOT);
 					if (data.contains(GDE.STRING_COLON)) {
-						int hour = Integer.parseInt(data.substring(0, 2));
-						int minute = Integer.parseInt(data.substring(3, 5));
-						int second = Integer.parseInt(data.substring(6, 8));
+						int hour = 0;
+						int minute = 0;
+						int second = 0;
+
+						if (data.indexOf(GDE.STRING_COLON) != data.lastIndexOf(GDE.STRING_COLON)) { //00:01:45
+							hour = Integer.parseInt(data.substring(0, 2));
+							minute = Integer.parseInt(data.substring(3, 5));
+							second = Integer.parseInt(data.substring(6, 8));
+						}
+						else if (data.indexOf(GDE.STRING_COLON) == data.lastIndexOf(GDE.STRING_COLON)) { // 00:01
+							minute = Integer.parseInt(data.substring(0, 2));
+							second = Integer.parseInt(data.substring(3, 5));
+						}
 						GregorianCalendar calendar = new GregorianCalendar(year, month - 1, day, hour, minute, second);
 						long timeStamp = calendar.getTimeInMillis() + (data.contains(GDE.STRING_DOT) ? Integer.parseInt(data.substring(data.lastIndexOf(GDE.CHAR_DOT) + 1)) : 0);
 
@@ -317,7 +334,7 @@ public class CSVReaderWriter {
 
 					for (int i = 0; i < updateRecordNames.length && i < dataStr.length - 1; i++) { // only iterate over record names found in file
 						try {
-							data = dataStr[i + 1].trim().replace(GDE.CHAR_COMMA, GDE.CHAR_DOT).replace(GDE.STRING_BLANK, GDE.STRING_EMPTY);
+							data = dataStr[i + 1].trim().replace(GDE.CHAR_COMMA, GDE.CHAR_DOT).replace(GDE.STRING_BLANK, GDE.STRING_EMPTY).replace("%", GDE.STRING_EMPTY).replace("dBm", GDE.STRING_EMPTY);
 						}
 						catch (Exception e) {
 							data = "0";

@@ -44,4 +44,11 @@ fehlende Mappings einfach ergaenzen, bitte informieren Sie den Entwickler
   <entry key="Zelle avg">Zelle Spannung avg [V]</entry>
   <entry key="Zelle max">Zelle Spannung max [V]</entry>
   <entry key="Zelle diff">Zelle Spannung diff [V]</entry>
+  <entry key="LQI">LQI [%]</entry>
+  <entry key="Audio files">Audio files [#]</entry>
+  <entry key="Jeti">Jeti [-]</entry>
+  <entry key="RSSI">RSSI [dBm]</entry>
+  <entry key="HOPPING">HOPPING [-]</entry>
+  <entry key="Altitude">Höhe [m]</entry>
+  <entry key="Distance">Distanz [m]</entry>
 </properties>
