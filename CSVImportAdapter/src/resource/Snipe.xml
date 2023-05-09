@@ -30,34 +30,35 @@
                 <symbol>-</symbol>
                 <unit>%</unit>
                 <active>true</active>
+                <statistics min="true" max="true" avg="true" sigma="true"/>
             </Measurement>
             <Measurement>
                 <name>Audio Files</name>
                 <symbol>-</symbol>
                 <unit>#</unit>
                 <active>true</active>
-                <property name="scale_sync_ref_ordinal" value="0" type="Integer"/>
+                <statistics min="true" max="true" avg="true" sigma="true"/>
             </Measurement>
             <Measurement>
                 <name>Jeti</name>
                 <symbol>-</symbol>
                 <unit></unit>
                 <active>true</active>
-                <statistics min="true" max="true" avg="false" sigma="false"/>
+                <statistics min="true" max="true" avg="true" sigma="true"/>
             </Measurement>
             <Measurement>
                 <name>RSSI</name>
                 <symbol>-</symbol>
                 <unit>%</unit>
                 <active>true</active>
-                <statistics min="true" max="true" avg="true" sigma="false"/>
+                <statistics min="true" max="true" avg="true" sigma="true"/>
             </Measurement>
             <Measurement>
                 <name>HOPPING</name>
                 <symbol>-</symbol>
                 <unit></unit>
                 <active>true</active>
-                <statistics min="true" max="true" avg="true" sigma="false"/>
+                <statistics min="true" max="true" avg="true" sigma="true"/>
             </Measurement>
             <Measurement>
                 <name>altitude</name>
