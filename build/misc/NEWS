@@ -1,24 +1,14 @@
-GNU DataExplorer - News - comes with Version 3.7.7 - 10 May 2023
+GNU DataExplorer - News - comes with Version 3.7.8 - 27 May 2023
 
 Generic changes/fixes 
-	* delay update check to make sure UI is set up
-	* Java runtime update 17.0.6+9-LTS-190
+	* Java runtime update 17.0.7+8-LTS-224
 	
 Device specific changes/fixes
-	* Akkumatik - add configuration dialog
-	* Akkumatik - add help page with short dialog introduction
-	* GPS-Logger* - correct method comment, add exception log, tolerate wrong position of speed with glide ratio
-	* OpenTx-Telemetry - update to tolerate Ethos logs
-	* Snipe - add capability to read Snipe CSV log files
+	* HoTTAdapter - history analysis *.bin error sensor data fixed
 
 
 Allgemeine Änderungen/Korrekturen
-    * Update-Check verzögert, um Aufbau der Bedienoberfläche sicher zu stellen
-	* Aktualisierung der Java runtime 17.0.6+9-LTS-190
+	* Aktualisierung der Java runtime 17.0.7+8-LTS-224
        
 Gerätespezifische Änderungen/Korrekturen
-	* Akkumatik - Konfigurationsdialog hinzu gefügt
-	* Akkumatik - Hilfe und Kurzerklärung hinzu gefügt
-	* GPS-Logger* - Methodenkommentar korrigiert, Fehler Ausgabe hinzu gefügt, toleriere falsche Position von Geschwindigkeit bei Gleitwinkelwerten
-	* OpenTx-Telemetry - Toleriere Änderungen der Ethos Logs gegenüber OpenTx
-	* Snipe - Möglichkeit zum Lesen der CSV Log-Dateien
+	* HoTTAdapter - Historien-Analyse *.bin Fehler bei Sensordaten behoben
