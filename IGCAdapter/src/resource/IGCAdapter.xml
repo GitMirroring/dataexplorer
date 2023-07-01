@@ -96,6 +96,20 @@
 				<active>true</active>
 				<statistics sigma="false" avg="true" max="true" min="true" />
 			</Measurement>
+			<Measurement>
+				<name>_RSI_</name>
+				<symbol></symbol>
+				<unit></unit>
+				<active>true</active>
+				<statistics sigma="true" avg="true" max="true" min="true" />
+			</Measurement>
+			<Measurement>
+				<name>_LQI_</name>
+				<symbol></symbol>
+				<unit></unit>
+				<active>true</active>
+				<statistics sigma="true" avg="true" max="true" min="true" />
+			</Measurement>
 		</Channel>
 	</Channels>
 	<Desktop>
