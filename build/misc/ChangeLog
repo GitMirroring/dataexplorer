@@ -5,8 +5,9 @@ Generic changes/fixes
 	* 
 	
 Device specific changes/fixes
-	* Snipe - 
-	* IGCAdapter - add 2 more extention values
+	* Snipe - add CSV log import for analysis
+	* IGCAdapter - add 2 more extension values
+	* IGCAdapter - fix existing speed record
 
 Version 3.7.8 - 27 May 2023
 Generic changes/fixes 

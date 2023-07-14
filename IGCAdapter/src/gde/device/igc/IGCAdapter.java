@@ -593,7 +593,7 @@ public class IGCAdapter extends DeviceConfiguration implements IDevice {
 		boolean containsSpeed = false;
 		for (String recordProperty : fileRecordsProperties) {
 			String[] tmp = StringHelper.splitString(recordProperty, Record.DELIMITER, "_name=");
-			containsSpeed = tmp[0].equals("Speed");
+			containsSpeed = tmp[0].equals("Speed") || tmp[0].startsWith("Geschw");
 			if (containsSpeed)
 				break;
 		}
