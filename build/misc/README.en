@@ -1,4 +1,4 @@
-﻿******** DataExplorer README ***********  18 Sep 2022 WB
+﻿******** DataExplorer README ***********  18 Jul 2023 WB
 
 The GNU DataExplorer is free software, please see http://www.gnu.org/philosophy/free-sw.html. It is also available at no
 cost, but without any warranty. Since the implementation is based on Java using the free available libraries RXTXcomm and SWT
@@ -33,7 +33,7 @@ Windows:
 
 How to detect the processor architecture: 
 on command prompt : "echo %PROCESSOR_ARCHITECTURE% -> x86 == 32 Bit; AMD64 == 64 Bit or Settings/All Programs -> Control Panel -> System -> System Type
-Correlating to the processor architecture the Java runtime should be installed. Please pay attention during download.
+Correlating to the processor architecture, required for 32 Bit only, the Java runtime should be installed. Please pay attention during download.
 Starting with version 3.06 DataExplorere comes with an installer. The install operations requires administration rights.
 Attention: Do not use special characters in installation path, Java using UTF-8 as default, conversion problems could occur!
 During the first execution of the program the application configuration directories are created at %APPDATA%\DataExplorer.
@@ -61,22 +61,13 @@ Below this directory also application configuration and trace log files are loca
 Hint: Is a message similar to "The java class could not be loaded. java.lang.UnsupportedClassVersionError: (gde/GDE) bad major version" 
 is received while executing the Java version (java -version) is to old to execute this program and must be renewed to a version 11 to Java 17.
 
-RXTXcomm uses serial port locking mechanism, the application user must be part of uucp and dialout group. Set permissions of /var/lock to root:uucp.
-While facing problems with USB2Serial UART SiliconLabs cp210x refer to GNULinux_cp210x directory in download area.
-
 
 
 MAC OS X:
 
-MAC OS run always on a 64 Bit processor architecture and supports the execution of 64 Bit Java applications.	
-Starting with 10.8 an installation of a Java-Software-Development-Kit is required. It should match the processor architecture. Please check while downloading.
-MAC OS version <= 10.7 already has a Java runtime installed. Configure under system preferences to have as top selection the newest available Java version.
-Older versions you might find the Java preferences under Applications -> Utilities -> Java Preferences.
+MAC OS run always on a 64 Bit processor architecture and supports the execution of 64 Bit Java applications.
+The 64 Bit variant contains a Java runtime environment. A separate Java installation is not required.	
 The download and opened DMG file show up DataExplorer.app which need simply drag to the Applications folder.
-If devices should be connected by a USB2Serial port adapter it is required to execute the RXTX_Post-Install script once. This will create a directory  
-/var/lock, if not exist. This directory is used to create lock files to prohibit a duplicated use of the same serial port. To enable usage of USB2Serial 
-adapter it is required to install matching driver. This drivers can be download by manufacturer of the USB2Serial chip.
-
 During the first execution of the program the application configuration directories are created /User/<user>/Library/Application Support/DataExplorer.
 Below this directory also application configuration and trace log files are located.
 

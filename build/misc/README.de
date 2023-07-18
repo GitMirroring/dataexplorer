@@ -1,4 +1,4 @@
-******** DataExplorer README ***********  18 Sep 2022 WB
+******** DataExplorer README ***********  18 Jul 2023 WB
 
 Der GNU DataExplorer ist freie Software, siehe http://www.gnu.org/philosophy/free-sw.html. Sie wird kostenfrei und ohne Spende 
 zur Verfügung gestellt. Es gibt aber auch keinerlei Gewährleistung. Durch die Implementierung in Java auf der Basis von der freien Bibliotheken 
@@ -32,7 +32,7 @@ Windows:
 
 Wie stelle ich die Prozessorarchitektur fest (Bitbreite):
 über die Kommandozeile : "echo %PROCESSOR_ARCHITECTURE% -> x86 == 32 Bit; AMD64 == 64 Bit oder Programme -> Kontrollzenter -> System -> System Typ
-Entsprechend der Prozessorarchitektur sollte die Java-Laufzeitumgebung installiert werden. Bitte beim Download beachten.
+Entsprechend der Prozessorarchitektur, nur für 32 Bit erforderlich, sollte die Java-Laufzeitumgebung installiert werden. Bitte beim Download beachten.
 Ab der Version 3.06 wir für Windows ein Installer zur Verfügung gestellt der einfach auszuführen ist. Zur Installation sind Administratorrechte nötig.
 Achtung: Bitte keine Umlaute im Installationspfad benutzen, Java arbeitet standardmäßig mit UTF-8, da kann es Probleme mit der Konvertierung in der Laufzeitumgebung geben!
 Beim ersten Start des Programms werden dann noch Anwendungkonfigurationsverzeichnisse unter %APPDATA%\DataExplorer angelegt. Hierunter werden 
@@ -64,23 +64,13 @@ Hinweis: Erscheint nach der Ausführung von DataExplorer folgende oder ähnliche F
 "The java class could not be loaded. java.lang.UnsupportedClassVersionError: (gde/GDE) bad major Version"
 ist die installierte Java Version (java -version) zu alt und muss gegen eine aktuelle Version 11  bis Java 17 ausgetauscht werden.
 
-RXTXcomm locked den seriellen Port über die Gruppe "uucp" und "dialout", welcher der Anwendungsnutzer angehören sollte.
-Bei Problemen mit dem USB2Serial UART von SiliconLabs cp210x siehe das GNULinux_cp210x Verzeichnis im Downloadbereich.
-
-
 
 
 MAC OS X:
 
 MAC OS läuft immer unter 64 Bit und unterstützt die Ausführung von 64 Bit Java-Programmen. 
-Ab 10.8 ist einen Installation der Java-Software-Development-Kit nötig, sie sollte zur Prozessorarchitektur passend installiert werden. Bitte beim Download beachten.
-MAC OS Versionen <= 10.7 haben bereits Java installiert. Die Einstellung hierzu befindet sich in den Systemeinstellungen. Bei älteren Systemen auch unter 
-Utilities -> Java Einstellungen.
+Die 64Bit Variante bringt eine Java-Laufzeitumgebung mit. Das funktiioniert auch mit einem ARM (M) Prozessor, dann unter Rosetta.
 Die bereit gestellt DMG Datei zeigt die Anwendung DataExplorer.app, die einfach auf den Applications Ordner zu ziehen ist.
-Sollen Geräte Daten über die serielle Schnittstelle empfangen ist einmalig das bereitgestellte RXTX_Post-Install einmalig auszuführen. Hierbei wird ein 
-Verzeichnis /var/lock angelegt, falls es noch nicht vorhanden ist. In diesem Verzeichnis werden Lockdateien angelegt, die verhindern, dass derselbe Port 
-2 mal verwendet wird. Wenn USB2Serial Adapter verwendet werden muss für den Adapter passender Drivercode installiert werden. Die kann man beim Hersteller des
-USB2Serial Chips herunterladen und installieren.
 Beim ersten Start des Programms werden dann noch Anwendungkonfigurationsverzeichnisse unter /User/<Benutzer>/Library/Application Support/DataExplorer
 angelegt. Hierunter werden auch Anwendungkonfiguration und Tracelogdaten abgelegt.
 
