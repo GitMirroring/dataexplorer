@@ -296,67 +296,69 @@ public class OperatingSystemHelper {
 
 				if (GDE.IS_WINDOWS) {
 					// warn user for UAC or fail due to required admin rights accessing registry
-					DataExplorer.getInstance().openMessageDialog(Messages.getString(MessageIds.GDE_MSGI0029));
-					String regExe = "Register" + GDE.BIT_MODE + ".exe"; //$NON-NLS-1$ //$NON-NLS-2$
-					log.log(Level.INFO, "register exe = " + regExe); //$NON-NLS-1$
-
-					FileUtils.extract(jarFile, regExe, GDE.STRING_EMPTY, targetDir, "WIN"); //$NON-NLS-1$
-					String targetBasePath = jarBasePath.replace(GDE.CHAR_FILE_SEPARATOR_UNIX, GDE.CHAR_FILE_SEPARATOR_WINDOWS);
-					targetBasePath = targetBasePath.startsWith(GDE.STRING_FILE_SEPARATOR_WINDOWS) ? targetBasePath.substring(1) : targetBasePath;
-					targetBasePath = targetBasePath.endsWith(GDE.STRING_FILE_SEPARATOR_WINDOWS) ? targetBasePath.substring(0, targetBasePath.length() - 1) : targetBasePath;
-					command = "cmd /C " + targetDir + regExe + GDE.STRING_BLANK + targetBasePath; //$NON-NLS-1$
-					if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "executing: " + command); //$NON-NLS-1$
-					Process process = new ProcessBuilder("cmd", "/C", targetDir + regExe, targetBasePath).start(); //$NON-NLS-1$ //$NON-NLS-2$
-					process.waitFor();
-					bisr = new BufferedReader(new InputStreamReader(process.getInputStream()));
-					besr = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-					String line;
-
-					StringBuilder sb = new StringBuilder();
-					while ((line = bisr.readLine()) != null) {
-						sb.append(line);
-					}
-					if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "std.out = " + sb.toString()); //$NON-NLS-1$
-					sb = new StringBuilder();
-					while ((line = besr.readLine()) != null) {
-						sb.append(line);
-					}
-					if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "std.err = " + sb.toString()); //$NON-NLS-1$
-					if (process.exitValue() != 0) {
-						String msg = "failed to execute \"" + command + "\" rc = " + process.exitValue(); //$NON-NLS-1$ //$NON-NLS-2$
-						log.log(Level.SEVERE, msg);
-						if (msg.contains("740")) //$NON-NLS-1$
+					// enable this step to skip 
+					if (SWT.OK == DataExplorer.getInstance().openOkCancelMessageDialog(Messages.getString(MessageIds.GDE_MSGI0029))) {
+						String regExe = "Register" + GDE.BIT_MODE + ".exe"; //$NON-NLS-1$ //$NON-NLS-2$
+						log.log(Level.INFO, "register exe = " + regExe); //$NON-NLS-1$
+		
+						FileUtils.extract(jarFile, regExe, GDE.STRING_EMPTY, targetDir, "WIN"); //$NON-NLS-1$
+						String targetBasePath = jarBasePath.replace(GDE.CHAR_FILE_SEPARATOR_UNIX, GDE.CHAR_FILE_SEPARATOR_WINDOWS);
+						targetBasePath = targetBasePath.startsWith(GDE.STRING_FILE_SEPARATOR_WINDOWS) ? targetBasePath.substring(1) : targetBasePath;
+						targetBasePath = targetBasePath.endsWith(GDE.STRING_FILE_SEPARATOR_WINDOWS) ? targetBasePath.substring(0, targetBasePath.length() - 1) : targetBasePath;
+						command = "cmd /C " + targetDir + regExe + GDE.STRING_BLANK + targetBasePath; //$NON-NLS-1$
+						if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "executing: " + command); //$NON-NLS-1$
+						Process process = new ProcessBuilder("cmd", "/C", targetDir + regExe, targetBasePath).start(); //$NON-NLS-1$ //$NON-NLS-2$
+						process.waitFor();
+						bisr = new BufferedReader(new InputStreamReader(process.getInputStream()));
+						besr = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+						String line;
+		
+						StringBuilder sb = new StringBuilder();
+						while ((line = bisr.readLine()) != null) {
+							sb.append(line);
+						}
+						if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "std.out = " + sb.toString()); //$NON-NLS-1$
+						sb = new StringBuilder();
+						while ((line = besr.readLine()) != null) {
+							sb.append(line);
+						}
+						if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "std.err = " + sb.toString()); //$NON-NLS-1$
+						if (process.exitValue() != 0) {
+							String msg = "failed to execute \"" + command + "\" rc = " + process.exitValue(); //$NON-NLS-1$ //$NON-NLS-2$
+							log.log(Level.SEVERE, msg);
+							if (msg.contains("740")) //$NON-NLS-1$
+								throw new IOException("error=740"); //$NON-NLS-1$
+		
+							throw new UnsatisfiedLinkError(msg);
+						}
+						bisr.close();
+						besr.close();
+		
+						//check if registration was successful
+						command = "cmd /C assoc .osd"; //$NON-NLS-1$
+						if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "executing \"" + command + "\" to check association"); //$NON-NLS-1$ //$NON-NLS-2$
+						process = Runtime.getRuntime().exec(command);
+						process.waitFor();
+						bisr = new BufferedReader(new InputStreamReader(process.getInputStream()));
+						besr = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+		
+						sb = new StringBuilder();
+						while ((line = bisr.readLine()) != null) {
+							sb.append(line);
+						}
+						if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "std.out = " + sb.toString()); //$NON-NLS-1$
+						sb = new StringBuilder();
+						while ((line = besr.readLine()) != null) {
+							sb.append(line);
+						}
+						if (log.isLoggable(Level.INFO)) {
+							log.log(Level.INFO, "std.err = " + sb.toString()); //$NON-NLS-1$
+							log.log(Level.INFO, "\"" + command + "\" rc = " + process.exitValue()); //$NON-NLS-1$ //$NON-NLS-2$
+						}
+						if (process.exitValue() != 0) {
+							log.log(Level.WARNING, "failed to register DataExplorer MIME type rc = " + process.exitValue()); //$NON-NLS-1$
 							throw new IOException("error=740"); //$NON-NLS-1$
-
-						throw new UnsatisfiedLinkError(msg);
-					}
-					bisr.close();
-					besr.close();
-
-					//check if registration was successful
-					command = "cmd /C assoc .osd"; //$NON-NLS-1$
-					if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "executing \"" + command + "\" to check association"); //$NON-NLS-1$ //$NON-NLS-2$
-					process = Runtime.getRuntime().exec(command);
-					process.waitFor();
-					bisr = new BufferedReader(new InputStreamReader(process.getInputStream()));
-					besr = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-
-					sb = new StringBuilder();
-					while ((line = bisr.readLine()) != null) {
-						sb.append(line);
-					}
-					if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "std.out = " + sb.toString()); //$NON-NLS-1$
-					sb = new StringBuilder();
-					while ((line = besr.readLine()) != null) {
-						sb.append(line);
-					}
-					if (log.isLoggable(Level.INFO)) {
-						log.log(Level.INFO, "std.err = " + sb.toString()); //$NON-NLS-1$
-						log.log(Level.INFO, "\"" + command + "\" rc = " + process.exitValue()); //$NON-NLS-1$ //$NON-NLS-2$
-					}
-					if (process.exitValue() != 0) {
-						log.log(Level.WARNING, "failed to register DataExplorer MIME type rc = " + process.exitValue()); //$NON-NLS-1$
-						throw new IOException("error=740"); //$NON-NLS-1$
+						}
 					}
 					rc = 0;
 				}

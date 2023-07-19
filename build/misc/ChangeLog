@@ -1,5 +1,12 @@
 Development history / change log, please read from bottom up
 
+Version 3.7.10 - xx yyy 2023
+Generic changes/fixes 
+	* enable register MIME type step to be skipped running on Windows
+	
+Device specific changes/fixes
+	* 
+
 Version 3.7.9 - 18 Jul 2023
 Generic changes/fixes 
 	* README files updated
