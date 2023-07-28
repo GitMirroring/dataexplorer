@@ -408,8 +408,11 @@ public class HoTTbinHistoReader {
 			}
 		}
 		if (doFullRead) {
-			((RcvBinParser) binParser).finalUpdateLossStatistics();
-			PackageLoss lostPackages  = binParser instanceof RcvBinParser ? ((RcvBinParser) binParser).getLostPackages() : null;
+			PackageLoss lostPackages = null;
+			if (binParser instanceof RcvBinParser) {
+				((RcvBinParser) binParser).finalUpdateLossStatistics();
+				lostPackages = ((RcvBinParser) binParser).getLostPackages();
+			}
 			Integer[] scores = getScores(lostPackages, histoRandomSample,  truss.getVault());
 			HoTTAdapter device = (HoTTAdapter) analyzer.getActiveDevice();
 			device.calculateInactiveRecords(tmpRecordSet);
