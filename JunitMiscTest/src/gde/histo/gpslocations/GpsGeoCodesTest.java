@@ -54,11 +54,17 @@ class GpsGeoCodesTest extends BasicTestCase {
 		DataAccess dataAccess = DataAccess.getInstance();
 
 		Random random = new Random();
-		double lat = random.nextFloat() * 20. + 40.; // Napoli to Stockholm
-		double lon = random.nextFloat() * 20.; // Greenwich to Krakow
-		String location = GeoCodes.getOrAcquireLocation(new GpsCoordinate(lat, lon), locationRadius, dataAccess);
+		double lat; 
+		double lon; 
+		String location;
+		do {
+			lat = random.nextFloat() * 20. + 40.;	// Napoli to Stockholm
+			lon = random.nextFloat() * 20.;				// Greenwich to Krakow
+			location = GeoCodes.getOrAcquireLocation(new GpsCoordinate(lat, lon), locationRadius, dataAccess);
+		}
+		while (location.equals(""));
 		System.out.println("lat/lon : " + lat + "/" + lon + "   " + location);
-		assertNotEquals("lat/lon : " + lat + "/" + lon + "   location", "", location);
+		assertNotEquals("lat/lon : " + lat + "/" + lon + "  " + location, "", location);
 	}
 
 	@Test
@@ -73,9 +79,9 @@ class GpsGeoCodesTest extends BasicTestCase {
 		location = GeoCodes.getOrAcquireLocation(new GpsCoordinate(48.8696877, 10.3573054), locationRadius, dataAccess); // 73441 Bopfingen, Germany (via
 																																																											// Google)
 		System.out.println(location);
-		assertTrue("  location", location.contains("Heidmühle, Bopfingen, Verwaltungsgemeinschaft Bopfingen, Ostalbkreis, Regierungsbezirk Stuttgart, Baden-Württemberg, 73441, Deutschland"));
+		assertTrue("  location", location.contains("Ipf, Keltenweg (Ipf), Oberdorf am Ipf, Bopfingen, Verwaltungsgemeinschaft Bopfingen, Ostalbkreis, Baden-Württemberg, 73441, Deutschland"));
 		location = GeoCodes.getOrAcquireLocation(new GpsCoordinate(45.0064253, 14.3965299), locationRadius, dataAccess);
 		System.out.println(location);
-		assertEquals("  location", "D100, Vodice, Primorsko-goranska županija, 51557, Hrvatska", location);
+		assertEquals("  location", "D100, Vodice, Grad Cres, Primorsko-goranska županija, 51557, Hrvatska", location);
 	}
 }

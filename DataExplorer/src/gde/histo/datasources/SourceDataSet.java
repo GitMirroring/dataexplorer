@@ -19,8 +19,6 @@
 
 package gde.histo.datasources;
 
-import static java.util.logging.Level.SEVERE;
-
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -204,8 +202,7 @@ public abstract class SourceDataSet {
 			try (InputStream sourceInputStream = analyzer.getDataAccess().getSourceInputStream(sourcePath);) {
 				HistoOsdReaderWriter.readVaults(sourceInputStream, trusses, analyzer);
 			} catch (Exception e) {
-				log.log(SEVERE, e.getMessage(), e);
-				log.info(() -> String.format("invalid file format: %s  channelNumber=%d  %s", //
+				log.log(Level.WARNING, String.format("invalid file format: %s  channelNumber=%d  %s", //
 						analyzer.getActiveDevice().getName(), analyzer.getActiveChannel().getNumber(), sourcePath));
 			}
 		}
@@ -279,8 +276,7 @@ public abstract class SourceDataSet {
 					try {
 						((IHistoDevice) analyzer.getActiveDevice()).getRecordSetFromImportFile(inputStream, truss, analyzer);
 					} catch (Exception e) {
-						log.log(SEVERE, e.getMessage(), e);
-						log.info(() -> String.format("invalid file format: %s  channelNumber=%d  %s", //
+						log.log(Level.WARNING, String.format("invalid file format: %s  channelNumber=%d  %s", //
 								analyzer.getActiveDevice().getName(), analyzer.getActiveChannel().getNumber(), sourcePath));
 					}
 					histoVaults.add(truss.getVault());

@@ -4,6 +4,7 @@ Version 3.7.10 - xx yyy 2023
 Generic changes/fixes 
 	* enable register MIME type step to be skipped running on Windows
 	* fix code setting line color from time grid context menu
+	* check Junit HistoSuite
 	
 Device specific changes/fixes
 	* HoTTAdapter* fix data transfer tab content MacOS
