@@ -9,6 +9,7 @@ Generic changes/fixes
 Device specific changes/fixes
 	* HoTTAdapter* fix data transfer tab content MacOS
 	* HoTTAdapter fix error in history bin reader none receiver data
+	* iChargerUSB* - fix balancer start selection capabilities
 
 Version 3.7.9 - 18 Jul 2023
 Generic changes/fixes 

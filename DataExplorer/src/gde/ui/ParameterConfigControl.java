@@ -574,7 +574,7 @@ public class ParameterConfigControl {
 			this.slider = new Slider(this.baseComposite, SWT.NONE);
 			this.slider.setLayoutData(sliderLData);
 			this.slider.setMinimum(0);
-			this.slider.setMaximum(this.textValues.length < 10 ? 10 + this.textValues.length - 1 : this.textValues.length + 1);
+			this.slider.setMaximum(this.textValues.length < 15 ? 10 + this.textValues.length - 1 : this.textValues.length + 1);
 			this.slider.setSelection(this.value);
 			this.slider.addSelectionListener(new SelectionAdapter() {
 				@Override
