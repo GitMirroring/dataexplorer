@@ -2527,7 +2527,7 @@
 				<symbol>vh</symbol>
 				<unit>m/sec</unit>
 				<active>true</active>
-				<statistics min="false" max="false" avg="true" sigma="false" />
+				<statistics min="true" max="true" avg="true" sigma="false" triggerRefOrdinal="88" comment="comment_trigger_ref" />
 				<label>label_climb_1</label>
 			</Measurement>
 			<Measurement>
@@ -4900,7 +4900,7 @@
 				<symbol>vh</symbol>
 				<unit>m/sec</unit>
 				<active>true</active>
-				<statistics min="false" max="true" avg="true" sigma="false" countByTrigger="true" countTriggerText="text_trigger_count_secondary" sumTriggerTimeText="text_trigger_time_sum">
+				<statistics min="true" max="true" avg="true" sigma="false"  triggerRefOrdinal="88" comment="comment_trigger_ref" countByTrigger="true" countTriggerText="text_trigger_count_secondary" sumTriggerTimeText="text_trigger_time_sum">
 					<trigger level="3000" isGreater="true" minTimeSec="4" comment="comment_trigger_gt_def" isSecondary="true" />
 				</statistics>
 				<label>label_climb_1</label>
