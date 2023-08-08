@@ -389,8 +389,6 @@ public class IGCReaderWriter {
 								altBaro = Integer.valueOf(line.substring(25, 30));
 								if (lastAltBaro != 0 && Math.abs(lastAltBaro - altBaro) > 30) {
 									log.log(Level.WARNING, String.format(Locale.getDefault(), "High altBaro\t deviation at line %d %s %2d", lineNumber-1, line.substring(1, 7), altBaro - lastAltBaro));
-									if (Math.abs(lastAltBaro - altBaro) > 200)
-										continue;
 								}
 								lastAltBaro = altBaro;
 							}
@@ -401,8 +399,6 @@ public class IGCReaderWriter {
 								altGPS = Integer.valueOf(line.substring(31, 35));
 								if (lastAltGPS != 0 && Math.abs(lastAltGPS - altGPS) > 30) {
 									log.log(Level.WARNING, String.format(Locale.getDefault(), "High altGPS\t deviation at line %d %s %2d", lineNumber-1, line.substring(1, 7), altGPS - lastAltGPS));
-									if (Math.abs(lastAltGPS - altGPS) > 200)
-										continue;
 								}
 								lastAltGPS = altGPS;
 							}
