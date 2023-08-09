@@ -2,14 +2,14 @@ Development history / change log, please read from bottom up
 
 Version 3.7.10 - xx yyy 2023
 Generic changes/fixes 
-	* enable register MIME type step to be skipped running on Windows
+	* while installing on Windows register MIME type can be skipped
 	* fix code setting line color from time grid context menu
 	* check Junit HistoSuite
 	
 Device specific changes/fixes
 	* HoTTAdapter* - fix data transfer tab content MacOS
 	* HoTTAdapter - fix error in history bin reader none receiver data
-	* iChargerUSB* - fix balancer start selection capabilities
+	* iChargerUSB* - fix balancer start configuration capabilities
 	* IGCAdapter - remove break conditions for altitude values
 
 Version 3.7.9 - 18 Jul 2023
