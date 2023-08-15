@@ -1,5 +1,12 @@
 Development history / change log, please read from bottom up
 
+Version 3.8.1 - xx yyy 2023
+Generic changes/fixes 
+	* export CSV following zoomed area
+	
+Device specific changes/fixes
+	* 
+
 Version 3.8.0 - 09 Aug 2023
 Generic changes/fixes 
 	* while installing on Windows register MIME type can be skipped

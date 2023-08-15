@@ -447,7 +447,7 @@ public class CSVReaderWriter {
 			catch (Exception e) {
 				startTime = new Date().getTime();
 			}
-			int recordEntries = recordSet.getRecordDataSize(true);
+			int recordEntries = recordSet.getRecordDataSize(false);
 			boolean isTimeFormatAbsolute = Settings.getInstance().isTimeFormatAbsolute();
 			int progressCycle = 0;
 			GDE.getUiNotification().setProgress(progressCycle);
