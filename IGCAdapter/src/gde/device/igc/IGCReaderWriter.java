@@ -350,7 +350,7 @@ public class IGCReaderWriter {
 							//I04 36 38 FXA 39 40 SIU 4143TDS 4446ENL
 							//1234567 89012345 678901234 5 67890 12345 678 90 123 456
 							//B114643 4752040N 01109779E A 00522 00555 035 09 227 225
-							if (timeStamp > 0 && actualTimeStamp - timeStamp > 2000) { // 2 sec
+							if (timeStamp > 0 && actualTimeStamp - timeStamp > 2500) { // 2.5 sec
 								log.log(Level.WARNING, String.format(Locale.getDefault(), "High time\t deviation at line %d %s %2d", lineNumber-1, line.substring(1, 7), actualTimeStamp - timeStamp));
 								boolean isHighTimeDeviation = actualTimeStamp - timeStamp > 20000; // 20 sec
 								boolean isToNextLowDeviation = lastTimeStamp > 0 && lastTimeStamp - timeStamp < 2000; // 2 sec
@@ -368,7 +368,7 @@ public class IGCReaderWriter {
 							try {
 								latitude = Integer.valueOf(line.substring(7, 14));
 								latitude = line.substring(14, 15).equalsIgnoreCase("N") ? latitude : -1 * latitude; //$NON-NLS-1$
-								if (lastLatitude != 0 && Math.abs(lastLatitude - latitude) > 20)
+								if (lastLatitude != 0 && Math.abs(lastLatitude - latitude) > 30)
 									log.log(Level.WARNING, String.format(Locale.getDefault(), "High latitude\t deviation at line %d %s %2d", lineNumber-1, line.substring(1, 7), latitude - lastLatitude));
 								lastLatitude = latitude;
 							}
@@ -378,7 +378,7 @@ public class IGCReaderWriter {
 							try {
 								longitude = Integer.valueOf(line.substring(15, 23));
 								longitude = line.substring(23, 24).equalsIgnoreCase("E") ? longitude : -1 * longitude; //$NON-NLS-1$
-								if (lastLongitude != 0 && Math.abs(lastLongitude - longitude) > 25)
+								if (lastLongitude != 0 && Math.abs(lastLongitude - longitude) > 35)
 									log.log(Level.WARNING, String.format(Locale.getDefault(), "High longitude\t deviation at line %d %s %2d", lineNumber-1, line.substring(1, 7), longitude - lastLongitude));
 								lastLongitude = longitude;
 							}

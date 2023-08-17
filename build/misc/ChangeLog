@@ -5,7 +5,7 @@ Generic changes/fixes
 	* export CSV following zoomed area
 	
 Device specific changes/fixes
-	* 
+	* IGCAdapter - fine tune mysterious value deviations which get logged
 
 Version 3.8.0 - 09 Aug 2023
 Generic changes/fixes 
