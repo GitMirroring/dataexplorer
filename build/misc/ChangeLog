@@ -6,6 +6,7 @@ Generic changes/fixes
 	
 Device specific changes/fixes
 	* IGCAdapter - fine tune mysterious value deviations which get logged
+	* iMax B8+ - add device from SkyRC
 
 Version 3.8.0 - 09 Aug 2023
 Generic changes/fixes 

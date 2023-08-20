@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with GNU DataExplorer.  If not, see <https://www.gnu.org/licenses/>.
     
-    Copyright (c) 2023 Winfried Bruegmann
+    Copyright (c) 2016,2017,2018,2019,2020,2021,2022,2023 Winfried Bruegmann
 ****************************************************************************************/
 package gde.device.skyrc;
 
@@ -23,27 +23,27 @@ import java.io.FileNotFoundException;
 import javax.xml.bind.JAXBException;
 
 import gde.device.DeviceConfiguration;
-import gde.device.bantam.eStationBC6;
+import gde.device.bantam.eStationBC8;
 
 /**
- * SkyRC iMax B6 device class which is 100% eStation BC6
+ * SkyRC iMax B8 device class which is 100% eStation BC8
  * @author Winfried Brügmann
  */
-public class IMaxB6 extends eStationBC6 {
+public class IMaxB8 extends eStationBC8 {
 
 	/**
 	 * @param deviceProperties
 	 * @throws FileNotFoundException
 	 * @throws JAXBException
 	 */
-	public IMaxB6(String deviceProperties) throws FileNotFoundException, JAXBException {
+	public IMaxB8(String deviceProperties) throws FileNotFoundException, JAXBException {
 		super(deviceProperties);
 	}
 
 	/**
 	 * @param deviceConfig
 	 */
-	public IMaxB6(DeviceConfiguration deviceConfig) {
+	public IMaxB8(DeviceConfiguration deviceConfig) {
 		super(deviceConfig);
 	}
 
