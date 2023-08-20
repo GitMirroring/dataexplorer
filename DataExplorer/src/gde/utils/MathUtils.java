@@ -26,6 +26,8 @@ import static java.math.RoundingMode.DOWN;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Locale;
 
 import gde.log.Level;
@@ -1012,5 +1014,48 @@ public class MathUtils {
 		int roundConstant = (logReference % 1 < .3) ? 5 : (logReference % 1.) < .7 ? 10 : 20;
 		return roundConstant * pow(10., floor(logReference) - 2.);
 	}
-
+	
+	/**
+	 * @param record the data pointer
+	 * @param start index
+	 * @param end index
+	 * @return the calculated average value as double value
+	 */
+	public static double calculateAverage(gde.data.Record record, int start, int end) {
+		int startIndex = start, endIndex = end;
+		if (start > end) {
+			startIndex = end;
+			endIndex = start;
+		}
+		return record.getDevice().translateValue(record, record.getAvgValue(startIndex, endIndex)/1000.);
+	}
+	
+	/**
+	 * @param record the data pointer
+	 * @param start index
+	 * @param end index
+	 * @return the calculated median value as double value
+	 */
+	public static double calculateMedian(gde.data.Record record, int start, int end) {
+		int startIndex = start, endIndex = end;
+		if (start > end) {
+			startIndex = end;
+			endIndex = start;
+		}
+		int indexDelta = endIndex - startIndex + 1;
+		log.log(Level.OFF, String.format("%d %d %d", startIndex, endIndex, indexDelta));
+			
+		ArrayList<Integer> array = new ArrayList<Integer>();
+		for(int i = startIndex; i <= endIndex; ++i)
+			array.add(record.realGet(i));
+		Collections.sort(array);
+		if (indexDelta == 0 || indexDelta == 1)
+			return record.getDevice().translateValue(record, array.get(0)/1000.);
+		else if(indexDelta == 2)
+			return record.getDevice().translateValue(record, (array.get(0)+array.get(1))/2000.);	 
+		if (indexDelta%2 == 0)
+			return record.getDevice().translateValue(record, (array.get(indexDelta/2)+array.get(indexDelta/2+1))/2000.);			
+		else
+			return record.getDevice().translateValue(record, array.get(indexDelta/2+1)/1000.);
+	}
 }

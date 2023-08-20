@@ -2142,7 +2142,7 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 	}
 
 	public void updateCompareWindow() {
-		this.compareTabItem.redrawGraphics(true);
+			this.compareTabItem.redrawGraphics(true);
 	}
 
 	public boolean isWithCompareSet() {
@@ -2342,10 +2342,9 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 		if (recordSet != null && recordSet.containsKey(recordKey)) {
 			if (isGraphicsTypeNormal) {
 				recordSet.setMeasurementMode(recordKey, enabled);
+				this.graphicsTabItem.getGraphicsComposite().cleanMeasurementPointer();
 				if (enabled)
 					this.graphicsTabItem.getGraphicsComposite().drawMeasurePointer(null, recordSet, GraphicsMode.MEASURE, false);
-				else
-					this.graphicsTabItem.getGraphicsComposite().cleanMeasurementPointer();
 			} else if (this.compareTabItem != null && !this.compareTabItem.isDisposed()) {
 				recordSet = DataExplorer.application.getCompareSet();
 				if (recordSet != null && recordSet.containsKey(recordKey)) {
@@ -2371,14 +2370,41 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 		if (recordSet != null && recordSet.containsKey(recordKey)) {
 			if (isGraphicsTypeNormal) {
 				recordSet.setDeltaMeasurementMode(recordKey, enabled);
+				this.graphicsTabItem.getGraphicsComposite().cleanMeasurementPointer();
 				if (enabled)
 					this.graphicsTabItem.getGraphicsComposite().drawMeasurePointer(null, recordSet, GraphicsMode.MEASURE_DELTA, false);
-				else
-					this.graphicsTabItem.getGraphicsComposite().cleanMeasurementPointer();
 			} else if (this.compareTabItem != null && !this.compareTabItem.isDisposed()) {
 				recordSet = DataExplorer.application.getCompareSet();
 				if (recordSet != null && recordSet.containsKey(recordKey)) {
 					recordSet.setDeltaMeasurementMode(recordKey, enabled);
+					if (enabled)
+						this.compareTabItem.getGraphicsComposite().drawMeasurePointer(null, recordSet, GraphicsMode.MEASURE_DELTA, false);
+					else
+						this.compareTabItem.getGraphicsComposite().cleanMeasurementPointer();
+				}
+			}
+		}
+	}
+
+	/**
+	 * switch application into delta measurement mode for visible record set using selected record
+	 * @param recordKey
+	 * @param enabled
+	 */
+	public void setAvgMedianMeasurementActive(String recordKey, boolean enabled) {
+		if (log.isLoggable(Level.FINE)) log.log(Level.FINE, recordKey);
+		boolean isGraphicsTypeNormal = isRecordSetVisible(GraphicsType.NORMAL);
+		RecordSet recordSet = isGraphicsTypeNormal ? Channels.getInstance().getActiveChannel().getActiveRecordSet() : this.compareSet;
+		if (recordSet != null && recordSet.containsKey(recordKey)) {
+			if (isGraphicsTypeNormal) {
+				recordSet.setAvgMedianMeasurementMode(recordKey, enabled);
+				this.graphicsTabItem.getGraphicsComposite().cleanMeasurementPointer();
+				if (enabled)
+					this.graphicsTabItem.getGraphicsComposite().drawMeasurePointer(null, recordSet, GraphicsMode.MEASURE_DELTA, false);
+			} else if (this.compareTabItem != null && !this.compareTabItem.isDisposed()) {
+				recordSet = DataExplorer.application.getCompareSet();
+				if (recordSet != null && recordSet.containsKey(recordKey)) {
+					recordSet.setAvgMedianMeasurementMode(recordKey, enabled);
 					if (enabled)
 						this.compareTabItem.getGraphicsComposite().drawMeasurePointer(null, recordSet, GraphicsMode.MEASURE_DELTA, false);
 					else

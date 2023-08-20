@@ -206,6 +206,7 @@ public class Record extends AbstractRecord implements IRecord {
 	// measurement
 	boolean												isMeasurementMode					= false;
 	boolean												isDeltaMeasurementMode		= false;
+	boolean												isAvgMedianMeasurementMode= false;
 
 	public final static String		NAME											= "_name";																																																															// active means this measurement can be red from device, other wise its calculated //$NON-NLS-1$
 	public final static String		UNIT											= "_unit";																																																															// active means this measurement can be red from device, other wise its calculated //$NON-NLS-1$
@@ -2012,6 +2013,14 @@ public class Record extends AbstractRecord implements IRecord {
 
 	public void setDeltaMeasurementMode(boolean enabled) {
 		this.isDeltaMeasurementMode = enabled;
+	}
+
+	public boolean isAvgMedianMeasurementMode() {
+		return this.isAvgMedianMeasurementMode;
+	}
+
+	public void setAvgMedianMeasurementMode(boolean enabled) {
+		this.isAvgMedianMeasurementMode = enabled;
 	}
 
 	/**

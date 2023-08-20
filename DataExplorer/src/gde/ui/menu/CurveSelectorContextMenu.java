@@ -67,7 +67,7 @@ public class CurveSelectorContextMenu {
 	MenuItem						axisEndValues, axisEndAuto, axisEndRound, axisStarts0, axisEndManual;
 	MenuItem						axisNumberFormat, axisNumberFormatAuto, axisNumberFormat0, axisNumberFormat1, axisNumberFormat2, axisNumberFormat3;
 	MenuItem						axisPosition, axisPositionLeft, axisPositionRight;
-	MenuItem						measurement, measurementRecordName, simpleMeasure, deltaMeasure;
+	MenuItem						measurement, measurementRecordName, simpleMeasure, deltaMeasure, avgMedianMeasure;
 	MenuItem						timeGridColor, timeGrid, timeGridOff, timeGridMain, timeGridMod60;
 	MenuItem						valueGridRecordName, valueGridColor, valueGrid, valueGridOff, valueGridEveryTick, valueGridEverySecond;
 
@@ -171,6 +171,8 @@ public class CurveSelectorContextMenu {
 									CurveSelectorContextMenu.this.copyCurveCompare.setEnabled(false);
 									CurveSelectorContextMenu.this.axisPosition.setEnabled(false);
 									CurveSelectorContextMenu.this.axisEndValues.setEnabled(false);
+									CurveSelectorContextMenu.this.deltaMeasure.setEnabled(false);
+									CurveSelectorContextMenu.this.avgMedianMeasure.setEnabled(false);
 								}
 
 								// utility window
@@ -179,6 +181,13 @@ public class CurveSelectorContextMenu {
 									if (CurveSelectorContextMenu.this.smoothVoltageCurveItem != null) CurveSelectorContextMenu.this.smoothVoltageCurveItem.setEnabled(false);
 									CurveSelectorContextMenu.this.copyCurveCompare.setEnabled(false);
 									CurveSelectorContextMenu.this.measurement.setEnabled(false);
+									CurveSelectorContextMenu.this.deltaMeasure.setEnabled(false);
+									CurveSelectorContextMenu.this.avgMedianMeasure.setEnabled(false);
+								}
+								
+								// history
+								if (CurveSelectorContextMenu.this.isTypeHisto) {
+									CurveSelectorContextMenu.this.avgMedianMeasure.setEnabled(false);
 								}
 
 								// disable clear, if nothing to clear
@@ -922,7 +931,9 @@ public class CurveSelectorContextMenu {
 					if (CurveSelectorContextMenu.this.recordSet != null && CurveSelectorContextMenu.this.selectedItem != null && !CurveSelectorContextMenu.this.selectedItem.isDisposed()) {
 						int selectedValueGridOrdinal = CurveSelectorContextMenu.this.recordSet.getValueGridRecordOrdinal();
 						if (selectedValueGridOrdinal >= 0) {
-							AbstractRecord abstractRecord = CurveSelectorContextMenu.this.recordSet.get(selectedValueGridOrdinal);
+							AbstractRecord abstractRecord = CurveSelectorContextMenu.this.recordSet.isCompareSet() 
+									? CurveSelectorContextMenu.this.recordSet.get(0)
+											: CurveSelectorContextMenu.this.recordSet.get(selectedValueGridOrdinal);
 							String recordNameUi = abstractRecord instanceof TrailRecord ? ((TrailRecord) abstractRecord).getNameReplacement() : abstractRecord.getName();
 							CurveSelectorContextMenu.this.valueGridRecordName.setText(Messages.getString(MessageIds.GDE_MSGT0118) + recordNameUi);
 							int gridType = CurveSelectorContextMenu.this.recordSet.getValueGridType();
@@ -1109,7 +1120,16 @@ public class CurveSelectorContextMenu {
 					setDeltaMeasurement(CurveSelectorContextMenu.this.recordNameKey, CurveSelectorContextMenu.this.deltaMeasure.getSelection());
 				}
 			});
-
+			this.avgMedianMeasure = new MenuItem(this.measurementMenu, SWT.CHECK);
+			this.avgMedianMeasure.setText(Messages.getString(MessageIds.GDE_MSGT0972));
+			this.avgMedianMeasure.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent evt) {
+					CurveSelectorContextMenu.log.finest(() -> "avgMedianMeasure.widgetSelected, event=" + evt); //$NON-NLS-1$
+					setAvgMedianMeasurement(CurveSelectorContextMenu.this.recordNameKey, CurveSelectorContextMenu.this.avgMedianMeasure.getSelection());
+				}
+			});
+				
 			new MenuItem(popupmenu, SWT.SEPARATOR);
 
 			this.copyCurveCompare = new MenuItem(popupmenu, SWT.PUSH);
@@ -1118,7 +1138,7 @@ public class CurveSelectorContextMenu {
 				@Override
 				public void handleEvent(Event e) {
 					CurveSelectorContextMenu.log.finest(() -> "copyCurveCompare Action performed! " + e); //$NON-NLS-1$
-					CurveSelectorContextMenu.this.application.createCompareWindowTabItem(); // if ot already exist
+					CurveSelectorContextMenu.this.application.createCompareWindowTabItem(); // if not already exist
 					String copyFromRecordKey = (String) popupmenu.getData(DataExplorer.RECORD_NAME);
 					RecordSet copyFromRecordSet = Channels.getInstance().getActiveChannel().getActiveRecordSet();
 					if (copyFromRecordSet != null && copyFromRecordKey != null) {
@@ -1287,6 +1307,7 @@ public class CurveSelectorContextMenu {
 			this.recordNameMeasurement = GDE.STRING_BLANK;
 			CurveSelectorContextMenu.this.simpleMeasure.setSelection(false);
 			CurveSelectorContextMenu.this.deltaMeasure.setSelection(false);
+			CurveSelectorContextMenu.this.avgMedianMeasure.setSelection(false);
 			CurveSelectorContextMenu.this.application.setStatusMessage(GDE.STRING_EMPTY);
 		}
 
@@ -1301,6 +1322,7 @@ public class CurveSelectorContextMenu {
 			setMeasurementActive(tmpRecordNameMeasurement, true);
 			CurveSelectorContextMenu.this.simpleMeasure.setSelection(true);
 			CurveSelectorContextMenu.this.deltaMeasure.setSelection(false);
+			CurveSelectorContextMenu.this.avgMedianMeasure.setSelection(false);
 		}
 		else {
 			this.recordNameMeasurement = GDE.STRING_BLANK;
@@ -1329,6 +1351,7 @@ public class CurveSelectorContextMenu {
 			setDeltaMeasurementActive(tmpRecordNameKey, true);
 			CurveSelectorContextMenu.this.deltaMeasure.setSelection(true);
 			CurveSelectorContextMenu.this.simpleMeasure.setSelection(false);
+			CurveSelectorContextMenu.this.avgMedianMeasure.setSelection(false);
 		}
 		else {
 			this.recordNameMeasurement = GDE.STRING_BLANK;
@@ -1343,6 +1366,35 @@ public class CurveSelectorContextMenu {
 			this.application.getPresentHistoExplorer().getActiveHistoChartTabItem().setMeasurementActive(tmpRecordNameMeasurement, enabled, true);
 		} else {
 			this.application.setDeltaMeasurementActive(tmpRecordNameMeasurement, enabled);
+		}
+	}
+
+	/**
+	 * perform all activities as if the menu item was toggled.
+	 * @param isActive
+	 * @param tmpRecordNameKey
+	 */
+	public void setAvgMedianMeasurement(String tmpRecordNameKey, boolean isActive) {
+		if (isMeasurementWhileNameChanged(tmpRecordNameKey) || isActive) {
+			this.recordNameMeasurement = tmpRecordNameKey;
+			setAvgMedianMeasurementActive(tmpRecordNameKey, true);
+			CurveSelectorContextMenu.this.avgMedianMeasure.setSelection(true);
+			CurveSelectorContextMenu.this.deltaMeasure.setSelection(false);
+			CurveSelectorContextMenu.this.simpleMeasure.setSelection(false);
+		}
+		else {
+			this.recordNameMeasurement = GDE.STRING_BLANK;
+			setAvgMedianMeasurementActive(tmpRecordNameKey, false);
+			CurveSelectorContextMenu.this.avgMedianMeasure.setSelection(false);
+			CurveSelectorContextMenu.this.application.setStatusMessage(GDE.STRING_EMPTY);
+		}
+	}
+
+	private void setAvgMedianMeasurementActive(String tmpRecordNameMeasurement, boolean enabled) {
+		if (this.isTypeHisto) {
+			this.application.getPresentHistoExplorer().getActiveHistoChartTabItem().setMeasurementActive(tmpRecordNameMeasurement, enabled, true);
+		} else {
+			this.application.setAvgMedianMeasurementActive(tmpRecordNameMeasurement, enabled);
 		}
 	}
 

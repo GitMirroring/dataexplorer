@@ -332,6 +332,9 @@ public abstract class AbstractRecordSet extends LinkedHashMap<String, AbstractRe
 	protected int																valueGridRecordOrdinal		= -1;
 	protected String														valueGridRecordName				= "";																				// histo: replace ordinal
 
+	// for compare set x min/max and y max (time) might be different
+	boolean																			isCompareSet							= false;
+
 	/**
 	 * Special record set data buffers according the size of given names array, where the name is the key to access the data buffer used to hold
 	 * compare able records (compare set).
@@ -653,6 +656,13 @@ public abstract class AbstractRecordSet extends LinkedHashMap<String, AbstractRe
 	@Override
 	public String toString() {
 		return "AbstractRecordSet [realSize=" + this.realSize() + ", hasDisplayableData=" + this.hasDisplayableData + ", visibleAndDisplayableRecordSize=" + this.visibleAndDisplayableRecords.size() + ", displayRecordSize=" + this.displayRecords.size() + "]";
+	}
+
+	/**
+	 * @return the isCompareSet
+	 */
+	public boolean isCompareSet() {
+		return this.isCompareSet;
 	}
 
 }

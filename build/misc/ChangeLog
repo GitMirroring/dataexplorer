@@ -3,6 +3,7 @@ Development history / change log, please read from bottom up
 Version 3.8.1 - xx yyy 2023
 Generic changes/fixes 
 	* export CSV following zoomed area
+	* add two point measurement method to calculate value average and median
 	
 Device specific changes/fixes
 	* IGCAdapter - fine tune mysterious value deviations which get logged

@@ -89,8 +89,6 @@ public final class RecordSet extends AbstractRecordSet {
 	protected double														maxValue												= Integer.MIN_VALUE;
 	protected double														minValue												= Integer.MAX_VALUE;
 
-	// for compare set x min/max and y max (time) might be different
-	boolean												isCompareSet									= false;
 	boolean												isUtilitySet									= false;
 	double												maxTime												= 0.0;																																																									//compare set -> each record will have its own timeSteps_ms,
 	// so the biggest record in view point of time will define the time scale
@@ -1246,13 +1244,6 @@ public final class RecordSet extends AbstractRecordSet {
 	}
 
 	/**
-	 * @return the isCompareSet
-	 */
-	public boolean isCompareSet() {
-		return this.isCompareSet;
-	}
-
-	/**
 	 * @return the isZoomMode
 	 */
 	public boolean isZoomMode() {
@@ -1983,9 +1974,11 @@ public final class RecordSet extends AbstractRecordSet {
 				if (oldRecord != null && !oldRecord.equals(record)) {
 					oldRecord.setMeasurementMode(false);
 					oldRecord.setDeltaMeasurementMode(false);
+					oldRecord.setAvgMedianMeasurementMode(false);
 				}
 				this.recordKeyMeasurement = recordKey;
 				record.setDeltaMeasurementMode(false);
+				record.setAvgMedianMeasurementMode(false);
 			}
 		}
 	}
@@ -2003,9 +1996,33 @@ public final class RecordSet extends AbstractRecordSet {
 				if (oldRecord != null && !oldRecord.equals(record)) {
 					oldRecord.setMeasurementMode(false);
 					oldRecord.setDeltaMeasurementMode(false);
+					oldRecord.setAvgMedianMeasurementMode(false);
 				}
 				this.recordKeyMeasurement = recordKey;
 				record.setMeasurementMode(false);
+				record.setAvgMedianMeasurementMode(false);
+			}
+		}
+	}
+
+	/**
+	 * @param recordKey the key which record should be measured
+	 * @param enabled the boolean value to set
+	 */
+	public void setAvgMedianMeasurementMode(String recordKey, boolean enabled) {
+		Record record = this.get(recordKey);
+		if (record != null) {
+			record.setAvgMedianMeasurementMode(enabled);
+			if (enabled) {
+				Record oldRecord = this.get(this.recordKeyMeasurement);
+				if (oldRecord != null && !oldRecord.equals(record)) {
+					oldRecord.setMeasurementMode(false);
+					oldRecord.setDeltaMeasurementMode(false);
+					oldRecord.setAvgMedianMeasurementMode(false);
+				}
+				this.recordKeyMeasurement = recordKey;
+				record.setMeasurementMode(false);
+				record.setDeltaMeasurementMode(false);
 			}
 		}
 	}
@@ -2018,6 +2035,7 @@ public final class RecordSet extends AbstractRecordSet {
 		if (record != null) {
 			record.setMeasurementMode(false);
 			record.setDeltaMeasurementMode(false);
+			record.setAvgMedianMeasurementMode(false);
 		}
 	}
 
@@ -2038,11 +2056,20 @@ public final class RecordSet extends AbstractRecordSet {
 	}
 
 	/**
+	 * @param recordKey the key which record should be measured
+	 * @return the isAvgMedianMeasurementMode (average & median calculation)
+	 */
+	public boolean isAvgMedianMeasurementMode(String recordKey) {
+		return this.get(recordKey) != null ? this.get(recordKey).isAvgMedianMeasurementMode() : false;
+	}
+
+	/**
 	 * Reset the record set in viewpoint of measurement.
 	 */
 	public void resetMeasurement() {
 		this.setMeasurementMode(this.recordKeyMeasurement, false);
 		this.setDeltaMeasurementMode(this.recordKeyMeasurement, false);
+		this.setAvgMedianMeasurementMode(this.recordKeyMeasurement, false);
 	}
 
 	/**

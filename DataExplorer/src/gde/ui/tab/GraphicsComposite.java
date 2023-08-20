@@ -71,6 +71,7 @@ import gde.utils.CurveUtils;
 import gde.utils.GraphicsUtils;
 import gde.utils.LocalizedDateTime;
 import gde.utils.LocalizedDateTime.DateTimePattern;
+import gde.utils.MathUtils;
 import gde.utils.StringHelper;
 import gde.utils.TimeLine;
 
@@ -347,6 +348,15 @@ public class GraphicsComposite extends Composite {
 					if (log.isLoggable(Level.FINEST)) log.log(Level.FINEST, "graphicCanvas.mouseUp, event=" + evt); //$NON-NLS-1$
 					if (evt.button == 1) {
 						mouseUpAction(evt);
+					}
+					if (GraphicsComposite.this.graphicsType == GraphicsType.NORMAL) {
+						RecordSet recordSet =  Channels.getInstance().getActiveChannel().getActiveRecordSet();
+						if (recordSet != null && recordSet.isAvgMedianMeasurementMode(recordSet.getRecordKeyMeasurement())) {
+							String measureRecordKey = recordSet.getRecordKeyMeasurement();
+							recordSet.isAvgMedianMeasurementMode(measureRecordKey);
+							Record record = recordSet.get(measureRecordKey);
+							GraphicsComposite.this.calculateAvgMedianStatusMessage(recordSet.getDevice(), record, record.getHorizontalPointIndexFromDisplayPoint(GraphicsComposite.this.xPosMeasure), record.getHorizontalPointIndexFromDisplayPoint(GraphicsComposite.this.xPosDelta));
+						}
 					}
 				}
 			});
@@ -736,7 +746,7 @@ public class GraphicsComposite extends Composite {
 		}
 		if (recordSet != null && recordSet.realSize() > 0) {
 
-			if (recordSet.isMeasurementMode(recordSet.getRecordKeyMeasurement()) || recordSet.isDeltaMeasurementMode(recordSet.getRecordKeyMeasurement())) {
+			if (recordSet.isMeasurementMode(recordSet.getRecordKeyMeasurement()) || recordSet.isDeltaMeasurementMode(recordSet.getRecordKeyMeasurement()) || recordSet.isAvgMedianMeasurementMode(recordSet.getRecordKeyMeasurement())) {
 				drawMeasurePointer(evt.gc, recordSet, GraphicsMode.MEASURE, this.xPosMeasure != 0);
 			}
 			else if (this.isLeftCutMode) {
@@ -974,41 +984,43 @@ public class GraphicsComposite extends Composite {
 		if (log.isLoggable(Level.FINER)) log.log(Level.FINER, "canvas size = " + GraphicsComposite.this.canvasBounds); //$NON-NLS-1$
 		if (this.canvasImage != null) GraphicsComposite.this.canvasImage.dispose();
 		try {
-			this.canvasImage = new Image(GDE.display, GraphicsComposite.this.canvasBounds);
-			this.canvasImageGC = new GC(this.canvasImage); //SWTResourceManager.getGC(this.canvasImage);
-			this.canvasImageGC.setBackground(this.surroundingBackground);
-			this.canvasImageGC.fillRectangle(this.canvasBounds);
-			this.canvasImageGC.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+			if (this.canvasBounds.width > 0 && this.canvasBounds.height > 0) {
+				this.canvasImage = new Image(GDE.display, GraphicsComposite.this.canvasBounds);
+				this.canvasImageGC = new GC(this.canvasImage); //SWTResourceManager.getGC(this.canvasImage);
+				this.canvasImageGC.setBackground(this.surroundingBackground);
+				this.canvasImageGC.fillRectangle(this.canvasBounds);
+				this.canvasImageGC.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 
-			RecordSet recordSet = null;
-			switch (this.graphicsType) {
-			case COMPARE:
-				if (this.application.isWithCompareSet()) {
-					recordSet = this.application.getCompareSet();
+				RecordSet recordSet = null;
+				switch (this.graphicsType) {
+				case COMPARE:
+					if (this.application.isWithCompareSet()) {
+						recordSet = this.application.getCompareSet();
+					}
+					break;
+	
+				case UTIL:
+					if (this.application.isWithUtilitySet()) {
+						recordSet = this.application.getUtilitySet();
+					}
+					break;
+	
+				default: // TYPE_NORMAL
+					if (this.channels.getActiveChannel() != null && this.channels.getActiveChannel().getActiveRecordSet() != null) {
+						recordSet = this.channels.getActiveChannel().getActiveRecordSet();
+					}
+					break;
 				}
-				break;
-
-			case UTIL:
-				if (this.application.isWithUtilitySet()) {
-					recordSet = this.application.getUtilitySet();
+				if (recordSet != null && recordSet.realSize() > 0) {
+					drawCurves(recordSet, this.canvasBounds, this.canvasImageGC);
+					//changed curve selection may change the scale end values
+					recordSet.syncScaleOfSyncableRecords();
 				}
-				break;
-
-			default: // TYPE_NORMAL
-				if (this.channels.getActiveChannel() != null && this.channels.getActiveChannel().getActiveRecordSet() != null) {
-					recordSet = this.channels.getActiveChannel().getActiveRecordSet();
-				}
-				break;
+				this.canvasImageGC.dispose();
 			}
-			if (recordSet != null && recordSet.realSize() > 0) {
-				drawCurves(recordSet, this.canvasBounds, this.canvasImageGC);
-				//changed curve selection may change the scale end values
-				recordSet.syncScaleOfSyncableRecords();
-			}
-			this.canvasImageGC.dispose();
 		}
 		catch (Exception e) {
-			log.log(Level.SEVERE, e.getMessage());
+			log.log(Level.SEVERE, e.getMessage(), e);
 		}
 		this.graphicCanvas.redraw(); // do full update where required
 		
@@ -1051,7 +1063,7 @@ public class GraphicsComposite extends Composite {
 				int indexPosMeasure = record.getHorizontalPointIndexFromDisplayPoint(this.xPosMeasure);
 				this.calculateMeasurementStatusMessage(actualDevice, record, indexPosMeasure);
 			}
-			else if (recordSet.isDeltaMeasurementMode(measureRecordKey)) {
+			else if (recordSet.isDeltaMeasurementMode(measureRecordKey) || recordSet.isAvgMedianMeasurementMode(measureRecordKey)) {
 				this.xPosMeasure = isRefresh ? this.xPosMeasure : this.curveAreaBounds.width / 4;
 				this.yPosMeasure = record.getVerticalDisplayPointValue(this.xPosMeasure);
 
@@ -1074,12 +1086,14 @@ public class GraphicsComposite extends Composite {
 				int indexPosMeasure = record.getHorizontalPointIndexFromDisplayPoint(this.xPosMeasure);
 				int indexPosDelta = record.getHorizontalPointIndexFromDisplayPoint(this.xPosDelta);
 
-				if (this.graphicsType == GraphicsType.NORMAL && record.getDevice().getAtlitudeTripSpeedOrdinals().length == 3 //device must make sure required measurements available
-						&& record.getOrdinal() == record.getDevice().getAtlitudeTripSpeedOrdinals()[0]) { // returned first ordinal match altitude 								
-					this.calculateSinkAndGlideRatioStatusMessage(actualDevice, record, indexPosMeasure, indexPosDelta);
-				}
-				else {
-					this.calculateDeltaValueStatusMessage(actualDevice, record, indexPosMeasure, indexPosDelta);
+				if (this.graphicsType == GraphicsType.NORMAL && !recordSet.isAvgMedianMeasurementMode(measureRecordKey)) {
+					if (record.getDevice().getAtlitudeTripSpeedOrdinals().length == 3 //device must make sure required measurements available
+							&& record.getOrdinal() == record.getDevice().getAtlitudeTripSpeedOrdinals()[0]) { // returned first ordinal match altitude 								
+						this.calculateSinkAndGlideRatioStatusMessage(actualDevice, record, indexPosMeasure, indexPosDelta);
+					}
+					else {
+						this.calculateDeltaValueStatusMessage(actualDevice, record, indexPosMeasure, indexPosDelta);
+					} 
 				}
 			} 
 		}
@@ -1209,6 +1223,7 @@ public class GraphicsComposite extends Composite {
 				this.recordSetComment.setText(this.recordSetCommentText);
 			}
 			this.application.setStatusMessage(GDE.STRING_EMPTY);
+			redrawGraphics();
 		}
 		catch (RuntimeException e) {
 			log.log(Level.WARNING, e.getMessage(), e);
@@ -1462,7 +1477,7 @@ public class GraphicsComposite extends Composite {
 						log.log(Level.WARNING, "mouse pointer out of range", e); //$NON-NLS-1$
 					}
 				}
-				else if (measureRecordKey != null && (recordSet.isMeasurementMode(measureRecordKey) || recordSet.isDeltaMeasurementMode(measureRecordKey))) {
+				else if (measureRecordKey != null && (recordSet.isMeasurementMode(measureRecordKey) || recordSet.isDeltaMeasurementMode(measureRecordKey) || recordSet.isAvgMedianMeasurementMode(measureRecordKey))) {
 					if (this.xPosMeasure + 1 >= evt.x && this.xPosMeasure - 1 <= evt.x || this.xPosDelta + 1 >= evt.x && this.xPosDelta - 1 <= evt.x) { // snap mouse pointer
 						this.graphicCanvas.setCursor(SWTResourceManager.getCursor(SWT.CURSOR_SIZEWE)); //$NON-NLS-1$
 					}
@@ -1519,6 +1534,22 @@ public class GraphicsComposite extends Composite {
 	}
 
 	/**
+	 * calculate delta values based on pointer position formatted as configured
+	 * @param actualDevice
+	 * @param record the record where the measurement pointer is set
+	 * @param indexPosMeasure index of black measurement
+	 * @param indexPosDelta index of blue measurement pointer
+	 */
+	private void calculateAvgMedianStatusMessage(IDevice actualDevice, Record record, int indexPosMeasure, int indexPosDelta) {
+		this.application.setStatusMessage(Messages.getString(MessageIds.GDE_MSGT0973,
+				//{0} - Zeitdifferenz = {1}, Mittelwert = {2}, Median = {3}
+				new Object[] { record.getName(), 
+						TimeLine.getFomatedTimeWithUnit(record.getHorizontalDisplayPointTime_ms(this.xPosDelta) - record.getHorizontalDisplayPointTime_ms(this.xPosMeasure)),
+						String.format("%3.1f [%s]", MathUtils.calculateAverage(record, indexPosMeasure, indexPosDelta), record.getUnit()),
+						String.format("%3.1f [%s]", MathUtils.calculateMedian(record, indexPosMeasure, indexPosDelta), record.getUnit()) }));
+				}
+
+	/**
 	 * calculates some interesting ratios for glider evaluation, values formatted as configured
 	 * @param record the record where the measurement pointer is set
 	 * @param indexPosMeasure index of black measurement
@@ -1560,12 +1591,12 @@ public class GraphicsComposite extends Composite {
 				this.xDown = point.x;
 				this.yDown = point.y;
 
-				if (measureRecordKey != null && (recordSet.isMeasurementMode(measureRecordKey) || recordSet.isDeltaMeasurementMode(measureRecordKey)) && this.xPosMeasure + 1 >= this.xDown
+				if (measureRecordKey != null && (recordSet.isMeasurementMode(measureRecordKey) || recordSet.isDeltaMeasurementMode(measureRecordKey) || recordSet.isAvgMedianMeasurementMode(measureRecordKey)) && this.xPosMeasure + 1 >= this.xDown
 						&& this.xPosMeasure - 1 <= this.xDown) { // snap mouse pointer
 					this.isLeftMouseMeasure = true;
 					this.isRightMouseMeasure = false;
 				}
-				else if (measureRecordKey != null && recordSet.isDeltaMeasurementMode(measureRecordKey) && this.xPosDelta + 1 >= this.xDown && this.xPosDelta - 1 <= this.xDown) { // snap mouse pointer
+				else if (measureRecordKey != null && (recordSet.isDeltaMeasurementMode(measureRecordKey) || recordSet.isAvgMedianMeasurementMode(measureRecordKey)) && this.xPosDelta + 1 >= this.xDown && this.xPosDelta - 1 <= this.xDown) { // snap mouse pointer
 					this.isRightMouseMeasure = true;
 					this.isLeftMouseMeasure = false;
 				}
