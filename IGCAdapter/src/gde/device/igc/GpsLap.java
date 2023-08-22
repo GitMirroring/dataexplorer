@@ -72,7 +72,18 @@ public class GpsLap extends HashMap<String, String>{
 	 * @param lap
 	 * @return String containing LAP  INDEX	 DURATION	LAP-TIME ALT ∆ALT
 	 */
-	public String toString(int lap, Double duration) {	
-		return String.format("%3d %4d  %7s %7s   %4d  %4d\n", lap, getIndex(),  getFormatedTime(duration.intValue() + getIntTime()), getFormatedTime(getIntTime()), getAlt(), getAltGainLos());		
+	public String toString(int lap, Double duration, String taskType) {	
+		double lapFlightSpeed_kmh = 0.0, idealLapSpeed_kmh = 0.0, ratio_m = 0.0;
+		switch (taskType) {
+		case "Light":
+			double trianglePathLength_km =  (200 + 200 + 200 * Math.sqrt(2.) + 200 * Math.sqrt(2.)) / 1000;
+			double totalPathLength_km = trianglePathLength_km * getIndex() / 100.;
+			lapFlightSpeed_kmh = totalPathLength_km / getTime() * 3600.;
+			idealLapSpeed_kmh = trianglePathLength_km / getTime() * 3600.;
+			ratio_m = getAltGainLos() < -15 ? trianglePathLength_km * 1000 / getAltGainLos() * -1 : 0.0;
+			break;
+		}
+
+		return String.format("%2d  %4d %7s   %7s  %4d  %4d   %3.1f     %3.1f      %4.1f\n", lap, getIndex(),  getFormatedTime(duration.intValue() + getIntTime()), getFormatedTime(getIntTime()), getAlt(), getAltGainLos(), idealLapSpeed_kmh, lapFlightSpeed_kmh, ratio_m);		
 	}
 }
