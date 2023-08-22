@@ -513,6 +513,7 @@ public final class RecordSet extends AbstractRecordSet {
 	 * @return formatted values as string array including time
 	 */
 	public String[] getExportRow(int index, boolean isAbsolute) {
+		index = this.get(0).getIndex(index);
 		String[] exportRow = new String[this.size() + 1]; // add time column
 		exportRow[0] = this.getFormatedTime_sec(index, isAbsolute);
 		return this.device.prepareExportRow(this, exportRow, index);
@@ -524,6 +525,7 @@ public final class RecordSet extends AbstractRecordSet {
 	 * @return raw values as string array including time
 	 */
 	public String[] getRawExportRow(int index, boolean isAbsolute) {
+		index = this.get(0).getIndex(index);
 		String[] exportRow = new String[this.size() + 1]; // add time column
 		exportRow[0] = this.getFormatedTime_sec(index, isAbsolute);
 		return this.device.prepareRawExportRow(this, exportRow, index);

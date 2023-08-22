@@ -4,6 +4,7 @@ Version 3.8.1 - xx yyy 2023
 Generic changes/fixes 
 	* export CSV following zoomed area
 	* add two point measurement method to calculate value average and median
+	* fix raw export time stamp
 	
 Device specific changes/fixes
 	* IGCAdapter - fine tune mysterious value deviations which get logged
