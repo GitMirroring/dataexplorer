@@ -401,6 +401,7 @@ public class CSVReaderWriter {
 			GDE.getUiNotification().setStatusMessage(Messages.getString(MessageIds.GDE_MSGT0138, new String[] {GDE.FILE_ENDING_CSV, filePath}));
 			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath), encoding));
 			char decimalSeparator = Settings.getInstance().getDecimalSeparator();
+			boolean isTimeFormatAbsolute = Settings.getInstance().isTimeFormatAbsolute();
 
 			df3.setGroupingUsed(false);
 			sb = new StringBuffer();
@@ -412,7 +413,7 @@ public class CSVReaderWriter {
 			log.log(Level.FINE, "written header line = " + sb.toString());  //$NON-NLS-1$
 
 			sb = new StringBuffer();
-			sb.append(Messages.getString(MessageIds.GDE_MSGT0137)).append(separator); // Spannung [V];Strom [A];Ladung [Ah];Leistung [W];Energie [Wh]";
+			sb.append(Messages.getString(isTimeFormatAbsolute ? MessageIds.GDE_MSGT0436 : MessageIds.GDE_MSGT0137)).append(separator); // Spannung [V];Strom [A];Ladung [Ah];Leistung [W];Energie [Wh]";
 			// write the measurements signature
 			int i = 0;
 			if (isRaw) {
@@ -448,7 +449,6 @@ public class CSVReaderWriter {
 				startTime = new Date().getTime();
 			}
 			int recordEntries = recordSet.getRecordDataSize(false);
-			boolean isTimeFormatAbsolute = Settings.getInstance().isTimeFormatAbsolute();
 			int progressCycle = 0;
 			GDE.getUiNotification().setProgress(progressCycle);
 

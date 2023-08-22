@@ -5,6 +5,7 @@ Generic changes/fixes
 	* export CSV following zoomed area
 	* add two point measurement method to calculate value average and median
 	* fix raw export time stamp
+	* fix CSV export header line according configured time stamp
 	
 Device specific changes/fixes
 	* IGCAdapter - fine tune mysterious value deviations which get logged
