@@ -588,12 +588,17 @@ public class KMZWriter {
 			zipWriter.write(KMZWriter.speedFooter.getBytes());
 
 			//triangle-track
+			int relativeAltitude = 0; //clamp to ground
 			String[] triangleTaskDefinition = recordSet.getRecordSetDescription().split(GDE.LINE_SEPARATOR);
 			if (triangleTaskDefinition.length == 2 && triangleTaskDefinition[1].length() > 25 && triangleTaskDefinition[1].split(GDE.STRING_MESSAGE_CONCAT).length == 4) {
 				List<String> wayPoints = new ArrayList<>();
 				for (String strCoords : triangleTaskDefinition[1].split(GDE.STRING_MESSAGE_CONCAT)) {
 					if (strCoords.startsWith("WP", 17))
 						wayPoints.add(strCoords.substring(0,8) + GDE.STRING_SEMICOLON + strCoords.substring(8, 17));
+					else if (strCoords.contains("200,200"))
+						relativeAltitude = 350; //max altitude for light class
+					else if (strCoords.contains("350,400") || strCoords.contains("500,500"))
+						relativeAltitude = 750; //max altitude for sport, scale, sls class
 				}
 			
 			zipWriter.write(String.format(KMZWriter.triangleHeader, "triangle").getBytes());
@@ -604,7 +609,6 @@ public class KMZWriter {
 					latitude = wayPoints.get(i).split(GDE.STRING_SEMICOLON)[0].endsWith("N") ? latitude : -1 * latitude;
 					double longitude = Double.parseDouble(wayPoints.get(i).split(GDE.STRING_SEMICOLON)[1].substring(0,7))/10;
 					longitude = wayPoints.get(i).split(GDE.STRING_SEMICOLON)[1].endsWith("E") ? longitude : -1 * longitude;
-					int relativeAltitude = 200;
 					// add data entries, translate according device and measurement unit
 					sb.append(String.format(Locale.ENGLISH, "\t\t\t\t\t\t%.7f,", device.translateValue(recordLongitude, longitude))) //$NON-NLS-1$
 							.append(String.format(Locale.ENGLISH, "%.7f,", device.translateValue(recordLatitude, latitude))) //$NON-NLS-1$
@@ -618,7 +622,6 @@ public class KMZWriter {
 			latitude = wayPoints.get(0).split(GDE.STRING_SEMICOLON)[0].endsWith("N") ? latitude : -1 * latitude;
 			double longitude = Double.parseDouble(wayPoints.get(0).split(GDE.STRING_SEMICOLON)[1].substring(0,7))/10;
 			longitude = wayPoints.get(0).split(GDE.STRING_SEMICOLON)[1].endsWith("E") ? longitude : -1 * longitude;
-			int relativeAltitude = 200;
 			// add data entries, translate according device and measurement unit
 			sb.append(String.format(Locale.ENGLISH, "\t\t\t\t\t\t%.7f,", device.translateValue(recordLongitude, longitude))) //$NON-NLS-1$
 					.append(String.format(Locale.ENGLISH, "%.7f,", device.translateValue(recordLatitude, latitude))) //$NON-NLS-1$
