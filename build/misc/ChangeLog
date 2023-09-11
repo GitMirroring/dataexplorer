@@ -6,7 +6,7 @@ Generic changes/fixes
 	* add two point measurement method to calculate value average and median
 	* fix raw export time stamp
 	* fix CSV export header line according configured time stamp
-	* adjust possible triangle altitude according GPS class while KMZ export
+	* adjust possible triangle altitude according maximum altitude of flight
 	
 Device specific changes/fixes
 	* IGCAdapter - fine tune mysterious value deviations which get logged

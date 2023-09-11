@@ -588,17 +588,13 @@ public class KMZWriter {
 			zipWriter.write(KMZWriter.speedFooter.getBytes());
 
 			//triangle-track
-			int relativeAltitude = 0; //clamp to ground
+			int relativeAltitude = (int) (recordAltitude == null ? 0 : device.translateValue(recordAltitude, recordAltitude.getMaxValue() / 1000.0) - height0); //0 == clamp to ground
 			String[] triangleTaskDefinition = recordSet.getRecordSetDescription().split(GDE.LINE_SEPARATOR);
 			if (triangleTaskDefinition.length == 2 && triangleTaskDefinition[1].length() > 25 && triangleTaskDefinition[1].split(GDE.STRING_MESSAGE_CONCAT).length == 4) {
 				List<String> wayPoints = new ArrayList<>();
 				for (String strCoords : triangleTaskDefinition[1].split(GDE.STRING_MESSAGE_CONCAT)) {
 					if (strCoords.startsWith("WP", 17))
 						wayPoints.add(strCoords.substring(0,8) + GDE.STRING_SEMICOLON + strCoords.substring(8, 17));
-					else if (strCoords.contains("200,200"))
-						relativeAltitude = 350; //max altitude for light class
-					else if (strCoords.contains("350,400") || strCoords.contains("500,500"))
-						relativeAltitude = 750; //max altitude for sport, scale, sls class
 				}
 			
 			zipWriter.write(String.format(KMZWriter.triangleHeader, "triangle").getBytes());
