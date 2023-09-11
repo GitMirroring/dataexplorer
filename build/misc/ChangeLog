@@ -7,6 +7,7 @@ Generic changes/fixes
 	* fix raw export time stamp
 	* fix CSV export header line according configured time stamp
 	* adjust possible triangle altitude according maximum altitude of flight
+	* update Java runtime to 17.0.8 if packaged 
 	
 Device specific changes/fixes
 	* IGCAdapter - fine tune mysterious value deviations which get logged
