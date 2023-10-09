@@ -628,7 +628,7 @@ public final class RecordSet extends AbstractRecordSet {
 		// add all others
 		for (int i = 0; i < this.size(); ++i) {
 			final Record record = this.get(i);
-			if (record.size() > 0 && record.ordinal != this.valueGridRecordOrdinal && !record.isScaleSyncMaster() && record.hasReasonableData()) displayRecords.add(record);
+			if (record.size() > 0 && record.ordinal != this.valueGridRecordOrdinal && !record.isScaleSyncMaster()) displayRecords.add(record);
 		}
 
 		return displayRecords.toArray(new Record[0]);
