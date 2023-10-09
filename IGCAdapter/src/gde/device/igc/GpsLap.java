@@ -73,31 +73,40 @@ public class GpsLap extends HashMap<String, String>{
 	 * @return String containing LAP  INDEX	 DURATION	LAP-TIME ALT ∆ALT
 	 */
 	public String toString(int lap, Double duration, String taskType) {	
-		double lapFlightSpeed_kmh = 0.0, idealLapSpeed_kmh = 0.0, ratio_m = 0.0;
+		double lapFlightSpeed_kmh = 0.0, idealLapSpeed_kmh = 0.0, ratio_m = 0.0, sink_m_s = 0.0;
 		switch (taskType) {
 		case "Light":
 			double trianglePathLength_km =  (200 + 200 + 200 * Math.sqrt(2.) + 200 * Math.sqrt(2.)) / 1000;
 			double totalPathLength_km = trianglePathLength_km * getIndex() / 100.;
 			lapFlightSpeed_kmh = totalPathLength_km / getTime() * 3600.;
 			idealLapSpeed_kmh = trianglePathLength_km / getTime() * 3600.;
-			ratio_m = getAltGainLos() < -15 && getIndex() < 130 ? trianglePathLength_km * 1000 / getAltGainLos() * -1 : 0.0;
+			if (getAltGainLos() < -15 && getIndex() < 130) {
+				ratio_m = trianglePathLength_km * 1000 / getAltGainLos() * -1;
+				sink_m_s = getAltGainLos() / getTime();
+			}
 			break;
 		case "Sport":
 			trianglePathLength_km =  (400 + 400 + 400 * Math.sqrt(2.) + 400 * Math.sqrt(2.)) / 1000;
 			totalPathLength_km = trianglePathLength_km * getIndex() / 100.;
 			lapFlightSpeed_kmh = totalPathLength_km / getTime() * 3600.;
 			idealLapSpeed_kmh = trianglePathLength_km / getTime() * 3600.;
-			ratio_m = getAltGainLos() < -20 && getIndex() < 130 ? trianglePathLength_km * 1000 / getAltGainLos() * -1 : 0.0;
+			if (getAltGainLos() < -20 && getIndex() < 130) {
+				ratio_m = trianglePathLength_km * 1000 / getAltGainLos() * -1;
+				sink_m_s = getAltGainLos() / getTime();
+			}
 			break;
 		default:
 			trianglePathLength_km =  (500 + 500 + 500 * Math.sqrt(2.) + 500 * Math.sqrt(2.)) / 1000;
 			totalPathLength_km = trianglePathLength_km * getIndex() / 100.;
 			lapFlightSpeed_kmh = totalPathLength_km / getTime() * 3600.;
 			idealLapSpeed_kmh = trianglePathLength_km / getTime() * 3600.;
-			ratio_m = getAltGainLos() < -30 && getIndex() < 130 ? trianglePathLength_km * 1000 / getAltGainLos() * -1 : 0.0;
+			if (getAltGainLos() < -30 && getIndex() < 130) {
+				ratio_m = trianglePathLength_km * 1000 / getAltGainLos() * -1;
+				sink_m_s = getAltGainLos() / getTime();
+			}
 			break;
 		}
 
-		return String.format("%2d  %4d %7s   %7s  %4d  %4d  %5.1f    %5.1f     %5.1f\n", lap, getIndex(),  getFormatedTime(duration.intValue() + getIntTime()), getFormatedTime(getIntTime()), getAlt(), getAltGainLos(), idealLapSpeed_kmh, lapFlightSpeed_kmh, ratio_m);		
+		return String.format("%2d  %4d %7s   %7s  %4d  %4d  %5.1f    %5.1f     %5.1f    %5.2f\n", lap, getIndex(),  getFormatedTime(duration.intValue() + getIntTime()), getFormatedTime(getIntTime()), getAlt(), getAltGainLos(), idealLapSpeed_kmh, lapFlightSpeed_kmh, ratio_m, sink_m_s);		
 	}
 }
