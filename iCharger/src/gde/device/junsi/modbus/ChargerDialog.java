@@ -1569,7 +1569,7 @@ public class ChargerDialog extends DeviceDialog {
 					ChargerDialog.this.btnBalance.setEnabled(false);
 					ChargerDialog.this.btnPower.setEnabled(false);
 					ChargerDialog.this.btnStop.setEnabled(false);
-					if (ChargerDialog.this.cellTypeNamesArray[ChargerDialog.this.memoryValues[0]].startsWith("L")) { //$NON-NLS-1$
+					if (ChargerDialog.this.memoryValues[0] >= 0 && ChargerDialog.this.cellTypeNamesArray[ChargerDialog.this.memoryValues[0]].startsWith("L")) { //$NON-NLS-1$
 						ChargerDialog.this.btnStorage.setEnabled(true);
 						ChargerDialog.this.btnBalance.setEnabled(true);
 					}
@@ -2777,522 +2777,529 @@ public class ChargerDialog extends DeviceDialog {
 
 	private void updateMemoryParameterControls() {
 
-		if ((this.isDuo && this.memoryValues[0] < 8) || this.memoryValues[0] < 9) { // X devices up to Power
-			int maxNumberCells = this.cellTypeNamesArray[this.memoryValues[0]].startsWith("L") ? ((iChargerUsb) this.device).getNumberOfLithiumCells() //$NON-NLS-1$
-					: this.cellTypeNamesArray[this.memoryValues[0]].startsWith("N") ? ChargerMemory.getMaxCellsNi(this.device) //$NON-NLS-1$
-							: this.cellTypeNamesArray[this.memoryValues[0]].startsWith("P") ? ChargerMemory.getMaxCellsPb(this.device) : 0; //$NON-NLS-1$
+		try {
+			if ((this.isDuo && this.memoryValues[0] < 8) || this.memoryValues[0] < 9) { // X devices up to Power
+				int maxNumberCells = this.cellTypeNamesArray[this.memoryValues[0]].startsWith("L") 
+						? ((iChargerUsb) this.device).getNumberOfLithiumCells() //$NON-NLS-1$
+						: this.cellTypeNamesArray[this.memoryValues[0]].startsWith("N") ? ChargerMemory.getMaxCellsNi(this.device) //$NON-NLS-1$
+								: this.cellTypeNamesArray[this.memoryValues[0]].startsWith("P") ? ChargerMemory.getMaxCellsPb(this.device) : 0; //$NON-NLS-1$
 
-			if (this.tbtmPower != null && !this.tbtmPower.isDisposed()) {
-				this.powerComposite.removeListener(SWT.Selection, this.memoryParameterChangeListener);
-				for (int i = 42; i < 47; ++i)
-					this.memoryParameters[i].dispose();
-				this.powerComposite.dispose();
-				this.tbtmPower.dispose();
-			}
-			if (this.powerLabel != null && !this.powerLabel.isDisposed()) {
-				this.powerLabel.dispose();
-				createBaseBatteryParameters();
-			}
-			if (this.tbtmCharge == null || this.tbtmCharge.isDisposed()) {
-				createChargeTabItem();
-				this.grpRunProgram.setEnabled(true);
-				this.tabFolderProgrMem.setSelection(0);
-			}
-			if (this.tbtmDischarge == null || this.tbtmDischarge.isDisposed()) createDischargeTabItem();
-			if (this.tbtmCycle == null || this.tbtmCycle.isDisposed()) createCycleTabItem();
-			if (this.tbtmOption == null || this.tbtmOption.isDisposed()) createOptionTabItem();
+				if (this.tbtmPower != null && !this.tbtmPower.isDisposed()) {
+					this.powerComposite.removeListener(SWT.Selection, this.memoryParameterChangeListener);
+					for (int i = 42; i < 47; ++i)
+						this.memoryParameters[i].dispose();
+					this.powerComposite.dispose();
+					this.tbtmPower.dispose();
+				}
+				if (this.powerLabel != null && !this.powerLabel.isDisposed()) {
+					this.powerLabel.dispose();
+					createBaseBatteryParameters();
+				}
+				if (this.tbtmCharge == null || this.tbtmCharge.isDisposed()) {
+					createChargeTabItem();
+					this.grpRunProgram.setEnabled(true);
+					this.tabFolderProgrMem.setSelection(0);
+				}
+				if (this.tbtmDischarge == null || this.tbtmDischarge.isDisposed()) createDischargeTabItem();
+				if (this.tbtmCycle == null || this.tbtmCycle.isDisposed()) createCycleTabItem();
+				if (this.tbtmOption == null || this.tbtmOption.isDisposed()) createOptionTabItem();
 
-			this.memoryParameters[1].updateValueRange("0(auto) - " + maxNumberCells, 0, maxNumberCells, 0); //$NON-NLS-1$
-			//battery type dependent updates
-			this.memoryParameters[5].setEnabled(true);
-			this.memoryParameters[6].setEnabled(this.memoryValues[5] != 0);
-			this.memoryParameters[7].setEnabled(true);
-			this.memoryParameters[7].getSlider().setEnabled(true);
-			this.grpBalancerSettings.setEnabled(true);
-			for (int i = 11; i < 17; ++i)
-				this.memoryParameters[i].setEnabled(true);
-			if (this.isDuo) {
-				switch (this.memoryValues[0]) { //battery type LiPo,LiLo,LiFe,NiMH,Nicd,Pb,NiZn,LiHV
-				case 0: //LiPo
-					this.memoryParameters[4].updateTextFieldValues(ChargerMemory.LiMode.VALUES);
-					this.memoryParameters[7].updateValueRange("4.2V (3.850 - 4.350V)", 3850, 4350, 4200, -3850); //$NON-NLS-1$
-					break;
-				case 1: //LiIo
-					this.memoryParameters[4].updateTextFieldValues(ChargerMemory.LiMode.VALUES);
-					this.memoryParameters[7].updateValueRange("4.1V (3.750 - 4.350V)", 3750, 4350, 4100, -3750); //$NON-NLS-1$
-					break;
-				case 2: //LiFe
-					this.memoryParameters[4].updateTextFieldValues(ChargerMemory.LiMode.VALUES);
-					this.memoryParameters[7].updateValueRange("3.3V (3.300 - 3.800 V", 3300, 3800, 3600, -3300); //$NON-NLS-1$
-					break;
-				case 6: //NiZn
-					this.memoryParameters[4].updateTextFieldValues(ChargerMemory.NiMode.VALUES);
-					this.memoryParameters[7].updateValueRange("1.9V (1.200 - 2.100 V", 1200, 2100, 2000, -1200); //$NON-NLS-1$
-					break;
-				case 7: //LiHV
-					this.memoryParameters[4].updateTextFieldValues(ChargerMemory.LiMode.VALUES);
-					this.memoryParameters[7].updateValueRange("4.35V (3.900 - 4.450V)", 3900, 4450, 4350, -3900); //$NON-NLS-1$
-					break;
-				case 3: //NiMH
-				case 4: //NiCd
-					this.memoryParameters[4].updateTextFieldValues(ChargerMemory.NiMode.VALUES);
-					this.memoryParameters[5].setEnabled(false);
-					this.memoryParameters[7].setEnabled(false);
-					this.grpBalancerSettings.setEnabled(false);
-					for (int i = 11; i < 17; ++i)
-						this.memoryParameters[i].setEnabled(false);
-					break;
-				case 5: //Pb
-					this.memoryParameters[4].updateTextFieldValues(ChargerMemory.PbMode.VALUES);
-					this.memoryParameters[5].setEnabled(false);
-					this.memoryParameters[7].setEnabled(false);
-					this.grpBalancerSettings.setEnabled(false);
-					for (int i = 11; i < 17; ++i)
-						this.memoryParameters[i].setEnabled(false);
-					break;
-				default: //unknown
-					this.memoryParameters[7].setEnabled(false);
-					this.grpBalancerSettings.setEnabled(false);
-					break;
-				}
-			}
-			else {
-				switch (this.memoryValues[0]) { //battery type LiPo,LiLo,LiFe,LiHV,LTO, NiMH,Nicd,NiZn,Pb
-				case 0: //LiPo
-					this.memoryParameters[4].updateTextFieldValues(ChargerMemory.LiMode.VALUES);
-					this.memoryParameters[7].updateValueRange("4.2V (3.850 - 4.350V)", 3850, 4350, 4200, -3850); //$NON-NLS-1$
-					break;
-				case 1: //LiIo
-					this.memoryParameters[4].updateTextFieldValues(ChargerMemory.LiMode.VALUES);
-					this.memoryParameters[7].updateValueRange("4.1V (3.750 - 4.350V)", 3750, 4350, 4100, -3750); //$NON-NLS-1$
-					break;
-				case 2: //LiFe
-					this.memoryParameters[4].updateTextFieldValues(ChargerMemory.LiMode.VALUES);
-					this.memoryParameters[7].updateValueRange("3.3V (3.300 - 3.800 V", 3300, 3800, 3600, -3300); //$NON-NLS-1$
-					break;
-				case 3: //LiHV
-					this.memoryParameters[4].updateTextFieldValues(ChargerMemory.LiMode.VALUES);
-					this.memoryParameters[7].updateValueRange("4.35V (3.900 - 4.450V)", 3900, 4450, 4350, -3900); //$NON-NLS-1$
-					break;
-				case 4: //LTO
-					this.memoryParameters[4].updateTextFieldValues(ChargerMemory.LiMode.VALUES);
-					this.memoryParameters[7].updateValueRange("2.85V (2.400 - 3.100 V", 2400, 3100, 2850, -2400); //$NON-NLS-1$
-					break;
-				case 7: //NiZn
-					this.memoryParameters[4].updateTextFieldValues(ChargerMemory.NiMode.VALUES);
-					this.memoryParameters[7].updateValueRange("1.9V (1.200 - 2.100 V", 1200, 2100, 2000, -1200); //$NON-NLS-1$
-					break;
-				case 5: //NiMH
-				case 6: //NiCd
-					this.memoryParameters[4].updateTextFieldValues(ChargerMemory.NiMode.VALUES);
-					this.memoryParameters[5].setEnabled(false);
-					this.memoryParameters[7].setEnabled(false);
-					this.grpBalancerSettings.setEnabled(false);
-					for (int i = 11; i < 17; ++i)
-						this.memoryParameters[i].setEnabled(false);
-					break;
-				case 8: //Pb
-					this.memoryParameters[4].updateTextFieldValues(ChargerMemory.PbMode.VALUES);
-					this.memoryParameters[5].setEnabled(false);
-					this.memoryParameters[7].setEnabled(false);
-					this.grpBalancerSettings.setEnabled(false);
-					for (int i = 11; i < 17; ++i)
-						this.memoryParameters[i].setEnabled(false);
-					break;
-				default: //Power
-					this.memoryParameters[7].setEnabled(false);
-					this.grpBalancerSettings.setEnabled(false);
-					for (int i = 11; i < 17; ++i)
-						this.memoryParameters[i].setEnabled(false);
-				}
-			}
-			this.memoryParameters[13].setEnabled(this.memoryValues[11] == 3);
-			this.memoryParameters[14].setEnabled(this.memoryValues[11] == 3);
-			this.memoryParameters[15].setEnabled(this.memoryValues[11] == 3);
-			this.memoryParameters[16].setEnabled(this.memoryValues[11] == 3);
-
-			//18 discharge parameter cell voltage is battery type dependent
-			//21 discharge extra is battery type dependent
-			//22 discharge balancer is battery type dependent
-			this.memoryParameters[18].updateNameLabel(Messages.getString(MessageIds.GDE_MSGT2672));
-			if (this.isDuo) {
-				switch (this.memoryValues[0]) { //LiPo,LiLo,LiFe,NiMH,Nicd,Pb
-				case 0: //LiPo
-					this.memoryParameters[18].updateValueRange("3.5V (3.000 - 4.100V)", 3000, 4100, -3000); //$NON-NLS-1$
-					this.memoryParameters[21].setEnabled(true);
-					this.memoryParameters[22].setEnabled(true);
-					break;
-				case 1: //LiIo
-					this.memoryParameters[18].updateValueRange("3.5V (2.500 - 4.000V)", 2500, 4000, -2500); //$NON-NLS-1$
-					this.memoryParameters[21].setEnabled(true);
-					this.memoryParameters[22].setEnabled(true);
-					break;
-				case 2: //LiFe
-					this.memoryParameters[18].updateValueRange("2.5V (2.000 - 3.500V)", 2000, 3500, -2000); //$NON-NLS-1$
-					this.memoryParameters[21].setEnabled(true);
-					this.memoryParameters[22].setEnabled(true);
-					break;
-				case 3: //NiMH
-				case 4: //NiCd
-					this.memoryParameters[18].updateNameLabel(Messages.getString(MessageIds.GDE_MSGT2619));
-					this.memoryParameters[18].updateValueRange("0.100 - 35.000V", 100, 35000, -100); //$NON-NLS-1$
-					this.memoryParameters[21].setEnabled(false);
-					this.memoryParameters[22].setEnabled(false);
-					break;
-				case 5: //Pb
-					this.memoryParameters[18].updateValueRange("1.8V (1.500 - 2.400V)", 1500, 2400, -1500); //$NON-NLS-1$
-					this.memoryParameters[21].setEnabled(false);
-					this.memoryParameters[22].setEnabled(false);
-					break;
-				case 6: //NiZn
-					this.memoryParameters[18].updateValueRange("1.1V (0.900 - 1.600V)", 900, 1600, -900); //$NON-NLS-1$
-					this.memoryParameters[21].setEnabled(true);
-					this.memoryParameters[22].setEnabled(true);
-					break;
-				case 7: //LiHV
-					this.memoryParameters[18].updateValueRange("3.6V (3.000 - 4.250V)", 3000, 4250, -3000); //$NON-NLS-1$
-					this.memoryParameters[21].setEnabled(true);
-					this.memoryParameters[22].setEnabled(true);
-					break;
-				default:
-					break;
-				}
-			}
-			else {
-				switch (this.memoryValues[0]) { //LiPo,LiLo,LiFe,NiMH,Nicd,Pb
-				case 0: //LiPo
-					this.memoryParameters[18].updateValueRange("3.5V (3.000 - 4.100V)", 3000, 4100, -3000); //$NON-NLS-1$
-					this.memoryParameters[21].setEnabled(true);
-					this.memoryParameters[22].setEnabled(true);
-					break;
-				case 1: //LiIo
-					this.memoryParameters[18].updateValueRange("3.5V (2.500 - 4.000V)", 2500, 4000, -2500); //$NON-NLS-1$
-					this.memoryParameters[21].setEnabled(true);
-					this.memoryParameters[22].setEnabled(true);
-					break;
-				case 2: //LiFe
-					this.memoryParameters[18].updateValueRange("2.5V (2.000 - 3.500V)", 2000, 3500, -2000); //$NON-NLS-1$
-					this.memoryParameters[21].setEnabled(true);
-					this.memoryParameters[22].setEnabled(true);
-					break;
-				case 3: //LiHV
-					this.memoryParameters[18].updateValueRange("3.6V (3.000 - 4.250V)", 3000, 4250, -3000); //$NON-NLS-1$
-					this.memoryParameters[21].setEnabled(true);
-					this.memoryParameters[22].setEnabled(true);
-					break;
-				case 4: //LTO
-					this.memoryParameters[18].updateValueRange("1.8V (1.500 - 2.900V)", 1500, 2900, -1500); //$NON-NLS-1$
-					this.memoryParameters[21].setEnabled(true);
-					this.memoryParameters[22].setEnabled(true);
-					break;
-				case 5: //NiMH
-				case 6: //NiCd
-					this.memoryParameters[18].updateNameLabel(Messages.getString(MessageIds.GDE_MSGT2619));
-					this.memoryParameters[18].updateValueRange("0.100 - 35.000 V", 100, 35000, -100); //$NON-NLS-1$
-					this.memoryParameters[21].setEnabled(false);
-					this.memoryParameters[22].setEnabled(false);
-					break;
-				case 7: //NiZn
-					this.memoryParameters[18].updateValueRange("1.1V (0.900 - 1.600V)", 900, 1600, -900); //$NON-NLS-1$
-					this.memoryParameters[21].setEnabled(true);
-					this.memoryParameters[22].setEnabled(true);
-					break;
-				case 8: //Pb
-					this.memoryParameters[18].updateValueRange("1.8V (1.500 - 2.400V)", 1500, 2400, -1500); //$NON-NLS-1$
-					this.memoryParameters[21].setEnabled(false);
-					this.memoryParameters[22].setEnabled(false);
-					break;
-				default:
-					break;
-				}
-			}
-			//23 discharge parameter cut temperature
-			//24 discharge parameter max discharge capacity
-			//25 discharge parameter safety timer
-
-			//26 Ni charge voltage drop
-			//27 Ni charge voltage drop delay
-			//28 Ni charge allow 0V
-			//29 Ni trickle charge enable
-			//30 Ni charge trickle current
-			//31 Ni charge trickle timeout
-			if (this.isDuo) {
-				switch (this.memoryValues[0]) { //LiPo,LiLo,LiFe,NiMH,Nicd,Pb
-				case 0: //LiPo
-				case 1: //LiIo
-				case 2: //LiFe
-				case 5: //Pb
-				case 6: //NiZn
-				case 7: //LiHV
-				default:
-					for (int i = 26; i < 32; ++i)
-						this.memoryParameters[i].setEnabled(false);
-					break;
-				case 3: //NiMH
-				case 4: //NiCd
-					for (int i = 26; i < 32; ++i)
-						this.memoryParameters[i].setEnabled(true);
-					break;
-				}
-			}
-			else {
-				switch (this.memoryValues[0]) { //LiPo,LiLo,LiFe,NiMH,Nicd,Pb
-				case 0: //LiPo
-				case 1: //LiIo
-				case 2: //LiFe
-				case 3: //LiHV
-				case 4: //LTO
-				case 7: //NiZn
-				case 8: //Pb
-				default:
-					for (int i = 26; i < 32; ++i)
-						this.memoryParameters[i].setEnabled(false);
-					break;
-				case 5: //NiMH
-				case 6: //NiCd
-					for (int i = 26; i < 32; ++i)
-						this.memoryParameters[i].setEnabled(true);
-					break;
-				}
-			}
-
-			//Li, NiZn, Pb only (NiMH, NiCd has charge at 0V enable)
-			//32 charge restore lowest voltage
-			//33 charge restore charge time
-			//34 charge restore charge current
-			//35 charge keep charging after done
-			if (this.isDuo) {
-				switch (this.memoryValues[0]) { //LiPo,LiLo,LiFe,NiMH,Nicd,Pb
-				case 0: //LiPo
-				case 1: //LiIo
-				case 2: //LiFe
-				case 5: //Pb
-				case 6: //NiZn
-				case 7: //LiHV
-				default:
-					for (int i = 32; i < 36; ++i)
-						this.memoryParameters[i].setEnabled(true);
-					break;
-				case 3: //NiMH
-				case 4: //NiCd
-					for (int i = 32; i < 36; ++i)
-						this.memoryParameters[i].setEnabled(false);
-					break;
-				}
-			}
-			else {
-				switch (this.memoryValues[0]) { //LiPo,LiLo,LiFe,NiMH,Nicd,Pb
-				case 0: //LiPo
-				case 1: //LiIo
-				case 2: //LiFe
-				case 3: //LiHV
-				case 4: //LTO
-				case 7: //NiZn
-				case 8: //Pb
-				default:
-					for (int i = 32; i < 36; ++i)
-						this.memoryParameters[i].setEnabled(true);
-					break;
-				case 5: //NiMH
-				case 6: //NiCd
-					for (int i = 32; i < 36; ++i)
-						this.memoryParameters[i].setEnabled(false);
-					break;
-				}
-			}
-
-			//36 storage parameter cell voltage (Li battery type only)
-			//37 storage parameter compensation
-			//38 storage acceleration
-			if (this.isDuo) {
-				switch (this.memoryValues[0]) { //LiPo,LiLo,LiFe,NiMH,Nicd,Pb
-				case 0: //LiPo
-				case 1: //LiIo
-				case 2: //LiFe
-				case 7: //LiHV
-				default:
-					if (this.tbtmStorage == null || this.tbtmStorage.isDisposed()) {
-						createStorageTabItem();
-					}
-					switch (this.memoryValues[0]) { //LiPo,LiLo,LiFe
+				this.memoryParameters[1].updateValueRange("0(auto) - " + maxNumberCells, 0, maxNumberCells, 0); //$NON-NLS-1$
+				//battery type dependent updates
+				this.memoryParameters[5].setEnabled(true);
+				this.memoryParameters[6].setEnabled(this.memoryValues[5] != 0);
+				this.memoryParameters[7].setEnabled(true);
+				this.memoryParameters[7].getSlider().setEnabled(true);
+				this.grpBalancerSettings.setEnabled(true);
+				for (int i = 11; i < 17; ++i)
+					this.memoryParameters[i].setEnabled(true);
+				if (this.isDuo) {
+					switch (this.memoryValues[0]) { //battery type LiPo,LiLo,LiFe,NiMH,Nicd,Pb,NiZn,LiHV
 					case 0: //LiPo
-						this.memoryParameters[36].updateValueRange("3.85V (3.700 - 3.900V)", 3700, 3900, -3700); //$NON-NLS-1$
+						this.memoryParameters[4].updateTextFieldValues(ChargerMemory.LiMode.VALUES);
+						this.memoryParameters[7].updateValueRange("4.2V (3.850 - 4.350V)", 3850, 4350, 4200, -3850); //$NON-NLS-1$
 						break;
 					case 1: //LiIo
-						this.memoryParameters[36].updateValueRange("3.75V (3.600 - 3.800V)", 3600, 3800, -3600); //$NON-NLS-1$
+						this.memoryParameters[4].updateTextFieldValues(ChargerMemory.LiMode.VALUES);
+						this.memoryParameters[7].updateValueRange("4.1V (3.750 - 4.350V)", 3750, 4350, 4100, -3750); //$NON-NLS-1$
 						break;
 					case 2: //LiFe
-						this.memoryParameters[36].updateValueRange("3.3V (3.100 - 3.400V)", 3100, 3400, -3100); //$NON-NLS-1$
+						this.memoryParameters[4].updateTextFieldValues(ChargerMemory.LiMode.VALUES);
+						this.memoryParameters[7].updateValueRange("3.3V (3.300 - 3.800 V", 3300, 3800, 3600, -3300); //$NON-NLS-1$
+						break;
+					case 6: //NiZn
+						this.memoryParameters[4].updateTextFieldValues(ChargerMemory.NiMode.VALUES);
+						this.memoryParameters[7].updateValueRange("1.9V (1.200 - 2.100 V", 1200, 2100, 2000, -1200); //$NON-NLS-1$
 						break;
 					case 7: //LiHV
-						this.memoryParameters[36].updateValueRange("3.9V (3.750 - 4.100V)", 3750, 4100, -3750); //$NON-NLS-1$
+						this.memoryParameters[4].updateTextFieldValues(ChargerMemory.LiMode.VALUES);
+						this.memoryParameters[7].updateValueRange("4.35V (3.900 - 4.450V)", 3900, 4450, 4350, -3900); //$NON-NLS-1$
 						break;
-					default:
+					case 3: //NiMH
+					case 4: //NiCd
+						this.memoryParameters[4].updateTextFieldValues(ChargerMemory.NiMode.VALUES);
+						this.memoryParameters[5].setEnabled(false);
+						this.memoryParameters[7].setEnabled(false);
+						this.grpBalancerSettings.setEnabled(false);
+						for (int i = 11; i < 17; ++i)
+							this.memoryParameters[i].setEnabled(false);
+						break;
+					case 5: //Pb
+						this.memoryParameters[4].updateTextFieldValues(ChargerMemory.PbMode.VALUES);
+						this.memoryParameters[5].setEnabled(false);
+						this.memoryParameters[7].setEnabled(false);
+						this.grpBalancerSettings.setEnabled(false);
+						for (int i = 11; i < 17; ++i)
+							this.memoryParameters[i].setEnabled(false);
+						break;
+					default: //unknown
+						this.memoryParameters[7].setEnabled(false);
+						this.grpBalancerSettings.setEnabled(false);
 						break;
 					}
-					break;
-				case 3: //NiMH
-				case 4: //NiCd
-				case 5: //Pb
-				case 6: //NiZn
-					if (this.tbtmStorage != null && !this.tbtmStorage.isDisposed()) {
-						this.storageComposite.removeListener(SWT.Selection, this.memoryParameterChangeListener);
-						for (int i = 36; i < 39; ++i)
-							this.memoryParameters[i].dispose();
-						this.storageComposite.dispose();
-						this.tbtmStorage.dispose();
-					}
-					break;
 				}
-			}
-			else {
-				switch (this.memoryValues[0]) { //LiPo,LiLo,LiFe,NiMH,Nicd,Pb
-				case 0: //LiPo
-				case 1: //LiIo
-				case 2: //LiFe
-				case 3: //LiHV
-				case 4: //LTO
-					if (this.tbtmStorage == null || this.tbtmStorage.isDisposed()) {
-						createStorageTabItem();
-					}
-					switch (this.memoryValues[0]) { //LiPo,LiLo,LiFe
+				else {
+					switch (this.memoryValues[0]) { //battery type LiPo,LiLo,LiFe,LiHV,LTO, NiMH,Nicd,NiZn,Pb
 					case 0: //LiPo
-						this.memoryParameters[36].updateValueRange("3.85V (3.700 - 3.900V)", 3700, 3900, -3700); //$NON-NLS-1$
+						this.memoryParameters[4].updateTextFieldValues(ChargerMemory.LiMode.VALUES);
+						this.memoryParameters[7].updateValueRange("4.2V (3.850 - 4.350V)", 3850, 4350, 4200, -3850); //$NON-NLS-1$
 						break;
 					case 1: //LiIo
-						this.memoryParameters[36].updateValueRange("3.75V (3.600 - 3.800V)", 3600, 3800, -3600); //$NON-NLS-1$
+						this.memoryParameters[4].updateTextFieldValues(ChargerMemory.LiMode.VALUES);
+						this.memoryParameters[7].updateValueRange("4.1V (3.750 - 4.350V)", 3750, 4350, 4100, -3750); //$NON-NLS-1$
 						break;
 					case 2: //LiFe
-						this.memoryParameters[36].updateValueRange("3.3V (3.100 - 3.400V)", 3100, 3400, -3100); //$NON-NLS-1$
+						this.memoryParameters[4].updateTextFieldValues(ChargerMemory.LiMode.VALUES);
+						this.memoryParameters[7].updateValueRange("3.3V (3.300 - 3.800 V", 3300, 3800, 3600, -3300); //$NON-NLS-1$
 						break;
 					case 3: //LiHV
-						this.memoryParameters[36].updateValueRange("3.9V (3.750 - 4.100V)", 3750, 4100, -3750); //$NON-NLS-1$
+						this.memoryParameters[4].updateTextFieldValues(ChargerMemory.LiMode.VALUES);
+						this.memoryParameters[7].updateValueRange("4.35V (3.900 - 4.450V)", 3900, 4450, 4350, -3900); //$NON-NLS-1$
 						break;
 					case 4: //LTO
-						this.memoryParameters[36].updateValueRange("2.5V (2.200 - 2.600V)", 2200, 2600, -2200); //$NON-NLS-1$
+						this.memoryParameters[4].updateTextFieldValues(ChargerMemory.LiMode.VALUES);
+						this.memoryParameters[7].updateValueRange("2.85V (2.400 - 3.100 V", 2400, 3100, 2850, -2400); //$NON-NLS-1$
+						break;
+					case 7: //NiZn
+						this.memoryParameters[4].updateTextFieldValues(ChargerMemory.NiMode.VALUES);
+						this.memoryParameters[7].updateValueRange("1.9V (1.200 - 2.100 V", 1200, 2100, 2000, -1200); //$NON-NLS-1$
+						break;
+					case 5: //NiMH
+					case 6: //NiCd
+						this.memoryParameters[4].updateTextFieldValues(ChargerMemory.NiMode.VALUES);
+						this.memoryParameters[5].setEnabled(false);
+						this.memoryParameters[7].setEnabled(false);
+						this.grpBalancerSettings.setEnabled(false);
+						for (int i = 11; i < 17; ++i)
+							this.memoryParameters[i].setEnabled(false);
+						break;
+					case 8: //Pb
+						this.memoryParameters[4].updateTextFieldValues(ChargerMemory.PbMode.VALUES);
+						this.memoryParameters[5].setEnabled(false);
+						this.memoryParameters[7].setEnabled(false);
+						this.grpBalancerSettings.setEnabled(false);
+						for (int i = 11; i < 17; ++i)
+							this.memoryParameters[i].setEnabled(false);
+						break;
+					default: //Power
+						this.memoryParameters[7].setEnabled(false);
+						this.grpBalancerSettings.setEnabled(false);
+						for (int i = 11; i < 17; ++i)
+							this.memoryParameters[i].setEnabled(false);
+					}
+				}
+				this.memoryParameters[13].setEnabled(this.memoryValues[11] == 3);
+				this.memoryParameters[14].setEnabled(this.memoryValues[11] == 3);
+				this.memoryParameters[15].setEnabled(this.memoryValues[11] == 3);
+				this.memoryParameters[16].setEnabled(this.memoryValues[11] == 3);
+
+				//18 discharge parameter cell voltage is battery type dependent
+				//21 discharge extra is battery type dependent
+				//22 discharge balancer is battery type dependent
+				this.memoryParameters[18].updateNameLabel(Messages.getString(MessageIds.GDE_MSGT2672));
+				if (this.isDuo) {
+					switch (this.memoryValues[0]) { //LiPo,LiLo,LiFe,NiMH,Nicd,Pb
+					case 0: //LiPo
+						this.memoryParameters[18].updateValueRange("3.5V (3.000 - 4.100V)", 3000, 4100, -3000); //$NON-NLS-1$
+						this.memoryParameters[21].setEnabled(true);
+						this.memoryParameters[22].setEnabled(true);
+						break;
+					case 1: //LiIo
+						this.memoryParameters[18].updateValueRange("3.5V (2.500 - 4.000V)", 2500, 4000, -2500); //$NON-NLS-1$
+						this.memoryParameters[21].setEnabled(true);
+						this.memoryParameters[22].setEnabled(true);
+						break;
+					case 2: //LiFe
+						this.memoryParameters[18].updateValueRange("2.5V (2.000 - 3.500V)", 2000, 3500, -2000); //$NON-NLS-1$
+						this.memoryParameters[21].setEnabled(true);
+						this.memoryParameters[22].setEnabled(true);
+						break;
+					case 3: //NiMH
+					case 4: //NiCd
+						this.memoryParameters[18].updateNameLabel(Messages.getString(MessageIds.GDE_MSGT2619));
+						this.memoryParameters[18].updateValueRange("0.100 - 35.000V", 100, 35000, -100); //$NON-NLS-1$
+						this.memoryParameters[21].setEnabled(false);
+						this.memoryParameters[22].setEnabled(false);
+						break;
+					case 5: //Pb
+						this.memoryParameters[18].updateValueRange("1.8V (1.500 - 2.400V)", 1500, 2400, -1500); //$NON-NLS-1$
+						this.memoryParameters[21].setEnabled(false);
+						this.memoryParameters[22].setEnabled(false);
+						break;
+					case 6: //NiZn
+						this.memoryParameters[18].updateValueRange("1.1V (0.900 - 1.600V)", 900, 1600, -900); //$NON-NLS-1$
+						this.memoryParameters[21].setEnabled(true);
+						this.memoryParameters[22].setEnabled(true);
+						break;
+					case 7: //LiHV
+						this.memoryParameters[18].updateValueRange("3.6V (3.000 - 4.250V)", 3000, 4250, -3000); //$NON-NLS-1$
+						this.memoryParameters[21].setEnabled(true);
+						this.memoryParameters[22].setEnabled(true);
 						break;
 					default:
 						break;
 					}
-					break;
-				default:
-				case 5: //NiMH
-				case 6: //NiCd
-				case 7: //NiZn
-				case 8: //Pb
-					if (this.tbtmStorage != null && !this.tbtmStorage.isDisposed()) {
-						this.storageComposite.removeListener(SWT.Selection, this.memoryParameterChangeListener);
-						for (int i = 36; i < 39; ++i)
-							this.memoryParameters[i].dispose();
-						this.storageComposite.dispose();
-						this.tbtmStorage.dispose();
-					}
-					break;
 				}
-			}
-			if (isDuo || isDx) {//47 channel mode asynchronous | synchronous DUO/DX only
-				if (this.memoryParameters[47] != null) {
-					this.memoryParameters[47].setEnabled(true);
+				else {
+					switch (this.memoryValues[0]) { //LiPo,LiLo,LiFe,NiMH,Nicd,Pb
+					case 0: //LiPo
+						this.memoryParameters[18].updateValueRange("3.5V (3.000 - 4.100V)", 3000, 4100, -3000); //$NON-NLS-1$
+						this.memoryParameters[21].setEnabled(true);
+						this.memoryParameters[22].setEnabled(true);
+						break;
+					case 1: //LiIo
+						this.memoryParameters[18].updateValueRange("3.5V (2.500 - 4.000V)", 2500, 4000, -2500); //$NON-NLS-1$
+						this.memoryParameters[21].setEnabled(true);
+						this.memoryParameters[22].setEnabled(true);
+						break;
+					case 2: //LiFe
+						this.memoryParameters[18].updateValueRange("2.5V (2.000 - 3.500V)", 2000, 3500, -2000); //$NON-NLS-1$
+						this.memoryParameters[21].setEnabled(true);
+						this.memoryParameters[22].setEnabled(true);
+						break;
+					case 3: //LiHV
+						this.memoryParameters[18].updateValueRange("3.6V (3.000 - 4.250V)", 3000, 4250, -3000); //$NON-NLS-1$
+						this.memoryParameters[21].setEnabled(true);
+						this.memoryParameters[22].setEnabled(true);
+						break;
+					case 4: //LTO
+						this.memoryParameters[18].updateValueRange("1.8V (1.500 - 2.900V)", 1500, 2900, -1500); //$NON-NLS-1$
+						this.memoryParameters[21].setEnabled(true);
+						this.memoryParameters[22].setEnabled(true);
+						break;
+					case 5: //NiMH
+					case 6: //NiCd
+						this.memoryParameters[18].updateNameLabel(Messages.getString(MessageIds.GDE_MSGT2619));
+						this.memoryParameters[18].updateValueRange("0.100 - 35.000 V", 100, 35000, -100); //$NON-NLS-1$
+						this.memoryParameters[21].setEnabled(false);
+						this.memoryParameters[22].setEnabled(false);
+						break;
+					case 7: //NiZn
+						this.memoryParameters[18].updateValueRange("1.1V (0.900 - 1.600V)", 900, 1600, -900); //$NON-NLS-1$
+						this.memoryParameters[21].setEnabled(true);
+						this.memoryParameters[22].setEnabled(true);
+						break;
+					case 8: //Pb
+						this.memoryParameters[18].updateValueRange("1.8V (1.500 - 2.400V)", 1500, 2400, -1500); //$NON-NLS-1$
+						this.memoryParameters[21].setEnabled(false);
+						this.memoryParameters[22].setEnabled(false);
+						break;
+					default:
+						break;
+					}
+				}
+				//23 discharge parameter cut temperature
+				//24 discharge parameter max discharge capacity
+				//25 discharge parameter safety timer
+
+				//26 Ni charge voltage drop
+				//27 Ni charge voltage drop delay
+				//28 Ni charge allow 0V
+				//29 Ni trickle charge enable
+				//30 Ni charge trickle current
+				//31 Ni charge trickle timeout
+				if (this.isDuo) {
+					switch (this.memoryValues[0]) { //LiPo,LiLo,LiFe,NiMH,Nicd,Pb
+					case 0: //LiPo
+					case 1: //LiIo
+					case 2: //LiFe
+					case 5: //Pb
+					case 6: //NiZn
+					case 7: //LiHV
+					default:
+						for (int i = 26; i < 32; ++i)
+							this.memoryParameters[i].setEnabled(false);
+						break;
+					case 3: //NiMH
+					case 4: //NiCd
+						for (int i = 26; i < 32; ++i)
+							this.memoryParameters[i].setEnabled(true);
+						break;
+					}
+				}
+				else {
+					switch (this.memoryValues[0]) { //LiPo,LiLo,LiFe,NiMH,Nicd,Pb
+					case 0: //LiPo
+					case 1: //LiIo
+					case 2: //LiFe
+					case 3: //LiHV
+					case 4: //LTO
+					case 7: //NiZn
+					case 8: //Pb
+					default:
+						for (int i = 26; i < 32; ++i)
+							this.memoryParameters[i].setEnabled(false);
+						break;
+					case 5: //NiMH
+					case 6: //NiCd
+						for (int i = 26; i < 32; ++i)
+							this.memoryParameters[i].setEnabled(true);
+						break;
+					}
+				}
+
+				//Li, NiZn, Pb only (NiMH, NiCd has charge at 0V enable)
+				//32 charge restore lowest voltage
+				//33 charge restore charge time
+				//34 charge restore charge current
+				//35 charge keep charging after done
+				if (this.isDuo) {
+					switch (this.memoryValues[0]) { //LiPo,LiLo,LiFe,NiMH,Nicd,Pb
+					case 0: //LiPo
+					case 1: //LiIo
+					case 2: //LiFe
+					case 5: //Pb
+					case 6: //NiZn
+					case 7: //LiHV
+					default:
+						for (int i = 32; i < 36; ++i)
+							this.memoryParameters[i].setEnabled(true);
+						break;
+					case 3: //NiMH
+					case 4: //NiCd
+						for (int i = 32; i < 36; ++i)
+							this.memoryParameters[i].setEnabled(false);
+						break;
+					}
+				}
+				else {
+					switch (this.memoryValues[0]) { //LiPo,LiLo,LiFe,NiMH,Nicd,Pb
+					case 0: //LiPo
+					case 1: //LiIo
+					case 2: //LiFe
+					case 3: //LiHV
+					case 4: //LTO
+					case 7: //NiZn
+					case 8: //Pb
+					default:
+						for (int i = 32; i < 36; ++i)
+							this.memoryParameters[i].setEnabled(true);
+						break;
+					case 5: //NiMH
+					case 6: //NiCd
+						for (int i = 32; i < 36; ++i)
+							this.memoryParameters[i].setEnabled(false);
+						break;
+					}
+				}
+
+				//36 storage parameter cell voltage (Li battery type only)
+				//37 storage parameter compensation
+				//38 storage acceleration
+				if (this.isDuo) {
+					switch (this.memoryValues[0]) { //LiPo,LiLo,LiFe,NiMH,Nicd,Pb
+					case 0: //LiPo
+					case 1: //LiIo
+					case 2: //LiFe
+					case 7: //LiHV
+					default:
+						if (this.tbtmStorage == null || this.tbtmStorage.isDisposed()) {
+							createStorageTabItem();
+						}
+						switch (this.memoryValues[0]) { //LiPo,LiLo,LiFe
+						case 0: //LiPo
+							this.memoryParameters[36].updateValueRange("3.85V (3.700 - 3.900V)", 3700, 3900, -3700); //$NON-NLS-1$
+							break;
+						case 1: //LiIo
+							this.memoryParameters[36].updateValueRange("3.75V (3.600 - 3.800V)", 3600, 3800, -3600); //$NON-NLS-1$
+							break;
+						case 2: //LiFe
+							this.memoryParameters[36].updateValueRange("3.3V (3.100 - 3.400V)", 3100, 3400, -3100); //$NON-NLS-1$
+							break;
+						case 7: //LiHV
+							this.memoryParameters[36].updateValueRange("3.9V (3.750 - 4.100V)", 3750, 4100, -3750); //$NON-NLS-1$
+							break;
+						default:
+							break;
+						}
+						break;
+					case 3: //NiMH
+					case 4: //NiCd
+					case 5: //Pb
+					case 6: //NiZn
+						if (this.tbtmStorage != null && !this.tbtmStorage.isDisposed()) {
+							this.storageComposite.removeListener(SWT.Selection, this.memoryParameterChangeListener);
+							for (int i = 36; i < 39; ++i)
+								this.memoryParameters[i].dispose();
+							this.storageComposite.dispose();
+							this.tbtmStorage.dispose();
+						}
+						break;
+					}
+				}
+				else {
+					switch (this.memoryValues[0]) { //LiPo,LiLo,LiFe,NiMH,Nicd,Pb
+					case 0: //LiPo
+					case 1: //LiIo
+					case 2: //LiFe
+					case 3: //LiHV
+					case 4: //LTO
+						if (this.tbtmStorage == null || this.tbtmStorage.isDisposed()) {
+							createStorageTabItem();
+						}
+						switch (this.memoryValues[0]) { //LiPo,LiLo,LiFe
+						case 0: //LiPo
+							this.memoryParameters[36].updateValueRange("3.85V (3.700 - 3.900V)", 3700, 3900, -3700); //$NON-NLS-1$
+							break;
+						case 1: //LiIo
+							this.memoryParameters[36].updateValueRange("3.75V (3.600 - 3.800V)", 3600, 3800, -3600); //$NON-NLS-1$
+							break;
+						case 2: //LiFe
+							this.memoryParameters[36].updateValueRange("3.3V (3.100 - 3.400V)", 3100, 3400, -3100); //$NON-NLS-1$
+							break;
+						case 3: //LiHV
+							this.memoryParameters[36].updateValueRange("3.9V (3.750 - 4.100V)", 3750, 4100, -3750); //$NON-NLS-1$
+							break;
+						case 4: //LTO
+							this.memoryParameters[36].updateValueRange("2.5V (2.200 - 2.600V)", 2200, 2600, -2200); //$NON-NLS-1$
+							break;
+						default:
+							break;
+						}
+						break;
+					default:
+					case 5: //NiMH
+					case 6: //NiCd
+					case 7: //NiZn
+					case 8: //Pb
+						if (this.tbtmStorage != null && !this.tbtmStorage.isDisposed()) {
+							this.storageComposite.removeListener(SWT.Selection, this.memoryParameterChangeListener);
+							for (int i = 36; i < 39; ++i)
+								this.memoryParameters[i].dispose();
+							this.storageComposite.dispose();
+							this.tbtmStorage.dispose();
+						}
+						break;
+					}
+				}
+				if (isDuo || isDx) {//47 channel mode asynchronous | synchronous DUO/DX only
+					if (this.memoryParameters[47] != null) {
+						this.memoryParameters[47].setEnabled(true);
+						if (this.regToInputWarningLable != null) {
+							boolean isToInput = this.memoryValues[20] == 1;
+							this.regToInputWarningLable.setEnabled(isToInput);
+							this.regToInputWarningLable.setForeground(isToInput ? SWTResourceManager.getColor(SWT.COLOR_RED) : SWTResourceManager.getColor(SWT.COLOR_WIDGET_BACKGROUND));
+						}
+						if (this.regToChannelSettings != null) {
+							boolean isToChannel = this.memoryValues[20] == 2;
+							this.regToChannelSettings.setEnabled(isToChannel);
+							this.memoryParameters[50].setEnabled(isToChannel);
+							boolean isResOrBulb = this.memoryValues[50] == 0;
+							this.memoryParameters[51].setEnabled(isToChannel && isResOrBulb);
+							this.memoryParameters[52].setEnabled(isToChannel && isResOrBulb);
+						}
+						
+						//update charge/discharge max current channel async/sync
+						if (this.memoryValues[47] == 1) {//single channel or channels async
+							this.memoryParameters[3].updateValueRange(String.format("0.05 ~ %d A", device.getChargeCurrentMaxSyncChannels()/10), 5, device.getChargeCurrentMaxSyncChannels()*10); //$NON-NLS-1$
+							this.memoryParameters[17].updateValueRange(String.format("0.05 ~ %d A", device.getChargeCurrentMaxSyncChannels()/10), 5, device.getChargeCurrentMaxSyncChannels()*10); //$NON-NLS-1$
+						}
+						else {//duo device channels in sync
+							this.memoryParameters[3].updateValueRange(String.format("0.05 ~ %d A", device.getChargeCurrentMax4Channel()/10), 5, device.getChargeCurrentMax4Channel()*10); //$NON-NLS-1$
+							this.memoryParameters[17].updateValueRange(String.format("0.05 ~ %d A", device.getChargeCurrentMax4Channel()/10), 5, device.getChargeCurrentMax4Channel()*10); //$NON-NLS-1$
+						}
+					}
+				}
+				else {
+					if (this.memoryParameters[47] != null)
+						this.memoryParameters[47].setEnabled(false);
 					if (this.regToInputWarningLable != null) {
 						boolean isToInput = this.memoryValues[20] == 1;
 						this.regToInputWarningLable.setEnabled(isToInput);
 						this.regToInputWarningLable.setForeground(isToInput ? SWTResourceManager.getColor(SWT.COLOR_RED) : SWTResourceManager.getColor(SWT.COLOR_WIDGET_BACKGROUND));
 					}
 					if (this.regToChannelSettings != null) {
-						boolean isToChannel = this.memoryValues[20] == 2;
+						boolean isToChannel = false;
 						this.regToChannelSettings.setEnabled(isToChannel);
 						this.memoryParameters[50].setEnabled(isToChannel);
-						boolean isResOrBulb = this.memoryValues[50] == 0;
-						this.memoryParameters[51].setEnabled(isToChannel && isResOrBulb);
-						this.memoryParameters[52].setEnabled(isToChannel && isResOrBulb);
-					}
-					
-					//update charge/discharge max current channel async/sync
-					if (this.memoryValues[47] == 1) {//single channel or channels async
-						this.memoryParameters[3].updateValueRange(String.format("0.05 ~ %d A", device.getChargeCurrentMaxSyncChannels()/10), 5, device.getChargeCurrentMaxSyncChannels()*10); //$NON-NLS-1$
-						this.memoryParameters[17].updateValueRange(String.format("0.05 ~ %d A", device.getChargeCurrentMaxSyncChannels()/10), 5, device.getChargeCurrentMaxSyncChannels()*10); //$NON-NLS-1$
-					}
-					else {//duo device channels in sync
-						this.memoryParameters[3].updateValueRange(String.format("0.05 ~ %d A", device.getChargeCurrentMax4Channel()/10), 5, device.getChargeCurrentMax4Channel()*10); //$NON-NLS-1$
-						this.memoryParameters[17].updateValueRange(String.format("0.05 ~ %d A", device.getChargeCurrentMax4Channel()/10), 5, device.getChargeCurrentMax4Channel()*10); //$NON-NLS-1$
+						this.memoryParameters[51].setEnabled(isToChannel);
+						this.memoryParameters[52].setEnabled(isToChannel);
 					}
 				}
 			}
-			else {
-				if (this.memoryParameters[47] != null)
-					this.memoryParameters[47].setEnabled(false);
-				if (this.regToInputWarningLable != null) {
-					boolean isToInput = this.memoryValues[20] == 1;
-					this.regToInputWarningLable.setEnabled(isToInput);
-					this.regToInputWarningLable.setForeground(isToInput ? SWTResourceManager.getColor(SWT.COLOR_RED) : SWTResourceManager.getColor(SWT.COLOR_WIDGET_BACKGROUND));
+			else if (!this.isDuo && this.memoryValues[0] == 9) { // X devices power type memory
+				this.memoryComposite.removeListener(SWT.Selection, this.memoryParameterChangeListener);
+				for (int i = 0; i < 42; ++i)
+					if (this.memoryParameters[i] != null) this.memoryParameters[i].dispose();
+
+				if (this.powerLabel == null || this.powerLabel.isDisposed()) {
+					this.powerLabel = new CLabel(this.memoryComposite, SWT.CENTER);
+					this.powerLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE + 15, SWT.BOLD));
+					this.powerLabel.setBackground(this.application.COLOR_CANVAS_YELLOW);
+					this.powerLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+					this.powerLabel.setText(Messages.getString(MessageIds.GDE_MSGT2677));
+					this.memoryComposite.layout();
 				}
-				if (this.regToChannelSettings != null) {
-					boolean isToChannel = false;
-					this.regToChannelSettings.setEnabled(isToChannel);
-					this.memoryParameters[50].setEnabled(isToChannel);
-					this.memoryParameters[51].setEnabled(isToChannel);
-					this.memoryParameters[52].setEnabled(isToChannel);
+
+				if (this.tbtmCharge != null && !this.tbtmCharge.isDisposed()) {
+					this.grpBalancerSettings.removeListener(SWT.Selection, this.memoryParameterChangeListener);
+					this.grpBalancerSettings.dispose();
+					this.grpAdvancedRestoreSettings.removeListener(SWT.Selection, this.memoryParameterChangeListener);
+					this.grpAdvancedRestoreSettings.dispose();
+					this.grpChargeSaftySettings.removeListener(SWT.Selection, this.memoryParameterChangeListener);
+					this.grpChargeSaftySettings.dispose();
+					this.chargeComposite.removeListener(SWT.Selection, this.memoryParameterChangeListener);
+					this.chargeComposite.dispose();
+					this.tbtmCharge.dispose();
+				}
+				if (this.tbtmDischarge != null && !this.tbtmDischarge.isDisposed()) {
+					this.dischargeComposite.removeListener(SWT.Selection, this.memoryParameterChangeListener);
+					this.dischargeComposite.dispose();
+					this.tbtmDischarge.dispose();
+				}
+				if (this.tbtmStorage != null && !this.tbtmStorage.isDisposed()) {
+					this.storageComposite.removeListener(SWT.Selection, this.memoryParameterChangeListener);
+					this.storageComposite.dispose();
+					this.tbtmStorage.dispose();
+				}
+				if (this.tbtmCycle != null && !this.tbtmCycle.isDisposed()) {
+					this.cycleComposite.removeListener(SWT.Selection, this.memoryParameterChangeListener);
+					this.cycleComposite.dispose();
+					this.tbtmCycle.dispose();
+				}
+				if (this.tbtmOption != null && !this.tbtmOption.isDisposed()) {
+					this.optionComposite.removeListener(SWT.Selection, this.memoryParameterChangeListener);
+					this.optionComposite.dispose();
+					this.tbtmOption.dispose();
+				}
+				if (this.tbtmPower == null || this.tbtmPower.isDisposed()) {
+					createPowerTabItem();
+					this.tabFolderProgrMem.setSelection(0);
+					if (this.memoryParameters[47] != null)
+						this.memoryParameters[47].dispose();
+				}
+			}
+
+			//update parameter controls
+			for (int i = 0; i < this.memoryParameters.length; i++) {
+				if (this.memoryParameters[i] != null) {
+					this.memoryParameters[i].setSliderSelection(this.memoryValues[i]);
 				}
 			}
 		}
-		else if (!this.isDuo && this.memoryValues[0] == 9) { // X devices power type memory
-			this.memoryComposite.removeListener(SWT.Selection, this.memoryParameterChangeListener);
-			for (int i = 0; i < 42; ++i)
-				if (this.memoryParameters[i] != null) this.memoryParameters[i].dispose();
-
-			if (this.powerLabel == null || this.powerLabel.isDisposed()) {
-				this.powerLabel = new CLabel(this.memoryComposite, SWT.CENTER);
-				this.powerLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE + 15, SWT.BOLD));
-				this.powerLabel.setBackground(this.application.COLOR_CANVAS_YELLOW);
-				this.powerLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
-				this.powerLabel.setText(Messages.getString(MessageIds.GDE_MSGT2677));
-				this.memoryComposite.layout();
-			}
-
-			if (this.tbtmCharge != null && !this.tbtmCharge.isDisposed()) {
-				this.grpBalancerSettings.removeListener(SWT.Selection, this.memoryParameterChangeListener);
-				this.grpBalancerSettings.dispose();
-				this.grpAdvancedRestoreSettings.removeListener(SWT.Selection, this.memoryParameterChangeListener);
-				this.grpAdvancedRestoreSettings.dispose();
-				this.grpChargeSaftySettings.removeListener(SWT.Selection, this.memoryParameterChangeListener);
-				this.grpChargeSaftySettings.dispose();
-				this.chargeComposite.removeListener(SWT.Selection, this.memoryParameterChangeListener);
-				this.chargeComposite.dispose();
-				this.tbtmCharge.dispose();
-			}
-			if (this.tbtmDischarge != null && !this.tbtmDischarge.isDisposed()) {
-				this.dischargeComposite.removeListener(SWT.Selection, this.memoryParameterChangeListener);
-				this.dischargeComposite.dispose();
-				this.tbtmDischarge.dispose();
-			}
-			if (this.tbtmStorage != null && !this.tbtmStorage.isDisposed()) {
-				this.storageComposite.removeListener(SWT.Selection, this.memoryParameterChangeListener);
-				this.storageComposite.dispose();
-				this.tbtmStorage.dispose();
-			}
-			if (this.tbtmCycle != null && !this.tbtmCycle.isDisposed()) {
-				this.cycleComposite.removeListener(SWT.Selection, this.memoryParameterChangeListener);
-				this.cycleComposite.dispose();
-				this.tbtmCycle.dispose();
-			}
-			if (this.tbtmOption != null && !this.tbtmOption.isDisposed()) {
-				this.optionComposite.removeListener(SWT.Selection, this.memoryParameterChangeListener);
-				this.optionComposite.dispose();
-				this.tbtmOption.dispose();
-			}
-			if (this.tbtmPower == null || this.tbtmPower.isDisposed()) {
-				createPowerTabItem();
-				this.tabFolderProgrMem.setSelection(0);
-				if (this.memoryParameters[47] != null)
-					this.memoryParameters[47].dispose();
-			}
-		}
-
-		//update parameter controls
-		for (int i = 0; i < this.memoryParameters.length; i++) {
-			if (this.memoryParameters[i] != null) {
-				this.memoryParameters[i].setSliderSelection(this.memoryValues[i]);
-			}
+		catch (RuntimeException e) {
+			ChargerDialog.log.log(Level.SEVERE, e.getMessage(), e);
+			this.application.openMessageDialogAsync(ChargerDialog.this.getDialogShell(), e.getMessage());
 		}
 	}
 

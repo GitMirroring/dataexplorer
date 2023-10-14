@@ -79,7 +79,7 @@ public class iCharger4512DUO extends iChargerUsb {
 	 */
 	@Override
 	public int getDcInputCurrentMax() {
-		return 650; //*0.1 A
+		return 800; //*0.1 A
 	}
 	
 	/**
@@ -103,7 +103,7 @@ public class iCharger4512DUO extends iChargerUsb {
 	 */
 	@Override
 	public int getChargeCurrentMax4Channel() {
-		return 300; //*0.1 A
+		return 450; //*0.1 A
 	}
 	
 	/**
@@ -117,7 +117,7 @@ public class iCharger4512DUO extends iChargerUsb {
 	 * @return the maximal charge power of device
 	 */
 	public int getDeviceChargePowerMax() {
-		return 1700;
+		return 2800;
 	}
 
 	/**
@@ -125,7 +125,7 @@ public class iCharger4512DUO extends iChargerUsb {
 	 */
 	@Override
 	public int[] getChargePowerMax() {
-		return new int[] {1200, 1200};
+		return new int[] {2000, 2000};
 	}
 
 	/**
@@ -133,7 +133,7 @@ public class iCharger4512DUO extends iChargerUsb {
 	 */
 	@Override
 	public int[] getDischargePowerMax() {
-		return new int[] {50, 50};
+		return new int[] {130, 130};
 	}
 	
 	/**
@@ -141,7 +141,7 @@ public class iCharger4512DUO extends iChargerUsb {
 	 */
 	@Override
 	public int[] getRegChannelVoltageLimits() {
-		return new int[] {1100, 52000};
+		return new int[] {200, 50000};
 	}
 
 	/**
@@ -149,6 +149,6 @@ public class iCharger4512DUO extends iChargerUsb {
 	 */
 	@Override
 	public int[] getRegChannelCurrentLimits() {
-		return new int[] {10, 6500};
+		return new int[] {5, 4500};
 	}
 }
