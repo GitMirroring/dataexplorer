@@ -117,6 +117,7 @@ public class ChargerDialog extends DeviceDialog {
 	final Listener										systemParameterChangeListener;
 	private ChargerInfo								systemInfo = null;
 	private ChargerSystem							systemSettings = null;
+	private boolean										isRetryReadMem = false;
 
 	final static short								REG_INPUT_INFO_START				= 0x0000;
 	
@@ -986,9 +987,19 @@ public class ChargerDialog extends DeviceDialog {
 				return programMemories.size() == 0 ? new String[0] : programMemories.toArray(new String[1]);
 			}
 		}
-		catch (IllegalStateException | TimeOutException e) {
+		catch (IllegalStateException e) {
 			ChargerDialog.log.log(Level.SEVERE, e.getMessage(), e);
 			this.application.openMessageDialogAsync(ChargerDialog.this.getDialogShell(), e.getMessage());
+		}
+		catch (TimeOutException te) {
+			if(!this.isRetryReadMem) {
+				ChargerDialog.log.log(Level.WARNING, te.getMessage(), te);
+				WaitTimer.delay(1000);
+				this.isRetryReadMem = true;
+				return readProgramMemories();
+			}
+			ChargerDialog.log.log(Level.SEVERE, te.getMessage(), te);
+			this.application.openMessageDialogAsync(ChargerDialog.this.getDialogShell(), te.getMessage());
 		}
 		catch (RuntimeException rte) {
 			ChargerDialog.log.log(Level.SEVERE, rte.getMessage(), rte);
@@ -1022,7 +1033,7 @@ public class ChargerDialog extends DeviceDialog {
 			
 			this.usbPort.masterRead((byte) 0, ChargerDialog.REG_HOLDING_MEM_START, sizeMemory, memoryBuffer);
 			this.selectedProgramMemory = new ChargerMemory(memoryBuffer, this.isDuo);
-			if (ChargerDialog.log.isLoggable(Level.FINE)) ChargerDialog.log.log(Level.FINE, this.selectedProgramMemory.toString(this.isDuo));
+			if (ChargerDialog.log.isLoggable(Level.INFO)) ChargerDialog.log.log(Level.INFO, "selectedProgramMemory = " + this.selectedProgramMemory.toString(this.isDuo));
 		}
 		catch (IllegalStateException | TimeOutException e) {
 			ChargerDialog.log.log(Level.SEVERE, e.getMessage(), e);
@@ -1617,21 +1628,21 @@ public class ChargerDialog extends DeviceDialog {
 		this.btnCopy.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ChargerDialog.this.combo.setForeground(ChargerDialog.this.application.COLOR_RED);
-				ChargerDialog.this.copiedProgramMemory = new ChargerMemory(ChargerDialog.this.selectedProgramMemory, ChargerDialog.this.isDuo);
-				String batteryType = new String(ChargerDialog.this.copiedProgramMemory.getName()).trim();
-				ChargerDialog.this.copiedProgramMemory.setName(batteryType + Messages.getString(MessageIds.GDE_MSGT2620));
-				short newIndex = addEntryMemoryHead(batteryType);
-				if (ChargerDialog.log.isLoggable(Level.INFO)) 
-					ChargerDialog.log.log(Level.INFO, String.format("memoryHead use new index: %s", newIndex)); //$NON-NLS-1$
-
-				if (newIndex > 0) {
-					writeProgramMemory(newIndex, ChargerDialog.this.copiedProgramMemory, (short) 0x55aa);
-					ChargerDialog.this.copiedProgramMemory = null;
-					ChargerDialog.this.combo.setForeground(ChargerDialog.this.application.COLOR_BLACK);
-					ChargerDialog.this.combo.setItems(readProgramMemories());
-					ChargerDialog.this.combo.select(ChargerDialog.this.lastSelectedComboIndex+1);
-					ChargerDialog.this.combo.notifyListeners(SWT.Selection, new Event());
+				if (ChargerDialog.this.selectedProgramMemory != null) {
+					ChargerDialog.this.combo.setForeground(ChargerDialog.this.application.COLOR_RED);
+					ChargerDialog.this.copiedProgramMemory = new ChargerMemory(ChargerDialog.this.selectedProgramMemory, ChargerDialog.this.isDuo);
+					String batteryType = new String(ChargerDialog.this.copiedProgramMemory.getName()).trim();
+					ChargerDialog.this.copiedProgramMemory.setName(batteryType + Messages.getString(MessageIds.GDE_MSGT2620));
+					short newIndex = addEntryMemoryHead(batteryType);
+					if (ChargerDialog.log.isLoggable(Level.INFO)) ChargerDialog.log.log(Level.INFO, String.format("memoryHead use new index: %s", newIndex)); //$NON-NLS-1$
+					if (newIndex > 0) {
+						writeProgramMemory(newIndex, ChargerDialog.this.copiedProgramMemory, (short) 0x55aa);
+						ChargerDialog.this.copiedProgramMemory = null;
+						ChargerDialog.this.combo.setForeground(ChargerDialog.this.application.COLOR_BLACK);
+						ChargerDialog.this.combo.setItems(readProgramMemories());
+						ChargerDialog.this.combo.select(ChargerDialog.this.lastSelectedComboIndex + 1);
+						ChargerDialog.this.combo.notifyListeners(SWT.Selection, new Event());
+					} 
 				}
 			}
 		});
