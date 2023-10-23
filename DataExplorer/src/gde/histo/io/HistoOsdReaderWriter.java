@@ -283,13 +283,18 @@ public final class HistoOsdReaderWriter extends OsdReaderWriter {
 			// GDE_MSGI2404=\nVerlorene Rückkanalpakete = {0} ~ {1} % ({2})
 			// "min=%.2f sec; max=%.2f sec; avg=%.2f sec; sigma=%.2f sec"
 			int idx0 = recordSetComment.indexOf(GDE.CHAR_NEW_LINE);
-			int idx1 = recordSetComment.indexOf(GDE.CHAR_EQUAL);
-			int idx2 = recordSetComment.indexOf("~", idx1); //$NON-NLS-1$
+			int idx1 = recordSetComment.indexOf(GDE.CHAR_EQUAL) + 1;
+			//old formating = 689 ~ 14,2 % new formating = (1638) 1272 ~2,1 % 
+			boolean isNewFormat = recordSetComment.indexOf(GDE.CHAR_LEFT_PARENTHESIS) == idx1 + 1;
+			idx1 = isNewFormat ? recordSetComment.indexOf(GDE.CHAR_BLANK, idx1+2) : idx1;
+			int idx2 = isNewFormat ? recordSetComment.indexOf("~", idx1) - 1 : recordSetComment.indexOf("~", idx1); //$NON-NLS-1$
 			int idx3 = recordSetComment.indexOf("%", idx2); //$NON-NLS-1$
+			String numLostPackages = recordSetComment.substring(idx1+1, idx2).trim();
+			String percentLostPackages = recordSetComment.substring(idx2 + 2, idx3 - 1).trim();
 			if (idx0 > 0 && idx1 > idx0 && idx2 > idx1 && idx3 > idx2) {
 				try {
-					values[0] = Double.parseDouble(recordSetComment.substring(idx1 + 2, idx2 - 1)); // integer
-					values[1] = doubleFormat.parse(recordSetComment.substring(idx2 + 2, idx3 - 1)).doubleValue();
+					values[0] = Double.parseDouble(numLostPackages); // integer
+					values[1] = doubleFormat.parse(percentLostPackages).doubleValue();
 					String[] times = (recordSetComment.substring(idx3 + 1)).split("="); //$NON-NLS-1$
 					if (times.length > 1) { // time statistics is available
 						values[2] = doubleFormat.parse(times[1].substring(0, times[1].indexOf(" "))).doubleValue(); //$NON-NLS-1$
@@ -297,8 +302,9 @@ public final class HistoOsdReaderWriter extends OsdReaderWriter {
 						values[4] = doubleFormat.parse(times[3].substring(0, times[3].indexOf(" "))).doubleValue(); //$NON-NLS-1$
 						values[5] = doubleFormat.parse(times[4].substring(0, times[4].indexOf(" "))).doubleValue(); //$NON-NLS-1$
 					}
-				} catch (ParseException e) {
-					// ignore and keep packageLoss as null
+				} catch (RuntimeException | ParseException e) {
+					log.log(Level.WARNING, recordSetComment +  "/n" + recordSetComment.substring(idx1));
+					log.log(Level.WARNING, e.getMessage(), e);
 				}
 			}
 			return values;
@@ -583,7 +589,13 @@ public final class HistoOsdReaderWriter extends OsdReaderWriter {
 		// scores for duration and timestep values are filled in by the HistoRecordSet
 		scores[ScoreLabelTypes.TOTAL_READINGS.ordinal()] = osdRecordSet.getRecordDataSize();
 		if (device instanceof IHistoDevice) {
-			double[] packagesLost = osdRecordSet.getPackageLoss();
+			double[] packagesLost = new double[6];
+			try {
+				packagesLost = osdRecordSet.getPackageLoss();
+			}
+			catch (RuntimeException e) {
+				e.printStackTrace();
+			}
 			BitSet activeSensors = ((IHistoDevice) device).getActiveSensors(osdRecordSet.getSensorSignature());
 			// recalculating the following scores from raw data would be feasible
 			scores[ScoreLabelTypes.TOTAL_PACKAGES.ordinal()] = packagesLost[1] != 0 ? (int) (packagesLost[0] * 100. / packagesLost[1]) : 0;

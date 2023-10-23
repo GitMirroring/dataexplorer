@@ -106,7 +106,7 @@ public class GDE {
 	private static boolean									isWithUi													= false;
 
 	// ****** begin global constants section *******
-	public static final String							VERSION														= "Version 3.8.2 beta 2";																																																					//$NON-NLS-1$
+	public static final String							VERSION														= "Version 3.8.2 beta 3";																																																					//$NON-NLS-1$
 	public static final int									VERSION_NUMBER										= GDE.VERSION.contains("beta") 
 															? Integer.parseInt(GDE.VERSION.substring(8, 8+5).replace(GDE.STRING_DOT, GDE.STRING_EMPTY)) - 1
 															: Integer.parseInt(GDE.VERSION.substring(8, 8+5).replace(GDE.STRING_DOT, GDE.STRING_EMPTY));
@@ -184,7 +184,9 @@ public class GDE {
 	public static final String							STRING_STAR												= "*";																																																											//$NON-NLS-1$
 	public static final char								CHAR_STAR													= '*';																																																											//$NON-NLS-1$
 	public static final String							STRING_LEFT_PARENTHESIS						= "(";																																																											//$NON-NLS-1$
+	public static final char								CHAR_LEFT_PARENTHESIS							= '(';																																																											//$NON-NLS-1$
 	public static final String							STRING_RIGHT_PARENTHESIS					= ")";																																																											//$NON-NLS-1$
+	public static final char								CHAR_RIGHT_PARENTHESIS						= ')';																																																											//$NON-NLS-1$
 	public static final String							STRING_RIGHT_PARENTHESIS_BLANK		= ") ";																																																											//$NON-NLS-1$
 	public static final String							STRING_BLANK_LEFT_BRACKET					= " [";																																																											//$NON-NLS-1$
 	public static final String							STRING_LEFT_BRACKET								= "[";																																																											//$NON-NLS-1$

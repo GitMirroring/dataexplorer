@@ -8,6 +8,7 @@ Device specific changes/fixes
 	* iCharger DX12 - add device
 	* iCharger4512DUO - add device
 	* IGCAdapter - add sink speed calculation 
+	* HoTTAdapter* - fix parsing package loss in OSD while history analysis
 
 
 Version 3.8.1 - 20 Sep 2023
