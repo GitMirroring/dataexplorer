@@ -1,28 +1,22 @@
-GNU DataExplorer - News - comes with Version 3.8.1 - 20 Sep 2023
+GNU DataExplorer - News - comes with Version 3.8.2 - 27 Oct 2023
 
 Generic changes/fixes 
-	* export CSV following zoomed data range
-	* add two point measurement method to calculate value average and median
-	* fix raw export time stamp
-	* fix CSV export header line according configured time stamp
-	* adjust possible triangle altitude according maximum altitude of flight
-	* update Java runtime to 17.0.8 if packaged 
+	* fix record scale position while some records contains zero values only
 	
 Device specific changes/fixes
-	* IGCAdapter - fine tune mysterious value deviations which get logged
-	* IGCAdapter - enhance traces with speed values with and without index, glide ratio
-	* iMax B8+ - add device from SkyRC
+	* iCharger DX12 - add device
+	* iCharger4512DUO - add device
+	* IGCAdapter - add sink speed calculation 
+	* HoTTAdapter* - fix parsing package loss in OSD while history analysis
+
 
 
 Allgemeine Änderungen/Korrekturen
-	* der CSV Export folgt dem reduzierten gezoomten Datenbereich
-	* Zweipunkt Messmethode zur Berechnung von Mittelwert und Median hinzugefügt
-	* Korrektur Zeitstempel Rohdaten Export
-	* Korrektur der CSV Kopfzeile entsprechend der konfigurierten Zeitdarstellung
-	* Ein mögliches Dreieck wird in der Höhe der maximal erreichten Flughöhe angepasst
-	* Update der Java runtime zu 17.0.8 wenn mit ausgeliefert
+	* Korrektur der Skalenposition be Anzeige von Daten die nur Nullwerte enthalten
        
 Gerätespezifische Änderungen/Korrekturen
-	* IGCAdapter - Feinabstimmung der fraglichen Werte, die ausgegeben werden
-	* IGCAdapter - Erweiterung der Ausgaben mit Geschwindigkeitswerten entsprechend dem Index und Gleitwert
-	* iMax B8+ - SkyRC Ladegerät hinzu gefügt
+	* iCharger DX12 - Gerät hinzugefügt
+	* iCharger4512DUO - Gerät hinzugefügt
+	* IGCAdapter - Berechnung der Sinkgeschwindigkeit hinzugefügt
+	* HoTTAdapter* - Korrektur der Auswertung von verlorenen Rückkanalpaketen aus OSD Dateien
+

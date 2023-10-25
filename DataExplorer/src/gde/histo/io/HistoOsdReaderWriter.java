@@ -594,7 +594,7 @@ public final class HistoOsdReaderWriter extends OsdReaderWriter {
 				packagesLost = osdRecordSet.getPackageLoss();
 			}
 			catch (RuntimeException e) {
-				e.printStackTrace();
+				log.log(Level.SEVERE, e.getMessage(), e);
 			}
 			BitSet activeSensors = ((IHistoDevice) device).getActiveSensors(osdRecordSet.getSensorSignature());
 			// recalculating the following scores from raw data would be feasible
