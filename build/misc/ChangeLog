@@ -6,7 +6,7 @@ Generic changes/fixes
 	
 Device specific changes/fixes
 	* IGCAdapter - refine 3D speed calculation
-	* iChargerUSB* - fix missing PB cell target voltage and charge end current
+	* iChargerUSB* - fix PB number of cells, cell target voltage and charge end current
 
 
 Version 3.8.2 - 27 Oct 2023

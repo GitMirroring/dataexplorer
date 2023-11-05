@@ -26,6 +26,10 @@ import gde.device.junsi.MessageIds;
 import gde.device.junsi.iCharger308DUO;
 import gde.device.junsi.iCharger4010DUO;
 import gde.device.junsi.iCharger406DUO;
+import gde.device.junsi.iCharger4512DUO;
+import gde.device.junsi.iCharger456DUO;
+import gde.device.junsi.iCharger458DUO;
+import gde.device.junsi.iChargerDX12;
 import gde.device.junsi.iChargerDX6;
 import gde.device.junsi.iChargerDX8;
 import gde.device.junsi.iChargerS6;
@@ -1088,19 +1092,16 @@ public class ChargerMemory {
 	 * @return number of maximal supported cells Pb chemistry
 	 */
 	public static int getMaxCellsPb(IDevice device) {
-		if (device instanceof iChargerX12) {
-			return 20;
-		}
-		else if (device instanceof iChargerX8 || device instanceof iCharger308DUO || device instanceof iChargerDX8) {
-			return 15;
-		}
-		else if (device instanceof iChargerX6 || device instanceof iChargerS6 || device instanceof iCharger406DUO || device instanceof iChargerDX6) {
+		if (device instanceof iChargerX6 || device instanceof iChargerS6 || device instanceof iCharger406DUO || device instanceof iChargerDX6 || device instanceof iCharger456DUO) {
 			return 12;
+		}
+		else if (device instanceof iChargerX8 || device instanceof iCharger308DUO || device instanceof iChargerDX8 || device instanceof iCharger458DUO) {
+			return 15;
 		}
 		else if (device instanceof iCharger4010DUO) {
 			return 18;
 		}
-		else if (device instanceof iChargerX12) {
+		else if (device instanceof iChargerX12 || device instanceof iChargerDX12 || device instanceof iCharger4512DUO) {
 			return 20;
 		}
 		return 0;
@@ -1375,7 +1376,7 @@ public class ChargerMemory {
 				break;
 			case 5: //Pb
 				values[4] = this.getPbModeC(); 
-				values[7] = 0;
+				values[7] = this.getPbChgCellVolt();
 				break;
 			case 6: //NiZn
 				values[4] = this.getNiModeC(); 
@@ -1420,6 +1421,10 @@ public class ChargerMemory {
 			case 7: //NiZn
 				values[4] = this.getNiModeC(); 
 				values[7] = this.getNiZnChgCellVolt(); 
+				break;
+			case 8: //Pb
+				values[4] = this.getPbModeC(); 
+				values[7] = this.getPbChgCellVolt();
 				break;
 			default: 
 				values[7] = 0; 
