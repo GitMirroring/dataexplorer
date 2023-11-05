@@ -1,5 +1,14 @@
 Development history / change log, please read from bottom up
 
+Version 3.8.3 - xx yyy 2023
+Generic changes/fixes 
+	* refine speed calculation based on GPS coordinates and altitude change
+	
+Device specific changes/fixes
+	* IGCAdapter - refine 3D speed calculation
+	* iChargerUSB* - fix missing PB cell target voltage and charge end current
+
+
 Version 3.8.2 - 27 Oct 2023
 Generic changes/fixes 
 	* fix record scale position while some records contains zero values only

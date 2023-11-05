@@ -600,14 +600,14 @@ public class GPSHelper {
 		
 		recordSpeed.add(0);
 		recordSpeed.add(0);
-		for (int i=5; i < recordSize - 1; ++i) {
+		for (int i=2; i < recordSize - 1; ++i) {
 			double speed2D = getSpeed2D_kmh(
-					device.translateValue(recordLatitude, recordLatitude.realGet(i-5)/1000.), 
-					device.translateValue(recordLongitude, recordLongitude.realGet(i-5)/1000.), 
-					recordSet.getTime(i-5), 
+					device.translateValue(recordLatitude, recordLatitude.realGet(i-2)/1000.), 
+					device.translateValue(recordLongitude, recordLongitude.realGet(i-2)/1000.), 
+					recordSet.getTime(i-2), 
 					device.translateValue(recordLatitude, recordLatitude.realGet(i)/1000.), 
 					device.translateValue(recordLongitude, recordLongitude.realGet(i)/1000.), 
-					recordSet.getTime(i));
+					recordSet.getTime(i+1));
 			recordSpeed.add((int)(speed2D  * 1000.));
 		}		
 		recordSpeed.add(0);
@@ -643,16 +643,16 @@ public class GPSHelper {
 		
 		recordSpeed.add(0);
 		recordSpeed.add(0);
-		for (int i=4; i < recordSize - 1; ++i) {
+		for (int i=2; i < recordSize - 1; ++i) {
 			double speed3D_kmh = getSpeed3D_kmh(
-					device.translateValue(recordLatitude, recordLatitude.realGet(i-4)/1000.), 
-					device.translateValue(recordLongitude, recordLongitude.realGet(i-4)/1000.), 
-					device.translateValue(recordAltitude, recordAltitude.realGet(i-4)/1000.), 
-					recordSet.getTime(i-4), 
+					device.translateValue(recordLatitude, recordLatitude.realGet(i-2)/1000.), 
+					device.translateValue(recordLongitude, recordLongitude.realGet(i-2)/1000.), 
+					device.translateValue(recordAltitude, recordAltitude.realGet(i-2)/1000.), 
+					recordSet.getTime(i-2), 
 					device.translateValue(recordLatitude, recordLatitude.realGet(i)/1000.), 
 					device.translateValue(recordLongitude, recordLongitude.realGet(i)/1000.), 
 					device.translateValue(recordAltitude, recordAltitude.realGet(i)/1000.), 
-					recordSet.getTime(i));
+					recordSet.getTime(i+1));
 			recordSpeed.add(Double.valueOf(speed3D_kmh * 1000.0).intValue());
 		}	
 		recordSpeed.add(0);
