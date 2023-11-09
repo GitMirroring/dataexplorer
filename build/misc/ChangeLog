@@ -8,6 +8,7 @@ Device specific changes/fixes
 	* IGCAdapter - refine 3D speed calculation
 	* iChargerUSB* - fix PB number of cells, cell target voltage and charge end current
 	* iChargerUSB* - enable setting of charge end current while Li balancer is switched off
+	* iChargerUSB* - fix configuration setting digital power voltage and current max value
 	* ZeroAdapter - fix date/time parsing
 
 

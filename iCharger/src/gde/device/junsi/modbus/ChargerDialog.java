@@ -2747,13 +2747,13 @@ public class ChargerDialog extends DeviceDialog {
 		//power voltage
 		this.memoryParameters[42] = new ParameterConfigControl(this.powerComposite, this.memoryValues, 42, "%3.1f", //$NON-NLS-1$
 				"Voltage", 175, //$NON-NLS-1$
-				"2.0 - 26.5 V", 280, //$NON-NLS-1$
-				true, 50, 200, 20, 265, -20, false);
+				String.format("2.0 ~ %.1f V", device.getDigitalPowerVoltageMax()/10.), 280, //$NON-NLS-1$
+				true, 50, 200, 20, device.getDigitalPowerVoltageMax(), -20, false);
 		//power current
 		this.memoryParameters[43] = new ParameterConfigControl(this.powerComposite, this.memoryValues, 43, "%3.1f", //$NON-NLS-1$
 				"Current", 175, //$NON-NLS-1$
-				"1.0 - 30.0 A", 280, //$NON-NLS-1$
-				true, 50, 200, 10, 300, -10, false);
+				String.format("1.0 ~ %.1f A", device.getChargeCurrentMax4Channel()/10.), 280, //$NON-NLS-1$
+				true, 50, 200, 10, device.getChargeCurrentMax4Channel(), -10, false);
 		//power option lock
 		this.memoryParameters[44] = new ParameterConfigControl(this.powerComposite, this.memoryValues, 44, "Lock", 175, //$NON-NLS-1$
 				"off, on", 280, //$NON-NLS-1$

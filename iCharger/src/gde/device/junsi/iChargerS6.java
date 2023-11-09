@@ -149,4 +149,11 @@ public class iChargerS6 extends iChargerUsb {
 	public int[] getRegChannelCurrentLimits() {
 		return new int[] {0, 0};
 	}
+	
+	/**
+	 * @return the max voltage adjustable for digital power supply voltage, factor 10
+	 */
+	public int getDigitalPowerVoltageMax() {
+		return 265;
+	}
 }

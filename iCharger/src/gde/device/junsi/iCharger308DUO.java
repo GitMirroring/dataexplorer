@@ -149,4 +149,12 @@ public class iCharger308DUO extends iChargerUsb {
 	public int[] getRegChannelCurrentLimits() {
 		return new int[] {5, 3000};
 	}
+	
+	/**
+	 * @return the max voltage adjustable for digital power supply voltage, factor 10
+	 */
+	public int getDigitalPowerVoltageMax() {
+		return 0;
+	}
+
 }

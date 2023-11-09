@@ -852,8 +852,13 @@ public abstract class iChargerUsb extends iCharger implements IDevice {
 	public abstract int[] getRegChannelVoltageLimits();
 	
 	/**
-	 * @return themin/max regenerative channel current, factor 100
+	 * @return the min/max regenerative channel current, factor 100
 	 */
 	public abstract int[] getRegChannelCurrentLimits();
+	
+	/**
+	 * @return the max voltage adjustable for digital power supply voltage, factor 10
+	 */
+	public abstract int getDigitalPowerVoltageMax();
 	
 }
