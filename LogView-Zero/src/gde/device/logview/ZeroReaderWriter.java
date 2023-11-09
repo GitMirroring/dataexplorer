@@ -406,15 +406,49 @@ public class ZeroReaderWriter {
 							data = dataStringArray[i].trim().replace(GDE.CHAR_COMMA, GDE.CHAR_DOT).replace(GDE.STRING_BLANK, GDE.STRING_EMPTY);
 							
 							if (indexTimeGiven == i) { //time given each line at index
-								String formatString = dataSetHeader.get(TIME_GIVEN_FORMAT); //ddHHmmss							
+								String formatString = dataSetHeader.get(TIME_GIVEN_FORMAT).replace(GDE.STRING_BLANK, GDE.STRING_EMPTY); //ddHHmmss, yyyyMMddHHmmss.f					
 								int year = new GregorianCalendar().get(Calendar.YEAR);
+								int subIndex = 0;
+								if (formatString.toLowerCase().contains("yyyy")) {
+									subIndex = formatString.indexOf("yyyy");
+									year = Integer.parseInt(data.substring(subIndex, 4));
+								}
 								int month = new GregorianCalendar().get(Calendar.MONTH);
-								int day = data.length() >= 2 && formatString.length() >= 2 && formatString.substring(0, 2).equals("dd") ? Integer.parseInt(data.substring(0, 2)) : 0;
-								int hour = data.length() >= 4 && formatString.length() >= 4 && formatString.substring(2, 4).toLowerCase().equals("hh") ? Integer.parseInt(data.substring(2, 4)) : 0;
-								int minute = data.length() >= 6 && formatString.length() >= 6 && formatString.substring(4, 6).equals("mm") ? Integer.parseInt(data.substring(4, 6)) : 0;
-								int second = data.length() >= 8 && formatString.length() >= 8 && formatString.substring(6, 8).equals("ss") ? Integer.parseInt(data.substring(6, 8)) : 0;
+								if (formatString.contains("MM")) {
+									subIndex = formatString.indexOf("MM");
+									month = Integer.parseInt(data.substring(subIndex, subIndex+2)) - 1;
+								}
+								int day = new GregorianCalendar().get(Calendar.DAY_OF_MONTH);
+								if (formatString.contains("dd")) {
+									subIndex = formatString.indexOf("dd");
+									day = Integer.parseInt(data.substring(subIndex, subIndex+2));
+								}
+								int hour = new GregorianCalendar().get(Calendar.HOUR_OF_DAY);
+								if (formatString.contains("HH")) {
+									subIndex = formatString.indexOf("HH");
+									hour = Integer.parseInt(data.substring(subIndex, subIndex+2));
+								}
+								else if (formatString.contains("hh")) {
+									subIndex = formatString.indexOf("hh");
+									hour = Integer.parseInt(data.substring(subIndex, subIndex+2));
+								}
+								int minute = new GregorianCalendar().get(Calendar.MINUTE);
+								if (formatString.contains("mm")) {
+									subIndex = formatString.indexOf("mm");
+									minute = Integer.parseInt(data.substring(subIndex, subIndex+2));
+								}
+								int second = new GregorianCalendar().get(Calendar.SECOND);
+								if (formatString.contains("ss")) {
+									subIndex = formatString.indexOf("ss");
+									second = Integer.parseInt(data.substring(subIndex, subIndex+2));
+								}
 								GregorianCalendar calendar = new GregorianCalendar(year, month, day, hour, minute, second);
-								dataSetHeader.put(TIME_GIVEN_MS, GDE.STRING_EMPTY + calendar.getTimeInMillis());
+								int milliseconds = 0;
+								if (formatString.contains(".f") || formatString.contains(".S")) {
+									subIndex = formatString.indexOf(".") + 1;
+									milliseconds = Integer.parseInt(data.substring(subIndex, data.length()));
+								}
+								dataSetHeader.put(TIME_GIVEN_MS, GDE.STRING_EMPTY + calendar.getTimeInMillis() + milliseconds);
 								if (dataSetHeader.get(TIME_GIVEN_MS_START) == null) dataSetHeader.put(TIME_GIVEN_MS_START, GDE.STRING_EMPTY + calendar.getTimeInMillis());
 								--j; 
 								continue;
