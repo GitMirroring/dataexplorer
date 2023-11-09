@@ -443,13 +443,16 @@ public class ZeroReaderWriter {
 									second = Integer.parseInt(data.substring(subIndex, subIndex+2));
 								}
 								GregorianCalendar calendar = new GregorianCalendar(year, month, day, hour, minute, second);
+								//log.log(Level.OFF, ""+ calendar.getTimeInMillis());
 								int milliseconds = 0;
 								if (formatString.contains(".f") || formatString.contains(".S")) {
 									subIndex = formatString.indexOf(".") + 1;
-									milliseconds = Integer.parseInt(data.substring(subIndex, data.length()));
+									milliseconds = Integer.parseInt(data.substring(subIndex, data.length())) * 100;
 								}
-								dataSetHeader.put(TIME_GIVEN_MS, GDE.STRING_EMPTY + calendar.getTimeInMillis() + milliseconds);
-								if (dataSetHeader.get(TIME_GIVEN_MS_START) == null) dataSetHeader.put(TIME_GIVEN_MS_START, GDE.STRING_EMPTY + calendar.getTimeInMillis());
+								//log.log(Level.OFF, year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second + "." + milliseconds);
+								dataSetHeader.put(TIME_GIVEN_MS, GDE.STRING_EMPTY + (calendar.getTimeInMillis() + milliseconds));
+								//log.log(Level.OFF, dataSetHeader.get(TIME_GIVEN_MS));
+								if (dataSetHeader.get(TIME_GIVEN_MS_START) == null) dataSetHeader.put(TIME_GIVEN_MS_START, GDE.STRING_EMPTY + (calendar.getTimeInMillis() + milliseconds));
 								--j; 
 								continue;
 							}
@@ -530,8 +533,8 @@ public class ZeroReaderWriter {
 				dataSetHeader = headers.get(channel.getNumber());
 				for (RecordSet updateRecordSet : channel.values()) {
 					long startTimeStamp = dataSetHeader.get(TIME_GIVEN_MS_START) != null
-							? Long.parseLong(dataSetHeader.get(TIME_GIVEN_MS_START))
-							: (long) (new File(filePath).lastModified() - updateRecordSet.getMaxTime_ms());
+								? Long.parseLong(dataSetHeader.get(TIME_GIVEN_MS_START))
+								: (long) (new File(filePath).lastModified() - updateRecordSet.getMaxTime_ms());
 					updateRecordSet.setRecordSetDescription(device.getName() + GDE.STRING_MESSAGE_CONCAT + Messages.getString(MessageIds.GDE_MSGT0129) + new SimpleDateFormat("yyyy-MM-dd, HH:mm:ss").format(startTimeStamp));
 					updateRecordSet.setStartTimeStamp(startTimeStamp);
 					channel.setFileDescription((new SimpleDateFormat("yyyy-MM-dd").format(startTimeStamp)).substring(0, 10) + channel.getFileDescription().substring(10));
