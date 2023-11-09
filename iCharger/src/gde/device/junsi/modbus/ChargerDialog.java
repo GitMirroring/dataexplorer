@@ -2511,14 +2511,14 @@ public class ChargerDialog extends DeviceDialog {
 		//charge parameter modus normal,balance,external,reflex
 		this.memoryParameters[4] = new ParameterConfigControl(this.chargeComposite, this.memoryValues, 4, Messages.getString(MessageIds.GDE_MSGT2641), 175, String.join(", ", ChargerMemory.LiMode.VALUES), //$NON-NLS-1$
 				280, ChargerMemory.LiMode.VALUES, 50, 200);
-		//charge parameter modus normal,balance,external,reflex
+		//charge parameter balancer modus 
 		this.memoryParameters[5] = new ParameterConfigControl(this.chargeComposite, this.memoryValues, 5, Messages.getString(MessageIds.GDE_MSGT2642), 175,
 				String.join(", ", ChargerMemory.BalancerLiSetup.VALUES), 280, //$NON-NLS-1$
 				ChargerMemory.BalancerLiSetup.VALUES, 50, 200);
 		//charge parameter end current, Li balancer end current, PB charge end current
 		this.memoryParameters[6] = new ParameterConfigControl(this.chargeComposite, this.memoryValues, 6, GDE.STRING_EMPTY, Messages.getString(MessageIds.GDE_MSGT2643), 175, "10% - 50%", 280, //$NON-NLS-1$
 				true, 50, 200, 10, 50, -10, false);
-		if (this.memoryValues[5] == 0) this.memoryParameters[6].setEnabled(false);
+		if (this.memoryValues[5] == 0 && this.memoryValues[4] == 0) this.memoryParameters[6].setEnabled(false);
 		//charge parameter cell voltage
 		this.memoryParameters[7] = new ParameterConfigControl(this.chargeComposite, this.memoryValues, 7, "%4.3f", Messages.getString(MessageIds.GDE_MSGT2644), 175, "4.000 V - 4.200 V", 280, //$NON-NLS-1$
 				true, 50, 200, 4000, 4350, 4200, -4000, false);
@@ -2822,8 +2822,7 @@ public class ChargerDialog extends DeviceDialog {
 				this.memoryParameters[1].updateValueRange("0(auto) - " + maxNumberCells, 0, maxNumberCells, 0); //$NON-NLS-1$
 				//battery type dependent updates
 				this.memoryParameters[5].setEnabled(true);
-				this.memoryParameters[6].setEnabled(this.memoryValues[5] != 0);
-				this.memoryParameters[6].updateNameLabel( Messages.getString(MessageIds.GDE_MSGT2643));
+				this.memoryParameters[6].setEnabled(this.memoryValues[5] != 0 || this.memoryValues[4] != 0);
 				this.memoryParameters[6].updateValueRange("10% - 50%", 10, 50, 50, -10); //$NON-NLS-1$
 				this.memoryParameters[7].setEnabled(true);
 				this.memoryParameters[7].getSlider().setEnabled(true);
@@ -2865,7 +2864,6 @@ public class ChargerDialog extends DeviceDialog {
 						this.memoryParameters[4].updateTextFieldValues(ChargerMemory.PbMode.VALUES);
 						this.memoryParameters[5].setEnabled(false);
 						this.memoryParameters[6].setEnabled(true);
-						this.memoryParameters[6].updateNameLabel( Messages.getString(MessageIds.GDE_MSGT2679));
 						this.memoryParameters[6].updateValueRange("1% - 50%", 1, 50, 50, -1); //$NON-NLS-1$
 						this.memoryParameters[7].updateValueRange("2.4V (2.2 - 2.6V)", ChargerMemory.PB_CHG_MIN, ChargerMemory.PB_CHG_MAX, ChargerMemory.PB_CHG_DEFAULT, -1*ChargerMemory.PB_CHG_MIN); //$NON-NLS-1$
 						this.grpBalancerSettings.setEnabled(false);
@@ -2917,7 +2915,6 @@ public class ChargerDialog extends DeviceDialog {
 						this.memoryParameters[4].updateTextFieldValues(ChargerMemory.PbMode.VALUES);
 						this.memoryParameters[5].setEnabled(false);
 						this.memoryParameters[6].setEnabled(true);
-						this.memoryParameters[6].updateNameLabel( Messages.getString(MessageIds.GDE_MSGT2679));
 						this.memoryParameters[6].updateValueRange("1% - 50%", 1, 50, 50, -1); //$NON-NLS-1$
 						this.memoryParameters[7].updateValueRange("2.4V (2.200 - 2.600V)", 2000, 2600, 2400, -2000); //$NON-NLS-1$
 						this.grpBalancerSettings.setEnabled(false);
