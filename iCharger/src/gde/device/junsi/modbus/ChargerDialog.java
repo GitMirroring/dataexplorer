@@ -2507,7 +2507,7 @@ public class ChargerDialog extends DeviceDialog {
 		//charge parameter current
 		this.memoryParameters[3] = new ParameterConfigControl(this.chargeComposite, this.memoryValues, 3, "%4.2f", Messages.getString(MessageIds.GDE_MSGT2640), 175, 
 				String.format("0.05 ~ %d A", device.getChargeCurrentMax4Channel()/10), 280, //$NON-NLS-1$
-				true, 50, 200, 5, device.getChargeCurrentMax4Channel()*10, -5, false);
+				true, 50, 200, 5, device.getChargeCurrentMax4Channel()*10+10, 0, false);
 		//charge parameter modus normal,balance,external,reflex
 		this.memoryParameters[4] = new ParameterConfigControl(this.chargeComposite, this.memoryValues, 4, Messages.getString(MessageIds.GDE_MSGT2641), 175, String.join(", ", ChargerMemory.LiMode.VALUES), //$NON-NLS-1$
 				280, ChargerMemory.LiMode.VALUES, 50, 200);
@@ -2624,7 +2624,7 @@ public class ChargerDialog extends DeviceDialog {
 		//discharge parameter current
 		this.memoryParameters[17] = new ParameterConfigControl(this.dischargeComposite, this.memoryValues, 17, "%4.2f", Messages.getString(MessageIds.GDE_MSGT2671), 175, 
 				String.format("0.05 ~ %d A", device.getChargeCurrentMax4Channel()/10), 280, //$NON-NLS-1$
-				true, 50, 200, 5, device.getChargeCurrentMax4Channel()*10, -5, false);
+				true, 50, 200, 5, device.getChargeCurrentMax4Channel()*10+10, 0, false);
 		//discharge parameter cell voltage
 		this.memoryParameters[18] = new ParameterConfigControl(this.dischargeComposite, this.memoryValues, 18, "%4.3f", Messages.getString(MessageIds.GDE_MSGT2672), 175, "3.000 - 4.100 V", 280, //$NON-NLS-1$
 				true, 50, 200, 3000, 4100, -3000, false);
@@ -3231,12 +3231,12 @@ public class ChargerDialog extends DeviceDialog {
 						
 						//update charge/discharge max current channel async/sync
 						if (this.memoryValues[47] == 1) {//single channel or channels async
-							this.memoryParameters[3].updateValueRange(String.format("0.05 ~ %d A", device.getChargeCurrentMaxSyncChannels()/10), 5, device.getChargeCurrentMaxSyncChannels()*10); //$NON-NLS-1$
-							this.memoryParameters[17].updateValueRange(String.format("0.05 ~ %d A", device.getChargeCurrentMaxSyncChannels()/10), 5, device.getChargeCurrentMaxSyncChannels()*10); //$NON-NLS-1$
+							this.memoryParameters[3].updateValueRange(String.format("0.05 ~ %d A", device.getChargeCurrentMaxSyncChannels()/10), 5, device.getChargeCurrentMaxSyncChannels()*10+10); //$NON-NLS-1$
+							this.memoryParameters[17].updateValueRange(String.format("0.05 ~ %d A", device.getChargeCurrentMaxSyncChannels()/10), 5, device.getChargeCurrentMaxSyncChannels()*10+10); //$NON-NLS-1$
 						}
 						else {//duo device channels in sync
-							this.memoryParameters[3].updateValueRange(String.format("0.05 ~ %d A", device.getChargeCurrentMax4Channel()/10), 5, device.getChargeCurrentMax4Channel()*10); //$NON-NLS-1$
-							this.memoryParameters[17].updateValueRange(String.format("0.05 ~ %d A", device.getChargeCurrentMax4Channel()/10), 5, device.getChargeCurrentMax4Channel()*10); //$NON-NLS-1$
+							this.memoryParameters[3].updateValueRange(String.format("0.05 ~ %d A", device.getChargeCurrentMax4Channel()/10), 5, device.getChargeCurrentMax4Channel()*10+10); //$NON-NLS-1$
+							this.memoryParameters[17].updateValueRange(String.format("0.05 ~ %d A", device.getChargeCurrentMax4Channel()/10), 5, device.getChargeCurrentMax4Channel()*10+10); //$NON-NLS-1$
 						}
 					}
 				}
