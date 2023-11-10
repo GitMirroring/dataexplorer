@@ -2377,8 +2377,8 @@ public class ChargerMemory {
 		this.userCell = userCell;
 	}
 
-	public short getDigitPowerVolt() {
-		return digitPowerVolt;
+	public int getDigitPowerVolt() {
+		return Short.toUnsignedInt(this.digitPowerVolt);
 	}
 
 	public void setDigitPowerVolt(short digitPowerVolt) {
