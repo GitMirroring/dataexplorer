@@ -472,8 +472,7 @@ public class CSVReaderWriter {
 										points[i] = Double.valueOf(data).intValue();
 									}
 									catch (NumberFormatException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
+										log.log(Level.WARNING, e.getMessage(), e);
 									}
 								}
 								break;
@@ -512,7 +511,13 @@ public class CSVReaderWriter {
 							}
 						}
 					}
-					recordSet.addPoints(points, time_ms);
+					try {
+						recordSet.addPoints(points, time_ms);
+					}
+					catch (DataInconsitsentException e) {
+						DataExplorer.getInstance().openMessageDialogAsync(e.getMessage() + "\n" + StringHelper.arrayToString(updateRecordNames));
+						throw e;
+					}
 
 					progressLineLength = progressLineLength > line.length() ? progressLineLength : line.length();
 					int progress = progressLineLength > 0 && inputFileSize > 0 ? (int) (lineNumber * 100 / (inputFileSize / progressLineLength)) : 50;

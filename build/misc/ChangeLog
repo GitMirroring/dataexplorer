@@ -10,6 +10,7 @@ Device specific changes/fixes
 	* iChargerUSB* - enable setting of charge end current while Li balancer is switched off
 	* iChargerUSB* - fix configuration setting digital power voltage and current max value
 	* ZeroAdapter - fix date/time parsing
+	* OpenTX-Telemetry - make repeating error visible on message box
 
 
 Version 3.8.2 - 27 Oct 2023
