@@ -4,6 +4,7 @@ Version 3.8.3 - xx yyy 2023
 Generic changes/fixes 
 	* refine speed calculation based on GPS coordinates and altitude change
 	* remove not required curves update switching data set 
+	* update SWT library for aarch64
 	
 Device specific changes/fixes
 	* IGCAdapter - refine 3D speed calculation
@@ -13,20 +14,19 @@ Device specific changes/fixes
 	* iChargerUSB* - fix charge/discharge slider end values
 	* ZeroAdapter - fix date/time parsing
 	* OpenTX-Telemetry - make repeating error visible on message box
+	* HoTTAdapter* - add ESC1..ESC4 reading capability
+	* UniLog - adjust dialog group sizes macOS
 
 
 Version 3.8.2 - 27 Oct 2023
 Generic changes/fixes 
 	* fix record scale position while some records contains zero values only
-	* update SWT library for aarch64
 	
 Device specific changes/fixes
 	* iCharger DX12 - add device
 	* iCharger4512DUO - add device
 	* IGCAdapter - add sink speed calculation 
 	* HoTTAdapter* - fix parsing package loss in OSD while history analysis
-	* HoTTAdapter* - add ESC1..ESC4 reading capability
-	* UniLog - adjust dialog group sizes macOS
 
 
 Version 3.8.1 - 20 Sep 2023
