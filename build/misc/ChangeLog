@@ -3,6 +3,7 @@ Development history / change log, please read from bottom up
 Version 3.8.3 - xx yyy 2023
 Generic changes/fixes 
 	* refine speed calculation based on GPS coordinates and altitude change
+	* remove not required curves update switching data set 
 	
 Device specific changes/fixes
 	* IGCAdapter - refine 3D speed calculation
@@ -23,6 +24,7 @@ Device specific changes/fixes
 	* iCharger4512DUO - add device
 	* IGCAdapter - add sink speed calculation 
 	* HoTTAdapter* - fix parsing package loss in OSD while history analysis
+	* UniLog - adjust dialog group sizes macOS
 
 
 Version 3.8.1 - 20 Sep 2023

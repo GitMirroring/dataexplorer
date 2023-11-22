@@ -442,7 +442,7 @@ public class UniLogDialog extends DeviceDialog {
 								this.statusGroup.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 								this.statusGroup.setLayout(new RowLayout(SWT.HORIZONTAL));
 								this.statusGroup.setText(Messages.getString(MessageIds.GDE_MSGT1302));
-								this.statusGroup.setBounds(12, 17, 602, 45);
+								this.statusGroup.setBounds(12, 17, 602, GDE.IS_MAC ? 55 : 45);
 								this.statusGroup.addMouseTrackListener(this.mouseTrackerEnterFadeOut);
 								{
 									new Composite(this.statusGroup, SWT.NONE).setLayoutData(new RowData(10, 22));
@@ -495,7 +495,7 @@ public class UniLogDialog extends DeviceDialog {
 								this.autoStartGroup = new Group(this.configMainComosite, SWT.NONE);
 								this.autoStartGroup.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 								this.autoStartGroup.setText(Messages.getString(MessageIds.GDE_MSGT1309));
-								this.autoStartGroup.setBounds(12, 226, 300, 99);
+								this.autoStartGroup.setBounds(12, 226, 300, GDE.IS_MAC ? 105 : 100);
 								this.autoStartGroup.addMouseTrackListener(this.mouseTrackerEnterFadeOut);
 								this.autoStartGroup.setLayout(new GridLayout(3, false));
 								{
@@ -602,7 +602,7 @@ public class UniLogDialog extends DeviceDialog {
 								this.motorPropGroup.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 								this.motorPropGroup.setLayout(null);
 								this.motorPropGroup.setText(Messages.getString(MessageIds.GDE_MSGT1313));
-								this.motorPropGroup.setBounds(12, 117, 300, 99);
+								this.motorPropGroup.setBounds(12, 117, 300, GDE.IS_MAC ? 105 : 100);
 								this.motorPropGroup.addMouseTrackListener(this.mouseTrackerEnterFadeOut);
 								this.motorPropGroup.setLayout(new RowLayout(SWT.HORIZONTAL));
 								{
@@ -730,7 +730,7 @@ public class UniLogDialog extends DeviceDialog {
 								this.dataRateGroup = new Group(this.configMainComosite, SWT.NONE);
 								this.dataRateGroup.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 								this.dataRateGroup.setText(Messages.getString(MessageIds.GDE_MSGT1317));
-								this.dataRateGroup.setBounds(337, 70, 277, 45);
+								this.dataRateGroup.setBounds(337, 70, 277, GDE.IS_MAC ? 55 : 45);
 								this.dataRateGroup.addMouseTrackListener(this.mouseTrackerEnterFadeOut);
 								this.dataRateGroup.setLayout(new GridLayout(1, true));
 								{
@@ -759,7 +759,7 @@ public class UniLogDialog extends DeviceDialog {
 								this.sensorGroup = new Group(this.configMainComosite, SWT.NONE);
 								this.sensorGroup.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 								this.sensorGroup.setText(Messages.getString(MessageIds.GDE_MSGT1307));
-								this.sensorGroup.setBounds(337, 120, 277, 120);
+								this.sensorGroup.setBounds(337, 120, 277, 123);
 								this.sensorGroup.addMouseTrackListener(this.mouseTrackerEnterFadeOut);
 								this.sensorGroup.setLayout(new RowLayout(SWT.HORIZONTAL));
 								{
@@ -855,7 +855,7 @@ public class UniLogDialog extends DeviceDialog {
 								this.limiterGroup = new Group(this.configMainComosite, SWT.NONE);
 								this.limiterGroup.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 								this.limiterGroup.setText(Messages.getString(MessageIds.GDE_MSGT1308));
-								this.limiterGroup.setBounds(337, 243, 277, 45);
+								this.limiterGroup.setBounds(337, 243, 277, GDE.IS_MAC ? 55 : 45);
 								this.limiterGroup.addMouseTrackListener(this.mouseTrackerEnterFadeOut);
 								this.limiterGroup.setLayout(new GridLayout(3, false));
 								{
@@ -913,7 +913,7 @@ public class UniLogDialog extends DeviceDialog {
 								this.readAdjustmentButton = new Button(this.configMainComosite, SWT.PUSH | SWT.FLAT | SWT.CENTER);
 								this.readAdjustmentButton.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 								this.readAdjustmentButton.setText(Messages.getString(MessageIds.GDE_MSGT1318));
-								this.readAdjustmentButton.setBounds(12, 74, 300, 30);
+								this.readAdjustmentButton.setBounds(12, GDE.IS_MAC ? 83 : 74, 300, 30);
 								this.readAdjustmentButton.addMouseTrackListener(mouseTrackerEnterFadeOut);
 								this.readAdjustmentButton.addSelectionListener(new SelectionAdapter() {
 									@Override
@@ -937,7 +937,7 @@ public class UniLogDialog extends DeviceDialog {
 								this.storeAdjustmentsButton = new Button(this.configMainComosite, SWT.PUSH | SWT.CENTER);
 								this.storeAdjustmentsButton.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 								this.storeAdjustmentsButton.setText(Messages.getString(MessageIds.GDE_MSGT1319));
-								this.storeAdjustmentsButton.setBounds(335, 296, 281, 30);
+								this.storeAdjustmentsButton.setBounds(335, GDE.IS_MAC ? 300 : 296, 281, 30);
 								this.storeAdjustmentsButton.setEnabled(false);
 								this.storeAdjustmentsButton.addMouseTrackListener(mouseTrackerEnterFadeOut);
 								this.storeAdjustmentsButton.addSelectionListener(new SelectionAdapter() {
@@ -1307,7 +1307,7 @@ public class UniLogDialog extends DeviceDialog {
 								{
 									this.loggingGroup = new Group(this.liveDataCaptureGroup, SWT.NONE);
 									this.loggingGroup.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
-									GridData groupGridData = new GridData(260, 70);
+									GridData groupGridData = new GridData(260, 50);
 									groupGridData.grabExcessHorizontalSpace = true;
 									groupGridData.horizontalAlignment = SWT.CENTER;
 									this.loggingGroup.setLayoutData(groupGridData);
