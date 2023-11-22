@@ -77,7 +77,7 @@ public class HoTTlogReader2 extends HoTTlogReader {
 		boolean isGPSData = false;
 		boolean isGeneralData = false;
 		boolean isElectricData = false;
-		boolean isMotorDriverData = false;
+		boolean isEscData = false, isEsc2Data = false,  isEsc3Data = false,  isEsc4Data = false;
 		HoTTlogReader2.recordSet = null;
 		HoTTlogReader2.isJustMigrated = false;
 		// 0=RX-TX-VPacks, 1=RXSQ, 2=Strength, 3=VPacks, 4=Tx, 5=Rx, 6=VoltageRx, 7=TemperatureRx 8=VoltageRxMin 9=EventRx
@@ -114,6 +114,9 @@ public class HoTTlogReader2 extends HoTTlogReader {
 		int[] valuesGAM = new int[26];
 		int[] valuesEAM = new int[31];
 		int[] valuesESC = new int[30];
+		int[] valuesESC2 = new int[30];
+		int[] valuesESC3 = new int[30];
+		int[] valuesESC4 = new int[30];
 		HoTTlogReader2.rcvLogParser = (RcvLogParser) Sensor.RECEIVER.createLogParser(HoTTbinReader.pickerParameters, valuesRec, timeSteps_ms, buf, numberLogChannels);
 		HoTTlogReader2.chnLogParser = (ChnLogParser) Sensor.CHANNEL.createLogParser(HoTTbinReader.pickerParameters, valuesChn, timeSteps_ms, buf, numberLogChannels);
 		HoTTlogReader2.varLogParser = (VarLogParser) Sensor.VARIO.createLogParser(HoTTbinReader.pickerParameters, valuesVar, timeSteps_ms, buf, numberLogChannels);
@@ -121,10 +124,13 @@ public class HoTTlogReader2 extends HoTTlogReader {
 		HoTTlogReader2.gamLogParser = (GamLogParser) Sensor.GAM.createLogParser(HoTTbinReader.pickerParameters, valuesGAM, timeSteps_ms, buf, numberLogChannels);
 		HoTTlogReader2.eamLogParser = (EamLogParser) Sensor.EAM.createLogParser(HoTTbinReader.pickerParameters, valuesEAM, timeSteps_ms, buf, numberLogChannels);
 		HoTTlogReader2.escLogParser = (EscLogParser) Sensor.ESC.createLogParser(HoTTbinReader.pickerParameters, valuesESC, timeSteps_ms, buf, numberLogChannels);
+		HoTTlogReader2.esc2LogParser = (Esc2LogParser) Sensor.ESC2.createLogParser(HoTTbinReader.pickerParameters, valuesESC2, timeSteps_ms, buf, numberLogChannels);
+		HoTTlogReader2.esc3LogParser = (Esc3LogParser) Sensor.ESC3.createLogParser(HoTTbinReader.pickerParameters, valuesESC3, timeSteps_ms, buf, numberLogChannels);
+		HoTTlogReader2.esc4LogParser = (Esc4LogParser) Sensor.ESC4.createLogParser(HoTTbinReader.pickerParameters, valuesESC4, timeSteps_ms, buf, numberLogChannels);
 		int logTimeStep_ms = 1000/Integer.valueOf(fileInfoHeader.get("COUNTER").split("/")[1].split(GDE.STRING_BLANK)[0]);
 		boolean isVarioDetected = false;
 		boolean isGPSdetected = false;
-		boolean isESCdetected = false;
+		boolean isESCdetected = false, isESC2detected = false,  isESC3detected = false,  isESC4detected = false;
 		int logDataOffset = Integer.valueOf(fileInfoHeader.get("LOG DATA OFFSET"));
 		long numberDatablocks = Long.parseLong(fileInfoHeader.get(HoTTAdapter.LOG_COUNT));
 		long startTimeStamp_ms = HoTTbinReader.getStartTimeStamp(fileInfoHeader.get("LOG START TIME"), HoTTbinReader.getStartTimeStamp(file.getName(), file.lastModified(), numberDatablocks));
@@ -212,7 +218,7 @@ public class HoTTlogReader2 extends HoTTlogReader {
 					case HoTTAdapter.ANSWER_SENSOR_VARIO_19200:
 						isVarioData = HoTTlogReader2.varLogParser.parse();
 						if (isVarioData && isReceiverData) {
-							migrateAddPoints(HoTTlogReader2.varLogParser.getTimeStep_ms(), isVarioData, isGPSData, isGeneralData, isElectricData, isMotorDriverData, channelNumber, valuesVar, valuesGPS, valuesGAM, valuesEAM, valuesESC);
+							migrateAddPoints(HoTTlogReader2.varLogParser.getTimeStep_ms(), isVarioData, isGPSData, isGeneralData, isElectricData, isEscData, isEsc2Data, isEsc3Data, isEsc4Data, channelNumber, valuesVar, valuesGPS, valuesGAM, valuesEAM, valuesESC, valuesESC2, valuesESC3, valuesESC4);
 							isReceiverData = false;
 
 							if (!isVarioDetected) {
@@ -224,7 +230,7 @@ public class HoTTlogReader2 extends HoTTlogReader {
 					case HoTTAdapter.ANSWER_SENSOR_GPS_19200:
 						isGPSData = HoTTlogReader2.gpsLogParser.parse();
 						if (isGPSData && isReceiverData) {
-							migrateAddPoints(HoTTlogReader2.gpsLogParser.getTimeStep_ms(), isVarioData, isGPSData, isGeneralData, isElectricData, isMotorDriverData, channelNumber, valuesVar, valuesGPS, valuesGAM, valuesEAM, valuesESC);
+							migrateAddPoints(HoTTlogReader2.gpsLogParser.getTimeStep_ms(), isVarioData, isGPSData, isGeneralData, isElectricData, isEscData, isEsc2Data, isEsc3Data, isEsc4Data, channelNumber, valuesVar, valuesGPS, valuesGAM, valuesEAM, valuesESC, valuesESC2, valuesESC3, valuesESC4);
 							isReceiverData = false;
 
 							if (!isGPSdetected) {
@@ -236,27 +242,72 @@ public class HoTTlogReader2 extends HoTTlogReader {
 					case HoTTAdapter.ANSWER_SENSOR_GENERAL_19200:
 						isGeneralData = HoTTlogReader2.gamLogParser.parse();
 						if (isGeneralData && isReceiverData) {
-							migrateAddPoints(HoTTlogReader2.gamLogParser.getTimeStep_ms(), isVarioData, isGPSData, isGeneralData, isElectricData, isMotorDriverData, channelNumber, valuesVar, valuesGPS, valuesGAM, valuesEAM, valuesESC);
+							migrateAddPoints(HoTTlogReader2.gamLogParser.getTimeStep_ms(), isVarioData, isGPSData, isGeneralData, isElectricData, isEscData, isEsc2Data, isEsc3Data, isEsc4Data, channelNumber, valuesVar, valuesGPS, valuesGAM, valuesEAM, valuesESC, valuesESC2, valuesESC3, valuesESC4);
 							isReceiverData = false;
 						}
 						break;
 					case HoTTAdapter.ANSWER_SENSOR_ELECTRIC_19200:
 						isElectricData = HoTTlogReader2.eamLogParser.parse();
 						if (isElectricData && isReceiverData) {
-							migrateAddPoints(HoTTlogReader2.eamLogParser.getTimeStep_ms(), isVarioData, isGPSData, isGeneralData, isElectricData, isMotorDriverData, channelNumber, valuesVar, valuesGPS, valuesGAM, valuesEAM, valuesESC);
+							migrateAddPoints(HoTTlogReader2.eamLogParser.getTimeStep_ms(), isVarioData, isGPSData, isGeneralData, isElectricData, isEscData, isEsc2Data, isEsc3Data, isEsc4Data, channelNumber, valuesVar, valuesGPS, valuesGAM, valuesEAM, valuesESC, valuesESC2, valuesESC3, valuesESC4);
 							isReceiverData = false;
 						}
 						break;
 					case HoTTAdapter.ANSWER_SENSOR_MOTOR_DRIVER_19200:
-						isMotorDriverData = HoTTlogReader2.escLogParser.parse(HoTTlogReader2.recordSet, HoTTlogReader2.escLogParser.getTimeStep_ms());
-						if (isMotorDriverData && isReceiverData) {
-							migrateAddPoints(HoTTlogReader2.escLogParser.getTimeStep_ms(), isVarioData, isGPSData, isGeneralData, isElectricData, isMotorDriverData, channelNumber, valuesVar, valuesGPS, valuesGAM, valuesEAM, valuesESC);
+						isEscData = HoTTlogReader2.escLogParser.parse(HoTTlogReader2.recordSet, HoTTlogReader2.escLogParser.getTimeStep_ms());
+						if (isEscData && isReceiverData) {
+							migrateAddPoints(HoTTlogReader2.escLogParser.getTimeStep_ms(), isVarioData, isGPSData, isGeneralData, isElectricData, isEscData, isEsc2Data, isEsc3Data, isEsc4Data, channelNumber, valuesVar, valuesGPS, valuesGAM, valuesEAM, valuesESC, valuesESC2, valuesESC3, valuesESC4);
 							isReceiverData = false;
 
 							if (!isESCdetected) {
-								HoTTAdapter2.updateEscTypeDependent((HoTTbinReader.buf[65] & 0xFF), device, HoTTlogReader2.recordSet);
+								HoTTAdapter2.updateEscTypeDependent((HoTTbinReader.buf[65] & 0xFF), device, HoTTlogReader2.recordSet, 1);
 								isESCdetected = true;
 							}
+						}
+						break;
+					case HoTTAdapter.ANSWER_SENSOR_ESC2_19200:
+						if (channelNumber == 6) {
+							isEsc2Data = HoTTlogReader2.esc2LogParser.parse(HoTTlogReader2.recordSet, HoTTlogReader2.esc2LogParser.getTimeStep_ms());
+							if (isEsc2Data && isReceiverData) {
+								migrateAddPoints(HoTTlogReader2.esc2LogParser.getTimeStep_ms(), isVarioData, isGPSData, isGeneralData, isElectricData, isEscData, isEsc2Data, isEsc3Data, isEsc4Data, channelNumber,
+										valuesVar, valuesGPS, valuesGAM, valuesEAM, valuesESC, valuesESC2, valuesESC3, valuesESC4);
+								isReceiverData = false;
+
+								if (!isESC2detected) {
+									HoTTAdapter2.updateEscTypeDependent((HoTTbinReader.buf[65] & 0xFF), device, HoTTlogReader2.recordSet, 2);
+									isESC2detected = true;
+								}
+							} 
+						}
+						break;
+					case HoTTAdapter.ANSWER_SENSOR_ESC3_19200:
+						if (channelNumber == 6) {
+							isEsc3Data = HoTTlogReader2.esc3LogParser.parse(HoTTlogReader2.recordSet, HoTTlogReader2.esc3LogParser.getTimeStep_ms());
+							if (isEsc3Data && isReceiverData) {
+								migrateAddPoints(HoTTlogReader2.esc3LogParser.getTimeStep_ms(), isVarioData, isGPSData, isGeneralData, isElectricData, isEscData, isEsc2Data, isEsc3Data, isEsc4Data, channelNumber,
+										valuesVar, valuesGPS, valuesGAM, valuesEAM, valuesESC, valuesESC2, valuesESC3, valuesESC4);
+								isReceiverData = false;
+
+								if (!isESC3detected) {
+									HoTTAdapter2.updateEscTypeDependent((HoTTbinReader.buf[65] & 0xFF), device, HoTTlogReader2.recordSet, 3);
+									isESC3detected = true;
+								}
+							} 
+						}
+						break;
+					case HoTTAdapter.ANSWER_SENSOR_ESC4_19200:
+						if (channelNumber == 6) {
+							isEsc4Data = HoTTlogReader2.esc4LogParser.parse(HoTTlogReader2.recordSet, HoTTlogReader2.esc4LogParser.getTimeStep_ms());
+							if (isEsc4Data && isReceiverData) {
+								migrateAddPoints(HoTTlogReader2.esc4LogParser.getTimeStep_ms(), isVarioData, isGPSData, isGeneralData, isElectricData, isEscData, isEsc2Data, isEsc3Data, isEsc4Data, channelNumber,
+										valuesVar, valuesGPS, valuesGAM, valuesEAM, valuesESC, valuesESC2, valuesESC3, valuesESC4);
+								isReceiverData = false;
+
+								if (!isESC4detected) {
+									HoTTAdapter2.updateEscTypeDependent((HoTTbinReader.buf[65] & 0xFF), device, HoTTlogReader2.recordSet, 4);
+									isESC4detected = true;
+								}
+							} 
 						}
 						break;
 					case 0x1F: //receiver sensitive data
@@ -353,12 +404,13 @@ public class HoTTlogReader2 extends HoTTlogReader {
 	 * @param isGPSData
 	 * @param isGeneralData
 	 * @param isElectricData
-	 * @param isMotorDriverData
+	 * @param isEscData
 	 * @param channelNumber
 	 * @throws DataInconsitsentException
 	 */
-	public static void migrateAddPoints(long timeStep_ms, boolean isVarioData, boolean isGPSData, boolean isGeneralData, boolean isElectricData, boolean isMotorDriverData, int channelNumber,
-			int[] valuesVario, int[] valuesGPS, int[] valuesGAM, int[] valuesEAM, int[] valuesESC)
+	public static void migrateAddPoints(long timeStep_ms, boolean isVarioData, boolean isGPSData, boolean isGeneralData, boolean isElectricData, 
+			boolean isEscData, boolean isEsc2Data, boolean isEsc3Data, boolean isEsc4Data, int channelNumber,
+			int[] valuesVario, int[] valuesGPS, int[] valuesGAM, int[] valuesEAM, int[] valuesESC, int[] valuesESC2, int[] valuesESC3, int[] valuesESC4)
 			throws DataInconsitsentException {
 		//receiver data gets integrated each cycle
 		// 0=RX-TX-VPacks, 1=RXSQ, 2=Strength, 3=VPacks, 4=Tx, 5=Rx, 6=VoltageRx, 7=TemperatureRx 8=VoltageRxMin 9=EventRx
@@ -374,9 +426,24 @@ public class HoTTlogReader2 extends HoTTlogReader {
 		// 96=Revolution_max, 97=Temperature1_max, 98=Temperature2_max 99=Event M
 		// 100=Speed 101=Speed_max 102=PWM 103=Throttle 104=VoltageBEC 105=VoltageBEC_min 106=CurrentBEC 107=TemperatureBEC 108=TemperatureCap 
 		// 109=Timing(empty) 110=Temperature_aux 111=Gear 112=YGEGenExt 113=MotStatEscNr 114=misc ESC_15 115=VersionESC
+		//ESC2
+		// 116=VoltageM, 117=CurrentM, 118=CapacityM, 119=PowerM, 120=RevolutionM, 121=TemperatureM 1, 122=TemperatureM 2 123=Voltage_min, 124=Current_max,
+		// 125=Revolution_max, 126=Temperature1_max, 127=Temperature2_max 128=Event M
+		// 129=Speed 130=Speed_max 131=PWM 132=Throttle 133=VoltageBEC 134=VoltageBEC_min 135=CurrentBEC 136=TemperatureBEC 137=TemperatureCap 
+		// 138=Timing(empty) 139=Temperature_aux 140=Gear 141=YGEGenExt 142=MotStatEscNr 143=misc ESC_15 144=VersionESC
+		//ESC3
+		// 145=VoltageM2, 146=CurrentM, 147=CapacityM, 148=PowerM, 149=RevolutionM, 150=TemperatureM 1, 151=TemperatureM 2 152=Voltage_min, 153=Current_max,
+		// 154=Revolution_max, 155=Temperature1_max, 156=Temperature2_max 157=Event M
+		// 158=Speed 159=Speed_max 160=PWM 161=Throttle 162=VoltageBEC 163=VoltageBEC_min 164=CurrentBEC 165=TemperatureBEC 166=TemperatureCap 
+		// 167=Timing(empty) 168=Temperature_aux 169=Gear 170=YGEGenExt 171=MotStatEscNr 172=misc ESC_15 173=VersionESC
+		//ESC4
+		// 174=VoltageM3, 175=CurrentM, 176=CapacityM, 177=PowerM, 178=RevolutionM, 179=TemperatureM 1, 180=TemperatureM 2 181=Voltage_min, 182=Current_max,
+		// 183=Revolution_max, 184=Temperature1_max, 185=Temperature2_max 186=Event M
+		// 187=Speed 188=Speed_max 189=PWM 190=Throttle 191=VoltageBEC 192=VoltageBEC_min 193=CurrentBEC 194=TemperatureBEC 195=TemperatureCap 
+		// 196=Timing(empty) 197=Temperature_aux 198=Gear 199=YGEGenExt 200=MotStatEscNr 201=misc ESC_15 202=VersionESC
 
 		// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=PowerOff, 104=BatterieLow, 105=Reset, 106=reserve
-		// 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max,
+		// 107=VoltageM4, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max,
 		// 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
 		// 120=Speed 121=Speed_max 122=PWM 123=Throttle 124=VoltageBEC 125=VoltageBEC_min 125=CurrentBEC 127=TemperatureBEC 128=TemperatureCap 
 		// 129=Timing(empty) 130=Temperature_aux 131=Gear 132=YGEGenExt 133=MotStatEscNr 134=misc ESC_15 135=VersionESC
@@ -449,7 +516,7 @@ public class HoTTlogReader2 extends HoTTlogReader {
 		//in 8=Voltage_min, 9=Current_max, 10=Revolution_max, 11=Temperature1_max, 12=Temperature2_max 13=Event
 		//in 14=Speed 15=Speed_max 16=PWM 17=Throttle 18=VoltageBEC 19=VoltageBEC_min 20=CurrentBEC 21=TemperatureBEC 22=TemperatureCap 
 		//in 23=Timing(empty) 24=Temperature_aux 25=Gear 26=YGEGenExt 27=MotStatEscNr 28=misc ESC_15 29=VersionESC
-		if (isMotorDriverData) {
+		if (isEscData) {
 			if (channelNumber == 4)
 				//out 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max, 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
 				//out 120=Speed 121=Speed_max 122=PWM 123=Throttle 124=VoltageBEC 125=VoltageBEC_min 125=CurrentBEC 127=TemperatureBEC 128=TemperatureCap 
@@ -463,6 +530,56 @@ public class HoTTlogReader2 extends HoTTlogReader {
 				//out 109=Timing(empty) 110=Temperature_aux 111=Gear 112=YGEGenExt 113=MotStatEscNr 114=misc ESC_15 115=VersionESC
 				for (int j = 0; j < 29; j++) {
 					HoTTlogReader2.points[j + 87] = valuesESC[j + 1];
+				}
+		}
+		if (isEsc2Data) {
+			if (channelNumber == 4)
+				//out 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max, 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
+				//out 120=Speed 121=Speed_max 122=PWM 123=Throttle 124=VoltageBEC 125=VoltageBEC_min 125=CurrentBEC 127=TemperatureBEC 128=TemperatureCap 
+				//out 129=Timing(empty) 130=Temperature_aux 131=Gear 132=YGEGenExt 133=MotStatEscNr 134=misc ESC_15 135=VersionESC
+				for (int j = 0; j < 29; j++) {
+					HoTTlogReader2.points[j + 107] = valuesESC2[j + 1];
+				}
+			else
+				// 116=VoltageM, 117=CurrentM, 118=CapacityM, 119=PowerM, 120=RevolutionM, 121=TemperatureM 1, 122=TemperatureM 2 123=Voltage_min, 124=Current_max,
+				// 125=Revolution_max, 126=Temperature1_max, 127=Temperature2_max 128=Event M
+				// 129=Speed 130=Speed_max 131=PWM 132=Throttle 133=VoltageBEC 134=VoltageBEC_min 135=CurrentBEC 136=TemperatureBEC 137=TemperatureCap 
+				// 138=Timing(empty) 139=Temperature_aux 140=Gear 141=YGEGenExt 142=MotStatEscNr 143=misc ESC_15 144=VersionESC
+				for (int j = 0; j < 29; j++) {
+					HoTTlogReader2.points[j + 116] = valuesESC2[j + 1];
+				}
+		}
+		if (isEsc3Data) {
+			if (channelNumber == 4)
+				//out 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max, 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
+				//out 120=Speed 121=Speed_max 122=PWM 123=Throttle 124=VoltageBEC 125=VoltageBEC_min 125=CurrentBEC 127=TemperatureBEC 128=TemperatureCap 
+				//out 129=Timing(empty) 130=Temperature_aux 131=Gear 132=YGEGenExt 133=MotStatEscNr 134=misc ESC_15 135=VersionESC
+				for (int j = 0; j < 29; j++) {
+					HoTTlogReader2.points[j + 107] = valuesESC3[j + 1];
+				}
+			else
+				// 145=VoltageM2, 146=CurrentM, 147=CapacityM, 148=PowerM, 149=RevolutionM, 150=TemperatureM 1, 151=TemperatureM 2 152=Voltage_min, 153=Current_max,
+				// 154=Revolution_max, 155=Temperature1_max, 156=Temperature2_max 157=Event M
+				// 158=Speed 159=Speed_max 160=PWM 161=Throttle 162=VoltageBEC 163=VoltageBEC_min 164=CurrentBEC 165=TemperatureBEC 166=TemperatureCap 
+				// 167=Timing(empty) 168=Temperature_aux 169=Gear 170=YGEGenExt 171=MotStatEscNr 172=misc ESC_15 173=VersionESC
+				for (int j = 0; j < 29; j++) {
+					HoTTlogReader2.points[j + 145] = valuesESC3[j + 1];
+				}
+		}
+		if (isEsc4Data) {
+			if (channelNumber == 4)
+				//out 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max, 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
+				//out 120=Speed 121=Speed_max 122=PWM 123=Throttle 124=VoltageBEC 125=VoltageBEC_min 125=CurrentBEC 127=TemperatureBEC 128=TemperatureCap 
+				//out 129=Timing(empty) 130=Temperature_aux 131=Gear 132=YGEGenExt 133=MotStatEscNr 134=misc ESC_15 135=VersionESC
+				for (int j = 0; j < 29; j++) {
+					HoTTlogReader2.points[j + 107] = valuesESC4[j + 1];
+				}
+			else
+				// 174=VoltageM3, 175=CurrentM, 176=CapacityM, 177=PowerM, 178=RevolutionM, 179=TemperatureM 1, 180=TemperatureM 2 181=Voltage_min, 182=Current_max,
+				// 183=Revolution_max, 184=Temperature1_max, 185=Temperature2_max 186=Event M
+				// 187=Speed 188=Speed_max 189=PWM 190=Throttle 191=VoltageBEC 192=VoltageBEC_min 193=CurrentBEC 194=TemperatureBEC 195=TemperatureCap 
+				for (int j = 0; j < 29; j++) {
+					HoTTlogReader2.points[j + 174] = valuesESC4[j + 1];
 				}
 		}
 

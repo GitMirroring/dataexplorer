@@ -1286,7 +1286,8 @@ public class GraphicsComposite extends Composite {
 	 */
 	public void setModeState(GraphicsMode mode) {
 		if (log.isLoggable(Level.FINER)) log.log(Level.FINER, "GraphicsMode = " + mode);
-		this.cleanMeasurementPointer();
+		if (this.isZoomMouse || this.isLeftMouseMeasure || this.isRightMouseMeasure || this.isPanMouse ||	this.isScopeMode)
+			this.cleanMeasurementPointer();
 		switch (mode) {
 		case ZOOM:
 			this.isZoomMouse = true;

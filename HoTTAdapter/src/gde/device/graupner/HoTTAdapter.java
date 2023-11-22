@@ -125,6 +125,9 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 	final static byte			ANSWER_SENSOR_GENERAL_19200				= (byte) (0xD0 & 0xFF);
 	final static byte			ANSWER_SENSOR_ELECTRIC_19200			= (byte) (0xE0 & 0xFF);
 	final static byte			ANSWER_SENSOR_MOTOR_DRIVER_19200	= (byte) (0xC0 & 0xFF);
+	final static byte			ANSWER_SENSOR_ESC2_19200					= (byte) (0x50 & 0xFF);
+	final static byte			ANSWER_SENSOR_ESC3_19200					= (byte) (0x60 & 0xFF);
+	final static byte			ANSWER_SENSOR_ESC4_19200					= (byte) (0x70 & 0xFF);
 
 	// HoTT sensor bytes 115200 Baud protocol (actual no slave mode)
 	// there is no real slave mode for this protocol
@@ -360,6 +363,114 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 			@Override
 			public LogParser createLogParserD(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[] buffer, int numberUsedChannels) {
 				return new HoTTlogReaderD.EscLogParser(pickerParameters, points, timeSteps_ms, buffer);
+			}
+		},
+		ESC2(8, "ESC2", "AIR_ESC2") { //$NON-NLS-1$
+			@Override
+			public BinParser createBinParser(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[][] buffers) {
+				return new HoTTbinReader.EscBinParser(pickerParameters, points, timeSteps_ms, buffers);
+			}
+
+			@Override
+			public LogParser createLogParser(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[] buffer, int numberUsedChannels) {
+				return new HoTTlogReader.Esc2LogParser(pickerParameters, points, timeSteps_ms, buffer);
+			}
+
+			@Override
+			public BinParser createBinParser2(PickerParameters pickerParameters, long[] timeSteps_ms, byte[][] buffers) {
+				return new HoTTbinReader2.EscBinParser(pickerParameters, timeSteps_ms, buffers);
+			}
+
+			@Override
+			public BinParser createBinParser2(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[][] buffers) {
+				return new HoTTbinReader2.EscBinParser(pickerParameters, points, timeSteps_ms, buffers);
+			}
+
+			@Override
+			public BinParser createBinParserD(PickerParameters pickerParameters, long[] timeSteps_ms, byte[][] buffers) {
+				return new HoTTbinReaderD.EscBinParser(pickerParameters, timeSteps_ms, buffers);
+			}
+
+			@Override
+			public BinParser createBinParserD(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[][] buffers) {
+				return new HoTTbinReaderD.EscBinParser(pickerParameters, points, timeSteps_ms, buffers);
+			}
+
+			@Override
+			public LogParser createLogParserD(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[] buffer, int numberUsedChannels) {
+				return new HoTTlogReaderD.Esc2LogParser(pickerParameters, points, timeSteps_ms, buffer);
+			}
+		},
+		ESC3(9, "ESC3", "AIR_ESC3") { //$NON-NLS-1$
+			@Override
+			public BinParser createBinParser(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[][] buffers) {
+				return new HoTTbinReader.EscBinParser(pickerParameters, points, timeSteps_ms, buffers);
+			}
+
+			@Override
+			public LogParser createLogParser(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[] buffer, int numberUsedChannels) {
+				return new HoTTlogReader.Esc3LogParser(pickerParameters, points, timeSteps_ms, buffer);
+			}
+
+			@Override
+			public BinParser createBinParser2(PickerParameters pickerParameters, long[] timeSteps_ms, byte[][] buffers) {
+				return new HoTTbinReader2.EscBinParser(pickerParameters, timeSteps_ms, buffers);
+			}
+
+			@Override
+			public BinParser createBinParser2(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[][] buffers) {
+				return new HoTTbinReader2.EscBinParser(pickerParameters, points, timeSteps_ms, buffers);
+			}
+
+			@Override
+			public BinParser createBinParserD(PickerParameters pickerParameters, long[] timeSteps_ms, byte[][] buffers) {
+				return new HoTTbinReaderD.EscBinParser(pickerParameters, timeSteps_ms, buffers);
+			}
+
+			@Override
+			public BinParser createBinParserD(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[][] buffers) {
+				return new HoTTbinReaderD.EscBinParser(pickerParameters, points, timeSteps_ms, buffers);
+			}
+
+			@Override
+			public LogParser createLogParserD(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[] buffer, int numberUsedChannels) {
+				return new HoTTlogReaderD.Esc3LogParser(pickerParameters, points, timeSteps_ms, buffer);
+			}
+		},
+		ESC4(10, "ESC4", "AIR_ESC4") { //$NON-NLS-1$
+			@Override
+			public BinParser createBinParser(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[][] buffers) {
+				return new HoTTbinReader.EscBinParser(pickerParameters, points, timeSteps_ms, buffers);
+			}
+
+			@Override
+			public LogParser createLogParser(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[] buffer, int numberUsedChannels) {
+				return new HoTTlogReader.Esc4LogParser(pickerParameters, points, timeSteps_ms, buffer);
+			}
+
+			@Override
+			public BinParser createBinParser2(PickerParameters pickerParameters, long[] timeSteps_ms, byte[][] buffers) {
+				return new HoTTbinReader2.EscBinParser(pickerParameters, timeSteps_ms, buffers);
+			}
+
+			@Override
+			public BinParser createBinParser2(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[][] buffers) {
+				return new HoTTbinReader2.EscBinParser(pickerParameters, points, timeSteps_ms, buffers);
+			}
+
+			@Override
+			public BinParser createBinParserD(PickerParameters pickerParameters, long[] timeSteps_ms, byte[][] buffers) {
+				return new HoTTbinReaderD.EscBinParser(pickerParameters, timeSteps_ms, buffers);
+			}
+
+			@Override
+			public BinParser createBinParserD(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[][] buffers) {
+				return new HoTTbinReaderD.EscBinParser(pickerParameters, points, timeSteps_ms, buffers);
+			}
+
+			@Override
+			public LogParser createLogParserD(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[] buffer, int numberUsedChannels) {
+				return new HoTTlogReaderD.Esc4LogParser(pickerParameters, points, timeSteps_ms, buffer);
 			}
 		},
 		CHANNEL(6, "Channel", "N/A") { //$NON-NLS-1$

@@ -24,6 +24,7 @@ Device specific changes/fixes
 	* iCharger4512DUO - add device
 	* IGCAdapter - add sink speed calculation 
 	* HoTTAdapter* - fix parsing package loss in OSD while history analysis
+	* HoTTAdapter* - add ESC1..ESC4 reading capability
 	* UniLog - adjust dialog group sizes macOS
 
 

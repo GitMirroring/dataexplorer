@@ -3,7 +3,7 @@
     <Device>
         <name implementation="gde.device.graupner.HoTTViewer">HoTTViewer</name>
         <manufacturer>Graupner</manufacturer>
-        <manufacturerURL>https://www.graupner.de</manufacturerURL>
+        <manufacturerURL>https://www.graupner.com</manufacturerURL>
         <group>logger</group>
         <image>HoTTViewer.png</image>
         <usage>false</usage>

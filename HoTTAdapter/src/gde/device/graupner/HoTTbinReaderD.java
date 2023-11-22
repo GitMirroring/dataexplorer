@@ -101,15 +101,15 @@ public class HoTTbinReaderD extends HoTTbinReader2 {
 					this.points[19] = (_buf4[9] & 0xFF) * 1000; //SM MicroVario starts with FW version 1.00 -> 100
 				} 
 				else {
-					// 136=Test 00 137=Test 01.. 149=Test 12
+					// 223=Test 00 224=Test 01.. 235=Test 12
 					for (int i = 0, j = 0; i < 3; i++, j += 2) {
-						HoTTbinReaderD.pointsVario[i + 136] = DataParser.parse2Short(_buf2, 4 + j) * 1000;
+						HoTTbinReaderD.points[i + 223] = DataParser.parse2Short(_buf2, 4 + j) * 1000;
 					}
 					for (int i = 0, j = 0; i < 5; i++, j += 2) {
-						HoTTbinReaderD.pointsVario[i + 139] = DataParser.parse2Short(_buf3, 0 + j) * 1000;
+						HoTTbinReaderD.points[i + 226] = DataParser.parse2Short(_buf3, 0 + j) * 1000;
 					}
 					for (int i = 0, j = 0; i < 5; i++, j += 2) {
-						HoTTbinReaderD.pointsVario[i + 144] = DataParser.parse2Short(_buf4, 0 + j) * 1000;
+						HoTTbinReaderD.points[i + 231] = DataParser.parse2Short(_buf4, 0 + j) * 1000;
 					}					
 				}
 				return true;
@@ -131,8 +131,8 @@ public class HoTTbinReaderD extends HoTTbinReader2 {
 				for (int j = 10; j < 20; j++) {
 					targetPoints[j] = this.points[j];
 				}
-				//136=Test 00 137=Test 01.. 148=Test 12
-				for (int j = 136; j < 149; j++) {
+				//223=Test 00 224=Test 01.. 235=Test 12
+				for (int j = 223; j < 236; j++) {
 					targetPoints[j] = this.points[j];
 				}
 			}
@@ -859,7 +859,7 @@ public class HoTTbinReaderD extends HoTTbinReader2 {
 										migrationJobs.add(Sensor.ESC);
 										
 										if (!isESCdetected) {
-											HoTTAdapterD.updateEscTypeDependent((HoTTbinReaderD.buf4[9] & 0xFF), device, HoTTbinReaderD.recordSet);
+											HoTTAdapterD.updateEscTypeDependent((HoTTbinReaderD.buf4[9] & 0xFF), device, HoTTbinReaderD.recordSet, 1);
 											isESCdetected = true;								
 										}
 									}

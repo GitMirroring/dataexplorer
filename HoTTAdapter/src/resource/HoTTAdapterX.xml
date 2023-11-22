@@ -3,7 +3,7 @@
     <Device>
         <name implementation="gde.device.graupner.HoTTAdapterX">HoTTAdapterX</name>
         <manufacturer>Graupner</manufacturer>
-        <manufacturerURL>https://www.graupner.de</manufacturerURL>
+        <manufacturerURL>https://www.graupner.com</manufacturerURL>
         <group>logger</group>
         <image>HoTTAdapterX.png</image>
         <usage>false</usage>

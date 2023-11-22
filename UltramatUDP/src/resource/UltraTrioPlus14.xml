@@ -3,7 +3,7 @@
 	<Device>
 		<name implementation="gde.device.graupner.UltraTrioPlus14">UltraTrioPlus14</name>
 		<manufacturer>Graupner</manufacturer>
-		<manufacturerURL>https://www.graupner.de</manufacturerURL>
+		<manufacturerURL>https://www.graupner.com</manufacturerURL>
 		<group>charger</group>
 		<image>UltraTrioPlus14.jpg</image>
 		<usage>false</usage>

@@ -82,7 +82,7 @@ public class HoTTbinReader {
 	static byte[]																	buf;
 	static byte[]																	buf0, buf1, buf2, buf3, buf4, buf5, buf6, buf7, buf8, buf9, bufA, bufB, bufC, bufD;
 	static long																		timeStep_ms;
-	static RecordSet															recordSetReceiver, recordSetGAM, recordSetEAM, recordSetVario, recordSetGPS, recordSetChannel, recordSetESC;
+	static RecordSet															recordSetReceiver, recordSetGAM, recordSetEAM, recordSetVario, recordSetGPS, recordSetChannel, recordSetESC, recordSetESC2, recordSetESC3, recordSetESC4;
 	// todo remove the next lines which are used neither by this class nor by HoTTbinHistoReader
 	static int[]																	pointsReceiver, pointsEAM, pointsVario, pointsGPS, pointsChannel, pointsESC, pointsGAM;
 	static int																		tmpVoltageRx								= 0;

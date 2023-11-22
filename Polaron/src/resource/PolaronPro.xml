@@ -3,7 +3,7 @@
     <Device>
         <name implementation="gde.device.graupner.PolaronPro">PolaronPro</name>
         <manufacturer>Graupner</manufacturer>
-        <manufacturerURL>https://www.graupner.de</manufacturerURL>
+        <manufacturerURL>https://www.graupner.com</manufacturerURL>
         <group>charger</group>
         <image>PolaronPro.png</image>
         <usage>false</usage>

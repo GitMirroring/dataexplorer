@@ -3,7 +3,7 @@
     <Device>
         <name implementation="gde.device.graupner.Ultramat16">Ultramat16</name>
         <manufacturer>Graupner</manufacturer>
-        <manufacturerURL>https://www.graupner.de</manufacturerURL>
+        <manufacturerURL>https://www.graupner.com</manufacturerURL>
         <group>charger</group>
         <image>Ultramat16S.jpg</image>
         <usage>false</usage>

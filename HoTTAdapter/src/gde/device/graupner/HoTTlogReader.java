@@ -40,6 +40,9 @@ public class HoTTlogReader extends HoTTbinReader {
 	protected static GamLogParser gamLogParser;
 	protected static EamLogParser eamLogParser;
 	protected static EscLogParser escLogParser;
+	protected static EscLogParser esc2LogParser;
+	protected static EscLogParser esc3LogParser;
+	protected static EscLogParser esc4LogParser;
 
 	/**
 	 * read complete file data and display the first found record set
@@ -69,7 +72,10 @@ public class HoTTlogReader extends HoTTbinReader {
 		HoTTbinReader.recordSetEAM = null; // 0=RXSQ, 1=Voltage, 2=Current, 3=Capacity, 4=Power, 5=Balance, 6=CellVoltage 1, 7=CellVoltage 2 .... 19=CellVoltage 14, 20=Altitude, 21=Climb 1, 22=Climb 3, 23=Voltage 1, 24=Voltage 2, 25=Temperature 1, 26=Temperature 2, 27=Revolution
 		HoTTbinReader.recordSetVario = null; // 0=RXSQ, 1=Altitude, 2=Climb 1, 3=Climb 3, 4=Climb 10, 5=VoltageRx, 6=TemperatureRx 7=Event 8=accX 9=accY 10=accZ 11=reserved 12=version
 		HoTTbinReader.recordSetGPS = null; // 0=RXSQ, 1=Latitude, 2=Longitude, 3=Altitude, 4=Climb 1, 5=Climb 3, 6=Velocity, 7=Distance, 8=Direction, 9=TripLength, 10=VoltageRx, 11=TemperatureRx 12=satellites 13=GPS-fix 14=EventGPS 15=HomeDirection 16=Roll 17=Pitch 18=Yaw 19=GyroX 20=GyroY 21=GyroZ 22=Vibration 23=Version	
-		HoTTbinReader.recordSetESC = null; // 0=RF_RXSQ, 1=Voltage, 2=Current, 3=Capacity, 4=Power, 5=Revolution, 6=Temperaure
+		HoTTbinReader.recordSetESC = null; // 0=RF_RXSQ, 1=Voltage, 2=Current, 3=Capacity, 4=Power, 5=Revolution, 6=Temperature
+		HoTTbinReader.recordSetESC2 = null; // 0=RF_RXSQ, 1=Voltage, 2=Current, 3=Capacity, 4=Power, 5=Revolution, 6=Temperature
+		HoTTbinReader.recordSetESC3 = null; // 0=RF_RXSQ, 1=Voltage, 2=Current, 3=Capacity, 4=Power, 5=Revolution, 6=Temperature
+		HoTTbinReader.recordSetESC4 = null; // 0=RF_RXSQ, 1=Voltage, 2=Current, 3=Capacity, 4=Power, 5=Revolution, 6=Temperature
 		long[] timeSteps_ms = new long[] {0};
 		int numberLogChannels = Integer.valueOf(fileInfoHeader.get("LOG NOB CHANNEL"));
 		boolean isASCII = fileInfoHeader.get("LOG TYPE").contains("ASCII");
@@ -84,11 +90,14 @@ public class HoTTlogReader extends HoTTbinReader {
 		HoTTlogReader.gamLogParser = (GamLogParser) Sensor.GAM.createLogParser(HoTTbinReader.pickerParameters, new int[26], timeSteps_ms, buf, numberLogChannels);
 		HoTTlogReader.eamLogParser = (EamLogParser) Sensor.EAM.createLogParser(HoTTbinReader.pickerParameters, new int[31], timeSteps_ms, buf, numberLogChannels);
 		HoTTlogReader.escLogParser = (EscLogParser) Sensor.ESC.createLogParser(HoTTbinReader.pickerParameters, new int[30], timeSteps_ms, buf, numberLogChannels);
+		HoTTlogReader.esc2LogParser = (EscLogParser) Sensor.ESC.createLogParser(HoTTbinReader.pickerParameters, new int[30], timeSteps_ms, buf, numberLogChannels);
+		HoTTlogReader.esc3LogParser = (EscLogParser) Sensor.ESC.createLogParser(HoTTbinReader.pickerParameters, new int[30], timeSteps_ms, buf, numberLogChannels);
+		HoTTlogReader.esc4LogParser = (EscLogParser) Sensor.ESC.createLogParser(HoTTbinReader.pickerParameters, new int[30], timeSteps_ms, buf, numberLogChannels);
 		int logTimeStep_ms = 1000/Integer.valueOf(fileInfoHeader.get("COUNTER").split("/")[1].split(GDE.STRING_BLANK)[0]);
 		HoTTbinReader.isTextModusSignaled = false;
 		boolean isVarioDetected = false;
 		boolean isGPSdetected = false;
-		boolean isESCdetected = false;
+		boolean isESCdetected = false, isESC2detected = false,  isESC3detected = false,  isESC4detected = false;
 		int logDataOffset = Integer.valueOf(fileInfoHeader.get("LOG DATA OFFSET"));
 		long numberDatablocks = Long.parseLong(fileInfoHeader.get(HoTTAdapter.LOG_COUNT));
 		long startTimeStamp_ms = HoTTbinReader.getStartTimeStamp(fileInfoHeader.get("LOG START TIME"), HoTTbinReader.getStartTimeStamp(file.getName(), file.lastModified(), numberDatablocks));
@@ -315,6 +324,87 @@ public class HoTTlogReader extends HoTTbinReader {
 								if (!isESCdetected) {
 									HoTTAdapter.updateEscTypeDependent((HoTTbinReader.buf[65] & 0xFF), device, HoTTbinReader.recordSetESC);
 									isESCdetected = true;
+								}
+								break;
+
+						case HoTTAdapter.ANSWER_SENSOR_ESC2_19200:
+								// check if recordSetGeneral initialized, transmitter and receiver
+								// data always present, but not in the same data rate as signals
+								if (HoTTbinReader.recordSetESC2 == null) {
+									channel = HoTTbinReader.channels.get(8);
+									channel.setFileDescription(HoTTbinReader.application.isObjectoriented()
+											? date + GDE.STRING_BLANK + HoTTbinReader.application.getObjectKey() : date);
+									recordSetName = recordSetNumber + GDE.STRING_RIGHT_PARENTHESIS_BLANK + HoTTAdapter.Sensor.ESC2.value() + recordSetNameExtend;
+									HoTTbinReader.recordSetESC2 = RecordSet.createRecordSet(recordSetName, device, 8, true, true, true);
+									channel.put(recordSetName, HoTTbinReader.recordSetESC2);
+									HoTTbinReader.recordSets.put(HoTTAdapter.Sensor.ESC2.value(), HoTTbinReader.recordSetESC2);
+									tmpRecordSet = channel.get(recordSetName);
+									tmpRecordSet.setRecordSetDescription(device.getName() + GDE.STRING_MESSAGE_CONCAT + Messages.getString(MessageIds.GDE_MSGT0129) + dateTime);
+									tmpRecordSet.setStartTimeStamp(startTimeStamp_ms);
+									if (HoTTbinReader.application.getMenuToolBar() != null) {
+										channel.applyTemplate(recordSetName, false);
+									}
+								}
+								// recordSetElectric initialized and ready to add data
+								HoTTlogReader.parseAddESC2(HoTTbinReader.buf);
+
+								if (!isESC2detected) {
+									HoTTAdapter.updateEscTypeDependent((HoTTbinReader.buf[65] & 0xFF), device, HoTTbinReader.recordSetESC2);
+									isESC2detected = true;
+								}
+								break;
+
+						case HoTTAdapter.ANSWER_SENSOR_ESC3_19200:
+								// check if recordSetGeneral initialized, transmitter and receiver
+								// data always present, but not in the same data rate as signals
+								if (HoTTbinReader.recordSetESC3 == null) {
+									channel = HoTTbinReader.channels.get(9);
+									channel.setFileDescription(HoTTbinReader.application.isObjectoriented()
+											? date + GDE.STRING_BLANK + HoTTbinReader.application.getObjectKey() : date);
+									recordSetName = recordSetNumber + GDE.STRING_RIGHT_PARENTHESIS_BLANK + HoTTAdapter.Sensor.ESC3.value() + recordSetNameExtend;
+									HoTTbinReader.recordSetESC3 = RecordSet.createRecordSet(recordSetName, device, 9, true, true, true);
+									channel.put(recordSetName, HoTTbinReader.recordSetESC3);
+									HoTTbinReader.recordSets.put(HoTTAdapter.Sensor.ESC3.value(), HoTTbinReader.recordSetESC3);
+									tmpRecordSet = channel.get(recordSetName);
+									tmpRecordSet.setRecordSetDescription(device.getName() + GDE.STRING_MESSAGE_CONCAT + Messages.getString(MessageIds.GDE_MSGT0129) + dateTime);
+									tmpRecordSet.setStartTimeStamp(startTimeStamp_ms);
+									if (HoTTbinReader.application.getMenuToolBar() != null) {
+										channel.applyTemplate(recordSetName, false);
+									}
+								}
+								// recordSetESC initialized and ready to add data
+								HoTTlogReader.parseAddESC3(HoTTbinReader.buf);
+
+								if (!isESC3detected) {
+									HoTTAdapter.updateEscTypeDependent((HoTTbinReader.buf[65] & 0xFF), device, HoTTbinReader.recordSetESC3);
+									isESC3detected = true;
+								}
+								break;
+
+						case HoTTAdapter.ANSWER_SENSOR_ESC4_19200:
+								// check if recordSetGeneral initialized, transmitter and receiver
+								// data always present, but not in the same data rate as signals
+								if (HoTTbinReader.recordSetESC4 == null) {
+									channel = HoTTbinReader.channels.get(10);
+									channel.setFileDescription(HoTTbinReader.application.isObjectoriented()
+											? date + GDE.STRING_BLANK + HoTTbinReader.application.getObjectKey() : date);
+									recordSetName = recordSetNumber + GDE.STRING_RIGHT_PARENTHESIS_BLANK + HoTTAdapter.Sensor.ESC4.value() + recordSetNameExtend;
+									HoTTbinReader.recordSetESC4 = RecordSet.createRecordSet(recordSetName, device, 10, true, true, true);
+									channel.put(recordSetName, HoTTbinReader.recordSetESC4);
+									HoTTbinReader.recordSets.put(HoTTAdapter.Sensor.ESC4.value(), HoTTbinReader.recordSetESC4);
+									tmpRecordSet = channel.get(recordSetName);
+									tmpRecordSet.setRecordSetDescription(device.getName() + GDE.STRING_MESSAGE_CONCAT + Messages.getString(MessageIds.GDE_MSGT0129) + dateTime);
+									tmpRecordSet.setStartTimeStamp(startTimeStamp_ms);
+									if (HoTTbinReader.application.getMenuToolBar() != null) {
+										channel.applyTemplate(recordSetName, false);
+									}
+								}
+								// recordSetESC initialized and ready to add data
+								HoTTlogReader.parseAddESC4(HoTTbinReader.buf);
+
+								if (!isESC4detected) {
+									HoTTAdapter.updateEscTypeDependent((HoTTbinReader.buf[65] & 0xFF), device, HoTTbinReader.recordSetESC4);
+									isESC4detected = true;
 								}
 								break;
 						}
@@ -1107,10 +1197,16 @@ public class HoTTlogReader extends HoTTbinReader {
 		protected int tmpCapacity;
 		protected int tmpRevolution;
 		protected int tmpTemperatureFet;
-		private final boolean	isChannelsChannel;
+		protected final boolean	isChannelsChannel;
 
 		protected EscLogParser(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[] buffer) {
 			super(pickerParameters, points, timeSteps_ms, buffer, Sensor.ESC);
+			this.buf = buffer;
+			this.isChannelsChannel = Analyzer.getInstance().getActiveChannel().getNumber() == HoTTAdapter2.CHANNELS_CHANNEL_NUMBER;
+		}
+		
+		protected EscLogParser(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[] buffer, Sensor sensor) {
+			super(pickerParameters, points, timeSteps_ms, buffer, sensor);
 			this.buf = buffer;
 			this.isChannelsChannel = Analyzer.getInstance().getActiveChannel().getNumber() == HoTTAdapter2.CHANNELS_CHANNEL_NUMBER;
 		}
@@ -1234,6 +1330,125 @@ public class HoTTlogReader extends HoTTbinReader {
 				//out 109=Timing(empty) 110=Temperature_aux 111=Gear 112=YGEGenExt 113=MotStatEscNr 114=misc ESC_15 115=VersionESC
 				for (int j = 0; j < 29; j++) {
 					targetPoints[j + 87] = this.points[j + 1];
+				}
+		}
+
+	}
+
+	/**
+	 * parse the buffered data from buffer and add points to record set
+	 *
+	 * @param _buf
+	 * @throws DataInconsitsentException
+	 */
+	protected static void parseAddESC2(byte[] _buf) throws DataInconsitsentException {
+		if (HoTTlogReader.esc2LogParser.parse(HoTTlogReader.recordSetESC2, HoTTlogReader.esc2LogParser.getTimeStep_ms())) {
+			HoTTlogReader.recordSetESC2.addPoints(HoTTlogReader.esc2LogParser.getPoints(), HoTTlogReader.esc2LogParser.getTimeStep_ms());
+		}
+		HoTTlogReader.isJustParsed = true;
+	}
+
+	public static class Esc2LogParser extends EscLogParser {
+
+		protected Esc2LogParser(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[] buffer) {
+			super(pickerParameters, points, timeSteps_ms, buffer, Sensor.ESC2);
+		}
+
+		@Override
+		public void migratePoints(int[] targetPoints) {
+			if (this.isChannelsChannel)
+				//out 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max, 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
+				//out 120=Speed 121=Speed_max 122=PWM 123=Throttle 124=VoltageBEC 125=VoltageBEC_min 125=CurrentBEC 127=TemperatureBEC 128=TemperatureCap 
+				//out 129=Timing(empty) 130=Temperature_aux 131=Gear 132=YGEGenExt 133=MotStatEscNr 134=misc ESC_15 135=VersionESC
+				for (int j = 0; j < 29; j++) {
+					targetPoints[j + 107] = this.points[j + 1];
+				}
+			else
+				// 116=VoltageM, 117=CurrentM, 118=CapacityM, 119=PowerM, 120=RevolutionM, 121=TemperatureM 1, 122=TemperatureM 2 123=Voltage_min, 124=Current_max,
+				// 125=Revolution_max, 126=Temperature1_max, 127=Temperature2_max 128=Event M
+				// 129=Speed 130=Speed_max 131=PWM 132=Throttle 133=VoltageBEC 134=VoltageBEC_min 135=CurrentBEC 136=TemperatureBEC 137=TemperatureCap 
+				// 138=Timing(empty) 139=Temperature_aux 140=Gear 141=YGEGenExt 142=MotStatEscNr 143=misc ESC_15 144=VersionESC
+				for (int j = 0; j < 29; j++) {
+					targetPoints[j + 116] = this.points[j + 1];
+				}
+		}
+
+	}
+
+	/**
+	 * parse the buffered data from buffer and add points to record set
+	 *
+	 * @param _buf
+	 * @throws DataInconsitsentException
+	 */
+	protected static void parseAddESC3(byte[] _buf) throws DataInconsitsentException {
+		if (HoTTlogReader.esc3LogParser.parse(HoTTlogReader.recordSetESC3, HoTTlogReader.esc3LogParser.getTimeStep_ms())) {
+			HoTTlogReader.recordSetESC3.addPoints(HoTTlogReader.esc3LogParser.getPoints(), HoTTlogReader.esc3LogParser.getTimeStep_ms());
+		}
+		HoTTlogReader.isJustParsed = true;
+	}
+
+	public static class Esc3LogParser extends EscLogParser {
+
+		protected Esc3LogParser(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[] buffer) {
+			super(pickerParameters, points, timeSteps_ms, buffer, Sensor.ESC3);
+		}
+
+		@Override
+		public void migratePoints(int[] targetPoints) {
+			if (this.isChannelsChannel)
+				//out 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max, 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
+				//out 120=Speed 121=Speed_max 122=PWM 123=Throttle 124=VoltageBEC 125=VoltageBEC_min 125=CurrentBEC 127=TemperatureBEC 128=TemperatureCap 
+				//out 129=Timing(empty) 130=Temperature_aux 131=Gear 132=YGEGenExt 133=MotStatEscNr 134=misc ESC_15 135=VersionESC
+				for (int j = 0; j < 29; j++) {
+					targetPoints[j + 107] = this.points[j + 1];
+				}
+			else
+				// 145=VoltageM2, 146=CurrentM, 147=CapacityM, 148=PowerM, 149=RevolutionM, 150=TemperatureM 1, 151=TemperatureM 2 152=Voltage_min, 153=Current_max,
+				// 154=Revolution_max, 155=Temperature1_max, 156=Temperature2_max 157=Event M
+				// 158=Speed 159=Speed_max 160=PWM 161=Throttle 162=VoltageBEC 163=VoltageBEC_min 164=CurrentBEC 165=TemperatureBEC 166=TemperatureCap 
+				// 167=Timing(empty) 168=Temperature_aux 169=Gear 170=YGEGenExt 171=MotStatEscNr 172=misc ESC_15 173=VersionESC
+				for (int j = 0; j < 29; j++) {
+					targetPoints[j + 145] = this.points[j + 1];
+				}
+		}
+
+	}
+
+	/**
+	 * parse the buffered data from buffer and add points to record set
+	 *
+	 * @param _buf
+	 * @throws DataInconsitsentException
+	 */
+	protected static void parseAddESC4(byte[] _buf) throws DataInconsitsentException {
+		if (HoTTlogReader.esc4LogParser.parse(HoTTlogReader.recordSetESC4, HoTTlogReader.esc4LogParser.getTimeStep_ms())) {
+			HoTTlogReader.recordSetESC4.addPoints(HoTTlogReader.esc4LogParser.getPoints(), HoTTlogReader.esc4LogParser.getTimeStep_ms());
+		}
+		HoTTlogReader.isJustParsed = true;
+	}
+
+	public static class Esc4LogParser extends EscLogParser {
+
+		protected Esc4LogParser(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[] buffer) {
+			super(pickerParameters, points, timeSteps_ms, buffer, Sensor.ESC4);
+		}
+
+		@Override
+		public void migratePoints(int[] targetPoints) {
+			if (this.isChannelsChannel)
+				//out 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max, 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
+				//out 120=Speed 121=Speed_max 122=PWM 123=Throttle 124=VoltageBEC 125=VoltageBEC_min 125=CurrentBEC 127=TemperatureBEC 128=TemperatureCap 
+				//out 129=Timing(empty) 130=Temperature_aux 131=Gear 132=YGEGenExt 133=MotStatEscNr 134=misc ESC_15 135=VersionESC
+				for (int j = 0; j < 29; j++) {
+					targetPoints[j + 107] = this.points[j + 1];
+				}
+			else
+				// 174=VoltageM3, 175=CurrentM, 176=CapacityM, 177=PowerM, 178=RevolutionM, 179=TemperatureM 1, 180=TemperatureM 2 181=Voltage_min, 182=Current_max,
+				// 183=Revolution_max, 184=Temperature1_max, 185=Temperature2_max 186=Event M
+				// 187=Speed 188=Speed_max 189=PWM 190=Throttle 191=VoltageBEC 192=VoltageBEC_min 193=CurrentBEC 194=TemperatureBEC 195=TemperatureCap 
+				for (int j = 0; j < 29; j++) {
+					targetPoints[j + 174] = this.points[j + 1];
 				}
 		}
 
