@@ -18,6 +18,7 @@ Device specific changes/fixes
 Version 3.8.2 - 27 Oct 2023
 Generic changes/fixes 
 	* fix record scale position while some records contains zero values only
+	* update SWT library for aarch64
 	
 Device specific changes/fixes
 	* iCharger DX12 - add device
