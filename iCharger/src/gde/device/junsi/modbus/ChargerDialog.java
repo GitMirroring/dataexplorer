@@ -893,7 +893,7 @@ public class ChargerDialog extends DeviceDialog {
 				case 26: //26 regCapLimit
 					systemSettings.xInputSources[systemValues[17]].setRegCapLimit(systemValues[26]);
 					break;
-				case 27: //language 0=en 1=de
+				case 27: //language 0=en 1=de 2=ch
 					systemSettings.setSelectLanguage((short) systemValues[27]);
 					break;
 					
@@ -1465,6 +1465,7 @@ public class ChargerDialog extends DeviceDialog {
 			}
 		});
 		this.dialogShell.layout();
+		this.dialogShell.setSize(800, 750);
 		Display display = getParent().getDisplay();
 		while (!this.dialogShell.isDisposed()) {
 			if (!display.readAndDispatch()) {
@@ -1497,7 +1498,8 @@ public class ChargerDialog extends DeviceDialog {
 		else if (Settings.getInstance().isDeviceDialogsOnTop())
 			this.dialogShell = new Shell(this.application.getDisplay(), SWT.DIALOG_TRIM | SWT.ON_TOP);
 		else
-			this.dialogShell = new Shell(this.application.getDisplay(), SWT.DIALOG_TRIM);		this.dialogShell.setSize(800, 750);
+			this.dialogShell = new Shell(this.application.getDisplay(), SWT.DIALOG_TRIM);		
+		this.dialogShell.setSize(800, 750);
 		
 		SWTResourceManager.registerResourceUser(this.dialogShell);
 		this.dialogShell.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE + 1, SWT.NORMAL));
@@ -2137,8 +2139,8 @@ public class ChargerDialog extends DeviceDialog {
 		//27 language 0=en 1=de
 		this.systemParameters[27] = new ParameterConfigControl(this.grpLanguage, this.systemValues, 27, 
 				"Language", 175, //$NON-NLS-1$
-				"English, Deutsch", 280, //$NON-NLS-1$
-				new String[] { "en", "de" }, 50, 200); //$NON-NLS-1$ //$NON-NLS-2$
+				"English, Deutsch, Chinese", 280, //$NON-NLS-1$
+				new String[] { "en", "de", "zh" }, 50, 200); //$NON-NLS-1$ //$NON-NLS-2$
 		grpLanguage.addListener(SWT.Selection, systemParameterChangeListener);
 		grpLanguage.layout();
 

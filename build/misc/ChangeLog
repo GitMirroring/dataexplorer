@@ -12,6 +12,7 @@ Device specific changes/fixes
 	* iChargerUSB* - enable setting of charge end current while Li balancer is switched off
 	* iChargerUSB* - fix configuration setting digital power voltage and current max value
 	* iChargerUSB* - fix charge/discharge slider end values
+	* iChargerUSB* - fix device language selection
 	* ZeroAdapter - fix date/time parsing
 	* OpenTX-Telemetry - make repeating error visible on message box
 	* HoTTAdapter* - add ESC1..ESC4 reading capability
