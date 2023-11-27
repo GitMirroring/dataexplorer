@@ -269,6 +269,7 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 
 							if (!isESC2detected) {
 								HoTTAdapterD.updateEscTypeDependent((HoTTbinReader.buf[65] & 0xFF), device, HoTTlogReaderD.recordSet, 2);
+								HoTTlogReaderD.detectedSensors.add(Sensor.ESC2);
 								isESC2detected = true;
 							}
 						}
@@ -281,6 +282,7 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 
 							if (!isESC3detected) {
 								HoTTAdapterD.updateEscTypeDependent((HoTTbinReader.buf[65] & 0xFF), device, HoTTlogReaderD.recordSet, 3);
+								HoTTlogReaderD.detectedSensors.add(Sensor.ESC3);
 								isESC3detected = true;
 							}
 						}
@@ -293,6 +295,7 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 
 							if (!isESC4detected) {
 								HoTTAdapterD.updateEscTypeDependent((HoTTbinReader.buf[65] & 0xFF), device, HoTTlogReaderD.recordSet, 4);
+								HoTTlogReaderD.detectedSensors.add(Sensor.ESC4);
 								isESC4detected = true;
 							}
 						}

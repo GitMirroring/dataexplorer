@@ -70,7 +70,7 @@ public class HoTTbinReaderD extends HoTTbinReader2 {
 		protected boolean parse() {
 			//  0=RX-TX-VPacks, 1=RXSQ, 2=Strength, 3=VPacks, 4=Tx, 5=Rx, 6=VoltageRx, 7=TemperatureRx 8=VoltageRxMin 9=EventRx
 			// 10=Altitude, 11=Climb 1, 12=Climb 3, 13=Climb 10 14=EventVario 15=misc Vario_1 16=misc Vario_2 17=misc Vario_3 18=misc Vario_4 19=misc Vario_5
-			//136=Test 00 137=Test 01.. 149=Test 12
+			// 223=Test 00 224=Test 01.. 235=Test 12
 			this.tmpHeight = DataParser.parse2Short(this._buf1, 2) - 500;
 			this.tmpClimb10 = DataParser.parse2UnsignedShort(this._buf2, 2) - 30000;
 			if (isPointsValid()) {

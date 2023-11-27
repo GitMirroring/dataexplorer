@@ -2871,6 +2871,7 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 	 * @param version detected in byte buffer
 	 * @param device HoTTAdapter
 	 * @param tmpRecordSet the record set to be updated
+	 * @param numESC the number of ESC
 	 */
 	protected static void updateEscTypeDependent(int version, IDevice device, RecordSet tmpRecordSet, int numESC) {
 		if (version == 3) { //YGE
