@@ -16,6 +16,7 @@ Device specific changes/fixes
 	* ZeroAdapter - fix date/time parsing
 	* OpenTX-Telemetry - make repeating error visible on message box
 	* HoTTAdapter* - add ESC1..ESC4 reading capability
+	* HoTTAdapter* - skip rx sensitivity data
 	* UniLog - adjust dialog group sizes macOS
 
 

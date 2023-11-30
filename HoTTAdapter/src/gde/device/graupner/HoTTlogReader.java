@@ -185,6 +185,11 @@ public class HoTTlogReader extends HoTTbinReader {
 							log.log(Level.INFO, String.format("Sensor %02X", HoTTbinReader.buf[26]));
 						}
 					}
+					else {
+						if (log.isLoggable(Level.INFO))
+							log.log(Level.INFO, "sensitivity data " + StringHelper.byte2Hex2CharString(HoTTbinReader.buf, HoTTbinReader.buf.length));
+						continue; //skip rx sensitivity data
+					}
 
 					HoTTlogReader.rcvLogParser.trackPackageLoss(true);
 
@@ -1306,8 +1311,8 @@ public class HoTTlogReader extends HoTTbinReader {
 			}
 
 			//enable binary output for enhanced ESC data
-			if (log.isLoggable(Level.INFO))
-				log.log(Level.INFO, StringHelper.byte2Hex2CharString(buf, buf.length));
+			if (log.isLoggable(Level.FINE))
+				log.log(Level.FINE, StringHelper.byte2Hex2CharString(buf, buf.length));
 			
 			if (log.isLoggable(Level.FINER)) {
 				printSensorValues(buf, this.points, 14);

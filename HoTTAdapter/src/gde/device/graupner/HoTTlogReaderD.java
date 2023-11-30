@@ -190,6 +190,12 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 							log.log(Level.INFO, String.format("Sensor %02X", HoTTbinReader.buf[26]));
 						}
 					}
+					else {
+						if (log.isLoggable(Level.INFO))
+							log.log(Level.INFO, "sensitivity data " + StringHelper.byte2Hex2CharString(HoTTbinReader.buf, HoTTbinReader.buf.length));
+						continue; //skip rx sensitivity data
+					}
+						
 					HoTTlogReaderD.rcvLogParser.trackPackageLoss(true);
 
 					//create and fill sensor specific data record sets
@@ -264,7 +270,8 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 					case HoTTAdapter.ANSWER_SENSOR_ESC2_19200:
 						isESC2Data = HoTTlogReaderD.esc2LogParser.parse(HoTTlogReaderD.recordSet, HoTTlogReaderD.esc2LogParser.getTimeStep_ms());
 						if (isESC2Data && isReceiverData) {
-							migrateAddPoints(HoTTlogReaderD.esc2LogParser.getTimeStep_ms(), isVarioData, isGPSData, isGeneralData, isElectricData, isESCData, isESC2Data, isESC3Data, isESC4Data, channelNumber, valuesVar, valuesGPS, valuesGAM, valuesEAM, valuesESC, valuesESC2, valuesESC3, valuesESC4);
+							migrateAddPoints(HoTTlogReaderD.esc2LogParser.getTimeStep_ms(), isVarioData, isGPSData, isGeneralData, isElectricData, isESCData, isESC2Data, isESC3Data, isESC4Data, channelNumber,
+									valuesVar, valuesGPS, valuesGAM, valuesEAM, valuesESC, valuesESC2, valuesESC3, valuesESC4);
 							isReceiverData = false;
 
 							if (!isESC2detected) {
@@ -272,12 +279,13 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 								HoTTlogReaderD.detectedSensors.add(Sensor.ESC2);
 								isESC2detected = true;
 							}
-						}
+						} 
 						break;
 					case HoTTAdapter.ANSWER_SENSOR_ESC3_19200:
 						isESC3Data = HoTTlogReaderD.esc3LogParser.parse(HoTTlogReaderD.recordSet, HoTTlogReaderD.esc3LogParser.getTimeStep_ms());
 						if (isESC3Data && isReceiverData) {
-							migrateAddPoints(HoTTlogReaderD.esc3LogParser.getTimeStep_ms(), isVarioData, isGPSData, isGeneralData, isElectricData, isESCData, isESC2Data, isESC3Data, isESC4Data, channelNumber, valuesVar, valuesGPS, valuesGAM, valuesEAM, valuesESC, valuesESC2, valuesESC3, valuesESC4);
+							migrateAddPoints(HoTTlogReaderD.esc3LogParser.getTimeStep_ms(), isVarioData, isGPSData, isGeneralData, isElectricData, isESCData, isESC2Data, isESC3Data, isESC4Data, channelNumber,
+									valuesVar, valuesGPS, valuesGAM, valuesEAM, valuesESC, valuesESC2, valuesESC3, valuesESC4);
 							isReceiverData = false;
 
 							if (!isESC3detected) {
@@ -285,12 +293,13 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 								HoTTlogReaderD.detectedSensors.add(Sensor.ESC3);
 								isESC3detected = true;
 							}
-						}
+						} 
 						break;
 					case HoTTAdapter.ANSWER_SENSOR_ESC4_19200:
 						isESC4Data = HoTTlogReaderD.esc4LogParser.parse(HoTTlogReaderD.recordSet, HoTTlogReaderD.esc4LogParser.getTimeStep_ms());
 						if (isESC4Data && isReceiverData) {
-							migrateAddPoints(HoTTlogReaderD.esc3LogParser.getTimeStep_ms(), isVarioData, isGPSData, isGeneralData, isElectricData, isESCData, isESC2Data, isESC3Data, isESC4Data, channelNumber, valuesVar, valuesGPS, valuesGAM, valuesEAM, valuesESC, valuesESC2, valuesESC3, valuesESC4);
+							migrateAddPoints(HoTTlogReaderD.esc3LogParser.getTimeStep_ms(), isVarioData, isGPSData, isGeneralData, isElectricData, isESCData, isESC2Data, isESC3Data, isESC4Data, channelNumber,
+									valuesVar, valuesGPS, valuesGAM, valuesEAM, valuesESC, valuesESC2, valuesESC3, valuesESC4);
 							isReceiverData = false;
 
 							if (!isESC4detected) {
@@ -298,7 +307,7 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 								HoTTlogReaderD.detectedSensors.add(Sensor.ESC4);
 								isESC4detected = true;
 							}
-						}
+						} 
 						break;
 					case 0x1F: //receiver sensitive data
 					default:

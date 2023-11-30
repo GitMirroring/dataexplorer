@@ -1006,7 +1006,7 @@
 				<label>label_event EAM</label>
 			</Measurement>
 			<Measurement>
-				<name>voltage M</name>
+				<name>voltage M1</name>
 				<symbol>U</symbol>
 				<unit>V</unit>
 				<active>true</active>
@@ -1018,7 +1018,7 @@
 				<label>label_voltage ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>current M</name>
+				<name>current M1</name>
 				<symbol>I</symbol>
 				<unit>A</unit>
 				<active>true</active>
@@ -1030,7 +1030,7 @@
 				<label>label_current ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>capacity M</name>
+				<name>capacity M1</name>
 				<symbol>C</symbol>
 				<unit>mAh</unit>
 				<active>true</active>
@@ -1043,7 +1043,7 @@
 				<label>label_capacity ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>power M</name>
+				<name>power M1</name>
 				<symbol>P</symbol>
 				<unit>W</unit>
 				<active>true</active>
@@ -1056,7 +1056,7 @@
 				<label>label_power ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>runs_per_minute M</name>
+				<name>runs_per_minute M1</name>
 				<symbol>rpm</symbol>
 				<unit>1/min</unit>
 				<active>true</active>
@@ -1069,7 +1069,7 @@
 				<label>label_rpm ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>temperature M_1</name>
+				<name>temperature M1_1</name>
 				<symbol>T</symbol>
 				<unit>°C</unit>
 				<active>true</active>
@@ -1080,7 +1080,7 @@
 				<label>label_temperature_fet ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>temperature M_2</name>
+				<name>temperature M1_2</name>
 				<symbol>T</symbol>
 				<unit>°C</unit>
 				<active>true</active>
@@ -1091,7 +1091,7 @@
 				<label>label_temperature_ext ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>voltage M_min</name>
+				<name>voltage M1_min</name>
 				<symbol>U_min</symbol>
 				<unit>V</unit>
 				<active>true</active>
@@ -1103,7 +1103,7 @@
 				<label>label_voltage_bat_min ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>current M_max</name>
+				<name>current M1_max</name>
 				<symbol>I</symbol>
 				<unit>A_max</unit>
 				<active>true</active>
@@ -1115,7 +1115,7 @@
 				<label>label_current_bat_max ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>runs_per_minute M_max</name>
+				<name>runs_per_minute M1_max</name>
 				<symbol>rpm_max</symbol>
 				<unit>1/min</unit>
 				<active>true</active>
@@ -1127,7 +1127,7 @@
 				<label>label_rpm_max ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>temperature M_1_max</name>
+				<name>temperature M1_1_max</name>
 				<symbol>T1_max</symbol>
 				<unit>°C</unit>
 				<active>true</active>
@@ -1137,7 +1137,7 @@
 				<label>label_temperature_fet_max ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>temperature M_2_max</name>
+				<name>temperature M1_2_max</name>
 				<symbol>T2_max</symbol>
 				<unit>°C</unit>
 				<active>true</active>
@@ -1147,7 +1147,7 @@
 				<label>label_temperature_ext_max ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>event M</name>
+				<name>event M1</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
@@ -1165,97 +1165,97 @@
 				<label>label_event ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_1</name>
+				<name>misc ESC1_1</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_2</name>
+				<name>misc ESC1_2</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_3</name>
+				<name>misc ESC1_3</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_4</name>
+				<name>misc ESC1_4</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_5</name>
+				<name>misc ESC1_5</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_6</name>
+				<name>misc ESC1_6</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_7</name>
+				<name>misc ESC1_7</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_8</name>
+				<name>misc ESC1_8</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_9</name>
+				<name>misc ESC1_9</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_10</name>
+				<name>misc ESC1_10</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_11</name>
+				<name>misc ESC1_11</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_12</name>
+				<name>misc ESC1_12</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_13</name>
+				<name>misc ESC1_13</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_14</name>
+				<name>misc ESC1_14</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_15</name>
+				<name>misc ESC1_15</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>version M</name>
+				<name>version M1</name>
 				<symbol></symbol>
 				<unit>#</unit>
 				<active>true</active>
@@ -2380,7 +2380,7 @@
 				<label>label_event EAM</label>
 			</Measurement>
 			<Measurement>
-				<name>voltage M</name>
+				<name>voltage M1</name>
 				<symbol>U</symbol>
 				<unit>V</unit>
 				<active>true</active>
@@ -2392,7 +2392,7 @@
 				<label>label_voltage ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>current M</name>
+				<name>current M1</name>
 				<symbol>I</symbol>
 				<unit>A</unit>
 				<active>true</active>
@@ -2404,7 +2404,7 @@
 				<label>label_current ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>capacity M</name>
+				<name>capacity M1</name>
 				<symbol>C</symbol>
 				<unit>mAh</unit>
 				<active>true</active>
@@ -2417,7 +2417,7 @@
 				<label>label_capacity ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>power M</name>
+				<name>power M1</name>
 				<symbol>P</symbol>
 				<unit>W</unit>
 				<active>true</active>
@@ -2430,7 +2430,7 @@
 				<label>label_power ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>runs_per_minute M</name>
+				<name>runs_per_minute M1</name>
 				<symbol>rpm</symbol>
 				<unit>1/min</unit>
 				<active>true</active>
@@ -2443,7 +2443,7 @@
 				<label>label_rpm ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>temperature M_1</name>
+				<name>temperature M1_1</name>
 				<symbol>T</symbol>
 				<unit>°C</unit>
 				<active>true</active>
@@ -2454,7 +2454,7 @@
 				<label>label_temperature_fet ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>temperature M_2</name>
+				<name>temperature M1_2</name>
 				<symbol>T</symbol>
 				<unit>°C</unit>
 				<active>true</active>
@@ -2465,7 +2465,7 @@
 				<label>label_temperature_ext ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>voltage M_min</name>
+				<name>voltage M1_min</name>
 				<symbol>U_min</symbol>
 				<unit>V</unit>
 				<active>true</active>
@@ -2477,7 +2477,7 @@
 				<label>label_voltage_bat_min ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>current M_max</name>
+				<name>current M1_max</name>
 				<symbol>I</symbol>
 				<unit>A_max</unit>
 				<active>true</active>
@@ -2489,7 +2489,7 @@
 				<label>label_current_bat_max ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>runs_per_minute M_max</name>
+				<name>runs_per_minute M1_max</name>
 				<symbol>rpm_max</symbol>
 				<unit>1/min</unit>
 				<active>true</active>
@@ -2501,7 +2501,7 @@
 				<label>label_rpm_max ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>temperature M_1_max</name>
+				<name>temperature M1_1_max</name>
 				<symbol>T1_max</symbol>
 				<unit>°C</unit>
 				<active>true</active>
@@ -2511,7 +2511,7 @@
 				<label>label_temperature_fet_max ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>temperature M_2_max</name>
+				<name>temperature M1_2_max</name>
 				<symbol>T2_max</symbol>
 				<unit>°C</unit>
 				<active>true</active>
@@ -2521,7 +2521,7 @@
 				<label>label_temperature_ext_max ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>event M</name>
+				<name>event M1</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
@@ -2539,97 +2539,97 @@
 				<label>label_event ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_1</name>
+				<name>misc ESC1_1</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_2</name>
+				<name>misc ESC1_2</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_3</name>
+				<name>misc ESC1_3</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_4</name>
+				<name>misc ESC1_4</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_5</name>
+				<name>misc ESC1_5</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_6</name>
+				<name>misc ESC1_6</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_7</name>
+				<name>misc ESC1_7</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_8</name>
+				<name>misc ESC1_8</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_9</name>
+				<name>misc ESC1_9</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_10</name>
+				<name>misc ESC1_10</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_11</name>
+				<name>misc ESC1_11</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_12</name>
+				<name>misc ESC1_12</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_13</name>
+				<name>misc ESC1_13</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_14</name>
+				<name>misc ESC1_14</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_15</name>
+				<name>misc ESC1_15</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>version M</name>
+				<name>version M1</name>
 				<symbol></symbol>
 				<unit>#</unit>
 				<active>true</active>
@@ -3850,7 +3850,7 @@
 				<label>label_event EAM</label>
 			</Measurement>
 			<Measurement>
-				<name>voltage M</name>
+				<name>voltage M1</name>
 				<symbol>U</symbol>
 				<unit>V</unit>
 				<active>true</active>
@@ -3863,7 +3863,7 @@
 				<label>label_voltage ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>current M</name>
+				<name>current M1</name>
 				<symbol>I</symbol>
 				<unit>A</unit>
 				<active>true</active>
@@ -3881,7 +3881,7 @@
 				<label>label_current ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>capacity M</name>
+				<name>capacity M1</name>
 				<symbol>C</symbol>
 				<unit>mAh</unit>
 				<active>true</active>
@@ -3896,7 +3896,7 @@
 				<label>label_capacity ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>power M</name>
+				<name>power M1</name>
 				<symbol>P</symbol>
 				<unit>W</unit>
 				<active>true</active>
@@ -3909,7 +3909,7 @@
 				<label>label_power ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>runs_per_minute M</name>
+				<name>runs_per_minute M1</name>
 				<symbol>rpm</symbol>
 				<unit>1/min</unit>
 				<active>true</active>
@@ -3922,7 +3922,7 @@
 				<label>label_rpm ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>temperature M_1</name>
+				<name>temperature M1_1</name>
 				<symbol>T</symbol>
 				<unit>°C</unit>
 				<active>true</active>
@@ -3933,7 +3933,7 @@
 				<label>label_temperature_fet ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>temperature M_2</name>
+				<name>temperature M1_2</name>
 				<symbol>T</symbol>
 				<unit>°C</unit>
 				<active>true</active>
@@ -3944,7 +3944,7 @@
 				<label>label_temperature_ext ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>voltage M_min</name>
+				<name>voltage M1_min</name>
 				<symbol>U_min</symbol>
 				<unit>V</unit>
 				<active>true</active>
@@ -3956,7 +3956,7 @@
 				<label>label_voltage_bat_min ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>current M_max</name>
+				<name>current M1_max</name>
 				<symbol>I</symbol>
 				<unit>A_max</unit>
 				<active>true</active>
@@ -3968,7 +3968,7 @@
 				<label>label_current_bat_max ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>runs_per_minute M_max</name>
+				<name>runs_per_minute M1_max</name>
 				<symbol>rpm_max</symbol>
 				<unit>1/min</unit>
 				<active>true</active>
@@ -3980,7 +3980,7 @@
 				<label>label_rpm_max ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>temperature M_1_max</name>
+				<name>temperature M1_1_max</name>
 				<symbol>T1_max</symbol>
 				<unit>°C</unit>
 				<active>true</active>
@@ -3990,7 +3990,7 @@
 				<label>label_temperature_fet_max ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>temperature M_2_max</name>
+				<name>temperature M1_2_max</name>
 				<symbol>T2_max</symbol>
 				<unit>°C</unit>
 				<active>true</active>
@@ -4000,7 +4000,7 @@
 				<label>label_temperature_ext_max ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>event M</name>
+				<name>event M1</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
@@ -4018,7 +4018,7 @@
 				<label>label_event ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_1</name>
+				<name>misc ESC1_1</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
@@ -4026,39 +4026,25 @@
 					sigma="false" />
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_2</name>
+				<name>misc ESC1_2</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_3</name>
+				<name>misc ESC1_3</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_4</name>
+				<name>misc ESC1_4</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_5</name>
-				<symbol></symbol>
-				<unit></unit>
-				<active>true</active>
-				<statistics min="true" max="true" avg="true"
-					sigma="false" />
-			</Measurement>
-			<Measurement>
-				<name>misc ESC_6</name>
-				<symbol></symbol>
-				<unit></unit>
-				<active>true</active>
-			</Measurement>
-			<Measurement>
-				<name>misc ESC_7</name>
+				<name>misc ESC1_5</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
@@ -4066,7 +4052,13 @@
 					sigma="false" />
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_8</name>
+				<name>misc ESC1_6</name>
+				<symbol></symbol>
+				<unit></unit>
+				<active>true</active>
+			</Measurement>
+			<Measurement>
+				<name>misc ESC1_7</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
@@ -4074,7 +4066,7 @@
 					sigma="false" />
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_9</name>
+				<name>misc ESC1_8</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
@@ -4082,13 +4074,7 @@
 					sigma="false" />
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_10</name>
-				<symbol></symbol>
-				<unit></unit>
-				<active>true</active>
-			</Measurement>
-			<Measurement>
-				<name>misc ESC_11</name>
+				<name>misc ESC1_9</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
@@ -4096,31 +4082,45 @@
 					sigma="false" />
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_12</name>
+				<name>misc ESC1_10</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_13</name>
+				<name>misc ESC1_11</name>
+				<symbol></symbol>
+				<unit></unit>
+				<active>true</active>
+				<statistics min="true" max="true" avg="true"
+					sigma="false" />
+			</Measurement>
+			<Measurement>
+				<name>misc ESC1_12</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_14</name>
+				<name>misc ESC1_13</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_15</name>
+				<name>misc ESC1_14</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>version M</name>
+				<name>misc ESC1_15</name>
+				<symbol></symbol>
+				<unit></unit>
+				<active>true</active>
+			</Measurement>
+			<Measurement>
+				<name>version M1</name>
 				<symbol></symbol>
 				<unit>#</unit>
 				<active>true</active>
@@ -5480,7 +5480,7 @@
 				<label>label_warning</label>
 			</Measurement>
 			<Measurement>
-				<name>voltage M</name>
+				<name>voltage M1</name>
 				<symbol>U</symbol>
 				<unit>V</unit>
 				<active>true</active>
@@ -5491,7 +5491,7 @@
 					type="Integer" />
 			</Measurement>
 			<Measurement>
-				<name>current M</name>
+				<name>current M1</name>
 				<symbol>I</symbol>
 				<unit>A</unit>
 				<active>true</active>
@@ -5502,7 +5502,7 @@
 					type="Integer" />
 			</Measurement>
 			<Measurement>
-				<name>capacity M</name>
+				<name>capacity M1</name>
 				<symbol>C</symbol>
 				<unit>mAh</unit>
 				<active>true</active>
@@ -5514,7 +5514,7 @@
 					type="Integer" />
 			</Measurement>
 			<Measurement>
-				<name>power M</name>
+				<name>power M1</name>
 				<symbol>P</symbol>
 				<unit>W</unit>
 				<active>true</active>
@@ -5526,7 +5526,7 @@
 					type="Integer" />
 			</Measurement>
 			<Measurement>
-				<name>runs_per_minute M</name>
+				<name>runs_per_minute M1</name>
 				<symbol>rpm</symbol>
 				<unit>1/min</unit>
 				<active>true</active>
@@ -5538,7 +5538,7 @@
 					type="Integer" />
 			</Measurement>
 			<Measurement>
-				<name>temperature M_1</name>
+				<name>temperature M1_1</name>
 				<symbol>T</symbol>
 				<unit>°C</unit>
 				<active>true</active>
@@ -5548,7 +5548,7 @@
 					type="Integer" />
 			</Measurement>
 			<Measurement>
-				<name>temperature M_2</name>
+				<name>temperature M1_2</name>
 				<symbol>T</symbol>
 				<unit>°C</unit>
 				<active>true</active>
@@ -5558,7 +5558,7 @@
 					type="Integer" />
 			</Measurement>
 			<Measurement>
-				<name>voltage M_min</name>
+				<name>voltage M1_min</name>
 				<symbol>U_min</symbol>
 				<unit>V</unit>
 				<active>true</active>
@@ -5569,7 +5569,7 @@
 				<trailDisplay discloseAll="true" defaultTrail="last" />
 			</Measurement>
 			<Measurement>
-				<name>current M_max</name>
+				<name>current M1_max</name>
 				<symbol>I</symbol>
 				<unit>A_max</unit>
 				<active>true</active>
@@ -5580,7 +5580,7 @@
 				<trailDisplay discloseAll="true" defaultTrail="last" />
 			</Measurement>
 			<Measurement>
-				<name>runs_per_minute M_max</name>
+				<name>runs_per_minute M1_max</name>
 				<symbol>rpm_max</symbol>
 				<unit>1/min</unit>
 				<active>true</active>
@@ -5591,7 +5591,7 @@
 				<trailDisplay discloseAll="true" defaultTrail="last" />
 			</Measurement>
 			<Measurement>
-				<name>temperature M_1_max</name>
+				<name>temperature M1_1_max</name>
 				<symbol>T1_max</symbol>
 				<unit>°C</unit>
 				<active>true</active>
@@ -5600,7 +5600,7 @@
 				<trailDisplay discloseAll="true" defaultTrail="last" />
 			</Measurement>
 			<Measurement>
-				<name>temperature M_2_max</name>
+				<name>temperature M1_2_max</name>
 				<symbol>T2_max</symbol>
 				<unit>°C</unit>
 				<active>true</active>
@@ -5609,7 +5609,7 @@
 				<trailDisplay discloseAll="true" defaultTrail="last" />
 			</Measurement>
 			<Measurement>
-				<name>event M</name>
+				<name>event M1</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
@@ -5627,97 +5627,97 @@
 				<label>label_event ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_1</name>
+				<name>misc ESC1_1</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_2</name>
+				<name>misc ESC1_2</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_3</name>
+				<name>misc ESC1_3</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_4</name>
+				<name>misc ESC1_4</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_5</name>
+				<name>misc ESC1_5</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_6</name>
+				<name>misc ESC1_6</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_7</name>
+				<name>misc ESC1_7</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_8</name>
+				<name>misc ESC1_8</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_9</name>
+				<name>misc ESC1_9</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_10</name>
+				<name>misc ESC1_10</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_11</name>
+				<name>misc ESC1_11</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_12</name>
+				<name>misc ESC1_12</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_13</name>
+				<name>misc ESC1_13</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_14</name>
+				<name>misc ESC1_14</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_15</name>
+				<name>misc ESC1_15</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>version M</name>
+				<name>version M1</name>
 				<symbol></symbol>
 				<unit>#</unit>
 				<active>true</active>
@@ -6699,7 +6699,7 @@
 				<label>label_event EAM</label>
 			</Measurement>
 			<Measurement>
-				<name>voltage M</name>
+				<name>voltage M1</name>
 				<symbol>U</symbol>
 				<unit>V</unit>
 				<active>true</active>
@@ -6712,7 +6712,7 @@
 				<label>label_voltage ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>current M</name>
+				<name>current M1</name>
 				<symbol>I</symbol>
 				<unit>A</unit>
 				<active>true</active>
@@ -6730,7 +6730,7 @@
 				<label>label_current ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>capacity M</name>
+				<name>capacity M1</name>
 				<symbol>C</symbol>
 				<unit>mAh</unit>
 				<active>true</active>
@@ -6745,7 +6745,7 @@
 				<label>label_capacity ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>power M</name>
+				<name>power M1</name>
 				<symbol>P</symbol>
 				<unit>W</unit>
 				<active>true</active>
@@ -6758,7 +6758,7 @@
 				<label>label_power ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>runs_per_minute M</name>
+				<name>runs_per_minute M1</name>
 				<symbol>rpm</symbol>
 				<unit>1/min</unit>
 				<active>true</active>
@@ -6771,7 +6771,7 @@
 				<label>label_rpm ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>temperature M_1</name>
+				<name>temperature M1_1</name>
 				<symbol>T</symbol>
 				<unit>°C</unit>
 				<active>true</active>
@@ -6782,7 +6782,7 @@
 				<label>label_temperature_fet ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>temperature M_2</name>
+				<name>temperature M1_2</name>
 				<symbol>T</symbol>
 				<unit>°C</unit>
 				<active>true</active>
@@ -6793,7 +6793,7 @@
 				<label>label_temperature_ext ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>voltage M_min</name>
+				<name>voltage M1_min</name>
 				<symbol>U_min</symbol>
 				<unit>V</unit>
 				<active>true</active>
@@ -6805,7 +6805,7 @@
 				<label>label_voltage_bat_min ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>current M_max</name>
+				<name>current M1_max</name>
 				<symbol>I</symbol>
 				<unit>A_max</unit>
 				<active>true</active>
@@ -6817,7 +6817,7 @@
 				<label>label_current_bat_max ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>runs_per_minute M_max</name>
+				<name>runs_per_minute M1_max</name>
 				<symbol>rpm_max</symbol>
 				<unit>1/min</unit>
 				<active>true</active>
@@ -6829,7 +6829,7 @@
 				<label>label_rpm_max ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>temperature M_1_max</name>
+				<name>temperature M1_1_max</name>
 				<symbol>T1_max</symbol>
 				<unit>°C</unit>
 				<active>true</active>
@@ -6839,7 +6839,7 @@
 				<label>label_temperature_fet_max ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>temperature M_2_max</name>
+				<name>temperature M1_2_max</name>
 				<symbol>T2_max</symbol>
 				<unit>°C</unit>
 				<active>true</active>
@@ -6849,7 +6849,7 @@
 				<label>label_temperature_fet_max ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>event M</name>
+				<name>event M1</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
@@ -6867,7 +6867,7 @@
 				<label>label_event ESC</label>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_1</name>
+				<name>misc ESC1_1</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
@@ -6875,39 +6875,25 @@
 					sigma="false" />
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_2</name>
+				<name>misc ESC1_2</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_3</name>
+				<name>misc ESC1_3</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_4</name>
+				<name>misc ESC1_4</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_5</name>
-				<symbol></symbol>
-				<unit></unit>
-				<active>true</active>
-				<statistics min="true" max="true" avg="true"
-					sigma="false" />
-			</Measurement>
-			<Measurement>
-				<name>misc ESC_6</name>
-				<symbol></symbol>
-				<unit></unit>
-				<active>true</active>
-			</Measurement>
-			<Measurement>
-				<name>misc ESC_7</name>
+				<name>misc ESC1_5</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
@@ -6915,7 +6901,13 @@
 					sigma="false" />
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_8</name>
+				<name>misc ESC1_6</name>
+				<symbol></symbol>
+				<unit></unit>
+				<active>true</active>
+			</Measurement>
+			<Measurement>
+				<name>misc ESC1_7</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
@@ -6923,7 +6915,7 @@
 					sigma="false" />
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_9</name>
+				<name>misc ESC1_8</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
@@ -6931,13 +6923,7 @@
 					sigma="false" />
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_10</name>
-				<symbol></symbol>
-				<unit></unit>
-				<active>true</active>
-			</Measurement>
-			<Measurement>
-				<name>misc ESC_11</name>
+				<name>misc ESC1_9</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
@@ -6945,31 +6931,45 @@
 					sigma="false" />
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_12</name>
+				<name>misc ESC1_10</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_13</name>
+				<name>misc ESC1_11</name>
+				<symbol></symbol>
+				<unit></unit>
+				<active>true</active>
+				<statistics min="true" max="true" avg="true"
+					sigma="false" />
+			</Measurement>
+			<Measurement>
+				<name>misc ESC1_12</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_14</name>
+				<name>misc ESC1_13</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_15</name>
+				<name>misc ESC1_14</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>version M</name>
+				<name>misc ESC1_15</name>
+				<symbol></symbol>
+				<unit></unit>
+				<active>true</active>
+			</Measurement>
+			<Measurement>
+				<name>version M1</name>
 				<symbol></symbol>
 				<unit>#</unit>
 				<active>true</active>
@@ -8366,7 +8366,7 @@
 				<active>true</active>
 			</Measurement>
 			<Measurement>
-				<name>misc ESC_5</name>
+				<name>misc ESC1_5</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>

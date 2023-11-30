@@ -193,6 +193,11 @@ public class HoTTlogReader2 extends HoTTlogReader {
 							log.log(Level.INFO, String.format("Sensor %02X", HoTTbinReader.buf[26]));
 						}
 					}
+					else {
+						if (log.isLoggable(Level.INFO))
+							log.log(Level.INFO, "sensitivity data " + StringHelper.byte2Hex2CharString(HoTTbinReader.buf, HoTTbinReader.buf.length));
+						continue; //skip rx sensitivity data
+					}
 					HoTTlogReader2.rcvLogParser.trackPackageLoss(true);
 
 					//create and fill sensor specific data record sets
