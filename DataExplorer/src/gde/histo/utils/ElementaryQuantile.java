@@ -414,7 +414,9 @@ public class ElementaryQuantile<T extends Number & Comparable<T>> {
 	}
 
 	public double getQuartile0() {
-		return trunk.get(0).doubleValue();
+		if (trunk != null && trunk.size() >= 1)
+			return trunk.get(0).doubleValue();
+		return 0.0;
 	}
 
 	public double getQuartile1() {
@@ -430,7 +432,9 @@ public class ElementaryQuantile<T extends Number & Comparable<T>> {
 	}
 
 	public double getQuartile4() {
-		return trunk.get(trunk.size() - 1).doubleValue();
+		if (trunk != null && trunk.size() >= 2)
+			return trunk.get(trunk.size() - 1).doubleValue();
+		return 0.0;
 	}
 
 	public double getInterQuartileRangeOBS() {

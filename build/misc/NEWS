@@ -1,22 +1,39 @@
-GNU DataExplorer - News - comes with Version 3.8.2 - 27 Oct 2023
+GNU DataExplorer - News - comes with Version 3.8.3 - 02 Dec 2023
 
 Generic changes/fixes 
-	* fix record scale position while some records contains zero values only
+	* refine speed calculation based on GPS coordinates and altitude change
+	* remove not required curves update while switching data set 
+	* update SWT library for aarch64
 	
 Device specific changes/fixes
-	* iCharger DX12 - add device
-	* iCharger4512DUO - add device
-	* IGCAdapter - add sink speed calculation 
-	* HoTTAdapter* - fix parsing package loss in OSD while history analysis
+	* IGCAdapter - refine 3D speed calculation
+	* iChargerUSB* - fix PB number of cells, cell target voltage and charge end current
+	* iChargerUSB* - enable setting of charge end current while Li balancer is switched off
+	* iChargerUSB* - fix configuration setting digital power voltage and current max value
+	* iChargerUSB* - fix charge/discharge slider end values
+	* iChargerUSB* - fix device language selection
+	* ZeroAdapter - fix date/time parsing
+	* OpenTX-Telemetry - make repeating errors visible on message box
+	* HoTTAdapter* - add ESC1..ESC4 reading capability
+	* HoTTAdapter* - skip rx sensitivity data
+	* UniLog - adjust dialog sizes for macOS
 
 
 
 Allgemeine Änderungen/Korrekturen
-	* Korrektur der Skalenposition be Anzeige von Daten die nur Nullwerte enthalten
-       
+	* Verfeinerung der Geschwindigkeitsberechnung anhand von GPS-Koordinaten und Höhenänderung
+	* Entfernen von nicht benötigten Kurven-Updates beim Wechsel des Datensatzes 
+	* SWT-Bibliothek für aarch64 aktualisieren     
+	  
 Gerätespezifische Änderungen/Korrekturen
-	* iCharger DX12 - Gerät hinzugefügt
-	* iCharger4512DUO - Gerät hinzugefügt
-	* IGCAdapter - Berechnung der Sinkgeschwindigkeit hinzugefügt
-	* HoTTAdapter* - Korrektur der Auswertung von verlorenen Rückkanalpaketen aus OSD Dateien
-
+	* IGCAdapter - verfeinert die 3D-Geschwindigkeitsberechnung
+	* iChargerUSB* - Korrektur der PB-Zellenanzahl, der Zellenspannung und des Ladeschlussstroms
+	* iChargerUSB* - ermöglichen der Einstellung des Ladeschlussstroms bei ausgeschaltetem Li-Balancer
+	* iChargerUSB* - Korrektur Konfigurationseinstellung der digitalen Spannung und des maximalen Stroms
+	* iChargerUSB* - Korrektur der Werte für Lade-/Entlade-Schieberegler
+	* iChargerUSB* - Auswahl der Gerätesprache erweitert
+	* ZeroAdapter - Korrekttur das Parsen von Datum/Uhrzeit
+	* OpenTX-Telemetry - macht wiederkehrende Fehler in der Nachrichtenbox sichtbar
+	* HoTTAdapter* - Lesefähigkeit für ESC1..ESC4 hinzugefügt
+	* HoTTAdapter* - überspringe Rx Empfindlichkeitsdaten
+	* UniLog - Anpassung Gerräte-Dialog für macOS
