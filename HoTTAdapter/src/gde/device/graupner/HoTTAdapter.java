@@ -1568,17 +1568,21 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 				}
 				break;
 			case HoTTAdapter.SENSOR_TYPE_SERVO_POSITION_115200:
-				if (dataBuffer.length >= 74) {
+				if (dataBuffer.length >= 74 && this.pickerParameters.isChannelsChannelEnabled) {
 					//log.log(Level.OFF, StringHelper.byte2Hex2CharString(dataBuffer, dataBuffer.length));
 					// 0=FreCh, 1=Tx, 2=Rx, 3=Ch 1, 4=Ch 2 .. 18=Ch 16
-					for (int i = 0, j = 0; i < 16; i++, j+=2) {
+					//update number of Tx Channels in dependency of used XML
+					int numberUsedCahnnels = this.getNumberOfMeasurements(6) > 24 ? 32 : 16;
+					for (int i = 0, j = 0; i < numberUsedCahnnels; i++, j+=2) {
 						points[3 + i] = (DataParser.parse2Short(dataBuffer, 8 + j) / 2 + 1500) * 1000;
 					}
-					StringBuffer sb = new StringBuffer();
-					for (int i = 0, j = 0; i < 16; i++, j+=2) {
-						sb.append(String.format("%2d = %4d; ", i+1, DataParser.parse2Short(dataBuffer, 8 + j) / 16 + 50));					
+					if (log.isLoggable(Level.FINE)) {
+						StringBuffer sb = new StringBuffer();
+						for (int i = 0, j = 0; i < numberUsedCahnnels; i++, j += 2) {
+							sb.append(String.format("%2d = %4d; ", i + 1, DataParser.parse2Short(dataBuffer, 8 + j) / 16 + 50));
+						}
+						log.log(Level.FINE, sb.toString());
 					}
-					log.log(Level.FINE, sb.toString());
 				}
 				break;
 			}

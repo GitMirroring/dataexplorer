@@ -719,7 +719,6 @@ public class HoTTbinReader {
 		BufCopier bufCopier = new BufCopier(buf, buf0, buf1, buf2, buf3, buf4);
 		long[] timeSteps_ms = new long[] {0};
 		HoTTbinReader.rcvBinParser = Sensor.RECEIVER.createBinParser(HoTTbinReader.pickerParameters, new int[10], timeSteps_ms, new byte[][] { buf });
-		HoTTbinReader.chnBinParser = Sensor.CHANNEL.createBinParser(HoTTbinReader.pickerParameters, new int[23], timeSteps_ms, new byte[][] { buf });
 		HoTTbinReader.varBinParser = Sensor.VARIO.createBinParser(HoTTbinReader.pickerParameters, new int[13], timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
 		HoTTbinReader.gpsBinParser = Sensor.GPS.createBinParser(HoTTbinReader.pickerParameters, new int[24], timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
 		HoTTbinReader.gamBinParser = Sensor.GAM.createBinParser(HoTTbinReader.pickerParameters, new int[26], timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
@@ -774,6 +773,7 @@ public class HoTTbinReader {
 				channel.setFileDescription(HoTTbinReader.application.isObjectoriented() ? date + GDE.STRING_BLANK + HoTTbinReader.application.getObjectKey() : date);
 				recordSetName = recordSetNumber + GDE.STRING_RIGHT_PARENTHESIS_BLANK + HoTTAdapter.Sensor.CHANNEL.value() + recordSetNameExtend;
 				HoTTbinReader.recordSetChannel = RecordSet.createRecordSet(recordSetName, device, 6, true, true, true);
+				HoTTbinReader.chnBinParser = Sensor.CHANNEL.createBinParser(HoTTbinReader.pickerParameters, new int[HoTTbinReader.recordSetChannel.size()], timeSteps_ms, new byte[][] { buf });
 				channel.put(recordSetName, HoTTbinReader.recordSetChannel);
 				HoTTbinReader.recordSets.put(HoTTAdapter.Sensor.CHANNEL.value(), HoTTbinReader.recordSetChannel);
 				tmpRecordSet = channel.get(recordSetName);
@@ -1127,7 +1127,6 @@ public class HoTTbinReader {
 		BufCopier bufCopier = new BufCopier(buf, buf0, buf1, buf2, buf3, buf4);
 		long[] timeSteps_ms = new long[] {0};
 		HoTTbinReader.rcvBinParser = Sensor.RECEIVER.createBinParser(HoTTbinReader.pickerParameters, new int[10], timeSteps_ms, new byte[][] { buf });
-		HoTTbinReader.chnBinParser = Sensor.CHANNEL.createBinParser(HoTTbinReader.pickerParameters, new int[23], timeSteps_ms, new byte[][] { buf });
 		HoTTbinReader.varBinParser = Sensor.VARIO.createBinParser(HoTTbinReader.pickerParameters, new int[13], timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
 		HoTTbinReader.gpsBinParser = Sensor.GPS.createBinParser(HoTTbinReader.pickerParameters, new int[24], timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
 		HoTTbinReader.gamBinParser = Sensor.GAM.createBinParser(HoTTbinReader.pickerParameters, new int[26], timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
@@ -1181,6 +1180,7 @@ public class HoTTbinReader {
 						? date + GDE.STRING_BLANK + HoTTbinReader.application.getObjectKey() : date);
 				recordSetName = recordSetNumber + GDE.STRING_RIGHT_PARENTHESIS_BLANK + HoTTAdapter.Sensor.CHANNEL.value() + recordSetNameExtend;
 				HoTTbinReader.recordSetChannel = RecordSet.createRecordSet(recordSetName, device, 6, true, true, true);
+				HoTTbinReader.chnBinParser = Sensor.CHANNEL.createBinParser(HoTTbinReader.pickerParameters, new int[HoTTbinReader.recordSetChannel.size()], timeSteps_ms, new byte[][] { buf });
 				channel.put(recordSetName, HoTTbinReader.recordSetChannel);
 				HoTTbinReader.recordSets.put(HoTTAdapter.Sensor.CHANNEL.value(), HoTTbinReader.recordSetChannel);
 				tmpRecordSet = channel.get(recordSetName);
@@ -1619,15 +1619,15 @@ public class HoTTbinReader {
 			this.points[8] = (DataParser.parse2UnsignedShort(_buf, 18) / 2) * 1000;
 			this.points[9] = (DataParser.parse2UnsignedShort(_buf, 20) / 2) * 1000;
 			this.points[10] = (DataParser.parse2UnsignedShort(_buf, 22) / 2) * 1000;
-			this.points[19] = (_buf[50] & 0x01) * 100000;
-			this.points[20] = (_buf[50] & 0x02) * 50000;
-			this.points[21] = (_buf[50] & 0x04) * 25000;
+			this.points[this.points.length-4] = (_buf[50] & 0x01) * 100000;
+			this.points[this.points.length-3] = (_buf[50] & 0x02) * 50000;
+			this.points[this.points.length-2] = (_buf[50] & 0x04) * 25000;
 			if (_buf[32] > 0 && _buf[32] < 27) {
-				this.points[22] = _buf[32] * 1000; // warning
+				this.points[this.points.length-1] = _buf[32] * 1000; // warning
 				log.log(Level.FINE, String.format("Warning %d occured at %s", this.points[22] / 1000, StringHelper.getFormatedTime("HH:mm:ss:SSS", this.getTimeStep_ms() - GDE.ONE_HOUR_MS)));
 			}
 			else
-				this.points[22] = 0;
+				this.points[this.points.length-1] = 0;
 
 			if (_buf[5] == 0x00) { // channel 9-12
 				this.points[11] = (DataParser.parse2UnsignedShort(_buf, 24) / 2) * 1000;

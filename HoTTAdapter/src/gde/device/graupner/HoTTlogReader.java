@@ -84,7 +84,6 @@ public class HoTTlogReader extends HoTTbinReader {
 		HoTTbinReader.dataBlockSize = isASCII ? asciiDataBlockSize : rawDataBlockSize;
 		HoTTbinReader.buf = new byte[HoTTbinReader.dataBlockSize];
 		HoTTlogReader.rcvLogParser = (RcvLogParser) Sensor.RECEIVER.createLogParser(HoTTbinReader.pickerParameters, new int[10], timeSteps_ms, buf, numberLogChannels);
-		HoTTlogReader.chnLogParser = (ChnLogParser) Sensor.CHANNEL.createLogParser(HoTTbinReader.pickerParameters, new int[23], timeSteps_ms, buf, numberLogChannels);
 		HoTTlogReader.varLogParser = (VarLogParser) Sensor.VARIO.createLogParser(HoTTbinReader.pickerParameters, new int[13], timeSteps_ms, buf, numberLogChannels);
 		HoTTlogReader.gpsLogParser = (GpsLogParser) Sensor.GPS.createLogParser(HoTTbinReader.pickerParameters, new int[24], timeSteps_ms, buf, numberLogChannels);
 		HoTTlogReader.gamLogParser = (GamLogParser) Sensor.GAM.createLogParser(HoTTbinReader.pickerParameters, new int[26], timeSteps_ms, buf, numberLogChannels);
@@ -138,6 +137,8 @@ public class HoTTlogReader extends HoTTbinReader {
 						? date + GDE.STRING_BLANK + HoTTbinReader.application.getObjectKey() : date);
 				recordSetName = recordSetNumber + GDE.STRING_RIGHT_PARENTHESIS_BLANK + HoTTAdapter.Sensor.CHANNEL.value() + recordSetNameExtend;
 				HoTTbinReader.recordSetChannel = RecordSet.createRecordSet(recordSetName, device, 6, true, true, true);
+				numberLogChannels = HoTTbinReader.recordSetChannel.size() == 23 ? 16 : numberLogChannels;
+				HoTTlogReader.chnLogParser = (ChnLogParser) Sensor.CHANNEL.createLogParser(HoTTbinReader.pickerParameters, new int[HoTTbinReader.recordSetChannel.size()], timeSteps_ms, buf, numberLogChannels);
 				channel.put(recordSetName, HoTTbinReader.recordSetChannel);
 				HoTTbinReader.recordSets.put(HoTTAdapter.Sensor.CHANNEL.value(), HoTTbinReader.recordSetChannel);
 				tmpRecordSet = channel.get(recordSetName);
@@ -186,8 +187,9 @@ public class HoTTlogReader extends HoTTbinReader {
 						}
 					}
 					else {
-						if (log.isLoggable(Level.INFO))
+						if (log.isLoggable(Level.INFO)) 
 							log.log(Level.INFO, "sensitivity data " + StringHelper.byte2Hex2CharString(HoTTbinReader.buf, HoTTbinReader.buf.length));
+						timeSteps_ms[BinParser.TIMESTEP_INDEX] += logTimeStep_ms;// add time step from log record given in info header
 						continue; //skip rx sensitivity data
 					}
 
@@ -1471,7 +1473,7 @@ public class HoTTlogReader extends HoTTbinReader {
 	}
 
 	public static class ChnLogParser extends LogParser {
-		protected final int											numberUsedChannels;
+		protected final int	numberUsedChannels;
 
 		protected ChnLogParser(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[] buffer, int numberUsedChannels) {
 			super(pickerParameters, points, timeSteps_ms, buffer, Sensor.CHANNEL);
@@ -1487,7 +1489,7 @@ public class HoTTlogReader extends HoTTbinReader {
 			this.points[1] = buf[8] * -1000;
 			this.points[2] = buf[9] * -1000;
 
-			for (int i = 0,j = 0; i < numberUsedChannels && i < 16; i++,j+=2) {
+			for (int i = 0,j = 0; i < numberUsedChannels; i++,j+=2) {
 				this.points[i + 3] = (DataParser.parse2UnsignedShort(buf, (66 + j)) / 2) * 1000;
 			}
 			//Ph(D)[4], Evt1(H)[5], Evt2(D)[6], Fch(D)[7], TXdBm(-D)[8], RXdBm(-D)[9], RfRcvRatio(D)[10], TrnRcvRatio(D)[11]
