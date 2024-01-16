@@ -355,7 +355,7 @@ public class CSVReaderWriter {
 							recordSet.setRecordSetDescription(recordSet.getRecordSetDescription() + line.replace('#', GDE.CHAR_BLANK) + GDE.LINE_SEPARATOR);
 						continue;
 					}
-					String[] dataStr = line.replace(", ", ",").split(" |"+separator); //replace(", ", ",") to allow GPS coords ..,48.474413, 11.477986,.. split(" |"+separator) to take ..,48.132850 11.720808,..
+					String[] dataStr = line.replace(",,", ",0.0 0.0,").replace(", ", ",").split(" |"+separator); //replace(", ", ",") to allow GPS coords ..,48.474413, 11.477986,.. split(" |"+separator) to take ..,48.132850 11.720808,..
 					String data = dataStr[0].trim();
 					int year = Integer.parseInt(data.substring(0, 4));
 					int month = Integer.parseInt(data.substring(5, 7));
