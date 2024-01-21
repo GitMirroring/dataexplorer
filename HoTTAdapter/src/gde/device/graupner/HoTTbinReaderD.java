@@ -35,6 +35,7 @@ import gde.data.RecordSet;
 import gde.device.IDevice;
 import gde.device.graupner.HoTTAdapter.PickerParameters;
 import gde.device.graupner.HoTTAdapter.Sensor;
+import gde.device.graupner.HoTTbinReader.BinParser;
 import gde.exception.DataInconsitsentException;
 import gde.io.DataParser;
 import gde.log.Level;
@@ -49,6 +50,89 @@ import gde.utils.StringHelper;
  */
 public class HoTTbinReaderD extends HoTTbinReader2 {
 	final static Logger							logger						= Logger.getLogger(HoTTbinReaderD.class.getName());
+	
+
+	public static class ChnBinParser extends BinParser {
+		protected final byte[] _buf;
+
+		protected ChnBinParser(PickerParameters pickerParameters, long[] timeSteps_ms, byte[][] buffers) {
+			this(pickerParameters,
+					new int[pickerParameters.analyzer.getActiveDevice().getNumberOfMeasurements(pickerParameters.analyzer.getActiveChannel().getNumber())], //
+					timeSteps_ms, buffers);
+			throw new UnsupportedOperationException("use in situ parsing");
+		}
+
+		protected ChnBinParser(PickerParameters pickerParameters, int[] points, long[] timeSteps_ms, byte[][] buffers) {
+			super(pickerParameters, points, timeSteps_ms, buffers, Sensor.CHANNEL);
+			_buf = buffers[0];
+			if (buffers.length != 1) throw new InvalidParameterException("buffers mismatch: " + buffers.length);
+		}
+
+		@Override
+		protected boolean parse() {
+			// 0=RX-TX-VPacks, 1=RXSQ, 2=Strength, 3=VPacks, 4=Tx, 5=Rx, 6=VoltageRx, 7=TemperatureRx 8=VoltageRxMin 9=EventRx
+			// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=Ch17 ... 118=Ch32 119=PowerOff, 120=BatterieLow, 121=Reset, 122=reserve
+			this.points[4] = (this._buf[3] & 0xFF) * -1000;
+			this.points[5] = (this._buf[4] & 0xFF) * -1000;
+
+			this.points[87] = (DataParser.parse2UnsignedShort(this._buf, 8) / 2) * 1000;
+			this.points[88] = (DataParser.parse2UnsignedShort(this._buf, 10) / 2) * 1000;
+			this.points[89] = (DataParser.parse2UnsignedShort(this._buf, 12) / 2) * 1000;
+			this.points[90] = (DataParser.parse2UnsignedShort(this._buf, 14) / 2) * 1000;
+			this.points[91] = (DataParser.parse2UnsignedShort(this._buf, 16) / 2) * 1000;
+			this.points[92] = (DataParser.parse2UnsignedShort(this._buf, 18) / 2) * 1000;
+			this.points[93] = (DataParser.parse2UnsignedShort(this._buf, 20) / 2) * 1000;
+			this.points[94] = (DataParser.parse2UnsignedShort(this._buf, 22) / 2) * 1000;
+
+			if (this._buf[5] == 0x00) { // channel 9-12
+				this.points[95] = (DataParser.parse2UnsignedShort(this._buf, 24) / 2) * 1000;
+				this.points[96] = (DataParser.parse2UnsignedShort(this._buf, 26) / 2) * 1000;
+				this.points[97] = (DataParser.parse2UnsignedShort(this._buf, 28) / 2) * 1000;
+				this.points[98] = (DataParser.parse2UnsignedShort(this._buf, 30) / 2) * 1000;
+				if (this.points[99] == 0) {
+					this.points[99] = 1500 * 1000;
+					this.points[100] = 1500 * 1000;
+					this.points[101] = 1500 * 1000;
+					this.points[102] = 1500 * 1000;
+				}
+			} else { // channel 13-16
+				this.points[99] = (DataParser.parse2UnsignedShort(this._buf, 24) / 2) * 1000;
+				this.points[100] = (DataParser.parse2UnsignedShort(this._buf, 26) / 2) * 1000;
+				this.points[101] = (DataParser.parse2UnsignedShort(this._buf, 28) / 2) * 1000;
+				this.points[102] = (DataParser.parse2UnsignedShort(this._buf, 30) / 2) * 1000;
+				if (this.points[95] == 0) {
+					this.points[95] = 1500 * 1000;
+					this.points[96] = 1500 * 1000;
+					this.points[97] = 1500 * 1000;
+					this.points[98] = 1500 * 1000;
+				}
+			}
+			// events 119=PowerOff, 120=BatterieLow, 121=Reset, 122=reserve
+			this.points[119] = (this._buf[50] & 0x01) * 100000;
+			this.points[120] = (this._buf[50] & 0x02) * 50000;
+			this.points[121] = (this._buf[50] & 0x04) * 25000;
+			if (this._buf[37] > 0 && this._buf[37] < 27)
+				this.points[122] = this._buf[32] * 1000; // warning
+			else
+				this.points[122] = 0;
+			return true;
+		}
+
+		@Override
+		public void migratePoints(int[] targetPoints) {
+			// 0=RX-TX-VPacks, 1=RXSQ, 2=Strength, 3=VPacks, 4=Tx, 5=Rx, 6=VoltageRx, 7=TemperatureRx 8=VoltageRxMin 9=EventRx
+			for (int j = 4; j < 7; j++) {
+				targetPoints[j] = this.points[j];
+			}
+			// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 
+			for (int j = 87; j < 87+16; j++) {
+				targetPoints[j] = this.points[j];
+			}
+			// points.length = 136 -> 103=PowerOff, 104=BatterieLow, 105=Reset, 106=reserve
+			// points.length = 152 -> 119=PowerOff, 120=BatterieLow, 121=Reset, 122=reserve
+			throw new UnsupportedOperationException("use in situ parsing");
+		}
+	}
 	
 	public static class VarBinParserD extends HoTTbinReader2.VarBinParser {
 		private int	tmpHeight		= 0;
@@ -101,15 +185,15 @@ public class HoTTbinReaderD extends HoTTbinReader2 {
 					this.points[19] = (_buf4[9] & 0xFF) * 1000; //SM MicroVario starts with FW version 1.00 -> 100
 				} 
 				else {
-					// 223=Test 00 224=Test 01.. 235=Test 12
+					// 239=Test 00 240=Test 01.. 251=Test 12
 					for (int i = 0, j = 0; i < 3; i++, j += 2) {
-						HoTTbinReaderD.points[i + 223] = DataParser.parse2Short(_buf2, 4 + j) * 1000;
+						HoTTbinReaderD.points[i + 239] = DataParser.parse2Short(_buf2, 4 + j) * 1000;
 					}
 					for (int i = 0, j = 0; i < 5; i++, j += 2) {
-						HoTTbinReaderD.points[i + 226] = DataParser.parse2Short(_buf3, 0 + j) * 1000;
+						HoTTbinReaderD.points[i + 242] = DataParser.parse2Short(_buf3, 0 + j) * 1000;
 					}
 					for (int i = 0, j = 0; i < 5; i++, j += 2) {
-						HoTTbinReaderD.points[i + 231] = DataParser.parse2Short(_buf4, 0 + j) * 1000;
+						HoTTbinReaderD.points[i + 247] = DataParser.parse2Short(_buf4, 0 + j) * 1000;
 					}					
 				}
 				return true;
@@ -172,75 +256,76 @@ public class HoTTbinReaderD extends HoTTbinReader2 {
 			this.tmpCapacity = DataParser.parse2Short(this._buf1, 7);
 			this.tmpRevolution = DataParser.parse2UnsignedShort(this._buf2, 5);
 			this.tmpTemperatureFet = (this._buf1[9] & 0xFF) - 20;
-			// 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max,
-			// 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
-			// 120=Speed 121=Speed_max 122=PWM 123=Throttle 124=VoltageBEC 125=VoltageBEC_max 125=CurrentBEC 127=TemperatureBEC 128=TemperatureCap 
-			// 129=Timing(empty) 130=Temperature_aux 131=Gear 132=YGEGenExt 133=MotStatEscNr 134=misc ESC_15 135=VersionESC
+
+			// 123=VoltageM, 124=CurrentM, 125=CapacityM, 126=PowerM, 127=RevolutionM, 128=TemperatureM 1, 129=TemperatureM 2 130=Voltage_min, 131=Current_max,
+			// 132=Revolution_max, 133=Temperature1_max, 134=Temperature2_max 135=Event M
+			// 136=Speed 137=Speed_max 138=PWM 139=Throttle 140=VoltageBEC 141=VoltageBEC_max 142=CurrentBEC 143=TemperatureBEC 144=TemperatureCap 
+			// 145=Timing(empty) 146=Temperature_aux 147=Gear 148=YGEGenExt 149=MotStatEscNr 150=misc ESC_15 151=VersionESC
 			if (isPointsValid()) {
-				this.points[107] = this.tmpVoltage * 1000;
-				this.points[108] = this.tmpCurrent * 1000;
-				this.points[110] = Double.valueOf(this.points[107] / 1000.0 * this.points[108]).intValue();
+				this.points[123] = this.tmpVoltage * 1000;
+				this.points[124] = this.tmpCurrent * 1000;
+				this.points[126] = Double.valueOf(this.points[107] / 1000.0 * this.points[108]).intValue();
 				if (!this.pickerParameters.isFilterEnabled || this.parseCount <= 20
 						|| (this.tmpCapacity != 0 && Math.abs(this.tmpCapacity) <= (this.points[109] / 1000 + this.tmpVoltage * this.tmpCurrent / 2500 + 2))) {
-					this.points[109] = this.tmpCapacity * 1000;
+					this.points[125] = this.tmpCapacity * 1000;
 				} else {
-					if (this.tmpCapacity != 0 && HoTTbinReaderD.log.isLoggable(Level.FINE))
-						HoTTbinReaderD.log.log(Level.FINE, StringHelper.getFormatedTime("mm:ss.SSS", this.getTimeStep_ms()) + " - " + this.tmpCapacity + " - " + (this.points[104] / 1000) + " + " + (this.tmpVoltage * this.tmpCurrent / 2500 + 2));
+					if (this.tmpCapacity != 0 && HoTTbinReader2.log.isLoggable(Level.FINE))
+						HoTTbinReader2.log.log(Level.FINE, StringHelper.getFormatedTime("mm:ss.SSS", this.getTimeStep_ms()) + " - " + this.tmpCapacity + " - " + (this.points[104] / 1000) + " + " + (this.tmpVoltage * this.tmpCurrent / 2500 + 2));
 				}
-				this.points[111] = this.tmpRevolution * 1000;
-				this.points[112] = this.tmpTemperatureFet * 1000;
+				this.points[127] = this.tmpRevolution * 1000;
+				this.points[128] = this.tmpTemperatureFet * 1000;
 
-				this.points[113] = ((this._buf2[9] & 0xFF) - 20) * 1000;
-				this.points[114] = DataParser.parse2Short(this._buf1, 5) * 1000;
-				this.points[115] = DataParser.parse2Short(this._buf2, 3) * 1000;
-				this.points[116] = DataParser.parse2UnsignedShort(this._buf2, 7) * 1000;
-				this.points[117] = ((this._buf2[0] & 0xFF) - 20) * 1000;
-				this.points[118] = ((this._buf3[0] & 0xFF) - 20) * 1000;
-				this.points[119] = (this._buf1[1] & 0xFF) * 1000; // inverse event
+				this.points[129] = ((this._buf2[9] & 0xFF) - 20) * 1000;
+				this.points[130] = DataParser.parse2Short(this._buf1, 5) * 1000;
+				this.points[131] = DataParser.parse2Short(this._buf2, 3) * 1000;
+				this.points[132] = DataParser.parse2UnsignedShort(this._buf2, 7) * 1000;
+				this.points[133] = ((this._buf2[0] & 0xFF) - 20) * 1000;
+				this.points[134] = ((this._buf3[0] & 0xFF) - 20) * 1000;
+				this.points[135] = (this._buf1[1] & 0xFF) * 1000; // inverse event
 				
 				if ((_buf4[9] & 0xFF) == 3) { //Extended YGE protocol 				
-					// 120=Speed 121=Speed_max 122=PWM 123=Throttle 124=VoltageBEC 125=VoltageBEC_max 125=CurrentBEC 127=TemperatureBEC 128=TemperatureCap 
-					// 129=Timing(empty) 130=Temperature_aux 131=Gear 132=YGEGenExt 133=MotStatEscNr 134=misc ESC_15 135=VersionESC
-					this.points[120] = DataParser.parse2Short(_buf3, 1) * 1000; //Speed
-					this.points[121] = DataParser.parse2Short(_buf3, 3) * 1000; //Speed max
-					this.points[122] = (_buf3[5] & 0xFF) * 1000; 								//PWM
-					this.points[123] = (_buf3[6] & 0xFF) * 1000; 								//Throttle
-					this.points[124] = (_buf3[7] & 0xFF) * 1000; 								//BEC Voltage
-					this.points[125] = (_buf3[8] & 0xFF) * 1000; 								//BEC Voltage min
-					this.points[126] = DataParser.parse2UnsignedShort(_buf3[9], _buf4[0]) * 1000; 	//BEC Current
-					this.points[127] = ((_buf4[1] & 0xFF) - 20) * 1000; 				//BEC Temperature
-					this.points[128] = ((_buf4[2] & 0xFF) - 20) * 1000; 				//Capacity Temperature
-					this.points[129] = (_buf4[3] & 0xFF) * 1000; 								//Timing
-					this.points[130] = ((_buf4[4] & 0xFF) - 20) * 1000; 				//Aux Temperature
-					this.points[131] = DataParser.parse2Short(_buf4, 5) * 1000; //Gear
-					this.points[132] = (_buf4[7] & 0xFF) * 1000; 								//YGEGenExt
-					this.points[133] = (_buf4[8] & 0xFF) * 1000; 								//MotStatEscNr
-					this.points[133] = 0; 																			//spare
-					this.points[135] = (_buf4[9] & 0xFF) * 1000; 								//Version ESC
+					// 136=Speed 137=Speed_max 138=PWM 139=Throttle 140=VoltageBEC 141=VoltageBEC_max 142=CurrentBEC 143=TemperatureBEC 144=TemperatureCap 
+					// 145=Timing(empty) 146=Temperature_aux 147=Gear 148=YGEGenExt 149=MotStatEscNr 150=misc ESC_15 151=VersionESC
+					this.points[136] = DataParser.parse2Short(_buf3, 1) * 1000; //Speed
+					this.points[137] = DataParser.parse2Short(_buf3, 3) * 1000; //Speed max
+					this.points[138] = (_buf3[5] & 0xFF) * 1000; 								//PWM
+					this.points[139] = (_buf3[6] & 0xFF) * 1000; 								//Throttle
+					this.points[140] = (_buf3[7] & 0xFF) * 1000; 								//BEC Voltage
+					this.points[141] = (_buf3[8] & 0xFF) * 1000; 								//BEC Voltage min
+					this.points[142] = DataParser.parse2UnsignedShort(_buf3[9], _buf4[0]) * 1000; 	//BEC Current
+					this.points[143] = ((_buf4[1] & 0xFF) - 20) * 1000; 				//BEC Temperature
+					this.points[144] = ((_buf4[2] & 0xFF) - 20) * 1000; 				//Capacity Temperature
+					this.points[145] = (_buf4[3] & 0xFF) * 1000; 								//Timing
+					this.points[146] = ((_buf4[4] & 0xFF) - 20) * 1000; 				//Aux Temperature
+					this.points[147] = DataParser.parse2Short(_buf4, 5) * 1000; //Gear
+					this.points[146] = (_buf4[7] & 0xFF) * 1000; 								//YGEGenExt
+					this.points[149] = (_buf4[8] & 0xFF) * 1000; 								//MotStatEscNr
+					this.points[150] = 0; 																			//spare
+					this.points[151] = (_buf4[9] & 0xFF) * 1000; 								//Version ESC
 				}
 				else if ((_buf4[9] & 0xFF) >= 128) { //Extended CS-Electronics
-					//120=AirSpeed 121=AirSpeed_max 122=PWM 123=Throttle 124=VoltagePump 125=VoltagePump_min 126=Flow 127=Fuel 128=Power 
-					//129=Thrust 130=TemperaturePump 131=EngineStat 132=spare 133=spare 134=spare 135=version
-					this.points[120] = DataParser.parse2Short(_buf3, 1) * 1000; 	//AirSpeed
-					this.points[121] = DataParser.parse2Short(_buf3, 3) * 1000; 	//AirSpeed max
-					this.points[122] = (_buf3[5] & 0xFF) * 1000; 									//PWM
-					this.points[123] = (_buf3[6] & 0xFF) * 1000; 									//Throttle
-					this.points[124] = (_buf3[7] & 0xFF) * 1000; 									//Pump Voltage
-					this.points[125] = (_buf3[8] & 0xFF) * 1000; 									//Pump Voltage min
-					this.points[126] = DataParser.parse2UnsignedShort(_buf3[9], _buf4[0]) * 1000;	//Flow
-					this.points[127] = DataParser.parse2UnsignedShort(_buf4, 1) * 1000;						//Fuel ml
-					this.points[128] = DataParser.parse2UnsignedShort(_buf4, 3) * 1000; 					//Power Wh
-					this.points[129] = DataParser.parse2UnsignedShort(_buf4, 5) * 1000; 					//Thrust
-					this.points[130] = ((_buf4[7] & 0xFF) - 20) * 1000; 					//Pump Temperature
-					this.points[131] = (_buf4[8] & 0xFF) * 1000; 									//Engine run
-					this.points[132] = 0; 																				//spare
-					this.points[133] = 0; 																				//spare
-					this.points[134] = 0; 																				//spare
-					this.points[135] = (_buf4[9] & 0xFF) * 1000; 									//Version ESC			
+					//136=AirSpeed 137=AirSpeed_max 138=PWM 139=Throttle 140=VoltagePump 141=VoltagePump_min 142=Flow 143=Fuel 144=Power 
+					//145=Thrust 146=TemperaturePump 147=EngineStat 148=spare 149=spare 150=spare 151=version
+					this.points[136] = DataParser.parse2Short(_buf3, 1) * 1000; 	//AirSpeed
+					this.points[137] = DataParser.parse2Short(_buf3, 3) * 1000; 	//AirSpeed max
+					this.points[138] = (_buf3[5] & 0xFF) * 1000; 									//PWM
+					this.points[139] = (_buf3[6] & 0xFF) * 1000; 									//Throttle
+					this.points[140] = (_buf3[7] & 0xFF) * 1000; 									//Pump Voltage
+					this.points[141] = (_buf3[8] & 0xFF) * 1000; 									//Pump Voltage min
+					this.points[142] = DataParser.parse2UnsignedShort(_buf3[9], _buf4[0]) * 1000;	//Flow
+					this.points[143] = DataParser.parse2UnsignedShort(_buf4, 1) * 1000;						//Fuel ml
+					this.points[144] = DataParser.parse2UnsignedShort(_buf4, 3) * 1000; 					//Power Wh
+					this.points[145] = DataParser.parse2UnsignedShort(_buf4, 5) * 1000; 					//Thrust
+					this.points[146] = ((_buf4[7] & 0xFF) - 20) * 1000; 					//Pump Temperature
+					this.points[147] = (_buf4[8] & 0xFF) * 1000; 									//Engine run
+					this.points[148] = 0; 																				//spare
+					this.points[149] = 0; 																				//spare
+					this.points[150] = 0; 																				//spare
+					this.points[151] = (_buf4[9] & 0xFF) * 1000; 									//Version ESC			
 				}
 				return true;
 			}
-			this.points[119] = (this._buf1[1] & 0xFF) * 1000; // inverse event
+			this.points[135] = (this._buf1[1] & 0xFF) * 1000; // inverse event
 			return false;
 		}
 
@@ -252,11 +337,11 @@ public class HoTTbinReaderD extends HoTTbinReader2 {
 
 		@Override
 		public void migratePoints(int[] targetPoints) {
-			// 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max,
-			// 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
-			// 120=Speed 121=Speed_max 122=PWM 123=Throttle 124=VoltageBEC 125=VoltageBEC_max 125=CurrentBEC 127=TemperatureBEC 128=TemperatureCap 
-			// 129=Timing(empty) 130=Temperature_aux 131=Gear 132=YGEGenExt 133=MotStatEscNr 134=VersionESC
-			for (int j = 107; j < targetPoints.length; j++) {
+			// 123=VoltageM, 124=CurrentM, 125=CapacityM, 126=PowerM, 127=RevolutionM, 128=TemperatureM 1, 129=TemperatureM 2 130=Voltage_min, 131=Current_max,
+			// 132=Revolution_max, 133=Temperature1_max, 134=Temperature2_max 135=Event M
+			// 136=Speed 137=Speed_max 138=PWM 139=Throttle 140=VoltageBEC 141=VoltageBEC_max 142=CurrentBEC 143=TemperatureBEC 144=TemperatureCap 
+			// 145=Timing(empty) 146=Temperature_aux 147=Gear 148=YGEGenExt 149=MotStatEscNr 150=misc ESC_15 151=VersionESC
+			for (int j = 123; j < 123+29; j++) {
 				targetPoints[j] = this.points[j];
 			}
 		}
@@ -307,31 +392,21 @@ public class HoTTbinReaderD extends HoTTbinReader2 {
 		}
 		if (migrationJobs.contains(Sensor.ESC)) {
 			HoTTbinReaderD.escBinParser.migratePoints(HoTTbinReaderD.points);
-			if (((EscBinParser) HoTTbinReaderD.escBinParser).isChannelsChannel()) {
-				// 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max,
-				// 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
-				// 120=Speed 121=Speed_max 122=PWM 123=Throttle 124=VoltageBEC 125=VoltageBEC_max 125=CurrentBEC 127=TemperatureBEC 128=TemperatureCap 
-				// 129=Timing(empty) 130=Temperature_aux 131=Gear 132=YGEGenExt 133=MotStatEscNr 134=misc ESC_15 135=VersionESC
-				if (!isResetMinMax[0] && HoTTbinReaderD.points[107] != 0) {
-					for (int i=107; i<135; ++i) {
-						tmpRecordSet.get(i).setMinMax(HoTTbinReaderD.points[i], HoTTbinReaderD.points[i]);
-					}
-					isResetMinMax[0] = true;
+			// 123=VoltageM, 124=CurrentM, 125=CapacityM, 126=PowerM, 127=RevolutionM, 128=TemperatureM 1, 129=TemperatureM 2 130=Voltage_min, 131=Current_max,
+			// 132=Revolution_max, 133=Temperature1_max, 134=Temperature2_max 135=Event M
+			// 136=Speed 137=Speed_max 138=PWM 139=Throttle 140=VoltageBEC 141=VoltageBEC_max 142=CurrentBEC 143=TemperatureBEC 144=TemperatureCap 
+			// 145=Timing(empty) 146=Temperature_aux 147=Gear 148=YGEGenExt 149=MotStatEscNr 150=misc ESC_15 151=VersionESC
+			if (!isResetMinMax[0] && HoTTbinReaderD.points[107] != 0) {
+				for (int i = 123; i < 123+29; i++) {
+					tmpRecordSet.get(i).setMinMax(HoTTbinReaderD.points[i], HoTTbinReaderD.points[i]);
 				}
-			} else {
-				// 87=VoltageM, 88=CurrentM, 89=CapacityM, 90=PowerM, 91=RevolutionM, 92=TemperatureM 1, 93=TemperatureM 2 94=Voltage_min, 95=Current_max,
-				// 96=Revolution_max, 97=Temperature1_max, 98=Temperature2_max 99=Event M
-				// 100=Speed 101=Speed_max 102=PWM 103=Throttle 104=VoltageBEC 105=VoltageBEC_max 106=CurrentBEC 107=TemperatureBEC 108=TemperatureCap 
-				// 109=Timing(empty) 110=Temperature_aux 111=Gear 112=YGEGenExt 113=MotStatEscNr 114=misc ESC_15 115=VersionESC
-				if (!isResetMinMax[0] && HoTTbinReaderD.points[87] != 0) {
-					for (int i=87; i<114; ++i) {
-						tmpRecordSet.get(i).setMinMax(HoTTbinReaderD.points[i], HoTTbinReaderD.points[i]);
-					}
-					isResetMinMax[0] = true;
-				}
+				isResetMinMax[0] = true;
 			}
 		}
 		migrationJobs.clear();
+		
+		if(HoTTbinReaderD.points[219] != 0 || HoTTbinReaderD.points[222] != 0)
+			System.out.println();
 
 		HoTTbinReaderD.recordSet.addPoints(HoTTbinReaderD.points, timeStep_ms);
 	}
@@ -390,12 +465,29 @@ public class HoTTbinReaderD extends HoTTbinReader2 {
 		// 57=LowestCellNumber, 58=Pressure, 59=Event G
 		// 60=Voltage E, 61=Current E, 62=Capacity E, 63=Power E, 64=Balance E, 65=CellVoltage E1, 66=CellVoltage E2 .... 78=CellVoltage E14,
 		// 79=Voltage E1, 80=Voltage E2, 81=Temperature E1, 82=Temperature E2 83=Revolution E 84=MotorTime 85=Speed 86=Event E
-		// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=PowerOff, 104=BatterieLow, 105=Reset, 106=reserve
-		// 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max,
-		// 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
-		// 120=Speed 121=Speed_max 122=PWM 123=Throttle 124=VoltageBEC 125=VoltageBEC_max 125=CurrentBEC 127=TemperatureBEC 128=TemperatureCap 
-		// 129=Timing(empty) 130=Temperature_aux 131=Gear 132=YGEGenExt 133=MotStatEscNr 134=misc ESC_15 135=VersionESC
-		// 136=Test 00 137=Test 01.. 149=Test 12
+		// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=Ch17 ... 118=Ch32, 119=PowerOff, 120=BatterieLow, 121=Reset, 122=reserve
+		//ESC1
+		// 123=VoltageM, 124=CurrentM, 125=CapacityM, 126=PowerM, 127=RevolutionM, 128=TemperatureM 1, 129=TemperatureM 2 130=Voltage_min, 131=Current_max,
+		// 132=Revolution_max, 133=Temperature1_max, 134=Temperature2_max 135=Event M
+		// 136=Speed 137=Speed_max 138=PWM 139=Throttle 140=VoltageBEC 141=VoltageBEC_max 142=CurrentBEC 143=TemperatureBEC 144=TemperatureCap 
+		// 145=Timing(empty) 146=Temperature_aux 147=Gear 148=YGEGenExt 149=MotStatEscNr 150=misc ESC_15 151=VersionESC
+		//ESC2
+		// 152=VoltageM, 153=CurrentM, 154=CapacityM, 155=PowerM, 156=RevolutionM, 157=TemperatureM 1, 158=TemperatureM 2 159=Voltage_min, 160=Current_max,
+		// 161=Revolution_max, 162=Temperature1_max, 163=Temperature2_max 164=Event M
+		// 165=Speed 166=Speed_max 167=PWM 168=Throttle 169=VoltageBEC 170=VoltageBEC_min 171=CurrentBEC 172=TemperatureBEC 173=TemperatureCap 
+		// 174=Timing(empty) 175=Temperature_aux 176=Gear 177=YGEGenExt 178=MotStatEscNr 179=misc ESC_15 180=VersionESC
+		//ESC3
+		// 181=VoltageM2, 182=CurrentM, 183=CapacityM, 184=PowerM, 185=RevolutionM, 186=TemperatureM 1, 187=TemperatureM 2 188=Voltage_min, 189=Current_max,
+		// 190=Revolution_max, 191=Temperature1_max, 192=Temperature2_max 193=Event M
+		// 194=Speed 195=Speed_max 196=PWM 197=Throttle 198=VoltageBEC 199=VoltageBEC_min 200=CurrentBEC 201=TemperatureBEC 202=TemperatureCap 
+		// 203=Timing(empty) 204=Temperature_aux 205=Gear 206=YGEGenExt 207=MotStatEscNr 208=misc ESC_15 209=VersionESC
+		//ESC4
+		// 210=VoltageM3, 211=CurrentM, 212=CapacityM, 213=PowerM, 214=RevolutionM, 215=TemperatureM 1, 216=TemperatureM 2 217=Voltage_min, 218=Current_max,
+		// 219=Revolution_max, 220=Temperature1_max, 221=Temperature2_max 222=Event M
+		// 223=Speed 224=Speed_max 225=PWM 226=Throttle 227=VoltageBEC 228=VoltageBEC_min 229=CurrentBEC 230=TemperatureBEC 231=TemperatureCap 
+		// 232=Timing(empty) 233=Temperature_aux 234=Gear 235=YGEGenExt 236=MotStatEscNr 237=misc ESC_15 238=VersionESC
+
+		// 239=Test 00 240=Test 01.. 251=Test 12
 		HoTTbinReaderD.points = new int[device.getNumberOfMeasurements(channelNumber)];
 		HoTTbinReaderD.pointsGAM = HoTTbinReaderD.pointsEAM = HoTTbinReaderD.pointsESC = HoTTbinReaderD.pointsVario = HoTTbinReaderD.pointsGPS = HoTTbinReaderD.points;
 		HoTTbinReaderD.dataBlockSize = 64;
@@ -572,28 +664,15 @@ public class HoTTbinReaderD extends HoTTbinReader2 {
 
 									bufCopier.clearBuffers();
 									isSensorData = true;
-									if (((EscBinParser) HoTTbinReaderD.escBinParser).isChannelsChannel()) {
-										// 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max,
-										// 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
-										// 120=Speed 121=Speed_max 122=PWM 123=Throttle 124=VoltageBEC 125=VoltageBEC_max 125=CurrentBEC 127=TemperatureBEC 128=TemperatureCap 
-										// 129=Timing(empty) 130=Temperature_aux 131=Gear 132=YGEGenExt 133=MotStatEscNr 134=misc ESC_15 135=VersionESC
-										if (!isResetMinMax[0] && HoTTbinReaderD.points[107] != 0) {
-											for (int j=107; j<136; ++j) {
-												tmpRecordSet.get(j).setMinMax(HoTTbinReaderD.points[j], HoTTbinReaderD.points[j]);
-											}
-											isResetMinMax[0] = true;
+									// 123=VoltageM, 124=CurrentM, 125=CapacityM, 126=PowerM, 127=RevolutionM, 128=TemperatureM 1, 129=TemperatureM 2 130=Voltage_min, 131=Current_max,
+									// 132=Revolution_max, 133=Temperature1_max, 134=Temperature2_max 135=Event M
+									// 136=Speed 137=Speed_max 138=PWM 139=Throttle 140=VoltageBEC 141=VoltageBEC_max 142=CurrentBEC 143=TemperatureBEC 144=TemperatureCap 
+									// 145=Timing(empty) 146=Temperature_aux 147=Gear 148=YGEGenExt 149=MotStatEscNr 150=misc ESC_15 151=VersionESC
+									if (!isResetMinMax[0] && HoTTbinReaderD.points[107] != 0) {
+										for (int j = 123; j < 123+29; j++) {
+											tmpRecordSet.get(j).setMinMax(HoTTbinReaderD.points[j], HoTTbinReaderD.points[j]);
 										}
-									} else {
-										// 87=VoltageM, 88=CurrentM, 89=CapacityM, 90=PowerM, 91=RevolutionM, 92=TemperatureM 1, 93=TemperatureM 2 94=Voltage_min, 95=Current_max,
-										// 96=Revolution_max, 97=Temperature1_max, 98=Temperature2_max 99=Event M
-										// 100=Speed 101=Speed_max 102=PWM 103=Throttle 104=VoltageBEC 105=VoltageBEC_max 106=CurrentBEC 107=TemperatureBEC 108=TemperatureCap 
-										// 109=Timing(empty) 110=Temperature_aux 111=Gear 112=YGEGenExt 113=MotStatEscNr 114=misc ESC_15 115=VersionESC
-										if (!isResetMinMax[0] && HoTTbinReaderD.points[87] != 0) {
-											for (int j=87; j<116; ++j) {
-												tmpRecordSet.get(j).setMinMax(HoTTbinReaderD.points[j], HoTTbinReaderD.points[j]);
-											}
-											isResetMinMax[0] = true;
-										}
+										isResetMinMax[0] = true;
 									}
 								}
 							}
@@ -691,13 +770,29 @@ public class HoTTbinReaderD extends HoTTbinReader2 {
 		// 57=LowestCellNumber, 58=Pressure, 59=Event G
 		// 60=Voltage E, 61=Current E, 62=Capacity E, 63=Power E, 64=Balance E, 65=CellVoltage E1, 66=CellVoltage E2 .... 78=CellVoltage E14,
 		// 79=Voltage E1, 80=Voltage E2, 81=Temperature E1, 82=Temperature E2 83=Revolution E 84=MotorTime 85=Speed 86=Event E
-		// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=PowerOff, 104=BatterieLow, 105=Reset, 106=reserve
-		// 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max,
-		// 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
-		// 120=Speed 121=Speed_max 122=PWM 123=Throttle 124=VoltageBEC 125=VoltageBEC_max 125=CurrentBEC 127=TemperatureBEC 128=TemperatureCap 
-		// 129=Timing(empty) 130=Temperature_aux 131=Gear 132=YGEGenExt 133=MotStatEscNr 134=misc ESC_15 135=VersionESC
-		// 136=Test 00 137=Test 01.. 149=Test 12
-		// 129=Timing(empty) 130=Temperature_aux 131=Gear 132=YGEGenExt 133=MotStatEscNr 134=misc ESC_15 135=VersionESC
+		// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=Ch17 ... 118=Ch32, 119=PowerOff, 120=BatterieLow, 121=Reset, 122=reserve
+		//ESC1
+		// 123=VoltageM, 124=CurrentM, 125=CapacityM, 126=PowerM, 127=RevolutionM, 128=TemperatureM 1, 129=TemperatureM 2 130=Voltage_min, 131=Current_max,
+		// 132=Revolution_max, 133=Temperature1_max, 134=Temperature2_max 135=Event M
+		// 136=Speed 137=Speed_max 138=PWM 139=Throttle 140=VoltageBEC 141=VoltageBEC_max 142=CurrentBEC 143=TemperatureBEC 144=TemperatureCap 
+		// 145=Timing(empty) 146=Temperature_aux 147=Gear 148=YGEGenExt 149=MotStatEscNr 150=misc ESC_15 151=VersionESC
+		//ESC2
+		// 152=VoltageM, 153=CurrentM, 154=CapacityM, 155=PowerM, 156=RevolutionM, 157=TemperatureM 1, 158=TemperatureM 2 159=Voltage_min, 160=Current_max,
+		// 161=Revolution_max, 162=Temperature1_max, 163=Temperature2_max 164=Event M
+		// 165=Speed 166=Speed_max 167=PWM 168=Throttle 169=VoltageBEC 170=VoltageBEC_min 171=CurrentBEC 172=TemperatureBEC 173=TemperatureCap 
+		// 174=Timing(empty) 175=Temperature_aux 176=Gear 177=YGEGenExt 178=MotStatEscNr 179=misc ESC_15 180=VersionESC
+		//ESC3
+		// 181=VoltageM2, 182=CurrentM, 183=CapacityM, 184=PowerM, 185=RevolutionM, 186=TemperatureM 1, 187=TemperatureM 2 188=Voltage_min, 189=Current_max,
+		// 190=Revolution_max, 191=Temperature1_max, 192=Temperature2_max 193=Event M
+		// 194=Speed 195=Speed_max 196=PWM 197=Throttle 198=VoltageBEC 199=VoltageBEC_min 200=CurrentBEC 201=TemperatureBEC 202=TemperatureCap 
+		// 203=Timing(empty) 204=Temperature_aux 205=Gear 206=YGEGenExt 207=MotStatEscNr 208=misc ESC_15 209=VersionESC
+		//ESC4
+		// 210=VoltageM3, 211=CurrentM, 212=CapacityM, 213=PowerM, 214=RevolutionM, 215=TemperatureM 1, 216=TemperatureM 2 217=Voltage_min, 218=Current_max,
+		// 219=Revolution_max, 220=Temperature1_max, 221=Temperature2_max 222=Event M
+		// 223=Speed 224=Speed_max 225=PWM 226=Throttle 227=VoltageBEC 228=VoltageBEC_min 229=CurrentBEC 230=TemperatureBEC 231=TemperatureCap 
+		// 232=Timing(empty) 233=Temperature_aux 234=Gear 235=YGEGenExt 236=MotStatEscNr 237=misc ESC_15 238=VersionESC
+
+		// 239=Test 00 240=Test 01.. 251=Test 12
 		HoTTbinReaderD.points = new int[device.getNumberOfMeasurements(channelNumber)];
 		HoTTbinReaderD.pointsGAM = new int[HoTTbinReaderD.points.length];
 		HoTTbinReaderD.pointsEAM = new int[HoTTbinReaderD.points.length];

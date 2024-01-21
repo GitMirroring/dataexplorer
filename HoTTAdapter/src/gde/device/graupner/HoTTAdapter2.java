@@ -848,8 +848,15 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 				if (dataBuffer.length >= 74) {
 					//log.log(Level.INFO, StringHelper.byte2Hex2CharString(dataBuffer, dataBuffer.length));
 					// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=PowerOff, 104=BatterieLow, 105=Reset, 106=reserve
-					for (int i = 0, j = 0; i < 16; i++, j+=2) {
+					for (int i = 0, j = 0; i < 32; i++, j+=2) {
 						points[87 + i] = (DataParser.parse2Short(dataBuffer, 8 + j) / 2 + 1500) * 1000;
+					}
+					if (log.isLoggable(Level.FINE)) {
+						StringBuffer sb = new StringBuffer();
+						for (int i = 0, j = 0; i < 32; i++, j += 2) {
+							sb.append(String.format("%2d = %4d; ", i + 1, DataParser.parse2Short(dataBuffer, 8 + j) / 16 + 50));
+						}
+						log.log(Level.FINE, sb.toString());
 					}
 				}
 				break;
@@ -1504,7 +1511,7 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 		//3.4.6 extend this.measurements: 24=HomeDirection 25=Roll 26=Pitch 27=Yaw 28=GyroX 29=GyroY 30=GyroZ 31=Vibration 32=Version
 		//3.5.0 extend this.measurements: 15=misc Vario_1 16=misc Vario_2 17=misc Vario_3 18=misc Vario_4 19=misc Vario_5
 		//3.6.0 extend this measurements: 100=misc ESC_1 to 115=misc ESC_15 - 120=misc ESC_1 to 135=misc ESC_15
-
+		//3.8.4 extend this.measurements: 103=Ch17 ... 118=Ch32 (channels channel only 136 -> 152)
 
 		// 0=RX-TX-VPacks, 1=RXSQ, 2=Strength, 3=VPacks, 4=Tx, 5=Rx, 6=VoltageRx, 7=TemperatureRx 8=VoltageRxMin 9=EventRx
 		// 10=Altitude, 11=Climb 1, 12=Climb 3, 13=Climb 10 14=EventVario 15=misc Vario_1 16=misc Vario_2 17=misc Vario_3 18=misc Vario_4 19=misc Vario_5
@@ -1520,11 +1527,13 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 		// 100=Speed 101=Speed_max 102=PWM 103=Throttle 104=VoltageBEC 105=VoltageBEC_max 106=CurrentBEC 107=TemperatureBEC 108=TemperatureCap 
 		// 109=Timing(empty) 110=Temperature_aux 111=Gear 112=YGEGenExt 113=MotStatEscNr 114=misc ESC_15 115=VersionESC
 
-		// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=PowerOff, 104=BatterieLow, 105=Reset, 106=reserve
-		// 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max,
-		// 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
-		// 120=Speed 121=Speed_max 122=PWM 123=Throttle 124=VoltageBEC 125=VoltageBEC_max 125=CurrentBEC 127=TemperatureBEC 128=TemperatureCap 
-		// 129=Timing(empty) 130=Temperature_aux 131=Gear 132=YGEGenExt 133=MotStatEscNr 134=misc ESC_15 135=VersionESC
+		//Channels
+		// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=Ch17 ... 118=Ch32
+		// points.length = 152 -> 119=PowerOff, 120=BatterieLow, 121=Reset, 122=reserve
+		// 123=VoltageM, 124=CurrentM, 125=CapacityM, 126=PowerM, 127=RevolutionM, 128=TemperatureM 1, 129=TemperatureM 2 130=Voltage_min, 131=Current_max,
+		// 132=Revolution_max, 133=Temperature1_max, 134=Temperature2_max 135=Event M
+		// 136=Speed 137=Speed_max 138=PWM 139=Throttle 140=VoltageBEC 141=VoltageBEC_max 142=CurrentBEC 143=TemperatureBEC 144=TemperatureCap 
+		// 145=Timing(empty) 146=Temperature_aux 147=Gear 148=YGEGenExt 149=MotStatEscNr 150=misc ESC_15 151=VersionESC
 
 		StringBuilder sb = new StringBuilder().append(GDE.LINE_SEPARATOR);
 
@@ -2529,8 +2538,43 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 				}
 				break;
 				
+			case 136: //Channels channel 3.6.0 to 3.8.3	
+				for (int i = 0, j = 0; i < recordKeys.length; i++) {
+					//3.8.4 extend this.measurements: 103=Ch17 ... 118=Ch32 (channels channel only 136 -> 152)
+					switch (i) { //list of added measurements
+					case 103: //ch17
+					case 104: //ch18
+					case 105: //ch19
+					case 106: //ch20
+					case 107: //ch21
+					case 108: //ch22
+					case 109: //ch23
+					case 110: //ch24
+					case 111: //ch25
+					case 112: //ch26
+					case 113: //ch27
+					case 114: //ch28
+					case 115: //ch29
+					case 116: //ch30
+					case 117: //ch31
+					case 118: //ch32
+						sb.append(String.format("added measurement set to isCalculation=true -> %s\n", recordKeys[i]));
+						recordSet.get(i).setActive(null);
+						break;
+					default:
+						HashMap<String, String> recordProps = StringHelper.splitString(fileRecordsProperties[j], Record.DELIMITER, Record.propertyKeys);
+						sb.append(String.format("%19s match %19s isAvtive = %s\n", recordKeys[i], recordProps.get(Record.NAME), recordProps.get(Record.IS_ACTIVE)));
+						cleanedRecordNames.add(recordKeys[i]);
+						noneCalculationRecordNames.add(recordProps.get(Record.NAME));
+						if (fileRecordsProperties[j].contains("_isActive=false"))
+							recordSet.get(i).setActive(false);
+						++j;
+						break;
+					}
+				}
+				break;
+				
 			case 116:	//3.6.0 no channels
-			case 136:	//3.6.0 with channels
 			default:
 				cleanedRecordNames.addAll(Arrays.asList(recordKeys));
 				for (int i = 0; i < fileRecordsProperties.length; i++) {
@@ -2884,19 +2928,23 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 			// 57=LowestCellNumber, 58=Pressure, 59=Event G
 			// 60=Voltage E, 61=Current E, 62=Capacity E, 63=Power E, 64=Balance E, 65=CellVoltage E1, 66=CellVoltage E2 .... 78=CellVoltage E14,
 			// 79=Voltage E1, 80=Voltage E2, 81=Temperature E1, 82=Temperature E2 83=Revolution E 84=MotorTime 85=Speed 86=Event E
+			// ESC wo channels
 			// 87=VoltageM, 88=CurrentM, 89=CapacityM, 90=PowerM, 91=RevolutionM, 92=TemperatureM 1, 93=TemperatureM 2 94=Voltage_min, 95=Current_max,
 			// 96=Revolution_max, 97=Temperature1_max, 98=Temperature2_max 99=Event M
 			// 100=Speed 101=Speed_max 102=PWM 103=Throttle 104=VoltageBEC 105=VoltageBEC_max 106=CurrentBEC 107=TemperatureBEC 108=TemperatureCap 
 			// 109=Timing(empty) 110=Temperature_aux 111=Gear 112=YGEGenExt 113=MotStatEscNr 114=misc ESC_15 115=VersionESC
-
-			// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=PowerOff, 104=BatterieLow, 105=Reset, 106=reserve
-			// 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max,
-			// 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
-			// 120=Speed 121=Speed_max 122=PWM 123=Throttle 124=VoltageBEC 125=VoltageBEC_max 125=CurrentBEC 127=TemperatureBEC 128=TemperatureCap 
-			// 129=Timing(empty) 130=Temperature_aux 131=Gear 132=YGEGenExt 133=MotStatEscNr 134=misc ESC_15 135=VersionESC
+			// Channels
+			// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=Ch17 ... 118=Ch32
+			// points.length = 136 -> 103=PowerOff, 104=BatterieLow, 105=Reset, 106=reserve
+			// points.length = 152 -> 119=PowerOff, 120=BatterieLow, 121=Reset, 122=reserve
+			// ESC
+			// 123=VoltageM, 124=CurrentM, 125=CapacityM, 126=PowerM, 127=RevolutionM, 128=TemperatureM 1, 129=TemperatureM 2 130=Voltage_min, 131=Current_max,
+			// 132=Revolution_max, 133=Temperature1_max, 134=Temperature2_max 135=Event M
+			// 136=Speed 137=Speed_max 138=PWM 139=Throttle 140=VoltageBEC 141=VoltageBEC_max 142=CurrentBEC 143=TemperatureBEC 144=TemperatureCap 
+			// 145=Timing(empty) 146=Temperature_aux 147=Gear 148=YGEGenExt 149=MotStatEscNr 150=misc ESC_15 151=VersionESC
 			int offsetNumberESC = (numESC - 1) * 29;
 			int channelConfigNumber = tmpRecordSet.getChannelConfigNumber();
-			int channelOffset = channelConfigNumber == 4 ? 20 + offsetNumberESC : offsetNumberESC;
+			int channelOffset = channelConfigNumber == 4 ? 36 + offsetNumberESC : offsetNumberESC;
 			tmpRecordSet.get(100 + channelOffset).setName(device.getMeasurementReplacement("speed") + " M" + numESC);
 			tmpRecordSet.get(100 + channelOffset).setUnit("km/h");
 			device.getMeasurement(channelConfigNumber, 100 + channelOffset).setStatistics(StatisticsType.fromString("min=true max=true avg=true sigma=false"));
@@ -2950,32 +2998,36 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 			// 57=LowestCellNumber, 58=Pressure, 59=Event G
 			// 60=Voltage E, 61=Current E, 62=Capacity E, 63=Power E, 64=Balance E, 65=CellVoltage E1, 66=CellVoltage E2 .... 78=CellVoltage E14,
 			// 79=Voltage E1, 80=Voltage E2, 81=Temperature E1, 82=Temperature E2 83=Revolution E 84=MotorTime 85=Speed 86=Event E
+			// ESC wo channels
 			// 87=VoltageM, 88=CurrentM, 89=CapacityM, 90=PowerM, 91=RevolutionM, 92=TemperatureM 1, 93=TemperatureM 2 94=Voltage_min, 95=Current_max,
 			// 96=Revolution_max, 97=Temperature1_max, 98=Temperature2_max 99=Event M
-			// 100=AirSpeed 101=AirSpeed_max 102=PWM 103=Throttle 104=VoltagePump 105=VoltagePump_min 106=Flow 107=Fuel 108=Power 
-			// 109=Thrust 110=TemperaturePump 111=EngineStat 112=spare 113=spare 114=spare 115=version
-
-			// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=PowerOff, 104=BatterieLow, 105=Reset, 106=reserve
-			// 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max,
-			// 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
-			// 120=AirSpeed 121=AirSpeed_max 122=PWM 123=Throttle 124=VoltagePump 125=VoltagePump_min 126=Flow 127=Fuel 128=Power 
-			// 129=Thrust 130=TemperaturePump 131=EngineStat 132=spare 133=spare 134=spare 135=version
+			// 100=Speed 101=Speed_max 102=PWM 103=Throttle 104=VoltageBEC 105=VoltageBEC_max 106=CurrentBEC 107=TemperatureBEC 108=TemperatureCap 
+			// 109=Timing(empty) 110=Temperature_aux 111=Gear 112=YGEGenExt 113=MotStatEscNr 114=misc ESC_15 115=VersionESC
+			// Channels
+			// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=Ch17 ... 118=Ch32
+			// points.length = 136 -> 103=PowerOff, 104=BatterieLow, 105=Reset, 106=reserve
+			// points.length = 152 -> 119=PowerOff, 120=BatterieLow, 121=Reset, 122=reserve
+			// ESC
+			// 123=VoltageM, 124=CurrentM, 125=CapacityM, 126=PowerM, 127=RevolutionM, 128=TemperatureM 1, 129=TemperatureM 2 130=Voltage_min, 131=Current_max,
+			// 132=Revolution_max, 133=Temperature1_max, 134=Temperature2_max 135=Event M
+			// 136=Speed 137=Speed_max 138=PWM 139=Throttle 140=VoltageBEC 141=VoltageBEC_max 142=CurrentBEC 143=TemperatureBEC 144=TemperatureCap 
+			// 145=Timing(empty) 146=Temperature_aux 147=Gear 148=YGEGenExt 149=MotStatEscNr 150=misc ESC_15 151=VersionESC
 			int offsetNumberESC = (numESC - 1) * 29;
 			int channelConfigNumber = tmpRecordSet.getChannelConfigNumber();
-			int channelOffset = channelConfigNumber == 4 ? 20 + offsetNumberESC : offsetNumberESC;
-			
-			// 87=VoltageM, 88=CurrentM, 89=CapacityM, 90=PowerM, 91=RevolutionM, 92=TemperatureM 1, 93=TemperatureM 2 94=Voltage_min, 95=Current_max,
-			// 96=Revolution_max, 97=Temperature1_max, 98=Temperature2_max 99=Event M
+			int channelOffset = channelConfigNumber == 4 ? 36 + offsetNumberESC : offsetNumberESC;
 			tmpRecordSet.get(87 + channelOffset).setName(device.getMeasurementReplacement("voltage") + " ECU" + numESC);
 			tmpRecordSet.get(88 + channelOffset).setName(device.getMeasurementReplacement("current") + " ECU" + numESC);
+			tmpRecordSet.get(89 + channelOffset).setName(device.getMeasurementReplacement("capacity") + " ECU" + numESC);
+			tmpRecordSet.get(90 + channelOffset).setName(device.getMeasurementReplacement("power") + " ECU" + numESC);
+			tmpRecordSet.get(91 + channelOffset).setName(device.getMeasurementReplacement("revolution") + " ECU" + numESC);
 			tmpRecordSet.get(92 + channelOffset).setName(device.getMeasurementReplacement("temperature") + " EGT" + numESC + " 1");
 			tmpRecordSet.get(93 + channelOffset).setName(device.getMeasurementReplacement("temperature") + " EGT" + numESC + " 2");
 			tmpRecordSet.get(94 + channelOffset).setName(device.getMeasurementReplacement("voltage") + " ECU" + numESC + "_min");
 			tmpRecordSet.get(95 + channelOffset).setName(device.getMeasurementReplacement("current") + " ECU" + numESC + "_max");
 			tmpRecordSet.get(97 + channelOffset).setName(device.getMeasurementReplacement("temperature") + " EGT" + numESC + " 1_max");
 			tmpRecordSet.get(98 + channelOffset).setName(device.getMeasurementReplacement("temperature") + " EGT" + numESC + " 2_max");
-			
-
+			tmpRecordSet.get(99 + channelOffset).setName(device.getMeasurementReplacement("event") + " ECU" + numESC);
+		
 			tmpRecordSet.get(100 + channelOffset).setName(device.getMeasurementReplacement("air_speed") + " M" + numESC);
 			tmpRecordSet.get(100 + channelOffset).setUnit("km/h");
 			device.getMeasurement(channelConfigNumber, 100 + channelOffset).setStatistics(StatisticsType.fromString("min=true max=true avg=true sigma=false"));

@@ -90,12 +90,29 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 		// 57=LowestCellNumber, 58=Pressure, 59=Event G
 		// 60=Voltage E, 61=Current E, 62=Capacity E, 63=Power E, 64=Balance E, 65=CellVoltage E1, 66=CellVoltage E2 .... 78=CellVoltage E14,
 		// 79=Voltage E1, 80=Voltage E2, 81=Temperature E1, 82=Temperature E2 83=Revolution E 84=MotorTime 85=Speed 86=Event E
-		// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=PowerOff, 104=BatterieLow, 105=Reset, 106=reserve
-		// 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max,
-		// 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
-		// 120=Speed 121=Speed_max 122=PWM 123=Throttle 124=VoltageBEC 125=VoltageBEC_min 125=CurrentBEC 127=TemperatureBEC 128=TemperatureCap 
-		// 129=Timing(empty) 130=Temperature_aux 131=Gear 132=YGEGenExt 133=MotStatEscNr 134=misc ESC_15 135=VersionESC
-		// 136=Test 00 137=Test 01.. 149=Test 12
+		// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=Ch17 ... 118=Ch32, 119=PowerOff, 120=BatterieLow, 121=Reset, 122=reserve
+		// ESC1
+		// 123=VoltageM, 124=CurrentM, 125=CapacityM, 126=PowerM, 127=RevolutionM, 128=TemperatureM 1, 129=TemperatureM 2 130=Voltage_min, 131=Current_max,
+		// 132=Revolution_max, 133=Temperature1_max, 134=Temperature2_max 135=Event M
+		// 136=Speed 137=Speed_max 138=PWM 139=Throttle 140=VoltageBEC 141=VoltageBEC_max 142=CurrentBEC 143=TemperatureBEC 144=TemperatureCap 
+		// 145=Timing(empty) 146=Temperature_aux 147=Gear 148=YGEGenExt 149=MotStatEscNr 150=misc ESC_15 151=VersionESC
+		//ESC2
+		// 152=VoltageM, 153=CurrentM, 154=CapacityM, 155=PowerM, 156=RevolutionM, 157=TemperatureM 1, 158=TemperatureM 2 159=Voltage_min, 160=Current_max,
+		// 161=Revolution_max, 162=Temperature1_max, 163=Temperature2_max 164=Event M
+		// 165=Speed 166=Speed_max 167=PWM 168=Throttle 169=VoltageBEC 170=VoltageBEC_min 171=CurrentBEC 172=TemperatureBEC 173=TemperatureCap 
+		// 174=Timing(empty) 175=Temperature_aux 176=Gear 177=YGEGenExt 178=MotStatEscNr 179=misc ESC_15 180=VersionESC
+		//ESC3
+		// 181=VoltageM2, 182=CurrentM, 183=CapacityM, 184=PowerM, 185=RevolutionM, 186=TemperatureM 1, 187=TemperatureM 2 188=Voltage_min, 189=Current_max,
+		// 190=Revolution_max, 191=Temperature1_max, 192=Temperature2_max 193=Event M
+		// 194=Speed 195=Speed_max 196=PWM 197=Throttle 198=VoltageBEC 199=VoltageBEC_min 200=CurrentBEC 201=TemperatureBEC 202=TemperatureCap 
+		// 203=Timing(empty) 204=Temperature_aux 205=Gear 206=YGEGenExt 207=MotStatEscNr 208=misc ESC_15 209=VersionESC
+		//ESC4
+		// 210=VoltageM3, 211=CurrentM, 212=CapacityM, 213=PowerM, 214=RevolutionM, 215=TemperatureM 1, 216=TemperatureM 2 217=Voltage_min, 218=Current_max,
+		// 219=Revolution_max, 220=Temperature1_max, 221=Temperature2_max 222=Event M
+		// 223=Speed 224=Speed_max 225=PWM 226=Throttle 227=VoltageBEC 228=VoltageBEC_min 229=CurrentBEC 230=TemperatureBEC 231=TemperatureCap 
+		// 232=Timing(empty) 233=Temperature_aux 234=Gear 235=YGEGenExt 236=MotStatEscNr 237=misc ESC_15 238=VersionESC
+
+		// 239=Test 00 240=Test 01.. 251=Test 12
 		HoTTlogReaderD.points = new int[device.getNumberOfMeasurements(channelNumber)];
 		long[] timeSteps_ms = new long[] {0};
 		int numberLogChannels = Integer.valueOf(fileInfoHeader.get("LOG NOB CHANNEL"));
@@ -103,7 +120,7 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 		int rawDataBlockSize = Integer.parseInt(fileInfoHeader.get(HoTTAdapter.RAW_LOG_SIZE));
 		int asciiDataBlockSize = Integer.parseInt(fileInfoHeader.get(HoTTAdapter.ASCII_LOG_SIZE));
     int[] valuesRec = new int[10];
-    int[] valuesChn = new int[23];
+    int[] valuesChn = new int[39];
     int[] valuesVar = new int[27];
     int[] valuesGPS = new int[24];
     int[] valuesGAM = new int[26];
@@ -214,7 +231,7 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 					HoTTlogReaderD.chnLogParser.parse();
 					//in 0=FreCh, 1=Tx, 2=Rx, 3=Ch 1, 4=Ch 2 .. 18=Ch 16 19=PowerOff 20=BattLow 21=Reset 22=Warning
 					//out 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=PowerOff, 104=BatterieLow, 105=Reset, 106=reserv
-					System.arraycopy(valuesChn, 3, HoTTlogReaderD.points, 87, 20); //copy channel data and events, warning
+					System.arraycopy(valuesChn, 3, HoTTlogReaderD.points, 87, 36); //copy channel data and events, warning
 
 					switch ((byte) (HoTTbinReader.buf[26] & 0xFF)) { //actual sensor
 					case HoTTAdapter.ANSWER_SENSOR_VARIO_19200:
@@ -398,7 +415,7 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 			super.parse();
 
 			//if ((_buf[40] & 0xFF) == 0xFF) { // gyro receiver
-			// 223=Test 00 224=Test 01.. 235=Test 12
+			// 239=Test 00 240=Test 01.. 251=Test 12
 				for (int i = 0, j = 0; i < 13; i++, j += 2) {
 					this.points[i + 14] = DataParser.parse2Short(buf, 40 + j) * 1000;
 				}
@@ -434,28 +451,29 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 		// 57=LowestCellNumber, 58=Pressure, 59=Event G
 		// 60=Voltage E, 61=Current E, 62=Capacity E, 63=Power E, 64=Balance E, 65=CellVoltage E1, 66=CellVoltage E2 .... 78=CellVoltage E14,
 		// 79=Voltage E1, 80=Voltage E2, 81=Temperature E1, 82=Temperature E2 83=Revolution E 84=MotorTime 85=Speed 86=Event E
-		// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=PowerOff, 104=BatterieLow, 105=Reset, 106=reserve
-		// 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max,
-		// 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
-		// 120=Speed 121=Speed_max 122=PWM 123=Throttle 124=VoltageBEC 125=VoltageBEC_min 125=CurrentBEC 127=TemperatureBEC 128=TemperatureCap 
-		// 129=Timing(empty) 130=Temperature_aux 131=Gear 132=YGEGenExt 133=MotStatEscNr 134=misc ESC_15 135=VersionESC
+		// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=Ch17 ... 118=Ch32, 119=PowerOff, 120=BatterieLow, 121=Reset, 122=reserve
+		//ESC1
+		// 123=VoltageM, 124=CurrentM, 125=CapacityM, 126=PowerM, 127=RevolutionM, 128=TemperatureM 1, 129=TemperatureM 2 130=Voltage_min, 131=Current_max,
+		// 132=Revolution_max, 133=Temperature1_max, 134=Temperature2_max 135=Event M
+		// 136=Speed 137=Speed_max 138=PWM 139=Throttle 140=VoltageBEC 141=VoltageBEC_max 142=CurrentBEC 143=TemperatureBEC 144=TemperatureCap 
+		// 145=Timing(empty) 146=Temperature_aux 147=Gear 148=YGEGenExt 149=MotStatEscNr 150=misc ESC_15 151=VersionESC
 		//ESC2
-		// 136=VoltageM, 137=CurrentM, 138=CapacityM, 139=PowerM, 140=RevolutionM, 141=TemperatureM 1, 142=TemperatureM 2 143=Voltage_min, 144=Current_max,
-		// 145=Revolution_max, 146=Temperature1_max, 147=Temperature2_max 148=Event M
-		// 149=Speed 150=Speed_max 151=PWM 152=Throttle 153=VoltageBEC 154=VoltageBEC_min 155=CurrentBEC 156=TemperatureBEC 157=TemperatureCap 
-		// 158=Timing(empty) 159=Temperature_aux 160=Gear 161=YGEGenExt 162=MotStatEscNr 163=misc ESC_15 164=VersionESC
+		// 152=VoltageM, 153=CurrentM, 154=CapacityM, 155=PowerM, 156=RevolutionM, 157=TemperatureM 1, 158=TemperatureM 2 159=Voltage_min, 160=Current_max,
+		// 161=Revolution_max, 162=Temperature1_max, 163=Temperature2_max 164=Event M
+		// 165=Speed 166=Speed_max 167=PWM 168=Throttle 169=VoltageBEC 170=VoltageBEC_min 171=CurrentBEC 172=TemperatureBEC 173=TemperatureCap 
+		// 174=Timing(empty) 175=Temperature_aux 176=Gear 177=YGEGenExt 178=MotStatEscNr 179=misc ESC_15 180=VersionESC
 		//ESC3
-		// 165=VoltageM2, 166=CurrentM, 167=CapacityM, 168=PowerM, 169=RevolutionM, 170=TemperatureM 1, 171=TemperatureM 2 172=Voltage_min, 173=Current_max,
-		// 174=Revolution_max, 175=Temperature1_max, 176=Temperature2_max 177=Event M
-		// 178=Speed 179=Speed_max 180=PWM 181=Throttle 182=VoltageBEC 183=VoltageBEC_min 184=CurrentBEC 185=TemperatureBEC 186=TemperatureCap 
-		// 187=Timing(empty) 188=Temperature_aux 189=Gear 190=YGEGenExt 191=MotStatEscNr 192=misc ESC_15 193=VersionESC
+		// 181=VoltageM2, 182=CurrentM, 183=CapacityM, 184=PowerM, 185=RevolutionM, 186=TemperatureM 1, 187=TemperatureM 2 188=Voltage_min, 189=Current_max,
+		// 190=Revolution_max, 191=Temperature1_max, 192=Temperature2_max 193=Event M
+		// 194=Speed 195=Speed_max 196=PWM 197=Throttle 198=VoltageBEC 199=VoltageBEC_min 200=CurrentBEC 201=TemperatureBEC 202=TemperatureCap 
+		// 203=Timing(empty) 204=Temperature_aux 205=Gear 206=YGEGenExt 207=MotStatEscNr 208=misc ESC_15 209=VersionESC
 		//ESC4
-		// 194=VoltageM3, 195=CurrentM, 196=CapacityM, 197=PowerM, 198=RevolutionM, 199=TemperatureM 1, 200=TemperatureM 2 201=Voltage_min, 202=Current_max,
-		// 203=Revolution_max, 204=Temperature1_max, 205=Temperature2_max 206=Event M
-		// 207=Speed 208=Speed_max 209=PWM 210=Throttle 211=VoltageBEC 212=VoltageBEC_min 213=CurrentBEC 214=TemperatureBEC 215=TemperatureCap 
-		// 216=Timing(empty) 217=Temperature_aux 218=Gear 219=YGEGenExt 220=MotStatEscNr 221=misc ESC_15 222=VersionESC
+		// 210=VoltageM3, 211=CurrentM, 212=CapacityM, 213=PowerM, 214=RevolutionM, 215=TemperatureM 1, 216=TemperatureM 2 217=Voltage_min, 218=Current_max,
+		// 219=Revolution_max, 220=Temperature1_max, 221=Temperature2_max 222=Event M
+		// 223=Speed 224=Speed_max 225=PWM 226=Throttle 227=VoltageBEC 228=VoltageBEC_min 229=CurrentBEC 230=TemperatureBEC 231=TemperatureCap 
+		// 232=Timing(empty) 233=Temperature_aux 234=Gear 235=YGEGenExt 236=MotStatEscNr 237=misc ESC_15 238=VersionESC
 
-		// 223=Test 00 224=Test 01.. 235=Test 12
+		// 239=Test 00 240=Test 01.. 251=Test 12
 
 		//in 0=RXSQ, 1=Voltage, 2=Current, 3=Capacity, 4=Power, 5=Balance, 6=CellVoltage 1, 7=CellVoltage 2 .... 19=CellVoltage 14,
 		//in 20=Altitude, 21=Climb 1, 22=Climb 3, 23=Voltage 1, 24=Voltage 2, 25=Temperature 1, 26=Temperature 2 27=RPM 28=MotorTime 29=Speed 30=Event
@@ -522,9 +540,9 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 				HoTTlogReaderD.points[j + 15] = valuesVario[j + 8];
 			}
 
-			//out 223=Test 00 224=Test 01.. 235=Test 12
+			//out 239=Test 00 240=Test 01.. 251=Test 12
 			for (int j = 0; j < 13; j++) {
-				HoTTlogReaderD.points[j + 223] = valuesVario[j + 14];
+				HoTTlogReaderD.points[j + 239] = valuesVario[j + 14];
 			}
 		}
 		//in 0=RF_RXSQ, 1=Voltage, 2=Current, 3=Capacity, 4=Power, 5=Revolution, 6=Temperature1, 7=Temperature2
@@ -532,38 +550,39 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 		//in 14=Speed 15=Speed_max 16=PWM 17=Throttle 18=VoltageBEC 19=VoltageBEC_min 20=CurrentBEC 21=TemperatureBEC 22=TemperatureCap 
 		//in 23=Timing(empty) 24=Temperature_aux 25=Gear 26=YGEGenExt 27=MotStatEscNr 28=misc ESC_15 29=VersionESC
 		if (isEscData) {
-			//out 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max, 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
-			//out 120=Speed 121=Speed_max 122=PWM 123=Throttle 124=VoltageBEC 125=VoltageBEC_min 125=CurrentBEC 127=TemperatureBEC 128=TemperatureCap 
-			//out 129=Timing(empty) 130=Temperature_aux 131=Gear 132=YGEGenExt 133=MotStatEscNr 134=misc ESC_15 135=VersionESC
+			// 123=VoltageM, 124=CurrentM, 125=CapacityM, 126=PowerM, 127=RevolutionM, 128=TemperatureM 1, 129=TemperatureM 2 130=Voltage_min, 131=Current_max,
+			// 132=Revolution_max, 133=Temperature1_max, 134=Temperature2_max 135=Event M
+			// 136=Speed 137=Speed_max 138=PWM 139=Throttle 140=VoltageBEC 141=VoltageBEC_max 142=CurrentBEC 143=TemperatureBEC 144=TemperatureCap 
+			// 145=Timing(empty) 146=Temperature_aux 147=Gear 148=YGEGenExt 149=MotStatEscNr 150=misc ESC_15 151=VersionESC
 			for (int j = 0; j < 29; j++) {
-				HoTTlogReaderD.points[j + 107] = valuesESC[j + 1];
+				HoTTlogReaderD.points[j + 123] = valuesESC[j + 1];
 			}
 		}
 		if (isEsc2Data) {
-			// 136=VoltageM, 137=CurrentM, 138=CapacityM, 139=PowerM, 140=RevolutionM, 141=TemperatureM 1, 142=TemperatureM 2 143=Voltage_min, 144=Current_max,
-			// 145=Revolution_max, 146=Temperature1_max, 147=Temperature2_max 148=Event M
-			// 149=Speed 150=Speed_max 151=PWM 152=Throttle 153=VoltageBEC 154=VoltageBEC_min 155=CurrentBEC 156=TemperatureBEC 157=TemperatureCap 
-			// 158=Timing(empty) 159=Temperature_aux 160=Gear 161=YGEGenExt 162=MotStatEscNr 163=misc ESC_15 164=VersionESC
+			// 152=VoltageM, 153=CurrentM, 154=CapacityM, 155=PowerM, 156=RevolutionM, 157=TemperatureM 1, 158=TemperatureM 2 159=Voltage_min, 160=Current_max,
+			// 161=Revolution_max, 162=Temperature1_max, 163=Temperature2_max 164=Event M
+			// 165=Speed 166=Speed_max 167=PWM 168=Throttle 169=VoltageBEC 170=VoltageBEC_min 171=CurrentBEC 172=TemperatureBEC 173=TemperatureCap 
+			// 174=Timing(empty) 175=Temperature_aux 176=Gear 177=YGEGenExt 178=MotStatEscNr 179=misc ESC_15 180=VersionESC
 			for (int j = 0; j < 29; j++) {
-				HoTTlogReaderD.points[j + 136] = valuesESC2[j + 1];
+				HoTTlogReaderD.points[j + 152] = valuesESC2[j + 1];
 			}
 		}
 		if (isEsc3Data) {
-			// 165=VoltageM2, 166=CurrentM, 167=CapacityM, 168=PowerM, 169=RevolutionM, 170=TemperatureM 1, 171=TemperatureM 2 172=Voltage_min, 173=Current_max,
-			// 174=Revolution_max, 175=Temperature1_max, 176=Temperature2_max 177=Event M
-			// 178=Speed 179=Speed_max 180=PWM 181=Throttle 182=VoltageBEC 183=VoltageBEC_min 184=CurrentBEC 185=TemperatureBEC 186=TemperatureCap 
-			// 187=Timing(empty) 188=Temperature_aux 189=Gear 190=YGEGenExt 191=MotStatEscNr 192=misc ESC_15 193=VersionESC
+			// 181=VoltageM2, 182=CurrentM, 183=CapacityM, 184=PowerM, 185=RevolutionM, 186=TemperatureM 1, 187=TemperatureM 2 188=Voltage_min, 189=Current_max,
+			// 190=Revolution_max, 191=Temperature1_max, 192=Temperature2_max 193=Event M
+			// 194=Speed 195=Speed_max 196=PWM 197=Throttle 198=VoltageBEC 199=VoltageBEC_min 200=CurrentBEC 201=TemperatureBEC 202=TemperatureCap 
+			// 203=Timing(empty) 204=Temperature_aux 205=Gear 206=YGEGenExt 207=MotStatEscNr 208=misc ESC_15 209=VersionESC
 			for (int j = 0; j < 29; j++) {
-				HoTTlogReaderD.points[j + 165] = valuesESC3[j + 1];
+				HoTTlogReaderD.points[j + 181] = valuesESC3[j + 1];
 			}
 		}
 		if (isEsc4Data) {
-			// 194=VoltageM3, 195=CurrentM, 196=CapacityM, 197=PowerM, 198=RevolutionM, 199=TemperatureM 1, 200=TemperatureM 2 201=Voltage_min, 202=Current_max,
-			// 203=Revolution_max, 204=Temperature1_max, 205=Temperature2_max 206=Event M
-			// 207=Speed 208=Speed_max 209=PWM 210=Throttle 211=VoltageBEC 212=VoltageBEC_min 213=CurrentBEC 214=TemperatureBEC 215=TemperatureCap 
-			// 216=Timing(empty) 217=Temperature_aux 218=Gear 219=YGEGenExt 220=MotStatEscNr 221=misc ESC_15 222=VersionESC
+			// 210=VoltageM3, 211=CurrentM, 212=CapacityM, 213=PowerM, 214=RevolutionM, 215=TemperatureM 1, 216=TemperatureM 2 217=Voltage_min, 218=Current_max,
+			// 219=Revolution_max, 220=Temperature1_max, 221=Temperature2_max 222=Event M
+			// 223=Speed 224=Speed_max 225=PWM 226=Throttle 227=VoltageBEC 228=VoltageBEC_min 229=CurrentBEC 230=TemperatureBEC 231=TemperatureCap 
+			// 232=Timing(empty) 233=Temperature_aux 234=Gear 235=YGEGenExt 236=MotStatEscNr 237=misc ESC_15 238=VersionESC
 			for (int j = 0; j < 29; j++) {
-				HoTTlogReaderD.points[j + 194] = valuesESC4[j + 1];
+				HoTTlogReaderD.points[j + 210] = valuesESC4[j + 1];
 			}
 		}
 

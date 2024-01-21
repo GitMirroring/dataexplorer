@@ -89,16 +89,21 @@ public class HoTTlogReader2 extends HoTTlogReader {
 		// 57=LowestCellNumber, 58=Pressure, 59=Event G
 		// 60=Voltage E, 61=Current E, 62=Capacity E, 63=Power E, 64=Balance E, 65=CellVoltage E1, 66=CellVoltage E2 .... 78=CellVoltage E14,
 		// 79=Voltage E1, 80=Voltage E2, 81=Temperature E1, 82=Temperature E2 83=Revolution E 84=MotorTime 85=Speed 86=Event E
+		// ESC wo channels
 		// 87=VoltageM, 88=CurrentM, 89=CapacityM, 90=PowerM, 91=RevolutionM, 92=TemperatureM 1, 93=TemperatureM 2 94=Voltage_min, 95=Current_max,
 		// 96=Revolution_max, 97=Temperature1_max, 98=Temperature2_max 99=Event M
-		// 100=Speed 101=Speed_max 102=PWM 103=Throttle 104=VoltageBEC 105=VoltageBEC_min 106=CurrentBEC 107=TemperatureBEC 108=TemperatureCap 
+		// 100=Speed 101=Speed_max 102=PWM 103=Throttle 104=VoltageBEC 105=VoltageBEC_max 106=CurrentBEC 107=TemperatureBEC 108=TemperatureCap 
 		// 109=Timing(empty) 110=Temperature_aux 111=Gear 112=YGEGenExt 113=MotStatEscNr 114=misc ESC_15 115=VersionESC
 
-		// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=PowerOff, 104=BatterieLow, 105=Reset, 106=reserve
-		// 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max,
-		// 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
-		// 120=Speed 121=Speed_max 122=PWM 123=Throttle 124=VoltageBEC 125=VoltageBEC_min 125=CurrentBEC 127=TemperatureBEC 128=TemperatureCap 
-		// 129=Timing(empty) 130=Temperature_aux 131=Gear 132=YGEGenExt 133=MotStatEscNr 134=misc ESC_15 135=VersionESC
+		// Channels
+		// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=Ch17 ... 118=Ch32
+		// points.length = 136 -> 103=PowerOff, 104=BatterieLow, 105=Reset, 106=reserve
+		// points.length = 152 -> 119=PowerOff, 120=BatterieLow, 121=Reset, 122=reserve
+		// ESC
+		// 123=VoltageM, 124=CurrentM, 125=CapacityM, 126=PowerM, 127=RevolutionM, 128=TemperatureM 1, 129=TemperatureM 2 130=Voltage_min, 131=Current_max,
+		// 132=Revolution_max, 133=Temperature1_max, 134=Temperature2_max 135=Event M
+		// 136=Speed 137=Speed_max 138=PWM 139=Throttle 140=VoltageBEC 141=VoltageBEC_max 142=CurrentBEC 143=TemperatureBEC 144=TemperatureCap 
+		// 145=Timing(empty) 146=Temperature_aux 147=Gear 148=YGEGenExt 149=MotStatEscNr 150=misc ESC_15 151=VersionESC
 		HoTTlogReader2.points = new int[device.getNumberOfMeasurements(channelNumber)];
 		long[] timeSteps_ms = new long[] {0};
 		int numberLogChannels = Integer.valueOf(fileInfoHeader.get("LOG NOB CHANNEL"));
@@ -108,7 +113,7 @@ public class HoTTlogReader2 extends HoTTlogReader {
 		HoTTlogReader2.dataBlockSize = isASCII ? asciiDataBlockSize : rawDataBlockSize;
 		HoTTlogReader2.buf = new byte[HoTTbinReader.dataBlockSize];
 		int[] valuesRec = new int[10];
-		int[] valuesChn = new int[23];
+		int[] valuesChn = new int[39];
 		int[] valuesVar = new int[13];
 		int[] valuesGPS = new int[24];
 		int[] valuesGAM = new int[26];
@@ -187,8 +192,9 @@ public class HoTTlogReader2 extends HoTTlogReader {
 				//STATUS : Ph(D)[4], Evt1(H)[5], Evt2(D)[6], Fch(D)[7], TXdBm(-D)[8], RXdBm(-D)[9], RfRcvRatio(D)[10], TrnRcvRatio(D)[11]
 				//S.INFOR : DEV(D)[22], CH(D)[23], SID(H)[24], WARN(H)[25]
 				//if (!HoTTAdapter.isFilterTextModus || (HoTTbinReader.buf[6] & 0x01) == 0) { //switch into text modus
+				//log.log(Level.OFF, String.format("HoTTbinReader.buf[24] == 0x%02X", HoTTbinReader.buf[24]));
 				if (HoTTbinReader.buf[8] != 0 && HoTTbinReader.buf[9] != 0) { //buf 8, 9, tx,rx, rx sensitivity data
-					if (HoTTbinReader.buf[24] != 0x1F) {//rx sensitivity data
+					if (HoTTbinReader.buf[24] != 0x1F) {//!rx sensitivity data
 						if (log.isLoggable(Level.INFO)) {
 							log.log(Level.INFO, String.format("Sensor %02X", HoTTbinReader.buf[26]));
 						}
@@ -196,6 +202,7 @@ public class HoTTlogReader2 extends HoTTlogReader {
 					else {
 						if (log.isLoggable(Level.INFO))
 							log.log(Level.INFO, "sensitivity data " + StringHelper.byte2Hex2CharString(HoTTbinReader.buf, HoTTbinReader.buf.length));
+						timeSteps_ms[BinParser.TIMESTEP_INDEX] += logTimeStep_ms;// add default time step given by log msec
 						continue; //skip rx sensitivity data
 					}
 					HoTTlogReader2.rcvLogParser.trackPackageLoss(true);
@@ -216,7 +223,7 @@ public class HoTTlogReader2 extends HoTTlogReader {
 						HoTTlogReader2.chnLogParser.parse();
 						//in 0=FreCh, 1=Tx, 2=Rx, 3=Ch 1, 4=Ch 2 .. 18=Ch 16 19=PowerOff 20=BattLow 21=Reset 22=Warning
 						//out 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=PowerOff, 104=BatterieLow, 105=Reset, 106=reserve
-						System.arraycopy(valuesChn, 3, HoTTlogReader2.points, 87, 20); //copy channel data and events, warning
+						System.arraycopy(valuesChn, 3, HoTTlogReader2.points, 87, 36); //copy channel data and events, warning
 					}
 					
 					switch ((byte) (HoTTbinReader.buf[26] & 0xFF)) { //actual sensor
@@ -430,6 +437,7 @@ public class HoTTlogReader2 extends HoTTlogReader {
 		// 57=LowestCellNumber, 58=Pressure, 59=Event G
 		// 60=Voltage E, 61=Current E, 62=Capacity E, 63=Power E, 64=Balance E, 65=CellVoltage E1, 66=CellVoltage E2 .... 78=CellVoltage E14,
 		// 79=Voltage E1, 80=Voltage E2, 81=Temperature E1, 82=Temperature E2 83=Revolution E 84=MotorTime 85=Speed 86=Event E
+		//ESC		
 		// 87=VoltageM, 88=CurrentM, 89=CapacityM, 90=PowerM, 91=RevolutionM, 92=TemperatureM 1, 93=TemperatureM 2 94=Voltage_min, 95=Current_max,
 		// 96=Revolution_max, 97=Temperature1_max, 98=Temperature2_max 99=Event M
 		// 100=Speed 101=Speed_max 102=PWM 103=Throttle 104=VoltageBEC 105=VoltageBEC_min 106=CurrentBEC 107=TemperatureBEC 108=TemperatureCap 
@@ -450,11 +458,15 @@ public class HoTTlogReader2 extends HoTTlogReader {
 		// 187=Speed 188=Speed_max 189=PWM 190=Throttle 191=VoltageBEC 192=VoltageBEC_min 193=CurrentBEC 194=TemperatureBEC 195=TemperatureCap 
 		// 196=Timing(empty) 197=Temperature_aux 198=Gear 199=YGEGenExt 200=MotStatEscNr 201=misc ESC_15 202=VersionESC
 
-		// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=PowerOff, 104=BatterieLow, 105=Reset, 106=reserve
-		// 107=VoltageM4, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max,
-		// 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
-		// 120=Speed 121=Speed_max 122=PWM 123=Throttle 124=VoltageBEC 125=VoltageBEC_min 125=CurrentBEC 127=TemperatureBEC 128=TemperatureCap 
-		// 129=Timing(empty) 130=Temperature_aux 131=Gear 132=YGEGenExt 133=MotStatEscNr 134=misc ESC_15 135=VersionESC
+		// Channels
+		// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=Ch17 ... 118=Ch32
+		// points.length = 136 -> 103=PowerOff, 104=BatterieLow, 105=Reset, 106=reserve
+		// points.length = 152 -> 119=PowerOff, 120=BatterieLow, 121=Reset, 122=reserve
+		// ESC
+		// 123=VoltageM, 124=CurrentM, 125=CapacityM, 126=PowerM, 127=RevolutionM, 128=TemperatureM 1, 129=TemperatureM 2 130=Voltage_min, 131=Current_max,
+		// 132=Revolution_max, 133=Temperature1_max, 134=Temperature2_max 135=Event M
+		// 136=Speed 137=Speed_max 138=PWM 139=Throttle 140=VoltageBEC 141=VoltageBEC_max 142=CurrentBEC 143=TemperatureBEC 144=TemperatureCap 
+		// 145=Timing(empty) 146=Temperature_aux 147=Gear 148=YGEGenExt 149=MotStatEscNr 150=misc ESC_15 151=VersionESC
 
 		//in 0=RXSQ, 1=Voltage, 2=Current, 3=Capacity, 4=Power, 5=Balance, 6=CellVoltage 1, 7=CellVoltage 2 .... 19=CellVoltage 14,
 		//in 20=Altitude, 21=Climb 1, 22=Climb 3, 23=Voltage 1, 24=Voltage 2, 25=Temperature 1, 26=Temperature 2 27=RPM 28=MotorTime 29=Speed 30=Event
@@ -526,11 +538,12 @@ public class HoTTlogReader2 extends HoTTlogReader {
 		//in 23=Timing(empty) 24=Temperature_aux 25=Gear 26=YGEGenExt 27=MotStatEscNr 28=misc ESC_15 29=VersionESC
 		if (isEscData) {
 			if (channelNumber == 4)
-				//out 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max, 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
-				//out 120=Speed 121=Speed_max 122=PWM 123=Throttle 124=VoltageBEC 125=VoltageBEC_min 125=CurrentBEC 127=TemperatureBEC 128=TemperatureCap 
-				//out 129=Timing(empty) 130=Temperature_aux 131=Gear 132=YGEGenExt 133=MotStatEscNr 134=misc ESC_15 135=VersionESC
+				//out 123=VoltageM, 124=CurrentM, 125=CapacityM, 126=PowerM, 127=RevolutionM, 128=TemperatureM 1, 129=TemperatureM 2 130=Voltage_min, 131=Current_max,
+				//out 132=Revolution_max, 133=Temperature1_max, 134=Temperature2_max 135=Event M
+				//out 136=Speed 137=Speed_max 138=PWM 139=Throttle 140=VoltageBEC 141=VoltageBEC_max 142=CurrentBEC 143=TemperatureBEC 144=TemperatureCap 
+				//out 145=Timing(empty) 146=Temperature_aux 147=Gear 148=YGEGenExt 149=MotStatEscNr 150=misc ESC_15 151=VersionESC
 				for (int j = 0; j < 29; j++) {
-					HoTTlogReader2.points[j + 107] = valuesESC[j + 1];
+					HoTTlogReader2.points[j + 123] = valuesESC[j + 1];
 				}
 			else
 				//out 87=VoltageM, 88=CurrentM, 89=CapacityM, 90=PowerM, 91=RevolutionM, 92=TemperatureM 1, 93=TemperatureM 2 94=Voltage_min, 95=Current_max, 96=Revolution_max, 97=Temperature1_max, 98=Temperature2_max 99=Event M
@@ -541,14 +554,7 @@ public class HoTTlogReader2 extends HoTTlogReader {
 				}
 		}
 		if (isEsc2Data) {
-			if (channelNumber == 4)
-				//out 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max, 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
-				//out 120=Speed 121=Speed_max 122=PWM 123=Throttle 124=VoltageBEC 125=VoltageBEC_min 125=CurrentBEC 127=TemperatureBEC 128=TemperatureCap 
-				//out 129=Timing(empty) 130=Temperature_aux 131=Gear 132=YGEGenExt 133=MotStatEscNr 134=misc ESC_15 135=VersionESC
-				for (int j = 0; j < 29; j++) {
-					HoTTlogReader2.points[j + 107] = valuesESC2[j + 1];
-				}
-			else
+			if (channelNumber != 4)
 				// 116=VoltageM, 117=CurrentM, 118=CapacityM, 119=PowerM, 120=RevolutionM, 121=TemperatureM 1, 122=TemperatureM 2 123=Voltage_min, 124=Current_max,
 				// 125=Revolution_max, 126=Temperature1_max, 127=Temperature2_max 128=Event M
 				// 129=Speed 130=Speed_max 131=PWM 132=Throttle 133=VoltageBEC 134=VoltageBEC_min 135=CurrentBEC 136=TemperatureBEC 137=TemperatureCap 
@@ -558,14 +564,7 @@ public class HoTTlogReader2 extends HoTTlogReader {
 				}
 		}
 		if (isEsc3Data) {
-			if (channelNumber == 4)
-				//out 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max, 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
-				//out 120=Speed 121=Speed_max 122=PWM 123=Throttle 124=VoltageBEC 125=VoltageBEC_min 125=CurrentBEC 127=TemperatureBEC 128=TemperatureCap 
-				//out 129=Timing(empty) 130=Temperature_aux 131=Gear 132=YGEGenExt 133=MotStatEscNr 134=misc ESC_15 135=VersionESC
-				for (int j = 0; j < 29; j++) {
-					HoTTlogReader2.points[j + 107] = valuesESC3[j + 1];
-				}
-			else
+			if (channelNumber != 4)
 				// 145=VoltageM2, 146=CurrentM, 147=CapacityM, 148=PowerM, 149=RevolutionM, 150=TemperatureM 1, 151=TemperatureM 2 152=Voltage_min, 153=Current_max,
 				// 154=Revolution_max, 155=Temperature1_max, 156=Temperature2_max 157=Event M
 				// 158=Speed 159=Speed_max 160=PWM 161=Throttle 162=VoltageBEC 163=VoltageBEC_min 164=CurrentBEC 165=TemperatureBEC 166=TemperatureCap 
@@ -575,14 +574,7 @@ public class HoTTlogReader2 extends HoTTlogReader {
 				}
 		}
 		if (isEsc4Data) {
-			if (channelNumber == 4)
-				//out 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max, 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
-				//out 120=Speed 121=Speed_max 122=PWM 123=Throttle 124=VoltageBEC 125=VoltageBEC_min 125=CurrentBEC 127=TemperatureBEC 128=TemperatureCap 
-				//out 129=Timing(empty) 130=Temperature_aux 131=Gear 132=YGEGenExt 133=MotStatEscNr 134=misc ESC_15 135=VersionESC
-				for (int j = 0; j < 29; j++) {
-					HoTTlogReader2.points[j + 107] = valuesESC4[j + 1];
-				}
-			else
+			if (channelNumber != 4)
 				// 174=VoltageM3, 175=CurrentM, 176=CapacityM, 177=PowerM, 178=RevolutionM, 179=TemperatureM 1, 180=TemperatureM 2 181=Voltage_min, 182=Current_max,
 				// 183=Revolution_max, 184=Temperature1_max, 185=Temperature2_max 186=Event M
 				// 187=Speed 188=Speed_max 189=PWM 190=Throttle 191=VoltageBEC 192=VoltageBEC_min 193=CurrentBEC 194=TemperatureBEC 195=TemperatureCap 
