@@ -106,7 +106,7 @@ public class GDE {
 	private static boolean									isWithUi													= false;
 
 	// ****** begin global constants section *******
-	public static final String							VERSION														= "Version 3.8.3";																																																					//$NON-NLS-1$
+	public static final String							VERSION														= "Version 3.8.4"; // check device update list in settings getServiceUpdateList()																																																			//$NON-NLS-1$
 	public static final int									VERSION_NUMBER										= GDE.VERSION.contains("beta") 
 															? Integer.parseInt(GDE.VERSION.substring(8, 8+5).replace(GDE.STRING_DOT, GDE.STRING_EMPTY)) - 1
 															: Integer.parseInt(GDE.VERSION.substring(8, 8+5).replace(GDE.STRING_DOT, GDE.STRING_EMPTY));
@@ -472,7 +472,7 @@ public class GDE {
 				}
 			};
 			GDE.settingsThread.start();
-
+			
 			log.log(Level.INFO, "main start");
 			String inputFilePath = GDE.STRING_EMPTY;
 
@@ -516,6 +516,8 @@ public class GDE {
 					log.logp(Level.INFO, GDE.$CLASS_NAME, $METHOD_NAME, "inputFilePath = " + inputFilePath); //$NON-NLS-1$
 				}
 			}
+
+			Settings.getInstance().checkUpdateDeviceProperties(Settings.getDevicesPath());
 
 			// list system properties
 			StringBuilder sb = new StringBuilder().append("Environment : \n"); //$NON-NLS-1$

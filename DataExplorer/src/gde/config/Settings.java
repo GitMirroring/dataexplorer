@@ -61,6 +61,7 @@ import org.xml.sax.SAXException;
 import gde.Analyzer;
 import gde.DataAccess;
 import gde.GDE;
+import gde.device.DeviceConfiguration;
 import gde.log.Level;
 import gde.log.LogFormatter;
 import gde.messages.MessageIds;
@@ -200,6 +201,7 @@ public final class Settings extends Properties {
 	public final static String			OBJECT_LIST											= "object_list";																																									//$NON-NLS-1$
 	public final static String			ACTIVE_OBJECT										= "active_object";																																								//$NON-NLS-1$
 
+	public final static String			APPL_VERSION_NUMBER							= "appl_version_number";
 	public final static String			DATA_FILE_PATH									= "data_file_path";																																								//$NON-NLS-1$
 	public final static String			OBJECT_IMAGE_FILE_PATH					= "object_image_file_path";																																				//$NON-NLS-1$
 	public final static String			LIST_SEPARATOR									= "list_separator";																																								//$NON-NLS-1$
@@ -360,7 +362,7 @@ public final class Settings extends Properties {
 				checkDeviceProperties(String.format("%s%s", devicePropertiesTargetpath, GDE.STRING_FILE_SEPARATOR_UNIX), true);
 				checkMeasurementDisplayMappings(true, lang);
 			}
-
+			
 			// locale settings has been changed, replacement of device property files required
 			if (this.getLocaleChanged()) {
 				checkMeasurementDisplayMappings(false, lang);
@@ -424,7 +426,7 @@ public final class Settings extends Properties {
 	 * @param devicePropertiesTargetpath
 	 */
 	private void checkDeviceProperties(String devicePropertiesTargetpath, boolean replaceDeviceXmlFiles) {
-		final String $METHOD_NAME = "updateDeviceProperties"; //$NON-NLS-1$
+		final String $METHOD_NAME = "checkDeviceProperties"; //$NON-NLS-1$
 
 		if (replaceDeviceXmlFiles) {
 			String deviceJarBasePath = FileUtils.getDevicePluginJarBasePath();
@@ -452,6 +454,67 @@ public final class Settings extends Properties {
 							if (obsoleteFile.exists())
 								if (!obsoleteFile.delete())
 									log.log(Level.WARNING, String.format("could not delete %s%s%s", devicePropertiesTargetpath, serviceName, GDE.FILE_ENDING_DOT_XML));
+						}
+					}
+				}
+				catch (Throwable e) {
+					Settings.log.logp(java.util.logging.Level.SEVERE, Settings.$CLASS_NAME, $METHOD_NAME, e.getMessage(), e);
+				}
+				//add the services found in jar to the collection of device services
+				for (ExportService service : services) {
+					this.deviceServices.put(service.getName(), service);
+				}
+			}
+		}
+	}
+
+	/**
+	 * check for individual device XML list is available and need update
+	 * @param devicePropertiesTargetpath
+	 */
+	public void checkUpdateDeviceProperties(String devicePropertiesTargetpath) {
+		final String $METHOD_NAME = "checkUpdateDeviceProperties"; //$NON-NLS-1$
+		
+		log.log(Level.INFO, String.format("isDeviceXmlUpdateRequired %b", isDeviceXmlUpdateRequired()));
+		if (isDeviceXmlUpdateRequired()) {
+			List<String> serviceUpdateList = getServiceUpdateList();
+			List<String> usedDeviceList = Arrays.asList(getDeviceUseCsv().split(GDE.STRING_CSV_SEPARATOR));
+			List<String> usedServiceList = new ArrayList<>();
+			for (String deviceName : usedDeviceList)
+				usedServiceList.add(deviceName.substring(0, deviceName.indexOf(GDE.CHAR_STAR)));
+			String deviceJarBasePath = FileUtils.getDevicePluginJarBasePath();
+			log.logp(java.util.logging.Level.CONFIG, Settings.$CLASS_NAME, $METHOD_NAME, String.format("deviceJarBasePath = %s", deviceJarBasePath)); //$NON-NLS-1$
+			String[] files = new File(deviceJarBasePath).list();
+			if (files == null) {
+				log.log(Level.SEVERE, String.format("check if %s is an existing directory", deviceJarBasePath));
+				throw new RuntimeException(String.format("directory %s does not exist", deviceJarBasePath));
+			}
+			for (String jarFileName : files) {
+				if (!jarFileName.endsWith(GDE.FILE_ENDING_DOT_JAR))
+					continue;
+				JarFile jarFile = null;
+				List<ExportService> services = new ArrayList<>();
+				try {
+					jarFile = new JarFile(String.format("%s%s%s", deviceJarBasePath, GDE.STRING_FILE_SEPARATOR_UNIX, jarFileName));
+					services = FileUtils.getDeviceJarServices(jarFile);
+					for (ExportService service : services) {
+						final String serviceName = service.getName();
+						if (serviceUpdateList.contains(serviceName) && usedServiceList.contains(serviceName)) {
+							DeviceConfigurations devConfigs = Analyzer.getInstance().getDeviceConfigurations();
+							String deviceXML = devicePropertiesTargetpath + GDE.STRING_FILE_SEPARATOR_UNIX + serviceName + GDE.FILE_ENDING_DOT_XML;							
+							if (devConfigs != null) {
+								DeviceConfiguration oldDevConfig = devConfigs.get(serviceName);
+								extractDeviceProperties(jarFile, serviceName, devicePropertiesTargetpath);
+								DeviceConfiguration newDevConfig = new DeviceConfiguration(deviceXML);
+								if (newDevConfig != null) {
+									newDevConfig.setUsed(true);
+									if (oldDevConfig.getPort().length() > 1 && !oldDevConfig.getPort().startsWith("USB")) newDevConfig.setPort(oldDevConfig.getPort());
+									if (oldDevConfig.getDataBlockPreferredDataLocation().length() > 1) newDevConfig.setDataBlockPreferredDataLocation(oldDevConfig.getDataBlockPreferredDataLocation());
+									newDevConfig.storeDeviceProperties();
+									devConfigs.remove(serviceName);
+									devConfigs.put(serviceName, newDevConfig);
+								} 
+							}
 						}
 					}
 				}
@@ -756,6 +819,7 @@ public final class Settings extends Properties {
 			}
 
 			writer.write(String.format("%s\n", Settings.APPL_BLOCK)); // [Programmeinstellungen] //$NON-NLS-1$
+			writer.write(String.format("%-40s \t=\t %s\n", Settings.APPL_VERSION_NUMBER, getApplVersionNumber())); //$NON-NLS-1$
 			writer.write(String.format("%-40s \t=\t %s\n", Settings.DATA_FILE_PATH, getDataFilePath())); //$NON-NLS-1$
 			writer.write(String.format("%-40s \t=\t %s\n", Settings.OBJECT_IMAGE_FILE_PATH, getObjectImageFilePath())); //$NON-NLS-1$
 			writer.write(String.format("%-40s \t=\t %s\n", Settings.USE_DATA_FILE_NAME_LEADER, getUsageDateAsFileNameLeader())); //$NON-NLS-1$
@@ -3223,5 +3287,30 @@ public final class Settings extends Properties {
 	
 	public void setStartDeviceCommunicationAfterStartup(boolean enabled) {
 		this.setProperty(Settings.IS_START_DEV_COMM_AFTER_START, String.valueOf(enabled));
+	}
+	
+	public int getApplVersionNumber() {
+		return GDE.VERSION_NUMBER;	
+	}
+	
+	/**
+	 * check updated version number and entries in serviice update list
+	 * @return true if possible device XML update required
+	 */
+	public boolean isDeviceXmlUpdateRequired() {
+		return Integer.valueOf(this.getProperty(Settings.APPL_VERSION_NUMBER, "383").replace(".", "")) < GDE.VERSION_NUMBER && !getServiceUpdateList().isEmpty();
+	}
+	
+	/**
+	 * maintain this list while updating version number with device XML files changed without XSD update 
+	 * @return list of potential to be updated device XML
+	 */
+	public List<String> getServiceUpdateList() {
+		List<String> deviceList = new ArrayList<>();
+		deviceList.add("HoTTAdapter");
+		deviceList.add("HoTTAdapterM");
+		deviceList.add("HoTTAdapter2");
+		deviceList.add("HoTTAdapter2M");
+		return deviceList;
 	}
 }

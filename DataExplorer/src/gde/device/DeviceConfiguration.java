@@ -142,7 +142,7 @@ public class DeviceConfiguration {
 
 		String basePath = "C:/Documents and Settings/brueg/Application Data/DataExplorer/Devices/"; //$NON-NLS-1$
 
-		try (FileInputStream inputStream = new FileInputStream(basePath + "DeviceProperties_V13.xsd")) {
+		try (FileInputStream inputStream = new FileInputStream(basePath + "DeviceProperties_V48.xsd")) {
 			Schema schema = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI).newSchema(new StreamSource(inputStream));
 			JAXBContext jc = JAXBContext.newInstance("gde.device"); //$NON-NLS-1$
 			Unmarshaller unmarshaller = jc.createUnmarshaller();
