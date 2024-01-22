@@ -513,6 +513,7 @@ public final class Settings extends Properties {
 									newDevConfig.storeDeviceProperties();
 									devConfigs.remove(serviceName);
 									devConfigs.put(serviceName, newDevConfig);
+									log.logp(java.util.logging.Level.OFF, Settings.$CLASS_NAME, $METHOD_NAME, String.format("device XML updated => %s.xml", serviceName)); //$NON-NLS-1$
 								} 
 							}
 						}
