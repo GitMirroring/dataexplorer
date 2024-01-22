@@ -35,7 +35,6 @@ import gde.data.RecordSet;
 import gde.device.IDevice;
 import gde.device.graupner.HoTTAdapter.PickerParameters;
 import gde.device.graupner.HoTTAdapter.Sensor;
-import gde.device.graupner.HoTTbinReader.BinParser;
 import gde.exception.DataInconsitsentException;
 import gde.io.DataParser;
 import gde.log.Level;

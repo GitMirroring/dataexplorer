@@ -1747,39 +1747,55 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 					case 84: //MotorTime E
 					case 85: //Speed E
 					case 86: //Event E
-					case 103: //PowerOff
-					case 104: //BatterieLow
-					case 105: //Reset
-					case 106: //reserve
-					case 107: //Voltage M,
-					case 108: //Current M,
-					case 109: //Capacity M,
-					case 110: //Power M,
-					case 111: //Revolution M
-					case 112: //TemperatureM 1
-					case 113: //TemperatureM 2
-					case 114: //Voltage_min
-					case 115: //Current_max
-					case 116: //Revolution_max
-					case 117: //Temperature1_max
-					case 118: //Temperature2_max
-					case 119: //Event M
-					case 120: //misc ESC_1
-					case 121: //misc ESC_2
-					case 122: //misc ESC_3
-					case 123: //misc ESC_4
-					case 124: //misc ESC_5
-					case 125: //misc ESC_6
-					case 126: //misc ESC_7
-					case 127: //misc ESC_8
-					case 128: //misc ESC_9
-					case 129: //misc ESC_10
-					case 130: //misc ESC_11
-					case 131: //misc ESC_12
-					case 132: //misc ESC_13
-					case 133: //misc ESC_14
-					case 134: //misc ESC_15
-					case 135: //VersionESC
+					case 103: //ch17
+					case 104: //ch18
+					case 105: //ch19
+					case 106: //ch20
+					case 107: //ch21
+					case 108: //ch22
+					case 109: //ch23
+					case 110: //ch24
+					case 111: //ch25
+					case 112: //ch26
+					case 113: //ch27
+					case 114: //ch28
+					case 115: //ch29
+					case 116: //ch30
+					case 117: //ch31
+					case 118: //ch32
+					case 119: //PowerOff
+					case 120: //BatterieLow
+					case 121: //Reset
+					case 122: //reserve
+					case 123: //Voltage M,
+					case 124: //Current M,
+					case 125: //Capacity M,
+					case 126: //Power M,
+					case 127: //Revolution M
+					case 128: //TemperatureM 1
+					case 129: //TemperatureM 2
+					case 130: //Voltage_min
+					case 131: //Current_max
+					case 132: //Revolution_max
+					case 133: //Temperature1_max
+					case 134: //Temperature2_max
+					case 135: //Event M
+					case 136: //misc ESC_1
+					case 137: //misc ESC_2
+					case 138: //misc ESC_3
+					case 139: //misc ESC_4
+					case 140: //misc ESC_5
+					case 141: //misc ESC_6
+					case 142: //misc ESC_7
+					case 143: //misc ESC_8
+					case 144: //misc ESC_9
+					case 145: //misc ESC_10
+					case 146: //misc ESC_11
+					case 147: //misc ESC_12
+					case 148: //misc ESC_13
+					case 149: //misc ESC_14
+					case 150: //misc ESC_15
+					case 151: //VersionESC
 						sb.append(String.format("added measurement set to isCalculation=true -> %s\n", recordKeys[i]));
 						recordSet.get(i).setActive(null);
 						break;
@@ -1899,29 +1915,45 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 					case  84: //MotorTime E
 					case  85: //Speed E
 					case  86: //Event E
-					case 113: //TemperatureM 2
-					case 114: //Voltage_min
-					case 115: //Current_max
-					case 116: //Revolution_max
-					case 117: //Temperature1_max
-					case 118: //Temperature2_max
-					case 119: //Event M
-					case 120: //misc ESC_1
-					case 121: //misc ESC_2
-					case 122: //misc ESC_3
-					case 123: //misc ESC_4
-					case 124: //misc ESC_5
-					case 125: //misc ESC_6
-					case 126: //misc ESC_7
-					case 127: //misc ESC_8
-					case 128: //misc ESC_9
-					case 129: //misc ESC_10
-					case 130: //misc ESC_11
-					case 131: //misc ESC_12
-					case 132: //misc ESC_13
-					case 133: //misc ESC_14
-					case 134: //misc ESC_15
-					case 135: //VersionESC
+					case 103: //ch17
+					case 104: //ch18
+					case 105: //ch19
+					case 106: //ch20
+					case 107: //ch21
+					case 108: //ch22
+					case 109: //ch23
+					case 110: //ch24
+					case 111: //ch25
+					case 112: //ch26
+					case 113: //ch27
+					case 114: //ch28
+					case 115: //ch29
+					case 116: //ch30
+					case 117: //ch31
+					case 118: //ch32
+					case 129: //TemperatureM 2
+					case 130: //Voltage_min
+					case 131: //Current_max
+					case 132: //Revolution_max
+					case 133: //Temperature1_max
+					case 134: //Temperature2_max
+					case 135: //Event M
+					case 136: //misc ESC_1
+					case 137: //misc ESC_2
+					case 138: //misc ESC_3
+					case 139: //misc ESC_4
+					case 140: //misc ESC_5
+					case 141: //misc ESC_6
+					case 142: //misc ESC_7
+					case 143: //misc ESC_8
+					case 144: //misc ESC_9
+					case 145: //misc ESC_10
+					case 146: //misc ESC_11
+					case 147: //misc ESC_12
+					case 148: //misc ESC_13
+					case 149: //misc ESC_14
+					case 150: //misc ESC_15
+					case 151: //VersionESC
 						sb.append(String.format("added measurement set to isCalculation=true -> %s\n", recordKeys[i]));
 						recordSet.get(i).setActive(null);
 						break;
@@ -2052,29 +2084,45 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 						case 84: //MotorTime E
 						case 85: //Speed E
 						case 86: //Event E
-						case 113: //TemperatureM 2
-						case 114: //Voltage_min
-						case 115: //Current_max
-						case 116: //Revolution_max
-						case 117: //Temperature1_max
-						case 118: //Temperature2_max
-						case 119: //Event M
-						case 120: //misc ESC_1
-						case 121: //misc ESC_2
-						case 122: //misc ESC_3
-						case 123: //misc ESC_4
-						case 124: //misc ESC_5
-						case 125: //misc ESC_6
-						case 126: //misc ESC_7
-						case 127: //misc ESC_8
-						case 128: //misc ESC_9
-						case 129: //misc ESC_10
-						case 130: //misc ESC_11
-						case 131: //misc ESC_12
-						case 132: //misc ESC_13
-						case 133: //misc ESC_14
-						case 134: //misc ESC_15
-						case 135: //VersionESC
+						case 103: //ch17
+						case 104: //ch18
+						case 105: //ch19
+						case 106: //ch20
+						case 107: //ch21
+						case 108: //ch22
+						case 109: //ch23
+						case 110: //ch24
+						case 111: //ch25
+						case 112: //ch26
+						case 113: //ch27
+						case 114: //ch28
+						case 115: //ch29
+						case 116: //ch30
+						case 117: //ch31
+						case 118: //ch32
+						case 129: //TemperatureM 2
+						case 130: //Voltage_min
+						case 131: //Current_max
+						case 132: //Revolution_max
+						case 133: //Temperature1_max
+						case 134: //Temperature2_max
+						case 135: //Event M
+						case 136: //misc ESC_1
+						case 137: //misc ESC_2
+						case 138: //misc ESC_3
+						case 139: //misc ESC_4
+						case 140: //misc ESC_5
+						case 141: //misc ESC_6
+						case 142: //misc ESC_7
+						case 143: //misc ESC_8
+						case 144: //misc ESC_9
+						case 145: //misc ESC_10
+						case 146: //misc ESC_11
+						case 147: //misc ESC_12
+						case 148: //misc ESC_13
+						case 149: //misc ESC_14
+						case 150: //misc ESC_15
+						case 151: //VersionESC
 							sb.append(String.format("added measurement set to isCalculation=true -> %s\n", recordKeys[i]));
 							recordSet.get(i).setActive(null);
 							break;
@@ -2303,22 +2351,38 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 					case 35: //GyroZ
 					case 36: //Vibration
 					case 37: //Version
-					case 120: //misc ESC_1
-					case 121: //misc ESC_2
-					case 122: //misc ESC_3
-					case 123: //misc ESC_4
-					case 124: //misc ESC_5
-					case 125: //misc ESC_6
-					case 126: //misc ESC_7
-					case 127: //misc ESC_8
-					case 128: //misc ESC_9
-					case 129: //misc ESC_10
-					case 130: //misc ESC_11
-					case 131: //misc ESC_12
-					case 132: //misc ESC_13
-					case 133: //misc ESC_14
-					case 134: //misc ESC_15
-					case 135: //VersionESC
+					case 103: //ch17
+					case 104: //ch18
+					case 105: //ch19
+					case 106: //ch20
+					case 107: //ch21
+					case 108: //ch22
+					case 109: //ch23
+					case 110: //ch24
+					case 111: //ch25
+					case 112: //ch26
+					case 113: //ch27
+					case 114: //ch28
+					case 115: //ch29
+					case 116: //ch30
+					case 117: //ch31
+					case 118: //ch32
+					case 136: //misc ESC_1
+					case 137: //misc ESC_2
+					case 138: //misc ESC_3
+					case 139: //misc ESC_4
+					case 140: //misc ESC_5
+					case 141: //misc ESC_6
+					case 142: //misc ESC_7
+					case 143: //misc ESC_8
+					case 144: //misc ESC_9
+					case 145: //misc ESC_10
+					case 146: //misc ESC_11
+					case 147: //misc ESC_12
+					case 148: //misc ESC_13
+					case 149: //misc ESC_14
+					case 150: //misc ESC_15
+					case 151: //VersionESC
 						sb.append(String.format("added measurement set to isCalculation=true -> %s\n", recordKeys[i]));
 						recordSet.get(i).setActive(null);
 						break;
@@ -2435,22 +2499,38 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 					case 17: //misc Vario_3
 					case 18: //misc Vario_4
 					case 19: //misc Vario_5
-					case 120: //misc ESC_1
-					case 121: //misc ESC_2
-					case 122: //misc ESC_3
-					case 123: //misc ESC_4
-					case 124: //misc ESC_5
-					case 125: //misc ESC_6
-					case 126: //misc ESC_7
-					case 127: //misc ESC_8
-					case 128: //misc ESC_9
-					case 129: //misc ESC_10
-					case 130: //misc ESC_11
-					case 131: //misc ESC_12
-					case 132: //misc ESC_13
-					case 133: //misc ESC_14
-					case 134: //misc ESC_15
-					case 135: //VersionESC
+					case 103: //ch17
+					case 104: //ch18
+					case 105: //ch19
+					case 106: //ch20
+					case 107: //ch21
+					case 108: //ch22
+					case 109: //ch23
+					case 110: //ch24
+					case 111: //ch25
+					case 112: //ch26
+					case 113: //ch27
+					case 114: //ch28
+					case 115: //ch29
+					case 116: //ch30
+					case 117: //ch31
+					case 118: //ch32
+					case 136: //misc ESC_1
+					case 137: //misc ESC_2
+					case 138: //misc ESC_3
+					case 139: //misc ESC_4
+					case 140: //misc ESC_5
+					case 141: //misc ESC_6
+					case 142: //misc ESC_7
+					case 143: //misc ESC_8
+					case 144: //misc ESC_9
+					case 145: //misc ESC_10
+					case 146: //misc ESC_11
+					case 147: //misc ESC_12
+					case 148: //misc ESC_13
+					case 149: //misc ESC_14
+					case 150: //misc ESC_15
+					case 151: //VersionESC
 						sb.append(String.format("added measurement set to isCalculation=true -> %s\n", recordKeys[i]));
 						recordSet.get(i).setActive(null);
 						break;
@@ -2506,22 +2586,38 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 				for (int i = 0, j = 0; i < recordKeys.length; i++) {
 					//3.6.0 extend this measurements: 120=misc ESC_1 ... 134=misc ESC_15 135=VersionESC
 					switch (i) { //list of added measurements
-					case 120: //misc ESC_1
-					case 121: //misc ESC_2
-					case 122: //misc ESC_3
-					case 123: //misc ESC_4
-					case 124: //misc ESC_5
-					case 125: //misc ESC_6
-					case 126: //misc ESC_7
-					case 127: //misc ESC_8
-					case 128: //misc ESC_9
-					case 129: //misc ESC_10
-					case 130: //misc ESC_11
-					case 131: //misc ESC_12
-					case 132: //misc ESC_13
-					case 133: //misc ESC_14
-					case 134: //misc ESC_15
-					case 135: //VersionESC
+					case 103: //ch17
+					case 104: //ch18
+					case 105: //ch19
+					case 106: //ch20
+					case 107: //ch21
+					case 108: //ch22
+					case 109: //ch23
+					case 110: //ch24
+					case 111: //ch25
+					case 112: //ch26
+					case 113: //ch27
+					case 114: //ch28
+					case 115: //ch29
+					case 116: //ch30
+					case 117: //ch31
+					case 118: //ch32
+					case 136: //misc ESC_1
+					case 137: //misc ESC_2
+					case 138: //misc ESC_3
+					case 139: //misc ESC_4
+					case 140: //misc ESC_5
+					case 141: //misc ESC_6
+					case 142: //misc ESC_7
+					case 143: //misc ESC_8
+					case 144: //misc ESC_9
+					case 145: //misc ESC_10
+					case 146: //misc ESC_11
+					case 147: //misc ESC_12
+					case 148: //misc ESC_13
+					case 149: //misc ESC_14
+					case 150: //misc ESC_15
+					case 151: //VersionESC
 						sb.append(String.format("added measurement set to isCalculation=true -> %s\n", recordKeys[i]));
 						recordSet.get(i).setActive(null);
 						break;
