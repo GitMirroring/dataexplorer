@@ -107,6 +107,7 @@ import gde.ui.dialog.DeviceSelectionDialog;
 import gde.ui.dialog.FontSizeDialog;
 import gde.ui.dialog.HelpInfoDialog;
 import gde.ui.dialog.SettingsDialog;
+import gde.ui.dialog.UpdateMessageBox;
 import gde.ui.menu.MenuBar;
 import gde.ui.menu.MenuToolBar;
 import gde.ui.tab.AnalogWindow;
@@ -218,6 +219,7 @@ public class DataExplorer extends Composite {
 	boolean												isObjectWindowVisible							= false;
 
 	int														openYesNoMessageDialogAsyncValue	= -1;
+	Boolean 											openUpdateMessageDialogSyncValue 	= null;
 
 	DropTarget										target;																																												// = new DropTarget(dropTable, operations);
 
@@ -1596,6 +1598,23 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 		yesNoCancelMessageDialog.setMessage(message);
 		return yesNoCancelMessageDialog.open();
 	}
+
+	public boolean openUpdateMessageDialogSync() {
+		this.openUpdateMessageDialogSyncValue = false;
+		GDE.display.syncExec(new Runnable() {
+			@Override
+			public void run() {
+				UpdateMessageBox updateMessageBox = new UpdateMessageBox(GDE.shell, SWT.PRIMARY_MODAL | SWT.BORDER | SWT.TITLE);
+				DataExplorer.this.openUpdateMessageDialogSyncValue = updateMessageBox.open();
+			}
+		});
+		int counter = 10000;
+		while (this.openUpdateMessageDialogSyncValue == null && counter-- > 0) {
+			WaitTimer.delay(100);
+		}
+		return this.openUpdateMessageDialogSyncValue;
+	}
+
 
 	public void openAboutDialog() {
 		new AboutDialog(GDE.shell, SWT.PRIMARY_MODAL).open();
@@ -3232,7 +3251,7 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 	public void check4update() {
 		final String[] versionCheck = FileUtils.isUpdateAvailable();
 		if (Boolean.valueOf(versionCheck[0])) {
-			if (SWT.YES == DataExplorer.getInstance().openYesNoMessageDialogSync(Messages.getString(MessageIds.GDE_MSGI0052))) {
+			if (openUpdateMessageDialogSync()) {
 				new Thread("Download") {
 					@Override
 					public void run() {
