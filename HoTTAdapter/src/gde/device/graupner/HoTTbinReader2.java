@@ -114,9 +114,7 @@ public class HoTTbinReader2 extends HoTTbinReader {
 		// 109=Timing(empty) 110=Temperature_aux 111=Gear 112=YGEGenExt 113=MotStatEscNr 114=misc ESC_15 115=VersionESC
 
 		// Channels
-		// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=Ch17 ... 118=Ch32
-		// points.length = 136 -> 103=PowerOff, 104=BatterieLow, 105=Reset, 106=reserve
-		// points.length = 152 -> 119=PowerOff, 120=BatterieLow, 121=Reset, 122=reserve
+		// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=Ch17 ... 118=Ch32 119=PowerOff, 120=BatterieLow, 121=Reset, 122=reserve
 		// ESC
 		// 123=VoltageM, 124=CurrentM, 125=CapacityM, 126=PowerM, 127=RevolutionM, 128=TemperatureM 1, 129=TemperatureM 2 130=Voltage_min, 131=Current_max,
 		// 132=Revolution_max, 133=Temperature1_max, 134=Temperature2_max 135=Event M
@@ -444,9 +442,7 @@ public class HoTTbinReader2 extends HoTTbinReader {
 		// 109=Timing(empty) 110=Temperature_aux 111=Gear 112=YGEGenExt 113=MotStatEscNr 114=misc ESC_15 115=VersionESC
 
 		// Channels
-		// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=Ch17 ... 118=Ch32
-		// points.length = 136 -> 103=PowerOff, 104=BatterieLow, 105=Reset, 106=reserve
-		// points.length = 152 -> 119=PowerOff, 120=BatterieLow, 121=Reset, 122=reserve
+		// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=Ch17 ... 118=Ch32 119=PowerOff, 120=BatterieLow, 121=Reset, 122=reserve
 		// ESC
 		// 123=VoltageM, 124=CurrentM, 125=CapacityM, 126=PowerM, 127=RevolutionM, 128=TemperatureM 1, 129=TemperatureM 2 130=Voltage_min, 131=Current_max,
 		// 132=Revolution_max, 133=Temperature1_max, 134=Temperature2_max 135=Event M
