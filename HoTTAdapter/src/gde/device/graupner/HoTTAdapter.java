@@ -1746,7 +1746,8 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 				if (channel == 1 && ordinal >= 0 && ordinal <= 5) { // Receiver
 					dataTableRow[index + 1] = String.format("%.0f", (record.realGet(rowIndex) / 1000.0)); //$NON-NLS-1$
 				}
-				else if (channel == 6 && ordinal == 22) { //Channels warning
+				else if (channel == 6 && ordinal == 38) { //Channels warning
+					// 0=FreCh, 1=Tx, 2=Rx, 3=Ch01, 4=Ch02 .. 18=Ch16, 19=Ch17 .. 34=Ch32 35=PowerOff, 36=BattLow, 37=Reset, 38=warning
 					dataTableRow[index + 1] = record.realGet(rowIndex) == 0
 							? GDE.STRING_EMPTY
 							: String.format("'%c'", ((record.realGet(rowIndex) / 1000) + 64));
@@ -1815,7 +1816,7 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 				double minuten = (value - (grad * 1000.0)) / 10.0;
 				newValue = grad + minuten / 60.0;
 		}
-		else if (record.getAbstractParent().getChannelConfigNumber() == 6 && (record.getOrdinal() >= 3 && record.getOrdinal() <= 18) && value != 0.) {
+		else if (record.getAbstractParent().getChannelConfigNumber() == 6 && (record.getOrdinal() >= 3 && record.getOrdinal() <= 34) && value != 0.) {
 			//channel recordSet, channel values
 			if (this.pickerParameters.isChannelPercentEnabled) {
 				if (!record.getUnit().equals("%")) record.setUnit("%");
@@ -1855,7 +1856,7 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 				double minuten = (value - grad * 1.0) * 60.0;
 				newValue = (grad + minuten / 100.0) * 1000.0;
 		} 
-		else if (record.getAbstractParent().getChannelConfigNumber() == 6 && (record.getOrdinal() >= 3 && record.getOrdinal() <= 18) && value != 0.) {
+		else if (record.getAbstractParent().getChannelConfigNumber() == 6 && (record.getOrdinal() >= 3 && record.getOrdinal() <= 34) && value != 0.) {
 			if (this.pickerParameters.isChannelPercentEnabled) {
 				if (!record.getUnit().equals("%")) record.setUnit("%");
 				factor = 0.250;

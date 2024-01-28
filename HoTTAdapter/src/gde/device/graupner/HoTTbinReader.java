@@ -1607,7 +1607,7 @@ public class HoTTbinReader {
 
 		@Override
 		protected boolean parse() {
-			// 0=FreCh, 1=Tx, 2=Rx, 3=Ch 1, 4=Ch 2 .. 18=Ch 16, 19=PowerOff, 20=BattLow, 21=Reset, 22=warning
+			// 0=FreCh, 1=Tx, 2=Rx, 3=Ch01, 4=Ch02 .. 18=Ch16, 19=Ch17 .. 34=Ch32 35=PowerOff, 36=BattLow, 37=Reset, 38=warning
 			this.points[0] = (_buf[1] & 0xFF) * 1000;
 			this.points[1] = (_buf[3] & 0xFF) * -1000;
 			this.points[2] = (_buf[4] & 0xFF) * -1000;

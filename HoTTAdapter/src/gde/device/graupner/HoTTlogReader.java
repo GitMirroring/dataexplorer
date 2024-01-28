@@ -1484,7 +1484,7 @@ public class HoTTlogReader extends HoTTbinReader {
 		@Override
 		protected boolean parse() {
 
-			//0=FreCh, 1=Tx, 2=Rx, 3=Ch 1, 4=Ch 2 .. 18=Ch 16 19=PowerOff 20=BattLow 21=Reset 22=Warning
+			//0=FreCh, 1=Tx, 2=Rx, 3=Ch01, 4=Ch02 .. 18=Ch16 19=Ch17 .. 34=Ch32
 			this.points[0] = buf[7] * -1000;
 			this.points[1] = buf[8] * -1000;
 			this.points[2] = buf[9] * -1000;

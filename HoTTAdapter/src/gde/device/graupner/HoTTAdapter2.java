@@ -955,14 +955,16 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 				// 87=VoltageM, 88=CurrentM, 89=CapacityM, 90=PowerM, 91=RevolutionM, 92=TemperatureM 1, 93=TemperatureM 2 94=Voltage_min, 95=Current_max,
 				// 96=Revolution_max, 97=Temperature1_max, 98=Temperature2_max 99=Event M
 
-				// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=PowerOff, 104=BatterieLow, 105=Reset, 106=warning
-				// 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max,
-				// 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
+				// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=Ch17 ... 118=Ch32 119=PowerOff, 120=BatterieLow, 121=Reset, 122=warning
+				// 123=VoltageM, 124=CurrentM, 125=CapacityM, 126=PowerM, 127=RevolutionM, 128=TemperatureM 1, 129=TemperatureM 2 130=Voltage_min, 131=Current_max,
+				// 132=Revolution_max, 133=Temperature1_max, 134=Temperature2_max 135=Event M
+				// 136=Speed 137=Speed_max 138=PWM 139=Throttle 140=VoltageBEC 141=VoltageBEC_max 142=CurrentBEC 143=TemperatureBEC 144=TemperatureCap 
+				// 145=Timing(empty) 146=Temperature_aux 147=Gear 148=YGEGenExt 149=MotStatEscNr 150=misc ESC_15 151=VersionESC
 				boolean isChannelData = recordSet.getChannelConfigNumber() == 4;
 				if (ordinal >= 0 && ordinal <= 5) {
 					dataTableRow[index + 1] = String.format("%.0f", (record.realGet(rowIndex) / 1000.0)); //$NON-NLS-1$
 				}
-				else if (isChannelData && ordinal == 106 && record.getUnit().equals(GDE.STRING_EMPTY)) { //Warning
+				else if (isChannelData && ordinal == 122 && record.getUnit().equals(GDE.STRING_EMPTY)) { //Warning
 					dataTableRow[index + 1] = record.realGet(rowIndex) == 0
 							? GDE.STRING_EMPTY
 									: String.format("'%c'", ((record.realGet(rowIndex) / 1000)+64));
@@ -1021,16 +1023,18 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 		// 87=VoltageM, 88=CurrentM, 89=CapacityM, 90=PowerM, 91=RevolutionM, 92=TemperatureM 1, 93=TemperatureM 2 94=Voltage_min, 95=Current_max,
 		// 96=Revolution_max, 97=Temperature1_max, 98=Temperature2_max 99=Event M
 
-		// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=PowerOff, 104=BatterieLow, 105=Reset, 106=reserve
-		// 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max,
-		// 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
+		// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=Ch17 ... 118=Ch32 119=PowerOff, 120=BatterieLow, 121=Reset, 122=reserve
+		// 123=VoltageM, 124=CurrentM, 125=CapacityM, 126=PowerM, 127=RevolutionM, 128=TemperatureM 1, 129=TemperatureM 2 130=Voltage_min, 131=Current_max,
+		// 132=Revolution_max, 133=Temperature1_max, 134=Temperature2_max 135=Event M
+		// 136=Speed 137=Speed_max 138=PWM 139=Throttle 140=VoltageBEC 141=VoltageBEC_max 142=CurrentBEC 143=TemperatureBEC 144=TemperatureCap 
+		// 145=Timing(empty) 146=Temperature_aux 147=Gear 148=YGEGenExt 149=MotStatEscNr 150=misc ESC_15 151=VersionESC
 		final int latOrdinal = 20, lonOrdinal = 21;
 		if (record.getOrdinal() == latOrdinal || record.getOrdinal() == lonOrdinal) { //15=Latitude, 16=Longitude
 			int grad = ((int) (value / 1000));
 			double minuten = (value - (grad * 1000.0)) / 10.0;
 			newValue = grad + minuten / 60.0;
 		}
-		else if (record.getAbstractParent().getChannelConfigNumber() == 4 && (record.getOrdinal() >= 87 && record.getOrdinal() <= 102) && value != 0.) {
+		else if (record.getAbstractParent().getChannelConfigNumber() == 4 && (record.getOrdinal() >= 87 && record.getOrdinal() <= 118) && value != 0.) {
 			if (this.pickerParameters.isChannelPercentEnabled) {
 				if (!record.getUnit().equals("%")) record.setUnit("%");
 				factor = 0.250;
@@ -1073,16 +1077,18 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 		// 87=VoltageM, 88=CurrentM, 89=CapacityM, 90=PowerM, 91=RevolutionM, 92=TemperatureM 1, 93=TemperatureM 2 94=Voltage_min, 95=Current_max,
 		// 96=Revolution_max, 97=Temperature1_max, 98=Temperature2_max 99=Event M
 
-		// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=PowerOff, 104=BatterieLow, 105=Reset, 106=reserve
-		// 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max,
-		// 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
+		// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=Ch17 ... 118=Ch32 119=PowerOff, 120=BatterieLow, 121=Reset, 122=reserve
+		// 123=VoltageM, 124=CurrentM, 125=CapacityM, 126=PowerM, 127=RevolutionM, 128=TemperatureM 1, 129=TemperatureM 2 130=Voltage_min, 131=Current_max,
+		// 132=Revolution_max, 133=Temperature1_max, 134=Temperature2_max 135=Event M
+		// 136=Speed 137=Speed_max 138=PWM 139=Throttle 140=VoltageBEC 141=VoltageBEC_max 142=CurrentBEC 143=TemperatureBEC 144=TemperatureCap 
+		// 145=Timing(empty) 146=Temperature_aux 147=Gear 148=YGEGenExt 149=MotStatEscNr 150=misc ESC_15 151=VersionESC
 		final int latOrdinal = 20, lonOrdinal = 21;
 		if (record.getOrdinal() == latOrdinal || record.getOrdinal() == lonOrdinal) { // 20=Latitude, 21=Longitude
 			int grad = (int) value;
 			double minuten = (value - grad * 1.0) * 60.0;
 			newValue = (grad + minuten / 100.0) * 1000.0;
 		}
-		else if (record.getAbstractParent().getChannelConfigNumber() == 4 && (record.getOrdinal() >= 87 && record.getOrdinal() <= 102) && value != 0.) {
+		else if (record.getAbstractParent().getChannelConfigNumber() == 4 && (record.getOrdinal() >= 87 && record.getOrdinal() <= 118) && value != 0.) {
 			if (this.pickerParameters.isChannelPercentEnabled) {
 				if (!record.getUnit().equals("%")) record.setUnit("%");
 				factor = 0.250;
