@@ -202,9 +202,8 @@ public class HoTTlogReader extends HoTTbinReader {
 						}
 
 						// fill receiver data
-						if (HoTTbinReader.buf[24] != 0x1F) { //receiver sensitive data
-							HoTTlogReader.parseAddReceiver(HoTTbinReader.buf);
-						}
+						HoTTlogReader.parseAddReceiver(HoTTbinReader.buf);
+
 						if (pickerParameters.isChannelsChannelEnabled) {
 							// 0=FreCh, 1=Tx, 2=Rx, 3=Ch 1, 4=Ch 2 .. 18=Ch 16 19=PowerOff 20=BattLow 21=Reset 22=Warning
 							HoTTlogReader.parseAddChannel(HoTTbinReader.buf);
@@ -429,6 +428,8 @@ public class HoTTlogReader extends HoTTbinReader {
 						HoTTlogReader.rcvLogParser.trackPackageLoss(false);
 
 						if (pickerParameters.isChannelsChannelEnabled) {
+							// fill receiver data
+							HoTTlogReader.parseAddReceiver(HoTTbinReader.buf);
 							HoTTlogReader.parseAddChannel(HoTTbinReader.buf);
 						}
 

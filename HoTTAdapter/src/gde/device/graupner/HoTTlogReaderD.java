@@ -222,11 +222,9 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 					}
 
 					//fill receiver data
-					if (HoTTbinReader.buf[24] != 0x1F) { //receiver sensitive data
-						//in 0=RX-TX-VPacks, 1=RXSQ, 2=Strength, 3=VPacks, 4=Tx, 5=Rx, 6=VoltageRx, 7=TemperatureRx 8=VoltageRxMin 9=EventRx
-						isReceiverData = HoTTlogReaderD.rcvLogParser.parse();
-						System.arraycopy(valuesRec, 0, HoTTlogReaderD.points, 0, 10); //migrate/copy receiver points
-					}
+					//in 0=RX-TX-VPacks, 1=RXSQ, 2=Strength, 3=VPacks, 4=Tx, 5=Rx, 6=VoltageRx, 7=TemperatureRx 8=VoltageRxMin 9=EventRx
+					isReceiverData = HoTTlogReaderD.rcvLogParser.parse();
+					System.arraycopy(valuesRec, 0, HoTTlogReaderD.points, 0, 10); //migrate/copy receiver points
 
 					HoTTlogReaderD.chnLogParser.parse();
 					//in 0=FreCh, 1=Tx, 2=Rx, 3=Ch 1, 4=Ch 2 .. 18=Ch 16 19=PowerOff 20=BattLow 21=Reset 22=Warning
@@ -350,10 +348,13 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 					if (log.isLoggable(Level.FINE)) log.log(Level.FINE, "-->> Found tx=rx=0 dBm");
 
 					HoTTlogReaderD.rcvLogParser.trackPackageLoss(false);
+					//fill receiver data
+					isReceiverData = HoTTlogReaderD.rcvLogParser.parse();
+					System.arraycopy(valuesRec, 0, HoTTlogReaderD.points, 0, 10); //migrate/copy receiver points
 
 					HoTTlogReaderD.chnLogParser.parse();
-					//in 0=FreCh, 1=Tx, 2=Rx, 3=Ch 1, 4=Ch 2 .. 18=Ch 16 19=PowerOff 20=BattLow 21=Reset 22=Warning
 					System.arraycopy(valuesChn, 3, HoTTlogReaderD.points, 87, 20); //copy channel data and events, warning
+					
 					HoTTlogReaderD.recordSet.addPoints(HoTTlogReaderD.points, HoTTlogReaderD.chnLogParser.getTimeStep_ms());
 
 					timeSteps_ms[BinParser.TIMESTEP_INDEX] += logTimeStep_ms;

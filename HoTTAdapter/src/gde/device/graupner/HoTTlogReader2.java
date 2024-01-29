@@ -213,10 +213,8 @@ public class HoTTlogReader2 extends HoTTlogReader {
 					}
 
 					//fill receiver data
-					if (HoTTlogReader2.buf[24] != 0x1F) { //receiver sensitive data
-						isReceiverData = HoTTlogReader2.rcvLogParser.parse();
-						System.arraycopy(valuesRec, 0, HoTTlogReader2.points, 0, 10); //copy receiver points
-					}
+					isReceiverData = HoTTlogReader2.rcvLogParser.parse();
+					System.arraycopy(valuesRec, 0, HoTTlogReader2.points, 0, 10); //copy receiver points
 
 					if (channelNumber == 4) {
 						HoTTlogReader2.chnLogParser.parse();
@@ -346,18 +344,22 @@ public class HoTTlogReader2 extends HoTTlogReader {
 					if (i % progressIndicator == 0) GDE.getUiNotification().setProgress((int) (i * 100 / numberDatablocks));
 				}
 				else { //skip empty block, but add time step
-						if (log.isLoggable(Level.FINE)) log.log(Level.FINE, "-->> Found tx=rx=0 dBm");
-						
-						HoTTlogReader2.rcvLogParser.trackPackageLoss(false);
+					if (log.isLoggable(Level.FINE)) log.log(Level.FINE, "-->> Found tx=rx=0 dBm");
+
+					HoTTlogReader2.rcvLogParser.trackPackageLoss(false);
 
 					if (channelNumber == 4 && HoTTlogReader2.recordSet.getRecordDataSize(true) > 0) {
+						//fill receiver data
+						isReceiverData = HoTTlogReader2.rcvLogParser.parse();
+						System.arraycopy(valuesRec, 0, HoTTlogReader2.points, 0, 10); //copy receiver points
+
 						HoTTlogReader2.chnLogParser.parse();
 						//in 0=FreCh, 1=Tx, 2=Rx, 3=Ch 1, 4=Ch 2 .. 18=Ch 16 19=PowerOff 20=BattLow 21=Reset 22=Warning
 						//out 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=PowerOff, 104=BatterieLow, 105=Reset, 106=reserve
 						System.arraycopy(valuesChn, 3, HoTTlogReader2.points, 87, 20); //copy channel data and events, warning
 						HoTTlogReader2.recordSet.addPoints(HoTTlogReader2.points, HoTTlogReader2.chnLogParser.getTimeStep_ms());
 					}
-					
+
 					timeSteps_ms[BinParser.TIMESTEP_INDEX] += logTimeStep_ms;
 				}
 				//				} //switch into text modus - telemetry menu
