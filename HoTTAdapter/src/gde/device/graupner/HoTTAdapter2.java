@@ -518,9 +518,9 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 				// 87=VoltageM, 88=CurrentM, 89=CapacityM, 90=PowerM, 91=RevolutionM, 92=TemperatureM 1, 93=TemperatureM 2 94=Voltage_min, 95=Current_max,
 				// 96=Revolution_max, 97=Temperature1_max, 98=Temperature2_max 99=Event M
 
-				// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=PowerOff, 104=BatterieLow, 105=Reset, 106=reserve
-				// 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max,
-				// 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
+				// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=Ch17 ... 118=Ch32 119=PowerOff, 120=BatterieLow, 121=Reset, 122=reserve
+				// 123=VoltageM, 124=CurrentM, 125=CapacityM, 126=PowerM, 127=RevolutionM, 128=TemperatureM 1, 129=TemperatureM 2 130=Voltage_min, 131=Current_max,
+				// 132=Revolution_max, 133=Temperature1_max, 134=Temperature2_max 135=Event M
 				if (dataBuffer.length == 57) {
 					tmpVoltage = DataParser.parse2Short(dataBuffer, 16);
 					tmpCurrent = DataParser.parse2Short(dataBuffer, 24);
@@ -531,14 +531,14 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 						if (!this.pickerParameters.isFilterEnabled
 								|| tmpVoltage > 0 && tmpVoltage < 1000 && tmpCurrent < 4000 && tmpCurrent > -10 && tmpRevolution > -1
 								&& tmpRevolution < 20000 && !(points[112] != 0 && points[112] / 1000 - tmpTemperatureFet > 20)) {
-							// 107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max,
-							// 116=Revolution_max, 117=Temperature1_max, 118=Temperature2_max 119=Event M
-							points[107] = tmpVoltage * 1000;
-							points[108] = tmpCurrent * 1000;
-							points[109] = tmpCapacity * 1000;
-							points[110] = Double.valueOf(points[107] / 1000.0 * points[108]).intValue(); // power U*I [W];
-							points[111] = tmpRevolution * 1000;
-							points[112] = tmpTemperatureFet * 1000;
+							// 123=VoltageM, 124=CurrentM, 125=CapacityM, 126=PowerM, 127=RevolutionM, 128=TemperatureM 1, 129=TemperatureM 2 130=Voltage_min, 131=Current_max,
+							// 132=Revolution_max, 133=Temperature1_max, 134=Temperature2_max 135=Event M
+							points[123] = tmpVoltage * 1000;
+							points[124] = tmpCurrent * 1000;
+							points[125] = tmpCapacity * 1000;
+							points[126] = Double.valueOf(points[107] / 1000.0 * points[108]).intValue(); // power U*I [W];
+							points[127] = tmpRevolution * 1000;
+							points[128] = tmpTemperatureFet * 1000;
 						}
 					}
 					else {
