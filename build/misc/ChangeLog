@@ -4,6 +4,7 @@ Version 3.8.4 - xx yyy 2024
 Generic changes/fixes 
 	* enable update device XML without changing XSD
 	* add new update information message box
+	* update integrated Java runtime used by installer to build 17.0.10+11-LTS-240
 	
 Device specific changes/fixes
 	* HoTTAdapter - enable 32 Tx channels using new XML
