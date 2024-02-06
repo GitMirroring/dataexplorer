@@ -351,7 +351,7 @@ public class HoTTlogReader2 extends HoTTlogReader {
 					if (channelNumber == 4 && HoTTlogReader2.recordSet.getRecordDataSize(true) > 0) {
 						//fill receiver data
 						isReceiverData = HoTTlogReader2.rcvLogParser.parse();
-						System.arraycopy(valuesRec, 0, HoTTlogReader2.points, 0, 10); //copy receiver points
+						System.arraycopy(valuesRec, 4, HoTTlogReader2.points, 4, 2); //Rx and Tx values only, keep other data since invalid
 
 						HoTTlogReader2.chnLogParser.parse();
 						//in 0=FreCh, 1=Tx, 2=Rx, 3=Ch 1, 4=Ch 2 .. 18=Ch 16 19=PowerOff 20=BattLow 21=Reset 22=Warning

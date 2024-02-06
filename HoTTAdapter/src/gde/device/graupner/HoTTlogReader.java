@@ -427,9 +427,9 @@ public class HoTTlogReader extends HoTTbinReader {
 
 						HoTTlogReader.rcvLogParser.trackPackageLoss(false);
 
-						if (pickerParameters.isChannelsChannelEnabled) {
+						if (pickerParameters.isChannelsChannelEnabled && HoTTlogReader.recordSetReceiver.getRecordDataSize(true) > 0) {
 							// fill receiver data
-							HoTTlogReader.parseAddReceiver(HoTTbinReader.buf);
+							HoTTlogReader.parseAddReceiverRxTxOnly(HoTTbinReader.buf);
 							HoTTlogReader.parseAddChannel(HoTTbinReader.buf);
 						}
 
@@ -597,13 +597,25 @@ public class HoTTlogReader extends HoTTbinReader {
 
 	/**
 	 * parse the buffered data from buffer and add points to record set
-	 *
 	 * @param _buf
 	 * @throws DataInconsitsentException
 	 */
 	protected static void parseAddReceiver(byte[] _buf) throws DataInconsitsentException {
 		HoTTlogReader.rcvLogParser.parse();
 		HoTTlogReader.recordSetReceiver.addPoints(HoTTlogReader.rcvLogParser.getPoints(), HoTTlogReader.rcvLogParser.getTimeStep_ms());
+	}
+
+	/**
+	 * parse the buffered data from buffer and add points to record set
+	 * @param _buf
+	 * @throws DataInconsitsentException
+	 */
+	protected static void parseAddReceiverRxTxOnly(byte[] _buf) throws DataInconsitsentException {
+		int[] tmpPoints = new int[10];
+		System.arraycopy(HoTTlogReader.rcvLogParser.points, 0, tmpPoints, 0, 10);
+		HoTTlogReader.rcvLogParser.parseTxRxOnly();
+		System.arraycopy(HoTTlogReader.rcvLogParser.getPoints(), 4, tmpPoints, 4, 2); //Rx and Tx values only, keep other data since invalid
+		HoTTlogReader.recordSetReceiver.addPoints(tmpPoints, HoTTlogReader.rcvLogParser.getTimeStep_ms());
 	}
 
 	public static class RcvLogParser extends LogParser {
@@ -621,6 +633,11 @@ public class HoTTlogReader extends HoTTbinReader {
 			this.buf = buffer;
 		}
 
+		protected void parseTxRxOnly() {
+			this.points[4] = buf[8] * -1000;
+			this.points[5] = buf[9] * -1000;			
+		}
+		
 		@Override
 		protected boolean parse() {
 			//log.log(Level.OFF, StringHelper.byte2Hex2CharString(buf, 12, 10));
@@ -641,6 +658,9 @@ public class HoTTlogReader extends HoTTbinReader {
 					this.points[9] = (buf[25] & 0x60) * 1000; //warning V,T only
 				else
 					this.points[9] = 0;
+				
+				if(this.points[3] / 1000 > 2000) 
+					log.log(Level.OFF, "VPack = " + this.points[3] / 1000);
 			}
 			if (log.isLoggable(Level.FINE)) {
 				//data bytes: 8=TXdBm(-D), 9=RXdBm(-D)
