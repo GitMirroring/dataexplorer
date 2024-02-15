@@ -350,7 +350,7 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 					HoTTlogReaderD.rcvLogParser.trackPackageLoss(false);
 					//fill receiver data
 					isReceiverData = HoTTlogReaderD.rcvLogParser.parse();
-					System.arraycopy(valuesRec, 0, HoTTlogReaderD.points, 0, 10); //migrate/copy receiver points
+					System.arraycopy(valuesRec, 4, HoTTlogReaderD.points, 4, 2); //Rx and Tx values only, keep other data since invalid
 
 					HoTTlogReaderD.chnLogParser.parse();
 					System.arraycopy(valuesChn, 3, HoTTlogReaderD.points, 87, 20); //copy channel data and events, warning
