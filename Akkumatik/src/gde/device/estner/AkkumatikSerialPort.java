@@ -135,6 +135,10 @@ public class AkkumatikSerialPort extends DeviceCommPort {
 		return dataArray;
 	}
 	
+	/**
+	 * @param cmd values as space separated string
+	 * @return byte array following UM-Akkumatik specification
+	 */
   public static byte[] getBytes2Write(String cmd) {
 //  <Channel>1</Channel>
 //  <AccuTyp>0</AccuTyp>
@@ -148,6 +152,7 @@ public class AkkumatikSerialPort extends DeviceCommPort {
 //  <ChargeStopMode>0</ChargeStopMode>
 //  <ChargeCurrent>100</ChargeCurrent>
 //  <DisChargeCurrent>100</DisChargeCurrent>
+  	log.log(Level.INFO, "<STX> " + cmd + " <CS> <ETX>");
   	List<Byte> bytes2Write = new ArrayList<>();
   	for (String token : cmd.split(GDE.STRING_BLANK))
   		for (Byte b : token.getBytes())
@@ -161,7 +166,8 @@ public class AkkumatikSerialPort extends DeviceCommPort {
   	for (int i = 0; i < bytes2Write.size(); ++i)
   		bytes[i] = bytes2Write.get(i);
   	bytes[bytes.length-2] = AkkumatikSerialPort.getChecksum(bytes);
-
+  	
+  	log.log(Level.INFO, StringHelper.byte2Hex2CharString(bytes, bytes.length));
   	return bytes;
   }
 

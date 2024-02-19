@@ -10,6 +10,7 @@ Device specific changes/fixes
 	* HoTTAdapter - enable 32 Tx channels using new XML
 	* HoTTAdapter2 - enable 32 Tx channels using new XML
 	* OpenTx-Telemetrie - enable empty GPS coordinates (no GPS fix)
+	* Akkumatik - fix byte array preparation for transfer
 	
 Version 3.8.3 - 02 Dec 2023
 Generic changes/fixes 

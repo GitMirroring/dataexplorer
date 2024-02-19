@@ -928,8 +928,8 @@ public class AkkumatikDialog extends DeviceDialog {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					byte[] prg = AkkumatikSerialPort.getBytes2Write(actualAkkuSetting.toString());
-					statusLabel.setText("<STX>" + new String(prg) + "<ETX>");
-					log.log(Level.INFO, new String(prg));
+					statusLabel.setText("<STX> " + new String(prg) + " <CS> <ETX>");
+					log.log(Level.INFO, "Transfer: " + new String(prg));
 					if (serialPort != null && serialPort.isConnected())
 						setData2Write(prg);
 //					btnTransfer.setEnabled(false);
@@ -1429,16 +1429,17 @@ public class AkkumatikDialog extends DeviceDialog {
 				AkkumatikDialog.log.log(Level.TIME, "read setup XML time = " + StringHelper.getFormatedTime("ss:SSS", (new Date().getTime() - time))); //$NON-NLS-1$ //$NON-NLS-2$
 			
 				if (akkumatikSettings.getDialogSettings() != null) {
-					AkkumatikDialog.log.log(Level.FINE, "active channel = " + akkumatikSettings.getDialogSettings().getActiveChannel());
-					AkkumatikDialog.log.log(Level.FINE, "active setting channel 1, aktive entry = " + akkumatikSettings.getDialogSettings().getChannel1().getActiveSetting());
-					AkkumatikDialog.log.log(Level.FINE, "active setting channel 2, aktive entry = " + akkumatikSettings.getDialogSettings().getChannel2().getActiveSetting());
+					AkkumatikDialog.log.log(Level.OFF, "active channel = " + akkumatikSettings.getDialogSettings().getActiveChannel());
+					AkkumatikDialog.log.log(Level.OFF, "active setting channel 1, aktive entry = " + akkumatikSettings.getDialogSettings().getChannel1().getActiveSetting());
+					AkkumatikDialog.log.log(Level.OFF, "active setting channel 2, aktive entry = " + akkumatikSettings.getDialogSettings().getChannel2().getActiveSetting());
 				}
 			
 				if (akkumatikSettings.getAkkuSettings() != null) {
 					List<Setting> akkuSettings = akkumatikSettings.getAkkuSettings().setting;
-					for (Setting setting : akkuSettings)
-						AkkumatikDialog.log.log(Level.FINE, "Akku Setting Name = " + setting.getName());
-						
+					for (Setting setting : akkuSettings) {
+						AkkumatikDialog.log.log(Level.OFF, "Akku Setting Name = " + setting.getName());		
+						AkkumatikSerialPort.getBytes2Write(setting.toString());
+					}
 				}
 								
 				time = new Date().getTime();

@@ -293,7 +293,7 @@ public class Setting {
      *     
      */
     public String getCellCountPrepared() {
-    	return String.format("%s%s", tnsTbl[cellCount & 0x0F], tnsTbl[(cellCount & 0xF0) >> 4]);
+    	return String.format("%s%s", tnsTbl[(cellCount & 0xF0) >> 4], tnsTbl[cellCount & 0x0F]);
     }
 
     /**
@@ -342,6 +342,18 @@ public class Setting {
      */
     public Integer getCycle() {
         return cycle;
+    }
+
+    /**
+     * Gets the value of the cellCount property prepared for transfer.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
+     */
+    public String getCyclePrepared() {
+    	return String.format("%s%s", tnsTbl[(cycle & 0xF0) >> 4], tnsTbl[cycle & 0x0F]);
     }
 
     /**
@@ -528,7 +540,7 @@ public class Setting {
     	//                                      Lademenge
     	//                                           Zyklusanzahl
 
-    	return String.format("3 %d %02d %02d %02d %02d %02d %s 00 %s %s %s %s %02d 00", getChannel(), getAccuTyp(), getProgram(), getChargeMode(), getCurrentMode(), 
-    			getChargeStopMode(), getCellCountPrepared(), getCapacityPrepared(), getChargeCurrentPrepared(), getDisChargeCurrentPrepared(), getAmountPrepared(), getCycle());
+    	return String.format("3 %d %02d %02d %02d %02d %02d %s00 %s %s %s %s %s00", getChannel(), getAccuTyp(), getProgram(), getChargeMode(), getCurrentMode(), 
+    			getChargeStopMode(), getCellCountPrepared(), getCapacityPrepared(), getChargeCurrentPrepared(), getDisChargeCurrentPrepared(), getAmountPrepared(), getCyclePrepared());
     }
  }
