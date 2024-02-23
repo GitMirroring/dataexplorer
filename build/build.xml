@@ -272,6 +272,7 @@
 		<ant antfile="build.xml" target="clean" dir="Triangoli" inheritall="true" />
 		<ant antfile="build.xml" target="clean" dir="Core-Telemetry" inheritall="true" />
 		<ant antfile="build.xml" target="clean" dir="nextGen" inheritall="true" />
+		<ant antfile="build.xml" target="clean" dir="PeakTech" inheritall="true" />
 		<!-- add new device here -->
 	</target>
 
@@ -471,6 +472,7 @@
 		<ant antfile="build.xml" target="package" dir="Triangoli" inheritall="true" />
 		<ant antfile="build.xml" target="package" dir="Core-Telemetry" inheritall="true" />
 		<ant antfile="build.xml" target="package" dir="nextGen" inheritall="true" />
+		<ant antfile="build.xml" target="package" dir="PeakTech" inheritall="true" />
 		<!-- add new device here -->
 	</target>
 	
@@ -519,6 +521,7 @@
 		<ant antfile="build.xml" target="nonui_package" dir="Triangoli" inheritall="true" />
 		<ant antfile="build.xml" target="nonui_package" dir="Core-Telemetry" inheritall="true" />
 		<ant antfile="build.xml" target="nonui_package" dir="nextGen" inheritall="true" />
+		<ant antfile="build.xml" target="nonui_package" dir="PeakTech" inheritall="true" />
 		<!-- add new device here -->
 	</target>
 
@@ -566,6 +569,7 @@
 			<include name="Triangoli/build/*.jar" />
 			<include name="Core-Telemetry/build/*.jar" />
 			<include name="nextGen/build/*.jar" />
+			<include name="PeakTech/build/*.jar" />
 			<!-- add new device here -->
 		</patternset>
 	</fileset>
@@ -615,6 +619,7 @@
 			<include name="Triangoli/build/*NonUi*.jar" />
 			<include name="Core-Telemetry/build/*NonUi*.jar" />
 			<include name="nextGen/build/*NonUi*.jar" />
+			<include name="PeakTech/build/*NonUi*.jar" />
 			<!-- add new device here -->
 		</patternset>
 	</fileset>
