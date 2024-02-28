@@ -530,13 +530,13 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 					if (this.application.getActiveChannelNumber() == 4 || this.getName().equals("HoTTAdapterD")) {
 						if (!this.pickerParameters.isFilterEnabled
 								|| tmpVoltage > 0 && tmpVoltage < 1000 && tmpCurrent < 4000 && tmpCurrent > -10 && tmpRevolution > -1
-								&& tmpRevolution < 20000 && !(points[112] != 0 && points[112] / 1000 - tmpTemperatureFet > 20)) {
+								&& tmpRevolution < 20000 && !(points[128] != 0 && points[128] / 1000 - tmpTemperatureFet > 20)) {
 							// 123=VoltageM, 124=CurrentM, 125=CapacityM, 126=PowerM, 127=RevolutionM, 128=TemperatureM 1, 129=TemperatureM 2 130=Voltage_min, 131=Current_max,
 							// 132=Revolution_max, 133=Temperature1_max, 134=Temperature2_max 135=Event M
 							points[123] = tmpVoltage * 1000;
 							points[124] = tmpCurrent * 1000;
 							points[125] = tmpCapacity * 1000;
-							points[126] = Double.valueOf(points[107] / 1000.0 * points[108]).intValue(); // power U*I [W];
+							points[126] = Double.valueOf(points[123] / 1000.0 * points[124]).intValue(); // power U*I [W];
 							points[127] = tmpRevolution * 1000;
 							points[128] = tmpTemperatureFet * 1000;
 						}
@@ -816,14 +816,14 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 					tmpRevolution = DataParser.parse2Short(dataBuffer, 18);
 					tmpTemperatureFet = DataParser.parse2Short(dataBuffer, 24);
 					if (this.application.getActiveChannelNumber() == 4 || this.getName().equals("HoTTAdapterD")) {
-						//107=VoltageM, 108=CurrentM, 109=CapacityM, 110=PowerM, 111=RevolutionM, 112=TemperatureM 1, 113=TemperatureM 2 114=Voltage_min, 115=Current_max,
+						//123=VoltageM, 124=CurrentM, 125=CapacityM, 126=PowerM, 127=RevolutionM, 128=TemperatureM 1, 129=TemperatureM 2 130=Voltage_min, 131=Current_max,
 						if (!this.pickerParameters.isFilterEnabled
 								|| tmpVoltage > 0 && tmpVoltage < 1000 && tmpCurrent < 4000 && tmpCurrent > -10 && tmpRevolution > -1
-								&& tmpRevolution < 20000 && !(points[112] != 0 && points[112] / 1000 - tmpTemperatureFet > 20)) {
+								&& tmpRevolution < 20000 && !(points[128] != 0 && points[128] / 1000 - tmpTemperatureFet > 20)) {
 							points[123] = tmpVoltage * 1000;
 							points[124] = tmpCurrent * 1000;
 							points[125] = DataParser.parse2Short(dataBuffer, 22) * 1000;
-							points[126] = Double.valueOf(points[107] / 1000.0 * points[108]).intValue(); // power U*I [W];
+							points[126] = Double.valueOf(points[123] / 1000.0 * points[124]).intValue(); // power U*I [W];
 							points[127] = tmpRevolution * 1000;
 							points[128] = tmpTemperatureFet * 1000;
 						}
