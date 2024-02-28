@@ -1,6 +1,6 @@
 Development history / change log, please read from bottom up
 
-Version 3.8.4 - xx yyy 2024
+Version 3.8.4 - 28	Feb 2024
 Generic changes/fixes 
 	* enable update device XML without changing XSD
 	* add new update information message box
