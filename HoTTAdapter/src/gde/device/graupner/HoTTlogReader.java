@@ -658,9 +658,6 @@ public class HoTTlogReader extends HoTTbinReader {
 					this.points[9] = (buf[25] & 0x60) * 1000; //warning V,T only
 				else
 					this.points[9] = 0;
-				
-				if(this.points[3] / 1000 > 2000) 
-					log.log(Level.OFF, "VPack = " + this.points[3] / 1000);
 			}
 			if (log.isLoggable(Level.FINE)) {
 				//data bytes: 8=TXdBm(-D), 9=RXdBm(-D)
