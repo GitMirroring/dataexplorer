@@ -703,7 +703,7 @@ public class Channel extends HashMap<String, RecordSet> {
 
 
 	public String getFileDescription() {
-		if (log.isLoggable(Level.INFO)) log.log(Level.INFO, String.format("Channel %s get description %s", this.getName(), this.fileDescription));
+		if (log.isLoggable(Level.FINE)) log.log(Level.FINE, String.format("Channel %s get description %s", this.getName(), this.fileDescription));
 		return this.fileDescription;
 	}
 

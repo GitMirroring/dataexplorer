@@ -106,6 +106,7 @@ public class HoTTlogReader extends HoTTbinReader {
 		MenuToolBar menuToolBar = HoTTbinReader.application.getMenuToolBar();
 		int progressIndicator = (int) (numberDatablocks / 30);
 		GDE.getUiNotification().setProgress(0);
+		long sequenceNumber = 0, sequenceDelta = 0;
 
 		try {
 			HoTTbinReader.recordSets.clear();
@@ -159,6 +160,10 @@ public class HoTTlogReader extends HoTTbinReader {
 				if (isASCII) { //convert ASCII log data to hex
 					HoTTlogReader.convertAscii2Raw(rawDataBlockSize, HoTTbinReader.buf);
 				}
+				log.log(Level.INFO, "raw block data   " + StringHelper.byte2Hex2CharString(HoTTlogReader2.buf, 30));
+				sequenceDelta = sequenceDelta == 0 ? 1 : DataParser.getUInt32(HoTTlogReader2.buf, 0) - sequenceNumber;
+				timeSteps_ms[BinParser.TIMESTEP_INDEX] += logTimeStep_ms * sequenceDelta;// add default time step given by log msec
+				sequenceNumber = DataParser.getUInt32(HoTTlogReader2.buf, 0);
 				//log.logp(Level.OFF, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, StringHelper.byte2Hex4CharString(HoTTbinReader.buf, rawDataBlockSize));
 				if (HoTTbinReader.buf[8] == 0 || HoTTbinReader.buf[9] == 0 || HoTTbinReader.buf[24] == 0x1F) { // tx, rx, rx sensitivity data
 					continue;
@@ -179,18 +184,19 @@ public class HoTTlogReader extends HoTTbinReader {
 					convertAscii2Raw(rawDataBlockSize, HoTTbinReader.buf);
 				}
 				
-				//if (!pickerParameters.isFilterTextModus || (HoTTbinReader.buf[6] & 0x01) == 0) { // switch into text modus
+				if (HoTTbinReader.buf[24] == 0x1F) {//rx sensitivity data
+					if (log.isLoggable(Level.INFO))
+						log.log(Level.INFO, "sensitivity data " + StringHelper.byte2Hex2CharString(HoTTlogReader2.buf, 30));
+					sequenceDelta = DataParser.getUInt32(HoTTlogReader2.buf, 0) - sequenceNumber;
+					timeSteps_ms[BinParser.TIMESTEP_INDEX] += logTimeStep_ms * sequenceDelta;// add default time step given by log msec
+					sequenceNumber = DataParser.getUInt32(HoTTlogReader2.buf, 0);
+					continue; //skip rx sensitivity data
+				}
+				
 				if (HoTTbinReader.buf[8] != 0 && HoTTbinReader.buf[9] != 0) { //buf 8, 9, tx,rx, rx sensitivity data
-					if (HoTTbinReader.buf[24] != 0x1F) {//rx sensitivity data
-						if (log.isLoggable(Level.INFO)) {
-							log.log(Level.INFO, String.format("Sensor %02X", HoTTbinReader.buf[26]));
-						}
-					}
-					else {
-						if (log.isLoggable(Level.INFO)) 
-							log.log(Level.INFO, "sensitivity data " + StringHelper.byte2Hex2CharString(HoTTbinReader.buf, HoTTbinReader.buf.length));
-						timeSteps_ms[BinParser.TIMESTEP_INDEX] += logTimeStep_ms;// add time step from log record given in info header
-						continue; //skip rx sensitivity data
+					if (log.isLoggable(Level.INFO)) {
+						//log.log(Level.INFO, String.format("Sensor %02X", HoTTbinReader.buf[26]));
+						log.log(Level.INFO, "sensor data      " + StringHelper.byte2Hex2CharString(HoTTlogReader2.buf, 30));
 					}
 
 					HoTTlogReader.rcvLogParser.trackPackageLoss(true);
@@ -415,14 +421,16 @@ public class HoTTlogReader extends HoTTbinReader {
 								break;
 						}
 
-						timeSteps_ms[BinParser.TIMESTEP_INDEX] += logTimeStep_ms;// add time step from log record given in info header
+						sequenceDelta = DataParser.getUInt32(HoTTlogReader2.buf, 0) - sequenceNumber;
+						timeSteps_ms[BinParser.TIMESTEP_INDEX] += logTimeStep_ms * sequenceDelta;// add default time step given by log msec
+						sequenceNumber = DataParser.getUInt32(HoTTlogReader2.buf, 0);
 
 						HoTTbinReader.isJustParsed = !HoTTlogReader.rcvLogParser.updateLossStatistics();
 						
 						if (i % progressIndicator == 0)
 							GDE.getUiNotification().setProgress((int) (i * 100 / numberDatablocks));
 					}
-					else { // tx,rx == 0
+					else { // Rx == 0
 						if (HoTTlogReader.log.isLoggable(Level.FINE)) HoTTlogReader.log.log(Level.FINE, "-->> Found tx=rx=0 dBm");
 
 						HoTTlogReader.rcvLogParser.trackPackageLoss(false);
@@ -433,7 +441,9 @@ public class HoTTlogReader extends HoTTbinReader {
 							HoTTlogReader.parseAddChannel(HoTTbinReader.buf);
 						}
 
-						timeSteps_ms[BinParser.TIMESTEP_INDEX] += logTimeStep_ms;
+						sequenceDelta = DataParser.getUInt32(HoTTlogReader2.buf, 0) - sequenceNumber;
+						timeSteps_ms[BinParser.TIMESTEP_INDEX] += logTimeStep_ms * sequenceDelta;// add default time step given by log msec
+						sequenceNumber = DataParser.getUInt32(HoTTlogReader2.buf, 0);
 					}
 				//} //isTextModus
 				//else if (!HoTTbinReader.isTextModusSignaled) {
