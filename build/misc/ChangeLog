@@ -5,6 +5,7 @@ Generic changes/fixes
 	* 
 Device specific changes/fixes
 	* HoTTAdapter* - *.log reader, use block sequence number to track log time step
+	* PeakTech* - correct device XML names
 
 Version 3.8.4 - 28	Feb 2024
 Generic changes/fixes 
