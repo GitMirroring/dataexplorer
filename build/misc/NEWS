@@ -1,25 +1,15 @@
-GNU DataExplorer - News - comes with Version 3.8.4 - 28 Feb 2024
+GNU DataExplorer - News - comes with Version 3.8.5 - 5 Mar 2024
 
 Generic changes/fixes 
-	* enable update device XML without changing XSD
-	* add new update information message box
-	* update integrated Java runtime used by installer to build 17.0.10+11-LTS-240
+	* fix startup problem after clean new install
 	
 Device specific changes/fixes
-	* HoTTAdapter - enable 32 Tx channels using new XML
-	* HoTTAdapter2 - enable 32 Tx channels using new XML
-	* OpenTx-Telemetrie - enable empty GPS coordinates (no GPS fix)
-	* Akkumatik - fix byte array preparation for transfer
-	* PeakTech* - add support PeakTech2025 multimeter (RS232/USB)
-
+	* HoTTAdapter* - *.log reader, use block sequence number to track log time step
+	* PeakTech* - correct device XML names
+	
 Allgemeine Änderungen/Korrekturen
-	* Ermögliche die Aktualisierung von Geräte-XML ohne Änderung der XSD
-	* Hinzufügen eines neuen Feldes für Update-Informationen
-	* Aktualisierung der vom Installationsprogramm verwendeten integrierten Java-Laufzeitumgebung auf Build 17.0.10+11-LTS-240
+	* Korrektur zur Behebung des Startproblemes nach Neuinstallation
 	  
 Gerätespezifische Änderungen/Korrekturen
-	* HoTTAdapter - ermögliche 32 Sendekanäle unter Verwendung einer neuen XML-Datei
-	* HoTTAdapter2 - ermögliche 32 Sendekanäle unter Verwendung einer neuen XML-Datei
-	* OpenTx-Telemetrie - ermögliche leere GPS-Koordinaten (kein GPS-Fix)
-	* Akkumatik - Vorbereitung der Byte-Arrays für die Übertragung korrigiert
-	* PeakTech* - Unterstützung für PeakTech2025 Multimeter (RS232/USB) hinzugefügt
+	* HoTTAdapter* - *.log nutze Block-Sequenz-Nummer zum Zeitschrittverlauf
+	* PeakTech* - Korrektur der Geräte XML Namen
