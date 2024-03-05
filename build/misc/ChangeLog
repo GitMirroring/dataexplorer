@@ -1,8 +1,9 @@
 Development history / change log, please read from bottom up
 
-Version 3.8.5 - xx yyy 2024
+Version 3.8.5 - 5 Mar 2024
 Generic changes/fixes 
-	* 
+	* fix startup problem after clean new install
+	
 Device specific changes/fixes
 	* HoTTAdapter* - *.log reader, use block sequence number to track log time step
 	* PeakTech* - correct device XML names

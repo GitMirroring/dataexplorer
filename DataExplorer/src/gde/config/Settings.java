@@ -481,7 +481,8 @@ public final class Settings extends Properties {
 			List<String> usedDeviceList = Arrays.asList(getDeviceUseCsv().split(GDE.STRING_CSV_SEPARATOR));
 			List<String> usedServiceList = new ArrayList<>();
 			for (String deviceName : usedDeviceList)
-				usedServiceList.add(deviceName.substring(0, deviceName.indexOf(GDE.CHAR_STAR)));
+				if (!deviceName.isEmpty())
+					usedServiceList.add(deviceName.substring(0, deviceName.indexOf(GDE.CHAR_STAR)));
 			String deviceJarBasePath = FileUtils.getDevicePluginJarBasePath();
 			log.logp(java.util.logging.Level.CONFIG, Settings.$CLASS_NAME, $METHOD_NAME, String.format("deviceJarBasePath = %s", deviceJarBasePath)); //$NON-NLS-1$
 			String[] files = new File(deviceJarBasePath).list();
