@@ -3296,11 +3296,12 @@ public final class Settings extends Properties {
 	}
 	
 	/**
-	 * check updated version number and entries in serviice update list
+	 * check updated version number and entries in service update list
+	 * method should return true if update get installed over 383 until next XSD update
 	 * @return true if possible device XML update required
 	 */
 	public boolean isDeviceXmlUpdateRequired() {
-		return Integer.valueOf(this.getProperty(Settings.APPL_VERSION_NUMBER, "383").replace(".", "")) < GDE.VERSION_NUMBER && !getServiceUpdateList().isEmpty();
+		return Integer.valueOf(this.getProperty(Settings.APPL_VERSION_NUMBER, "383").replace(".", "")) == 383 && !getServiceUpdateList().isEmpty();
 	}
 	
 	/**
