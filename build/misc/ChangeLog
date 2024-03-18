@@ -2,10 +2,11 @@ Development history / change log, please read from bottom up
 
 Version 3.8.6 - xx yyy 2024
 Generic changes/fixes 
-	*   
+	* adapt TimeSteps.findBestIndex algorithm to cover big time deviations in short logs
 	
 Device specific changes/fixes
 	* HoTTAdapter* - restrict XML update while update install version 383
+	* PeakTech* - correct device name typo
 	
 Version 3.8.5 - 5 Mar 2024
 Generic changes/fixes 

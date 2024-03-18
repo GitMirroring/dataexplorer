@@ -340,10 +340,12 @@ public class TimeSteps extends Vector<Long> {
 				index = (int) (position + 0.5);
 			}
 			else {
-				index = (int) (time_ms / (this.lastElement() / (double) (this.elementCount - 1) / 10.0) / 2.0);
 				int value = Double.valueOf(time_ms * 10.0).intValue();
+				index = (int) (time_ms / (this.lastElement() / (double) (this.elementCount - 1) / 10.0) / 2.0);
+				index = index < elementCount && value < this.get(index) ? 0 : index; 
 				for (; index < elementCount; index++) {
-					if (value <= this.get(index)) break;
+					if (value <= this.get(index)) 
+						break;
 				}
 				if (index + 1 <= this.elementCount && (index > 0 && value <= (this.get(index) + this.get(index - 1)) / 2)) index = index - 1;
 			}
