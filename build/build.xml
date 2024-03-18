@@ -64,6 +64,9 @@
 			<os name="Windows 10" />
 		</condition>
 		<condition property="build.os.shortname" value="Windows">
+			<os name="Windows 11" />
+		</condition>
+		<condition property="build.os.shortname" value="Windows">
 			<os name="Windows NT (unknown)" /> <!-- Windows 8 -->
 		</condition>
 
