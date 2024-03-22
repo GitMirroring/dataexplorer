@@ -6,6 +6,7 @@ Generic changes/fixes
 	* adapt master build XML fpr Windows 11
 	
 Device specific changes/fixes
+	* HoTTAdapter* - rework *.log parsing to match FUS 
 	* HoTTAdapter* - restrict XML update while update install version 383
 	* PeakTech* - correct device name typo
 	
