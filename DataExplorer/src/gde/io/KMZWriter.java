@@ -588,46 +588,48 @@ public class KMZWriter {
 			zipWriter.write(KMZWriter.speedFooter.getBytes());
 
 			//triangle-track
-			int relativeAltitude = (int) (recordAltitude == null ? 0 : device.translateValue(recordAltitude, recordAltitude.getMaxValue() / 1000.0) - height0); //0 == clamp to ground
-			String[] triangleTaskDefinition = recordSet.getRecordSetDescription().split(GDE.LINE_SEPARATOR);
-			if (triangleTaskDefinition.length == 2 && triangleTaskDefinition[1].length() > 25 && triangleTaskDefinition[1].split(GDE.STRING_MESSAGE_CONCAT).length == 4) {
-				List<String> wayPoints = new ArrayList<>();
-				for (String strCoords : triangleTaskDefinition[1].split(GDE.STRING_MESSAGE_CONCAT)) {
-					if (strCoords.startsWith("WP", 17))
-						wayPoints.add(strCoords.substring(0,8) + GDE.STRING_SEMICOLON + strCoords.substring(8, 17));
+			if (recordSet.getDevice().getName().equals("IGCAdapter")) {
+				int relativeAltitude = (int) (recordAltitude == null ? 0 : device.translateValue(recordAltitude, recordAltitude.getMaxValue() / 1000.0) - height0); //0 == clamp to ground
+				String[] triangleTaskDefinition = recordSet.getRecordSetDescription().split(GDE.LINE_SEPARATOR);
+				if (triangleTaskDefinition.length == 2 && triangleTaskDefinition[1].length() > 25 && triangleTaskDefinition[1].split(GDE.STRING_MESSAGE_CONCAT).length == 4) {
+					List<String> wayPoints = new ArrayList<>();
+					for (String strCoords : triangleTaskDefinition[1].split(GDE.STRING_MESSAGE_CONCAT)) {
+						if (strCoords.startsWith("WP", 17))
+							wayPoints.add(strCoords.substring(0,8) + GDE.STRING_SEMICOLON + strCoords.substring(8, 17));
+					}
+				
+				zipWriter.write(String.format(KMZWriter.triangleHeader, "triangle").getBytes());
+				zipWriter.write(String.format(Locale.ENGLISH, KMZWriter.triangleLeader, "triangle",  "ffff0000", 2, "ffff0000".substring(2), randomColor, 1, altitudeMode).getBytes());
+				for (i = 0; i < 3 && wayPoints.size() == 3; i++) {
+						sb = new StringBuilder();
+						double latitude = Double.parseDouble(wayPoints.get(i).split(GDE.STRING_SEMICOLON)[0].substring(0,7))/100;
+						latitude = wayPoints.get(i).split(GDE.STRING_SEMICOLON)[0].endsWith("N") ? latitude : -1 * latitude;
+						double longitude = Double.parseDouble(wayPoints.get(i).split(GDE.STRING_SEMICOLON)[1].substring(0,7))/10;
+						longitude = wayPoints.get(i).split(GDE.STRING_SEMICOLON)[1].endsWith("E") ? longitude : -1 * longitude;
+						// add data entries, translate according device and measurement unit
+						sb.append(String.format(Locale.ENGLISH, "\t\t\t\t\t\t%.7f,", device.translateValue(recordLongitude, longitude))) //$NON-NLS-1$
+								.append(String.format(Locale.ENGLISH, "%.7f,", device.translateValue(recordLatitude, latitude))) //$NON-NLS-1$
+								.append(String.format(Locale.ENGLISH, "%d", relativeAltitude)).append(GDE.LINE_SEPARATOR); //$NON-NLS-1$
+	
+						zipWriter.write(sb.toString().getBytes());
+						KMZWriter.log.log(java.util.logging.Level.INFO, "data line = " + sb.toString()); //$NON-NLS-1$
 				}
-			
-			zipWriter.write(String.format(KMZWriter.triangleHeader, "triangle").getBytes());
-			zipWriter.write(String.format(Locale.ENGLISH, KMZWriter.triangleLeader, "triangle",  "ffff0000", 2, "ffff0000".substring(2), randomColor, 1, altitudeMode).getBytes());
-			for (i = 0; i < 3; i++) {
-					sb = new StringBuilder();
-					double latitude = Double.parseDouble(wayPoints.get(i).split(GDE.STRING_SEMICOLON)[0].substring(0,7))/100;
-					latitude = wayPoints.get(i).split(GDE.STRING_SEMICOLON)[0].endsWith("N") ? latitude : -1 * latitude;
-					double longitude = Double.parseDouble(wayPoints.get(i).split(GDE.STRING_SEMICOLON)[1].substring(0,7))/10;
-					longitude = wayPoints.get(i).split(GDE.STRING_SEMICOLON)[1].endsWith("E") ? longitude : -1 * longitude;
-					// add data entries, translate according device and measurement unit
-					sb.append(String.format(Locale.ENGLISH, "\t\t\t\t\t\t%.7f,", device.translateValue(recordLongitude, longitude))) //$NON-NLS-1$
-							.append(String.format(Locale.ENGLISH, "%.7f,", device.translateValue(recordLatitude, latitude))) //$NON-NLS-1$
-							.append(String.format(Locale.ENGLISH, "%d", relativeAltitude)).append(GDE.LINE_SEPARATOR); //$NON-NLS-1$
-
-					zipWriter.write(sb.toString().getBytes());
-					KMZWriter.log.log(java.util.logging.Level.INFO, "data line = " + sb.toString()); //$NON-NLS-1$
-			}
-			sb = new StringBuilder();
-			double latitude = Double.parseDouble(wayPoints.get(0).split(GDE.STRING_SEMICOLON)[0].substring(0,7))/100;
-			latitude = wayPoints.get(0).split(GDE.STRING_SEMICOLON)[0].endsWith("N") ? latitude : -1 * latitude;
-			double longitude = Double.parseDouble(wayPoints.get(0).split(GDE.STRING_SEMICOLON)[1].substring(0,7))/10;
-			longitude = wayPoints.get(0).split(GDE.STRING_SEMICOLON)[1].endsWith("E") ? longitude : -1 * longitude;
-			// add data entries, translate according device and measurement unit
-			sb.append(String.format(Locale.ENGLISH, "\t\t\t\t\t\t%.7f,", device.translateValue(recordLongitude, longitude))) //$NON-NLS-1$
-					.append(String.format(Locale.ENGLISH, "%.7f,", device.translateValue(recordLatitude, latitude))) //$NON-NLS-1$
-					.append(String.format(Locale.ENGLISH, "%d", relativeAltitude)).append(GDE.LINE_SEPARATOR); //$NON-NLS-1$
-
-			zipWriter.write(sb.toString().getBytes());
-			KMZWriter.log.log(java.util.logging.Level.INFO, "data line = " + sb.toString()); //$NON-NLS-1$
-
-			zipWriter.write(KMZWriter.triangleTrailer.getBytes());
-			zipWriter.write(KMZWriter.triangleFooter.getBytes());
+				sb = new StringBuilder();
+				double latitude = Double.parseDouble(wayPoints.get(0).split(GDE.STRING_SEMICOLON)[0].substring(0,7))/100;
+				latitude = wayPoints.get(0).split(GDE.STRING_SEMICOLON)[0].endsWith("N") ? latitude : -1 * latitude;
+				double longitude = Double.parseDouble(wayPoints.get(0).split(GDE.STRING_SEMICOLON)[1].substring(0,7))/10;
+				longitude = wayPoints.get(0).split(GDE.STRING_SEMICOLON)[1].endsWith("E") ? longitude : -1 * longitude;
+				// add data entries, translate according device and measurement unit
+				sb.append(String.format(Locale.ENGLISH, "\t\t\t\t\t\t%.7f,", device.translateValue(recordLongitude, longitude))) //$NON-NLS-1$
+						.append(String.format(Locale.ENGLISH, "%.7f,", device.translateValue(recordLatitude, latitude))) //$NON-NLS-1$
+						.append(String.format(Locale.ENGLISH, "%d", relativeAltitude)).append(GDE.LINE_SEPARATOR); //$NON-NLS-1$
+		
+				zipWriter.write(sb.toString().getBytes());
+				KMZWriter.log.log(java.util.logging.Level.INFO, "data line = " + sb.toString()); //$NON-NLS-1$
+		
+				zipWriter.write(KMZWriter.triangleTrailer.getBytes());
+				zipWriter.write(KMZWriter.triangleFooter.getBytes());
+				}
 			}
 
 			//data-track

@@ -3,7 +3,8 @@ Development history / change log, please read from bottom up
 Version 3.8.6 - xx yyy 2024
 Generic changes/fixes 
 	* adapt TimeSteps.findBestIndex algorithm to cover big time deviations in short logs
-	* adapt master build XML fpr Windows 11
+	* adapt master build XML for Windows 11
+	* allow writing triangle track while KMZ export for IGCAdapter only
 	
 Device specific changes/fixes
 	* HoTTAdapter* - rework *.log parsing to match FUS 
