@@ -149,6 +149,10 @@ public class HoTTAdapterDialogTabItem extends CTabItem {
 				MeasurementType measurement = channelMeasurements.get(i);
 				if (!measurement.getName().equals(actualRecordSet.get(i).getName()))
 					measurement.setName(actualRecordSet.get(i).getName());
+				if (!measurement.getUnit().equals(actualRecordSet.get(i).getUnit()))
+					measurement.setUnit(actualRecordSet.get(i).getUnit());
+				if (!measurement.getSymbol().equals(actualRecordSet.get(i).getSymbol()))
+					measurement.setSymbol(actualRecordSet.get(i).getSymbol());
 				this.measurementTypes.add(new MeasurementControl(this.mainTabComposite, this.dialog, channelConfigNumber, i,measurement, this.device, 1));
 			}
 		else	

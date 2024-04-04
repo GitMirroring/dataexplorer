@@ -711,11 +711,23 @@ public class Record extends AbstractRecord implements IRecord {
 	}
 
 	/**
-	 * get a reference to the record properies (offset, factor, ...)
+	 * get a reference to the record properties (offset, factor, ...)
 	 * @return list containing the properties
 	 */
 	List<PropertyType> getProperties() {
 		return this.properties;
+	}
+	
+	/**
+	 * clear all property types like offset, factor, scale sync, etc.
+	 */
+	public void clearProperties() {
+		List<PropertyType>  properties = this.getProperties();
+		Iterator<PropertyType> itr = properties.listIterator();
+		while(itr.hasNext()) {
+			itr.next();
+			itr.remove();
+		}
 	}
 
 	/**

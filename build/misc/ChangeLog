@@ -9,6 +9,7 @@ Generic changes/fixes
 Device specific changes/fixes
 	* HoTTAdapter* - rework *.log parsing to match FUS 
 	* HoTTAdapter* - restrict XML update while update install version 383
+	* HoTTAdapter* - enhance *.log parsing for EAM Deutsch PowerBox
 	* PeakTech* - correct device name typo
 	
 Version 3.8.5 - 5 Mar 2024

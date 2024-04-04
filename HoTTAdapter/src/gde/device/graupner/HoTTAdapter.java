@@ -2971,6 +2971,102 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 		}
 		return startTimeStamp_ms;
 	}
+	
+	/**
+	 * update the record set Electric Air Module dependent record meta data
+	 * @param version detected in byte buffer
+	 * @param device HoTTAdapter
+	 * @param tmpRecordSet the record set to be updated
+	 */
+	protected static void updateEAMTypeDependent(int version, IDevice device, RecordSet tmpRecordSet) {
+		//0=RXSQ, 1=Voltage, 2=Current, 3=Capacity, 4=Power, 5=Balance, 6=CellVoltage 1, 7=CellVoltage 2 .... 19=CellVoltage 14,
+		//20=Altitude, 21=Climb 1, 22=Climb 3, 23=Voltage 1, 24=Voltage 2, 25=Temperature 1, 26=Temperature 2 27=RPM 28=MotorTime 29=Speed 30=Event
+
+		// 0=RX-TX-VPacks, 1=RXSQ, 2=Strength, 3=VPacks, 4=Tx, 5=Rx, 6=VoltageRx, 7=TemperatureRx 8=VoltageRxMin 9=EventRx
+		// 10=Altitude, 11=Climb 1, 12=Climb 3, 13=Climb 10 14=EventVario 15=misc Vario_1 16=misc Vario_2 17=misc Vario_3 18=misc Vario_4 19=misc Vario_5
+		// 20=Latitude, 21=Longitude, 22=Velocity, 23=Distance, 24=Direction, 25=TripDistance 26=NumSatellites 27=GPS-Fix 28=EventGPS
+		// 29=HomeDirection 30=Roll 31=Pitch 32=Yaw 33=GyroX 34=GyroY 35=GyroZ 36=Vibration 37=Version	
+		// 38=Voltage G, 39=Current G, 40=Capacity G, 41=Power G, 42=Balance G, 43=CellVoltage G1, 44=CellVoltage G2 .... 48=CellVoltage G6,
+		// 49=Revolution G, 50=FuelLevel, 51=Voltage G1, 52=Voltage G2, 53=Temperature G1, 54=Temperature G2 55=Speed G, 56=LowestCellVoltage,
+		// 57=LowestCellNumber, 58=Pressure, 59=Event G
+		
+		// 60=Voltage E, 61=Current E, 62=Capacity E, 63=Power E, 64=Balance E, 65=CellVoltage E1, 66=CellVoltage E2 .... 78=CellVoltage E14,
+		// 79=Voltage E1, 80=Voltage E2, 81=Temperature E1, 82=Temperature E2 83=Revolution E 84=MotorTime 85=Speed 86=Event E
+	
+		if (version == 64) { //Deutsch Power Box
+			// 1=Voltage, 2=Current, 3=Capacity, 4=Power, 
+			// 5=Holds, 6=Lost Frames, 7=Fades 1, 8=Fades 2,
+			// 9=Voltage Bat1, 10=Current Bat1, 11=Capacity Bat1, 12=Voltage Ba2, 13=Current Bat1, 14=Capacity Bat2,
+			// 15 - 19 misc EAM, 20=Altitude, 21=Climb 1, 22=Climb 3, 23=misc EAM, 24=misc EAM
+			// 25=Status Gyro, 26=Status SpeedSensor 27=Revolution E 28=Version 0x40 29=Speed 30=Event E
+	
+			tmpRecordSet.get(5).setName("Holds");
+			tmpRecordSet.get(5).setUnit("#");
+			tmpRecordSet.get(5).setSymbol(GDE.STRING_EMPTY);
+			tmpRecordSet.get(5).clearProperties();
+			tmpRecordSet.get(6).setName("Lost Frames");
+			tmpRecordSet.get(6).setUnit("#");
+			tmpRecordSet.get(6).setSymbol(GDE.STRING_EMPTY);
+			tmpRecordSet.get(6).clearProperties();
+			tmpRecordSet.get(7).setName("Fades 1");
+			tmpRecordSet.get(7).setUnit("#");
+			tmpRecordSet.get(7).setSymbol(GDE.STRING_EMPTY);
+			tmpRecordSet.get(7).clearProperties();
+			tmpRecordSet.get(8).setName("Fades 2");
+			tmpRecordSet.get(8).setUnit("#");
+			tmpRecordSet.get(8).setSymbol(GDE.STRING_EMPTY);
+			tmpRecordSet.get(8).clearProperties();
+			tmpRecordSet.get(9).setName(device.getMeasurementReplacement("voltage") + " Bat1");
+			tmpRecordSet.get(9).setUnit("V");
+			tmpRecordSet.get(9).setSymbol("u1");
+			tmpRecordSet.get(9).getProperty(FACTOR).setValue(0.1);
+			tmpRecordSet.get(9).getProperty(IDevice.SYNC_ORDINAL).setValue(1);
+			tmpRecordSet.get(10).setName(device.getMeasurementReplacement("current") + " Bat1");
+			tmpRecordSet.get(10).setUnit("A");
+			tmpRecordSet.get(10).setSymbol("i1");
+			tmpRecordSet.get(10).getProperty(FACTOR).setValue(0.1);
+			tmpRecordSet.get(10).getProperty(IDevice.SYNC_ORDINAL).setValue(2);
+			tmpRecordSet.get(11).setName(device.getMeasurementReplacement("capacity") + " Bat1");
+			tmpRecordSet.get(11).setUnit("mAh");
+			tmpRecordSet.get(11).setSymbol("c1");
+			tmpRecordSet.get(11).getProperty(FACTOR).setValue(10);
+			tmpRecordSet.get(11).getProperty(IDevice.SYNC_ORDINAL).setValue(3);
+			tmpRecordSet.get(12).setName(device.getMeasurementReplacement("voltage") + " Bat2");
+			tmpRecordSet.get(12).setUnit("V");
+			tmpRecordSet.get(12).setSymbol("u2");
+			tmpRecordSet.get(12).getProperty(FACTOR).setValue(0.1);
+			tmpRecordSet.get(12).getProperty(IDevice.SYNC_ORDINAL).setValue(1);
+			tmpRecordSet.get(13).setName(device.getMeasurementReplacement("current") + " Bat2");
+			tmpRecordSet.get(13).setUnit("A");
+			tmpRecordSet.get(13).setSymbol("i2");
+			tmpRecordSet.get(13).getProperty(FACTOR).setValue(0.1);
+			tmpRecordSet.get(13).getProperty(IDevice.SYNC_ORDINAL).setValue(2);
+			tmpRecordSet.get(14).setName(device.getMeasurementReplacement("capacity") + " Bat2");
+			tmpRecordSet.get(14).setUnit("mAh");
+			tmpRecordSet.get(14).setSymbol("c2");
+			tmpRecordSet.get(14).getProperty(FACTOR).setValue(10);
+			tmpRecordSet.get(14).getProperty(IDevice.SYNC_ORDINAL).setValue(3);
+			tmpRecordSet.get(15).setName("misc EAM_1");
+			tmpRecordSet.get(16).setName("misc EAM_2");
+			tmpRecordSet.get(17).setName("misc EAM_3");
+			tmpRecordSet.get(18).setName("misc EAM_4");
+			tmpRecordSet.get(19).setName("misc EAM_5");
+			// 20=Altitude, 21=Climb 1, 22=Climb 3
+			tmpRecordSet.get(23).setName("misc EAM_4");
+			tmpRecordSet.get(24).setName("misc EAM_5");
+			tmpRecordSet.get(25).setName("Status Gyro");
+			tmpRecordSet.get(25).setUnit(GDE.STRING_EMPTY);
+			tmpRecordSet.get(25).setSymbol(GDE.STRING_EMPTY);
+			tmpRecordSet.get(25).clearProperties();
+			tmpRecordSet.get(26).setName("Status SpeedSensor");
+			tmpRecordSet.get(26).setUnit(GDE.STRING_EMPTY);
+			tmpRecordSet.get(26).setSymbol(GDE.STRING_EMPTY);
+			tmpRecordSet.get(26).clearProperties();
+			tmpRecordSet.get(28).setName("Version EAM");
+			tmpRecordSet.get(28).setUnit("#");
+			tmpRecordSet.get(28).setSymbol(GDE.STRING_EMPTY);
+		}
+	}
 
 	/**
 	 * update the record set ESC dependent record meta data

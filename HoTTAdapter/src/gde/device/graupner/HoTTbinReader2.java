@@ -95,6 +95,7 @@ public class HoTTbinReader2 extends HoTTbinReader {
 		boolean isSensorData = false;
 		boolean isVarioDetected = false;
 		boolean isGPSdetected = false;
+		boolean isEAMdetected = false;
 		boolean isESCdetected = false;
 		boolean[] isResetMinMax = new boolean[] {false, false, false, false, false}; //ESC, EAM, GAM, GPS, Vario
 		HoTTbinReader2.recordSet = null;
@@ -279,6 +280,14 @@ public class HoTTbinReader2 extends HoTTbinReader {
 								bufCopier.copyToFreeBuffer();
 								if (bufCopier.is4BuffersFull()) {
 									HoTTbinReader2.eamBinParser.parse();
+									
+									if (!isEAMdetected) {
+										if (isReasonableData(buf4) && HoTTbinReader2.recordSet.get(33).size() > 0 && HoTTbinReader2.recordSet.get(33).get(HoTTbinReader2.recordSet.get(33).size()-1) != 0) {
+											HoTTAdapter2.updateEAMTypeDependent((buf4[9] & 0xFF), device, HoTTbinReader2.recordSet);
+											isEAMdetected = true;
+										}
+									}
+
 									bufCopier.clearBuffers();
 									isSensorData = true;
 									// 60=Voltage E, 61=Current E, 62=Capacity E, 63=Power E, 64=Balance E, 65=CellVoltage E1, 66=CellVoltage E2 .... 78=CellVoltage E14,
@@ -1329,6 +1338,7 @@ public class HoTTbinReader2 extends HoTTbinReader {
 			// 38=Voltage G, 39=Current G, 40=Capacity G, 41=Power G, 42=Balance G, 43=CellVoltage G1, 44=CellVoltage G2 .... 48=CellVoltage G6,
 			// 49=Revolution G, 50=FuelLevel, 51=Voltage G1, 52=Voltage G2, 53=Temperature G1, 54=Temperature G2 55=Speed G, 56=LowestCellVoltage,
 			// 57=LowestCellNumber, 58=Pressure, 59=Event G
+			
 			// 60=Voltage E, 61=Current E, 62=Capacity E, 63=Power E, 64=Balance E, 65=CellVoltage E1, 66=CellVoltage E2 .... 78=CellVoltage E14,
 			// 79=Voltage E1, 80=Voltage E2, 81=Temperature E1, 82=Temperature E2 83=Revolution E 84=MotorTime 85=Speed 86=Event E
 			this.tmpHeight = DataParser.parse2Short(this._buf3, 3) - 500;
@@ -1337,49 +1347,56 @@ public class HoTTbinReader2 extends HoTTbinReader {
 			this.tmpVoltage2 = DataParser.parse2Short(this._buf2[9], this._buf3[0]);
 			this.tmpCapacity = DataParser.parse2Short(this._buf3[9], this._buf4[0]);
 			if (isPointsValid()) {
-				int maxVotage = Integer.MIN_VALUE;
-				int minVotage = Integer.MAX_VALUE;
-				this.points[60] = DataParser.parse2Short(this._buf3, 7) * 1000;
-				this.points[61] = DataParser.parse2Short(this._buf3, 5) * 1000;
-				if (!this.pickerParameters.isFilterEnabled || this.parseCount <= 20
-						|| Math.abs(this.tmpCapacity) <= (this.points[62] / 1000 + this.points[60] / 1000 * this.points[61] / 1000 / 2500 + 2)) {
-					this.points[62] = this.tmpCapacity * 1000;
-				} else {
-					if (HoTTbinReader2.log.isLoggable(Level.FINE))
-						HoTTbinReader2.log.log(Level.FINE, StringHelper.getFormatedTime("mm:ss.SSS", this.getTimeStep_ms()) + " - " + this.tmpCapacity + " - " + (this.points[48] / 1000) + " + " + (this.points[46] / 1000 * this.points[47] / 1000 / 2500 + 2));
-				}
-				this.points[63] = Double.valueOf(this.points[60] / 1000.0 * this.points[61]).intValue(); // power U*I [W];
-				for (int j = 0; j < 7; j++) {
-					this.points[j + 65] = (this._buf1[3 + j] & 0xFF) * 1000;
-					if (this.points[j + 65] > 0) {
-						maxVotage = this.points[j + 65] > maxVotage ? this.points[j + 65] : maxVotage;
-						minVotage = this.points[j + 65] < minVotage ? this.points[j + 65] : minVotage;
-					}
-				}
-				for (int j = 0; j < 7; j++) {
-					this.points[j + 72] = (this._buf2[j] & 0xFF) * 1000;
-					if (this.points[j + 72] > 0) {
-						maxVotage = this.points[j + 72] > maxVotage ? this.points[j + 72] : maxVotage;
-						minVotage = this.points[j + 72] < minVotage ? this.points[j + 72] : minVotage;
-					}
-				}
-				// calculate balance on the fly
-				this.points[64] = maxVotage != Integer.MIN_VALUE && minVotage != Integer.MAX_VALUE ? (maxVotage - minVotage) * 10 : 0;
-				if (this.pickerParameters.altitudeClimbSensorSelection == 4) { //sensor selection GPS (auto, Vario, GPS, GAM, EAM)
+				if (this.pickerParameters.altitudeClimbSensorSelection == 4) { //sensor selection EAM (auto, Vario, GPS, GAM, EAM)
 					this.points[10] = this.tmpHeight * 1000;
 					this.points[11] = (DataParser.parse2UnsignedShort(this._buf4, 1) - 30000) * 10;
 					this.points[12] = this.tmpClimb3 * 1000;
 				}
-				this.points[79] = this.tmpVoltage1 * 100;
-				this.points[80] = this.tmpVoltage2 * 100;
-				this.points[81] = ((this._buf3[1] & 0xFF) - 20) * 1000;
-				this.points[82] = ((this._buf3[2] & 0xFF) - 20) * 1000;
-				this.points[83] = DataParser.parse2UnsignedShort(this._buf4, 4) * 1000;
-				this.points[84] = ((this._buf4[6] & 0xFF) * 60 + (this._buf4[7] & 0xFF)) * 1000; 	// motor time
-				this.points[85] = DataParser.parse2Short(this._buf4, 8) * 1000; 									// speed
-				this.points[86] = ((this._buf1[1] & 0xFF) + ((this._buf1[2] & 0x7F) << 8)) * 1000;// inverse event
-				++this.parseCount;
-				return true;
+
+				this.points[60] = DataParser.parse2Short(this._buf3, 7) * 1000;
+				this.points[61] = DataParser.parse2Short(this._buf3, 5) * 1000;
+				
+				if ((this._buf4[7] & 0xFF) == 0x40) { //Deutsch Power Box
+				}
+				else { // original Graupner EAM
+					if (!this.pickerParameters.isFilterEnabled || this.parseCount <= 20 || Math.abs(this.tmpCapacity) <= (this.points[62] / 1000 + this.points[60] / 1000 * this.points[61] / 1000 / 2500 + 2)) {
+						this.points[62] = this.tmpCapacity * 1000;
+					}
+					else {
+						if (HoTTbinReader2.log.isLoggable(Level.FINE)) HoTTbinReader2.log.log(Level.FINE, StringHelper.getFormatedTime("mm:ss.SSS", this.getTimeStep_ms()) + " - " + this.tmpCapacity + " - "
+								+ (this.points[48] / 1000) + " + " + (this.points[46] / 1000 * this.points[47] / 1000 / 2500 + 2));
+					}
+					this.points[63] = Double.valueOf(this.points[60] / 1000.0 * this.points[61]).intValue(); // power U*I [W];
+
+					int maxVotage = Integer.MIN_VALUE;
+					int minVotage = Integer.MAX_VALUE;
+					for (int j = 0; j < 7; j++) {
+						this.points[j + 65] = (this._buf1[3 + j] & 0xFF) * 1000;
+						if (this.points[j + 65] > 0) {
+							maxVotage = this.points[j + 65] > maxVotage ? this.points[j + 65] : maxVotage;
+							minVotage = this.points[j + 65] < minVotage ? this.points[j + 65] : minVotage;
+						}
+					}
+					for (int j = 0; j < 7; j++) {
+						this.points[j + 72] = (this._buf2[j] & 0xFF) * 1000;
+						if (this.points[j + 72] > 0) {
+							maxVotage = this.points[j + 72] > maxVotage ? this.points[j + 72] : maxVotage;
+							minVotage = this.points[j + 72] < minVotage ? this.points[j + 72] : minVotage;
+						}
+					}
+					// calculate balance on the fly
+					this.points[64] = maxVotage != Integer.MIN_VALUE && minVotage != Integer.MAX_VALUE ? (maxVotage - minVotage) * 10 : 0;
+					this.points[79] = this.tmpVoltage1 * 100;
+					this.points[80] = this.tmpVoltage2 * 100;
+					this.points[81] = ((this._buf3[1] & 0xFF) - 20) * 1000;
+					this.points[82] = ((this._buf3[2] & 0xFF) - 20) * 1000;
+					this.points[83] = DataParser.parse2UnsignedShort(this._buf4, 4) * 1000;
+					this.points[84] = ((this._buf4[6] & 0xFF) * 60 + (this._buf4[7] & 0xFF)) * 1000; // motor time
+					this.points[85] = DataParser.parse2Short(this._buf4, 8) * 1000; // speed
+					this.points[86] = ((this._buf1[1] & 0xFF) + ((this._buf1[2] & 0x7F) << 8)) * 1000;// inverse event
+					++this.parseCount;
+					return true;
+				}
 			}
 			this.points[86] = ((this._buf1[1] & 0xFF) + ((this._buf1[2] & 0x7F) << 8)) * 1000; // inverse event
 			return false;

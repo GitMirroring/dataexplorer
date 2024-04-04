@@ -144,6 +144,7 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 		int logTimeStep_ms = 1000/Integer.valueOf(fileInfoHeader.get("COUNTER").split("/")[1].split(GDE.STRING_BLANK)[0]);
 		boolean isVarioDetected = false;
 		boolean isGPSdetected = false;
+		boolean isEAMdetected = false;
 		boolean isESCdetected = false, isESC2detected = false, isESC3detected = false, isESC4detected = false;
 		int logDataOffset = Integer.valueOf(fileInfoHeader.get("LOG DATA OFFSET"));
 		long numberDatablocks = Long.parseLong(fileInfoHeader.get(HoTTAdapter.LOG_COUNT));
@@ -276,6 +277,11 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 					if (isElectricData && isReceiverData) {
 						migrateAddPoints(HoTTlogReaderD.eamLogParser.getTimeStep_ms(), isVarioData, isGPSData, isGeneralData, isElectricData, isESCData, isESC2Data, isESC3Data, isESC4Data, channelNumber, valuesVar, valuesGPS, valuesGAM, valuesEAM, valuesESC, valuesESC2, valuesESC3, valuesESC4);
 						isReceiverData = false;
+						
+						if (!isEAMdetected) {
+							HoTTAdapter2.updateEAMTypeDependent((HoTTlogReaderD.buf[63] & 0xFF), device, HoTTlogReaderD.recordSet);
+							isEAMdetected = true;
+						}
 					}
 					break;
 				case HoTTAdapter.ANSWER_SENSOR_MOTOR_DRIVER_19200:

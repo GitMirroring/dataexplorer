@@ -96,6 +96,7 @@ public class HoTTlogReader extends HoTTbinReader {
 		HoTTbinReader.isTextModusSignaled = false;
 		boolean isVarioDetected = false;
 		boolean isGPSdetected = false;
+		boolean isEAMdetected = false;
 		boolean isESCdetected = false, isESC2detected = false,  isESC3detected = false,  isESC4detected = false;
 		int logDataOffset = Integer.valueOf(fileInfoHeader.get("LOG DATA OFFSET"));
 		long numberDatablocks = Long.parseLong(fileInfoHeader.get(HoTTAdapter.LOG_COUNT));
@@ -307,6 +308,10 @@ public class HoTTlogReader extends HoTTbinReader {
 						}
 						// recordSetElectric initialized and ready to add data
 						HoTTlogReader.parseAddEAM(HoTTbinReader.buf);
+						if (!isEAMdetected) {
+							HoTTAdapter.updateEAMTypeDependent((HoTTbinReader.buf[63] & 0xFF), device, HoTTbinReader.recordSetEAM);
+							isEAMdetected = true;								
+						}
 						break;
 
 				case HoTTAdapter.ANSWER_SENSOR_MOTOR_DRIVER_19200:
@@ -1128,6 +1133,13 @@ public class HoTTlogReader extends HoTTbinReader {
 		protected boolean parse() {
 			//0=RXSQ, 1=Voltage, 2=Current, 3=Capacity, 4=Power, 5=Balance, 6=CellVoltage 1, 7=CellVoltage 2 .... 19=CellVoltage 14,
 			//20=Altitude, 21=Climb 1, 22=Climb 3, 23=Voltage 1, 24=Voltage 2, 25=Temperature 1, 26=Temperature 2 27=RPM 28=MotorTime 29=Speed 30=Event
+			//Deutsch PowerBox
+			// 1=Voltage, 2=Current, 3=Capacity, 4=Power, 
+			// 5=Holds, 6=Lost Frames, 7=Fades 1, 8=Fades 2,
+			// 9=Voltage Bat1, 10=Current Bat1, 11=Capacity Bat1, 12=Voltage Ba2, 13=Current Bat1, 14=Capacity Bat2,
+			// 15 - 19 misc EAM, 20=Altitude, 21=Climb 1, 22=Climb 3, 23=misc EAM, 24=misc EAM
+			// 25=Status Gyro, 26=Status SpeedSensor 27=Revolution E 28=Version 0x40 29=Speed 30=Event E
+
 			//sensor byte: 26=sensor byte
 			//27,28=InverseBits 29=cell1, 30=cell2 31=cell3 32=cell4 33=cell5 34=cell6 35=cell7 36=cell8 37=cell9 38=cell10 39=cell11 40=cell12 41=cell13 42=cell14
 			//43,44=voltage1 45,46=voltage2 47=temperature1 48=temperature2 49,50=altitude 51,52=current 53,54=voltage 55,56=capacity 57,58=climb1 59=climb3
@@ -1138,32 +1150,64 @@ public class HoTTlogReader extends HoTTbinReader {
 			this.tmpVoltage1 = DataParser.parse2Short(buf, 43);
 			this.tmpVoltage2 = DataParser.parse2Short(buf, 45);
 			this.tmpCapacity = DataParser.parse2Short(buf, 55);
-			int maxVotage = Integer.MIN_VALUE;
-			int minVotage = Integer.MAX_VALUE;
 			this.points[1] = DataParser.parse2Short(buf, 53) * 1000;
 			this.points[2] = DataParser.parse2Short(buf, 51) * 1000;
 			this.points[3] = this.tmpCapacity * 1000;
 			this.points[4] = Double.valueOf(this.points[1] / 1000.0 * this.points[2]).intValue(); // power U*I [W];
-			for (int j = 0; j < 14; j++) { //cell voltages
-				this.points[j + 6] = (buf[j + 29] & 0xFF) * 1000;
-				if (this.points[j + 6] > 0) {
-					maxVotage = this.points[j + 6] > maxVotage ? this.points[j + 6] : maxVotage;
-					minVotage = this.points[j + 6] < minVotage ? this.points[j + 6] : minVotage;
-				}
-			}
-			this.points[5] = maxVotage != Integer.MIN_VALUE && minVotage != Integer.MAX_VALUE ? (maxVotage - minVotage) * 10 : 0; //balance
-			this.points[20] = this.tmpHeight * 1000;
-			this.points[21] = HoTTlogReader.isHoTTAdapter2 ? (DataParser.parse2UnsignedShort(buf, 57) - 30000) * 10 : DataParser.parse2UnsignedShort(buf, 57) * 1000;
-			this.points[22] = this.tmpClimb3 * 1000;
-			this.points[23] = this.tmpVoltage1 * 100;
-			this.points[24] = this.tmpVoltage2 * 100;
-			this.points[25] = ((buf[47] & 0xFF) - 20) * 1000;
-			this.points[26] = ((buf[48] & 0xFF) - 20) * 1000;
-			this.points[27] = DataParser.parse2UnsignedShort(buf, 60) * 1000;
-			this.points[28] = ((buf[62] & 0xFF) * 60 + (buf[63] & 0xFF)) * 1000; // motor time
-			this.points[29] = DataParser.parse2Short(buf, 64) * 1000; // speed
-			this.points[30] = ((buf[27] & 0xFF) + ((buf[28] & 0x7F) << 8)) * 1000; //inverse event
+			if ((HoTTbinReader.buf[63] & 0xFF) == 64) { //Deutsch Power Box
+				// 5=Holds, 6=Lost Frames, 7=Fades 1, 8=Fades 2,
+				// 9=Voltage Bat1, 10=Current Bat1, 11=Capacity Bat1, 12=Voltage Ba2, 13=Current Bat1, 14=Capacity Bat2,
+				// 15 - 19 misc EAM, 20=Altitude, 21=Climb 1, 22=Climb 3, 23=misc EAM, 24=misc EAM
+				// 25=Status Gyro, 26=Status SpeedSensor 27=Revolution E 28=Version 0x40 29=Speed 30=Event E
+				
+				//sensor byte: 26=sensor byte
+				//27,28=InverseBits 29=cell1, 30=cell2 31=cell3 32=cell4 33=cell5 34=cell6 35=cell7 36=cell8 37=cell9 38=cell10 39=cell11 40=cell12 41=cell13 42=cell14
+				//43,44=voltage1 45,46=voltage2 47=temperature1 48=temperature2 49,50=altitude 51,52=current 53,54=voltage 55,56=capacity 57,58=climb1 59=climb3
+				//60,61=rpm 62,63=runtime>3A 64,65=speed
+				this.points[5] = DataParser.parse2UnsignedShort(buf, 29) * 1000;
+				this.points[6] = DataParser.parse2UnsignedShort(buf, 35) * 1000;
+				this.points[7] = DataParser.parse2UnsignedShort(buf, 31) * 1000;
+				this.points[8] = DataParser.parse2UnsignedShort(buf, 33) * 1000;
+				
+				this.points[9] = DataParser.parse2UnsignedShort(buf, 43) * 1000;
+				this.points[10] = DataParser.parse2UnsignedShort(buf, 39) * 1000;
+				this.points[11] = DataParser.parse2UnsignedShort(buf, 37) * 1000;
+				
+				this.points[12] = DataParser.parse2UnsignedShort(buf, 45) * 1000;
+				this.points[13] = DataParser.parse2UnsignedShort(buf, 41) * 1000;
+				this.points[14] = DataParser.parse2UnsignedShort(buf, 60) * 1000;
+				
+				this.points[20] = this.tmpHeight * 1000;
+				this.points[21] = HoTTlogReader.isHoTTAdapter2 ? (DataParser.parse2UnsignedShort(buf, 57) - 30000) * 10 : DataParser.parse2UnsignedShort(buf, 57) * 1000;
+				this.points[22] = this.tmpClimb3 * 1000;
 
+				this.points[25] = ((buf[47] & 0xFF) - 20) * 1000;
+				this.points[26] = ((buf[48] & 0xFF) - 20) * 1000;
+				this.points[28] = (buf[63] & 0xFF) * 1000; // version Deutsch PB
+			}
+			else { //usual EAM data
+				int maxVotage = Integer.MIN_VALUE;
+				int minVotage = Integer.MAX_VALUE;
+				for (int j = 0; j < 14; j++) { //cell voltages
+					this.points[j + 6] = (buf[j + 29] & 0xFF) * 1000;
+					if (this.points[j + 6] > 0) {
+						maxVotage = this.points[j + 6] > maxVotage ? this.points[j + 6] : maxVotage;
+						minVotage = this.points[j + 6] < minVotage ? this.points[j + 6] : minVotage;
+					}
+				}
+				this.points[5] = maxVotage != Integer.MIN_VALUE && minVotage != Integer.MAX_VALUE ? (maxVotage - minVotage) * 10 : 0; //balance
+				this.points[20] = this.tmpHeight * 1000;
+				this.points[21] = HoTTlogReader.isHoTTAdapter2 ? (DataParser.parse2UnsignedShort(buf, 57) - 30000) * 10 : DataParser.parse2UnsignedShort(buf, 57) * 1000;
+				this.points[22] = this.tmpClimb3 * 1000;
+				this.points[23] = this.tmpVoltage1 * 100;
+				this.points[24] = this.tmpVoltage2 * 100;
+				this.points[25] = ((buf[47] & 0xFF) - 20) * 1000;
+				this.points[26] = ((buf[48] & 0xFF) - 20) * 1000;
+				this.points[27] = DataParser.parse2UnsignedShort(buf, 60) * 1000;
+				this.points[28] = ((buf[62] & 0xFF) * 60 + (buf[63] & 0xFF)) * 1000; // motor time
+				this.points[29] = DataParser.parse2Short(buf, 64) * 1000; // speed
+				this.points[30] = ((buf[27] & 0xFF) + ((buf[28] & 0x7F) << 8)) * 1000; //inverse event
+			}
 			if (log.isLoggable(Level.FINER)) {
 				printSensorValues(buf, this.points, 31);
 			}
