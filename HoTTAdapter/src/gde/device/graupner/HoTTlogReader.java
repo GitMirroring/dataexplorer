@@ -1154,6 +1154,7 @@ public class HoTTlogReader extends HoTTbinReader {
 			this.points[2] = DataParser.parse2Short(buf, 51) * 1000;
 			this.points[3] = this.tmpCapacity * 1000;
 			this.points[4] = Double.valueOf(this.points[1] / 1000.0 * this.points[2]).intValue(); // power U*I [W];
+			
 			if ((HoTTbinReader.buf[63] & 0xFF) == 64) { //Deutsch Power Box
 				// 5=Holds, 6=Lost Frames, 7=Fades 1, 8=Fades 2,
 				// 9=Voltage Bat1, 10=Current Bat1, 11=Capacity Bat1, 12=Voltage Ba2, 13=Current Bat1, 14=Capacity Bat2,
@@ -1164,10 +1165,10 @@ public class HoTTlogReader extends HoTTbinReader {
 				//27,28=InverseBits 29=cell1, 30=cell2 31=cell3 32=cell4 33=cell5 34=cell6 35=cell7 36=cell8 37=cell9 38=cell10 39=cell11 40=cell12 41=cell13 42=cell14
 				//43,44=voltage1 45,46=voltage2 47=temperature1 48=temperature2 49,50=altitude 51,52=current 53,54=voltage 55,56=capacity 57,58=climb1 59=climb3
 				//60,61=rpm 62,63=runtime>3A 64,65=speed
-				this.points[5] = DataParser.parse2UnsignedShort(buf, 29) * 1000;
-				this.points[6] = DataParser.parse2UnsignedShort(buf, 35) * 1000;
-				this.points[7] = DataParser.parse2UnsignedShort(buf, 31) * 1000;
-				this.points[8] = DataParser.parse2UnsignedShort(buf, 33) * 1000;
+				this.points[5] = DataParser.parse2UnsignedShort(buf, 29) * 1000; //29=cell1, 30=cell2
+				this.points[6] = DataParser.parse2UnsignedShort(buf, 35) * 1000; //35=cell7, 36=cell8
+				this.points[7] = DataParser.parse2UnsignedShort(buf, 31) * 1000; //31=cell3, 32=cell4
+				this.points[8] = DataParser.parse2UnsignedShort(buf, 33) * 1000; //33=cell5, 34=cell6
 				
 				this.points[9] = DataParser.parse2UnsignedShort(buf, 43) * 1000;
 				this.points[10] = DataParser.parse2UnsignedShort(buf, 39) * 1000;

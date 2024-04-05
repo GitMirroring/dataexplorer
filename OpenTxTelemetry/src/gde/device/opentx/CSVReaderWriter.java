@@ -516,6 +516,7 @@ public class CSVReaderWriter {
 					}
 					catch (DataInconsitsentException e) {
 						DataExplorer.getInstance().openMessageDialogAsync(e.getMessage() + "\n" + StringHelper.arrayToString(updateRecordNames));
+						if(reader != null) reader.close();
 						throw e;
 					}
 

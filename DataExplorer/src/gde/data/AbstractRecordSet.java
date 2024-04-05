@@ -117,8 +117,8 @@ public abstract class AbstractRecordSet extends LinkedHashMap<String, AbstractRe
 		 * Support settlements.
 		 */
 		public void initSyncedScales(AbstractRecordSet recordSet) {
-			clear();
-
+			this.clear();
+			
 			for (int i = 0; i < recordSet.size(); i++) {
 				@SuppressWarnings("unchecked")
 				T tmpRecord = (T) recordSet.get(i);
@@ -126,9 +126,9 @@ public abstract class AbstractRecordSet extends LinkedHashMap<String, AbstractRe
 				if (syncMasterRecordOrdinal >= 0) {
 					@SuppressWarnings("unchecked")
 					T syncMasterRecord = (T) recordSet.get(syncMasterRecordOrdinal);
-					if (get(syncMasterRecordOrdinal) == null) {
-						put(syncMasterRecordOrdinal, new Vector<T>());
-						get(syncMasterRecordOrdinal).add(syncMasterRecord);
+					if (this.get(syncMasterRecordOrdinal) == null) {
+						this.put(syncMasterRecordOrdinal, new Vector<T>());
+						this.get(syncMasterRecordOrdinal).add(syncMasterRecord);
 						syncMasterRecord.setSyncMinMax(Integer.MIN_VALUE, Integer.MAX_VALUE);
 					}
 					if (!isRecordContained(syncMasterRecordOrdinal, tmpRecord.getName())) {
