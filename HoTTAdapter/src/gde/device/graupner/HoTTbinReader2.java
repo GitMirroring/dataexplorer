@@ -95,7 +95,6 @@ public class HoTTbinReader2 extends HoTTbinReader {
 		boolean isSensorData = false;
 		boolean isVarioDetected = false;
 		boolean isGPSdetected = false;
-		boolean isEAMdetected = false;
 		boolean isESCdetected = false;
 		boolean[] isResetMinMax = new boolean[] {false, false, false, false, false}; //ESC, EAM, GAM, GPS, Vario
 		HoTTbinReader2.recordSet = null;
@@ -280,14 +279,6 @@ public class HoTTbinReader2 extends HoTTbinReader {
 								bufCopier.copyToFreeBuffer();
 								if (bufCopier.is4BuffersFull()) {
 									HoTTbinReader2.eamBinParser.parse();
-									
-									if (!isEAMdetected) {
-										if (isReasonableData(buf4) && HoTTbinReader2.recordSet.get(33).size() > 0 && HoTTbinReader2.recordSet.get(33).get(HoTTbinReader2.recordSet.get(33).size()-1) != 0) {
-											HoTTAdapter2.updateEAMTypeDependent((buf4[9] & 0xFF), device, HoTTbinReader2.recordSet);
-											isEAMdetected = true;
-										}
-									}
-
 									bufCopier.clearBuffers();
 									isSensorData = true;
 									// 60=Voltage E, 61=Current E, 62=Capacity E, 63=Power E, 64=Balance E, 65=CellVoltage E1, 66=CellVoltage E2 .... 78=CellVoltage E14,
