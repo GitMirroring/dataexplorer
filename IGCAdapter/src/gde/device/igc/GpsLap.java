@@ -51,8 +51,8 @@ public class GpsLap extends HashMap<String, String>{
 		return Integer.parseInt(this.get("altGainLos"));
 	}
 
-	public int getIndex() {
-		return Integer.parseInt(this.get("index"));
+	public double getIndex() {
+		return Double.parseDouble(this.get("index"));
 	}
 
 	public double getTime() {
@@ -80,7 +80,7 @@ public class GpsLap extends HashMap<String, String>{
 			double totalPathLength_km = trianglePathLength_km * getIndex() / 100.;
 			lapFlightSpeed_kmh = totalPathLength_km / getTime() * 3600.;
 			idealLapSpeed_kmh = trianglePathLength_km / getTime() * 3600.;
-			if (getAltGainLos() < -15 && getIndex() < 130) {
+			if (getAltGainLos() < -15 && getIndex() < 130.) {
 				ratio_m = trianglePathLength_km * 1000 / getAltGainLos() * -1;
 				sink_m_s = getAltGainLos() / getTime();
 			}
@@ -90,7 +90,7 @@ public class GpsLap extends HashMap<String, String>{
 			totalPathLength_km = trianglePathLength_km * getIndex() / 100.;
 			lapFlightSpeed_kmh = totalPathLength_km / getTime() * 3600.;
 			idealLapSpeed_kmh = trianglePathLength_km / getTime() * 3600.;
-			if (getAltGainLos() < -20 && getIndex() < 130) {
+			if (getAltGainLos() < -20 && getIndex() < 130.) {
 				ratio_m = trianglePathLength_km * 1000 / getAltGainLos() * -1;
 				sink_m_s = getAltGainLos() / getTime();
 			}
@@ -100,13 +100,13 @@ public class GpsLap extends HashMap<String, String>{
 			totalPathLength_km = trianglePathLength_km * getIndex() / 100.;
 			lapFlightSpeed_kmh = totalPathLength_km / getTime() * 3600.;
 			idealLapSpeed_kmh = trianglePathLength_km / getTime() * 3600.;
-			if (getAltGainLos() < -30 && getIndex() < 130) {
+			if (getAltGainLos() < -30 && getIndex() < 130.) {
 				ratio_m = trianglePathLength_km * 1000 / getAltGainLos() * -1;
 				sink_m_s = getAltGainLos() / getTime();
 			}
 			break;
 		}
 
-		return String.format("%2d  %4d %7s   %7s  %4d  %4d  %5.1f    %5.1f     %5.1f    %5.2f\n", lap, getIndex(),  getFormatedTime(duration.intValue() + getIntTime()), getFormatedTime(getIntTime()), getAlt(), getAltGainLos(), idealLapSpeed_kmh, lapFlightSpeed_kmh, ratio_m, sink_m_s);		
+		return String.format("%2d  %3.1f %7s   %7s  %4d  %4d  %5.1f    %5.1f     %5.1f    %5.2f\n", lap, getIndex(),  getFormatedTime(duration.intValue() + getIntTime()), getFormatedTime(getIntTime()), getAlt(), getAltGainLos(), idealLapSpeed_kmh, lapFlightSpeed_kmh, ratio_m, sink_m_s);		
 	}
 }

@@ -11,6 +11,7 @@ Device specific changes/fixes
 	* HoTTAdapter* - restrict XML update while update install version 383
 	* HoTTAdapter* - enhance *.log parsing for EAM Deutsch PowerBox
 	* PeakTech* - correct device name typo
+	* IGCAdapter - update to use double for lap index
 	
 Version 3.8.5 - 5 Mar 2024
 Generic changes/fixes 
