@@ -1,15 +1,26 @@
-GNU DataExplorer - News - comes with Version 3.8.5 - 5 Mar 2024
+GNU DataExplorer - News - comes with Version 3.8.6 - 12 Apr 2024
 
 Generic changes/fixes 
-	* fix startup problem after clean new install
+	* restrict XML update while update install version <= 3.8.3
+	* adapt TimeSteps.findBestIndex algorithm to cover big time deviations in short logs
+	* adapt master build XML for Windows 11
+	* allow writing triangle track while KMZ export for IGCAdapter only
 	
 Device specific changes/fixes
-	* HoTTAdapter* - *.log reader, use block sequence number to track log time step
-	* PeakTech* - correct device XML names
+	* HoTTAdapter* - rework *.log parsing to match FUS 
+	* HoTTAdapter* - restrict XML update while update install version 383
+	* HoTTAdapter* - enhance *.log parsing for EAM Deutsch PowerBox
+	* PeakTech* - correct device name typo
+	* IGCAdapter - update to use double for lap index
 	
 Allgemeine Änderungen/Korrekturen
-	* Korrektur zur Behebung des Startproblemes nach Neuinstallation
+	* erlaube einen XML Austaush nur bei Update 3.8.3 oder kleiner
+	* Apassung TimeSteps.findBestIndex Algorithmus, um große Zeitunterschiede in kurzen Logs abzudecken
+	* Anpassung Master build XML für Windows 11
+	* KMZ Dreieck Track wird nur noch beim IGCAdapter geschrieben
 	  
 Gerätespezifische Änderungen/Korrekturen
-	* HoTTAdapter* - *.log nutze Block-Sequenz-Nummer zum Zeitschrittverlauf
-	* PeakTech* - Korrektur der Geräte XML Namen
+	* HoTTAdapter* - Überarbeitung *.log Analyse, damit es zum FUS passt 
+	* HoTTAdapter* - Erweiteung *.log Analyse für Deutsch PowerBox als EAM
+	* PeakTech* - Korreektur Gerätename
+	* IGCAdapter - Nutze double für Dreiecks Index

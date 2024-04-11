@@ -1,14 +1,14 @@
 Development history / change log, please read from bottom up
 
-Version 3.8.6 - xx yyy 2024
+Version 3.8.6 - 12 Apr 2024
 Generic changes/fixes 
+	* restrict XML update while update install version <= 3.8.3
 	* adapt TimeSteps.findBestIndex algorithm to cover big time deviations in short logs
 	* adapt master build XML for Windows 11
 	* allow writing triangle track while KMZ export for IGCAdapter only
 	
 Device specific changes/fixes
 	* HoTTAdapter* - rework *.log parsing to match FUS 
-	* HoTTAdapter* - restrict XML update while update install version 383
 	* HoTTAdapter* - enhance *.log parsing for EAM Deutsch PowerBox
 	* PeakTech* - correct device name typo
 	* IGCAdapter - update to use double for lap index
