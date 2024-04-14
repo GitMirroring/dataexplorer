@@ -87,7 +87,7 @@ public class UpdateMessageBox extends Dialog {
 		fd_txttNewUpdateAvail.left = new FormAttachment(0, 5);
 		fd_txttNewUpdateAvail.height = 25;
 		txttNewUpdateAvail.setLayoutData(fd_txttNewUpdateAvail);
-		txttNewUpdateAvail.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+		txttNewUpdateAvail.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		txttNewUpdateAvail.setEditable(false);
 		txttNewUpdateAvail.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 		txttNewUpdateAvail.setText(Messages.getString(MessageIds.GDE_MSGI0072));
@@ -99,7 +99,7 @@ public class UpdateMessageBox extends Dialog {
 		fd_txtDownloadProblemHint.left = new FormAttachment(0, 20);
 		fd_txtDownloadProblemHint.height = 30;
 		txtDownloadProblemHint.setLayoutData(fd_txtDownloadProblemHint);
-		txtDownloadProblemHint.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+		txtDownloadProblemHint.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		txtDownloadProblemHint.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 		txtDownloadProblemHint.setText(Messages.getString(MessageIds.GDE_MSGI0073));
 		
@@ -110,7 +110,7 @@ public class UpdateMessageBox extends Dialog {
 		fd_txtBetaVersionHint.left = new FormAttachment(0, 20);
 		fd_txtBetaVersionHint.height = 30;
 		txtBetaVersionHint.setLayoutData(fd_txtBetaVersionHint);
-		txtBetaVersionHint.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+		txtBetaVersionHint.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		txtBetaVersionHint.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 		txtBetaVersionHint.setText(Messages.getString(MessageIds.GDE_MSGI0074));
 		txtBetaVersionHint.setEditable(false);
@@ -122,7 +122,7 @@ public class UpdateMessageBox extends Dialog {
 		fd_linkNews.height = 25;
 		fd_linkNews.width = 180;
 		linkNews.setLayoutData(fd_linkNews);
-		linkNews.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+		linkNews.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		linkNews.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 		linkNews.setText("<a>" + Messages.getString(MessageIds.GDE_MSGI0075) + "</a>");
 		linkNews.addSelectionListener(new SelectionAdapter() {
@@ -139,7 +139,7 @@ public class UpdateMessageBox extends Dialog {
 		fd_linkDonate.width = 80;
 		fd_linkDonate.height = 25;
 		linkDonate.setLayoutData(fd_linkDonate);
-		linkDonate.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+		linkDonate.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		linkDonate.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 		linkDonate.setText("<a>" + Messages.getString(MessageIds.GDE_MSGI0076) + "</a>");
 		linkDonate.addSelectionListener(new SelectionAdapter() {

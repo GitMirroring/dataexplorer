@@ -1,5 +1,9 @@
 Development history / change log, please read from bottom up
 
+Version 3.8.7 - xx yyy 2024
+Generic changes/fixes 
+	* change update dialog text background
+
 Version 3.8.6 - 12 Apr 2024
 Generic changes/fixes 
 	* restrict XML update while update install version <= 3.8.3
