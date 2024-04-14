@@ -100,6 +100,7 @@ public class UpdateMessageBox extends Dialog {
 		fd_txtDownloadProblemHint.height = 30;
 		txtDownloadProblemHint.setLayoutData(fd_txtDownloadProblemHint);
 		txtDownloadProblemHint.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+		txtDownloadProblemHint.setEditable(false);
 		txtDownloadProblemHint.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 		txtDownloadProblemHint.setText(Messages.getString(MessageIds.GDE_MSGI0073));
 		
@@ -158,7 +159,7 @@ public class UpdateMessageBox extends Dialog {
 		composite.setLayoutData(fd_composite);
 		composite.setLayout(new FormLayout());
 		
-		Button btnNo = new Button(composite, SWT.BORDER | SWT.CENTER);
+		Button btnNo = new Button(composite, SWT.CENTER|SWT.PUSH);
 		FormData fd_btnNo = new FormData();
 		fd_btnNo.left = new FormAttachment(0, 50);
 		fd_btnNo.bottom = new FormAttachment(100, -10);
@@ -173,7 +174,7 @@ public class UpdateMessageBox extends Dialog {
 			}
 		});
 		
-		Button btnYes = new Button(composite, SWT.BORDER | SWT.CENTER);
+		Button btnYes = new Button(composite, SWT.CENTER|SWT.PUSH);
 		FormData fd_btnYes = new FormData();
 		fd_btnYes.right = new FormAttachment(100, -50);
 		fd_btnYes.bottom = new FormAttachment(100, -10);
