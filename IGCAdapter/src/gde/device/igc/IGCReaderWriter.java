@@ -454,7 +454,7 @@ public class IGCReaderWriter {
 							result.add(line);
 							
 							String taskType = "Sport";
-							if (albatrossTask.toString().contains("200,200,70"))
+							if (albatrossTask.toString().contains("200,250,70"))
 								taskType = "Light";
 							else if (albatrossTask.toString().contains("500,500,120"))
 								taskType = "SLS";
@@ -476,6 +476,9 @@ public class IGCReaderWriter {
 					}
 					else if (line.startsWith("LPNP")) {
 						log.log(Level.FINE, "L RECORD - Albatross lap add penalty = " + line);
+					}
+					else if (line.startsWith("L")) {
+						log.log(Level.FINE, "L RECORD - ??? = " + line);
 					}
 					else if (line.startsWith("G")) {
 						log.log(Level.FINE, "line number " + lineNumber + " contains security code and is voted as last line! " + lastLine); //$NON-NLS-1$ //$NON-NLS-2$
