@@ -648,9 +648,9 @@
 		<!-- programm directory -->
 		<copy file="build/misc/DataExplorer32.exe" tofile="${output.windows32.program}/DataExplorer.exe" />
 		<copy file="build/misc/DataExplorer32.cmd" tofile="${output.windows32.program}/DataExplorer.cmd" />
+		<copy file="build/misc/DevicePropertiesEditor32.exe" tofile="${output.windows32.program}/DevicePropertiesEditor.exe" />
 		<copy todir="${output.windows32.program}" flatten="yes">
 			<fileset file="DataExplorer/build/*.jar" excludes="**/*NonUi*.jar" />
-			<fileset file="build/misc/DevicePropertiesEditor.exe" />
 			<!--
             <fileset file="build/misc/DataExplorer.ico" />
             <fileset file="build/misc/DevicePropertiesEditor.ico" />
@@ -666,9 +666,9 @@
 
 		<copy file="build/misc/DataExplorer64.exe" tofile="${output.windows64.program}/DataExplorer.exe" />
 		<copy file="build/misc/DataExplorer64.cmd" tofile="${output.windows64.program}/DataExplorer.cmd" />
+		<copy file="build/misc/DevicePropertiesEditor64.exe" tofile="${output.windows64.program}/DevicePropertiesEditor.exe" />
 		<copy todir="${output.windows64.program}" flatten="yes">
 			<fileset file="DataExplorer/build/*.jar" excludes="**/*NonUi*.jar" />
-			<fileset file="build/misc/DevicePropertiesEditor.exe" />
 			<!--
             <fileset file="build/misc/DataExplorer.ico" />
             <fileset file="build/misc/DevicePropertiesEditor.ico" />

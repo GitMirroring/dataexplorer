@@ -3,7 +3,7 @@
   <dontWrapJar>true</dontWrapJar>
   <headerType>gui</headerType>
   <jar>DataExplorer.jar</jar>
-  <outfile>C:\Users\Winfried\git\dataexplorer\build\misc\DevicePropertiesEditor.exe</outfile>
+  <outfile>C:\Users\Winfried\git\dataexplorer\build\misc\DevicePropertiesEditor32.exe</outfile>
   <errTitle>DevicePropertiesEditor - Exception</errTitle>
   <cmdLine></cmdLine>
   <chdir>.</chdir>
@@ -23,9 +23,9 @@
     <bundledJre64Bit>false</bundledJre64Bit>
     <bundledJreAsFallback>false</bundledJreAsFallback>
     <minVersion>1.8</minVersion>
-    <maxVersion></maxVersion>
+    <maxVersion>17</maxVersion>
     <jdkPreference>preferJre</jdkPreference>
-    <runtimeBits>64/32</runtimeBits>
+    <runtimeBits>32</runtimeBits>
     <initialHeapSize>32</initialHeapSize>
     <maxHeapSize>512</maxHeapSize>
     <opt>-Dfile.encoding=UTF-8</opt>
