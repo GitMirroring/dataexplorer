@@ -26,6 +26,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -85,7 +86,7 @@ public class GDE {
 		}
 
 		public void setProgress(int percentage) {
-			String sThreadId = String.format("%06d", Thread.currentThread().getId());
+			String sThreadId = String.format("%06d", Thread.currentThread().getId()); //release >= 19 -> threadId()
 			application.setProgress(percentage, sThreadId);
 		}
 
@@ -536,12 +537,12 @@ public class GDE {
 					? ((String)props.get("java.vm.specification.version")).substring(2) : ((String)props.get("java.vm.specification.version")));
 			
 			if (IS_ARCH_DATA_MODEL_64 || IS_OS_ARCH_ARM) {
-				if (javaVmSpecificationVersion < 11 || javaVmSpecificationVersion > 17) {
+				if (javaVmSpecificationVersion < 17 || javaVmSpecificationVersion > 21) {
 					application.openMessageDialogAsync(Messages.getString(MessageIds.GDE_MSGW0050, new Integer[] { javaVmSpecificationVersion }));
 				}
 			}
 			else {
-				if (javaVmSpecificationVersion < 8 || javaVmSpecificationVersion > 17) {
+				if (javaVmSpecificationVersion < 8 || javaVmSpecificationVersion > 21) {
 					application.openMessageDialogAsync(Messages.getString(MessageIds.GDE_MSGW0050, new Integer[] { javaVmSpecificationVersion }));
 				}
 			}
@@ -583,12 +584,12 @@ public class GDE {
 			}
 			for (String path : files) {
 				if (!path.startsWith(GDE.STRING_DOT)) if (new File(basePath + path + GDE.STRING_WITHIN_ECLIPSE).exists())
-					urls.add(new URL("file:" + basePath + path + GDE.STRING_WITHIN_ECLIPSE)); //$NON-NLS-1$
+					urls.add(Paths.get(basePath + path + GDE.STRING_WITHIN_ECLIPSE).toUri().toURL()); //$NON-NLS-1$
 				else if (new File(basePath + path + "/lib").exists()) {
 					try {
 						List<File> jarFiles = FileUtils.getFileListing(new File(basePath + path + "/lib/"), 1);
 						for (File jarFile : jarFiles) {
-							if (jarFile.getName().startsWith("HoTT") && jarFile.getName().endsWith(GDE.FILE_ENDING_DOT_JAR)) urls.add(new URL("file:" + basePath + path + "/lib/" + jarFile.getName())); //$NON-NLS-2$
+							if (jarFile.getName().startsWith("HoTT") && jarFile.getName().endsWith(GDE.FILE_ENDING_DOT_JAR)) urls.add(Paths.get(basePath + path + "/lib/" + jarFile.getName()).toUri().toURL()); //$NON-NLS-2$
 						}
 					}
 					catch (FileNotFoundException e) {

@@ -1,10 +1,10 @@
-﻿******** DataExplorer README ***********  18 Jul 2023 WB
+﻿******** DataExplorer README ***********  01 Jul 2024 WB
 
 The GNU DataExplorer is free software, please see http://www.gnu.org/philosophy/free-sw.html. It is also available at no
 cost, but without any warranty. Since the implementation is based on Java using the free available libraries RXTXcomm and SWT
 the execution of this program is possible under a number of popular operating systems like 32/64 Bit Windows and GNU/Linux 
-and MAC OS. The only requirement is the installation of a Java run-time of version 8 to Java 17 for the 32 bit versions and 
-Java 11 to 17 for the 64 bit versions, such as IcedTea or open JDK or SUN/Oracles Java Runtime or Java Service Environment. 
+and MAC OS. The only requirement is the installation of a Java run-time of version 11 to Java 21 for the 32 bit versions and 
+Java 11 to 21 for the 64 bit versions, such as IcedTea or open JDK or SUN/Oracles Java Runtime or Java Service Environment. 
 Prefer using Long Term Support (LTS) version.
 For simplicity, the 64 bit versions for Windows and MAC OS are provided with built-in Java run-time. There is no need to 
 install a Java runtime for these cases. Since the MAC OS versions are based on Intel code, DataExplorer runs in the Rosetta 
@@ -40,7 +40,7 @@ During the first execution of the program the application configuration director
 Below this directory also application configuration and trace log files are located.
 
 Hint: Is a message similar to "The java class could not be loaded. java.lang.UnsupportedClassVersionError: (gde/GDE) bad major version" 
-is received while executing the Java version (java -version) is to old to execute this program and must be renewed to a version 11 to Java 17.
+is received while executing the Java version (java -version) is to old to execute this program and must be renewed to a version 11 to Java 21.
 
 Depending of the used Windows version and patch level it might be required to install the latest 
 "Microsoft Visual C++ 2008 Redistributable Package" from www.microsoft.com/downloads (desktop icon, object link creation).
@@ -59,7 +59,7 @@ During the first execution of the program the application configuration director
 Below this directory also application configuration and trace log files are located.
 
 Hint: Is a message similar to "The java class could not be loaded. java.lang.UnsupportedClassVersionError: (gde/GDE) bad major version" 
-is received while executing the Java version (java -version) is to old to execute this program and must be renewed to a version 11 to Java 17.
+is received while executing the Java version (java -version) is to old to execute this program and must be renewed to a version 11 to Java 21.
 
 
 

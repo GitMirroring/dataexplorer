@@ -56,7 +56,7 @@
 		<property name="include.debug.info" value="yes" />
 		<mkdir dir="${module.output}" />
 		<mkdir dir="build" />
-		<javac destdir="${module.output}" classpathref="compile.classpath" release="8" encoding="UTF-8" debug="true" includeantruntime="false">
+		<javac destdir="${module.output}" classpathref="compile.classpath" release="11" encoding="UTF-8" debug="true" includeantruntime="false">
 			<src path="src" />
 			<compilerarg value="-XDignore.symbol.file"/>
 		</javac>

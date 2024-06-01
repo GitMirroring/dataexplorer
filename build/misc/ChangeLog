@@ -3,7 +3,10 @@ Development history / change log, please read from bottom up
 Version 3.8.7 - xx yyy 2024
 Generic changes/fixes 
 	* change update dialog text background
-	* update DevicePropertiesEditor launcher for Windows using bundled Java runtime. 
+	* update DevicePropertiesEditor launcher for Windows using bundled Java runtime
+	* remove Java 8 support - attention using old 32 bit OS
+	* allow usage of Java 21 without warning
+	* build using Java 21 and update build integrated runtime accordingly
 	
 	Device specific changes/fixes
 	* IGCAdapter - update to new start altitude 250m
