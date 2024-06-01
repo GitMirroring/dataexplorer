@@ -5,5 +5,5 @@
 
 echo java -jar -Xms64m -Xmx3092m $(dirname $0)/DataExplorer.jar
 echo argument $1
-java -jar -Xms64m -Xmx3092m $(dirname $0)/DataExplorer.jar $1
+java -jar -Xms64m -Xmx3092m $(dirname $0)/DataExplorer.jar "$1"
 

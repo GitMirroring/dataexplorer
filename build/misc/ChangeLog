@@ -7,6 +7,7 @@ Generic changes/fixes
 	* remove Java 8 support - attention using old 32 bit OS
 	* allow usage of Java 21 without warning
 	* build using Java 21 and update build integrated runtime accordingly
+	* enclose arguments in the Linux start script with apostrophe
 	
 	Device specific changes/fixes
 	* IGCAdapter - update to new start altitude 250m
