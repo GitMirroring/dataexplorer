@@ -346,6 +346,8 @@ public class CSVReaderWriter {
 				// now get all data   0; 14,780;  0,598;  1,000;  8,838;  0,002
 				String[] updateRecordNames = recordSet.getRecordNames();
 				int[] points = new int[updateRecordNames.length];
+				String[] tmpHeader = fileHeader.get(GDE.CSV_DATA_HEADER).split(" |"+separator);
+				
 				while ((line = reader.readLine()) != null) {
 					++lineNumber;
 					if (line.startsWith("#")) {
@@ -355,7 +357,25 @@ public class CSVReaderWriter {
 							recordSet.setRecordSetDescription(recordSet.getRecordSetDescription() + line.replace('#', GDE.CHAR_BLANK) + GDE.LINE_SEPARATOR);
 						continue;
 					}
-					String[] dataStr = line.replace(",,", ",0.0 0.0,").replace(", ", ",").split(" |"+separator); //replace(", ", ",") to allow GPS coords ..,48.474413, 11.477986,.. split(" |"+separator) to take ..,48.132850 11.720808,..
+					
+					if (line.contains(",,")) { // empty will be used for GPS coordinates as well as for not existing single values
+						int index = 0;
+						String[] tmpData = line.split(""+separator);
+						StringBuilder sb = new StringBuilder();
+						for (; index < tmpData.length; ++index) {
+							if (tmpData[index].equals(GDE.STRING_EMPTY)) if (tmpHeader[index].equals("GPS")) {
+								tmpData[index] = "0.0,0.0";
+								log.log(Level.WARNING, "empty GPS placeholder found line #" + lineNumber + " - replace with zero coords");
+							}
+							else {
+								tmpData[index] = "0.0";
+								log.log(Level.WARNING, "empty value placeholder found line #" + lineNumber + " - replace with zero");
+							}
+							sb.append(tmpData[index]).append(separator);
+						}
+						line = sb.toString();
+					}
+					String[] dataStr = line.replace(", ", ",").split(" |"+separator); //replace(", ", ",") to allow GPS coords ..,48.474413, 11.477986,.. split(" |"+separator) to take ..,48.132850 11.720808,..
 					String data = dataStr[0].trim();
 					int year = Integer.parseInt(data.substring(0, 4));
 					int month = Integer.parseInt(data.substring(5, 7));
