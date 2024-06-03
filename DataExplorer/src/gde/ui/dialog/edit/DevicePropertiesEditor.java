@@ -87,7 +87,9 @@ import gde.messages.MessageIds;
 import gde.messages.Messages;
 import gde.ui.DataExplorer;
 import gde.ui.SWTResourceManager;
+import gde.ui.dialog.DeviceSelectionDialog;
 import gde.ui.dialog.HelpInfoDialog;
+import gde.ui.menu.MenuBar;
 import gde.utils.FileUtils;
 import gde.utils.StringHelper;
 
@@ -291,6 +293,9 @@ public class DevicePropertiesEditor extends Composite {
 				if (!display.readAndDispatch()) display.sleep();
 			}
 			DataExplorer.getInstance().resetShellIcon();
+			DeviceSelectionDialog deviceSelect = DataExplorer.getInstance().getDeviceSelectionDialog();
+			deviceSelect.setActiveConfig(useDeviceConfiguration);
+			deviceSelect.setupDevice();
 		}
 		catch (Throwable e) {
 			log.log(java.util.logging.Level.SEVERE, e.getMessage(), e);
@@ -491,7 +496,6 @@ public class DevicePropertiesEditor extends Composite {
 						log.log(java.util.logging.Level.FINEST, "saveButton.widgetSelected, event=" + evt); //$NON-NLS-1$
 						DevicePropertiesEditor.this.deviceConfig.storeDeviceProperties();
 						DevicePropertiesEditor.this.saveButton.setEnabled(false);
-
 					}
 				});
 			}

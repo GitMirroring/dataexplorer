@@ -29,6 +29,7 @@ import gde.exception.TimeOutException;
 import gde.log.Level;
 import gde.ui.DataExplorer;
 import gde.utils.Checksum;
+import gde.utils.StringHelper;
 
 /**
  * eStation serial port implementation
@@ -52,7 +53,6 @@ public class CSV2SerialPort extends DeviceCommPort implements IDeviceCommPort {
 	long								time						= 0;
 	boolean							isDataReceived	= false;
 	int									index						= 0;
-	boolean 						isEndByte_1 		= false;
 	
 	final boolean				isSerialRequest;
 	final byte[]				serialRequest;
@@ -129,15 +129,15 @@ public class CSV2SerialPort extends DeviceCommPort implements IDeviceCommPort {
 	protected byte[] findDataEnd(int startIndex) throws IOException, TimeOutException {
 		final String $METHOD_NAME = "findDataEnd";
 		int endIndex;
-		while (this.index < this.answer.length && !((this.endByte_1 != 0x00 || this.answer[this.index - 1] == this.endByte_1 || isEndByte_1 == true) && this.answer[this.index] == this.endByte))
-			++this.index;
+		if (this.endByte_1 != 0x00) //two char line ending CR/LF
+			while (this.index < this.answer.length && !((this.endByte_1 != 0x00 || this.answer[this.index - 1] == this.endByte_1) && this.answer[this.index] == this.endByte))
+				++this.index;
+		else //this.endByte_1 == 0x00 -> single line end character
+			while (this.index < this.answer.length && !(this.answer[this.index] == this.endByte))
+				++this.index;
 		
-		if (this.endByte_1 != 0x00 || this.answer[this.index - 1] == this.endByte_1)
-			isEndByte_1 = true;
-
 		if (this.index < this.answer.length && (this.tmpData.length + this.index - startIndex) > 8) {
 			endIndex = this.index;
-			isEndByte_1 = false;
 			this.data = new byte[this.tmpData.length + endIndex - startIndex];
 			//System.out.println(startIndex + " - " + this.tmpData.length + " - " + endIndex);
 			System.arraycopy(this.tmpData, 0, this.data, 0, this.tmpData.length);
@@ -174,10 +174,12 @@ public class CSV2SerialPort extends DeviceCommPort implements IDeviceCommPort {
 	 * @throws TimeOutException
 	 */
 	protected void readNewData() throws IOException, TimeOutException {
-		if (!this.isDataReceived) {
+		if (!this.isDataReceived && this.port.isConnected()) {
 			this.answer = new byte[this.tmpDataLength];
 			this.answer = this.read(this.answer, this.timeout, this.stableIndex);
 			this.isDataReceived = true;
+			if (log.isLoggable(Level.FINE))
+					log.log(Level.FINE, StringHelper.byte2Hex2CharString(this.answer, this.answer.length));
 		}
 	}
 
