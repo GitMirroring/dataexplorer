@@ -55,7 +55,7 @@ import gde.ui.dialog.UsbDeviceSelectionDialog;
 import gde.utils.WaitTimer;
 import gnu.io.SerialPort;
 
-public class DeviceUsbPortImpl implements IDeviceCommPort {
+public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort {
 	private final static Logger					log							= Logger.getLogger(DeviceUsbPortImpl.class.getName());
 
 	final protected DeviceConfiguration	deviceConfig;
@@ -91,6 +91,8 @@ public class DeviceUsbPortImpl implements IDeviceCommPort {
 		this.settings = null;
 	}
 
+	//// unused serial port methods
+	
 	public SerialPort open() throws ApplicationConfigurationException, SerialPortException {
 		// Auto-generated method stub
 		return null;
@@ -194,6 +196,8 @@ public class DeviceUsbPortImpl implements IDeviceCommPort {
 		// Auto-generated method stub
 		return 0;
 	}
+
+	/////// USB interface starts here
 
 	/**
 	 * find USB device to be identified by vendor ID and product ID

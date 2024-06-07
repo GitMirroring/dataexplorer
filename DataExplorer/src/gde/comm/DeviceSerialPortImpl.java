@@ -69,7 +69,7 @@ import gnu.io.UnsupportedCommOperationException;
  * DeviceSerialPort is the abstract class of the serial port implementation as parent for a device specific serial port implementation
  * @author Winfried Brügmann
  */
-public class DeviceSerialPortImpl implements IDeviceCommPort, SerialPortEventListener {
+public class DeviceSerialPortImpl extends DeviceCommPort implements IDeviceCommPort, SerialPortEventListener {
 	final static String										$CLASS_NAME								= DeviceSerialPortImpl.class.getName();
 	final static Logger										log												= Logger.getLogger(DeviceSerialPortImpl.$CLASS_NAME);
 
@@ -125,6 +125,7 @@ public class DeviceSerialPortImpl implements IDeviceCommPort, SerialPortEventLis
 	 * @param currentApplication
 	 */
 	public DeviceSerialPortImpl(DeviceConfiguration currentDeviceConfig, DataExplorer currentApplication) {
+		super(currentDeviceConfig.getAsDevice(), currentApplication);
 		this.deviceConfig = currentDeviceConfig;
 		this.application = currentApplication;
 		this.settings = Settings.getInstance();

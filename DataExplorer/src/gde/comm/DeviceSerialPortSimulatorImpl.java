@@ -69,7 +69,7 @@ import gnu.io.SerialPort;
 /**
  * class to simulate serial port where bytes read form input file
  */
-public class DeviceSerialPortSimulatorImpl implements IDeviceCommPort {
+public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDeviceCommPort {
 	final static String	$CLASS_NAME					= DeviceSerialPortSimulatorImpl.class.getName();
 	final static Logger	log									= Logger.getLogger($CLASS_NAME);
 

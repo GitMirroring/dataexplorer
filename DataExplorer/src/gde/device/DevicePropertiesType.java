@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="Device" type="{}DeviceType"/>
  *         &lt;element name="SerialPort" type="{}SerialPortType" minOccurs="0"/>
  *         &lt;element name="UsbPort" type="{}UsbPortType" minOccurs="0"/>
+ *         &lt;element name="TcpPort" type="{}TcpPortType" minOccurs="0"/>
  *         &lt;element name="TimeBase" type="{}TimeBaseType"/>
  *         &lt;element name="DataBlock" type="{}DataBlockType" minOccurs="0"/>
  *         &lt;element name="State" type="{}StateType" minOccurs="0"/>
@@ -61,6 +62,7 @@ import javax.xml.bind.annotation.XmlType;
     "device",
     "serialPort",
     "usbPort",
+    "tcpPort",
     "timeBase",
     "dataBlock",
     "state",
@@ -75,6 +77,8 @@ public class DevicePropertiesType {
     protected SerialPortType serialPort;
     @XmlElement(name = "UsbPort")
     protected UsbPortType usbPort;
+    @XmlElement(name = "TcpPort")
+    protected TcpPortType tcpPort;
     @XmlElement(name = "TimeBase", required = true)
     protected TimeBaseType timeBase;
     @XmlElement(name = "DataBlock")
@@ -156,6 +160,30 @@ public class DevicePropertiesType {
      */
     public void setUsbPort(UsbPortType value) {
         this.usbPort = value;
+    }
+
+    /**
+     * Gets the value of the tcpPort property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link TcpPortType }
+     *     
+     */
+    public TcpPortType getTcpPort() {
+        return tcpPort;
+    }
+
+    /**
+     * Sets the value of the tcpPort property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link TcpPortType }
+     *     
+     */
+    public void setTcpPort(TcpPortType value) {
+        this.tcpPort = value;
     }
 
     /**

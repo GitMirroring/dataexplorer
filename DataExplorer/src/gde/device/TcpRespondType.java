@@ -13,32 +13,32 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for input_types.
+ * <p>Java class for tcp_respond_type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
- * &lt;simpleType name="input_types">
+ * &lt;simpleType name="tcp_respond_type">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="FILE_IO"/>
- *     &lt;enumeration value="SERIAL_IO"/>
+ *     &lt;enumeration value="CSV"/>
+ *     &lt;enumeration value="JSON"/>
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
  * 
  */
-@XmlType(name = "input_types")
+@XmlType(name = "tcp_respond_type")
 @XmlEnum
-public enum InputTypes {
+public enum TcpRespondType {
 
-    FILE_IO,
-    SERIAL_IO;
+    CSV,
+    JSON;
 
     public String value() {
         return name();
     }
 
-    public static InputTypes fromValue(String v) {
+    public static TcpRespondType fromValue(String v) {
         return valueOf(v);
     }
 

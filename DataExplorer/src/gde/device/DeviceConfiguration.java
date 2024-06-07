@@ -89,6 +89,7 @@ public class DeviceConfiguration {
 	private DeviceType												device;
 	private SerialPortType										serialPort;
 	private UsbPortType												usbPort;
+	private TcpPortType												tcpPort;
 	private DataBlockType											dataBlock;
 	private StateType													state;
 	private TimeBaseType											timeBase;
@@ -193,6 +194,7 @@ public class DeviceConfiguration {
 		this.device = this.deviceProps.getDevice();
 		this.serialPort = this.deviceProps.getSerialPort();
 		this.usbPort = this.deviceProps.getUsbPort();
+		this.tcpPort = this.deviceProps.getTcpPort();
 		this.dataBlock = this.deviceProps.getDataBlock();
 		this.state = this.deviceProps.getState();
 		this.timeBase = this.deviceProps.getTimeBase();
@@ -220,6 +222,7 @@ public class DeviceConfiguration {
 		this.device = this.deviceProps.getDevice();
 		this.serialPort = this.deviceProps.getSerialPort();
 		this.usbPort = this.deviceProps.getUsbPort();
+		this.tcpPort = this.deviceProps.getTcpPort();
 		this.dataBlock = this.deviceProps.getDataBlock();
 		this.state = this.deviceProps.getState();
 		this.timeBase = this.deviceProps.getTimeBase();
@@ -380,6 +383,21 @@ public class DeviceConfiguration {
 	public void removeUsbPortType() {
 		this.isChangePropery = true;
 		this.usbPort = this.deviceProps.usbPort = null;
+	}
+
+	/**
+	 * @return the serialPort
+	 */
+	public TcpPortType getTcpPortType() {
+		return this.tcpPort;
+	}
+
+	/**
+	 * remove the serialPort of the active device configuration
+	 */
+	public void removeTcpPortType() {
+		this.isChangePropery = true;
+		this.tcpPort = this.deviceProps.tcpPort = null;
 	}
 
 	/**

@@ -104,6 +104,9 @@ public class DeviceCommPort implements IDeviceCommPort {
 		else if (this.deviceConfig.getUsbPortType() != null) { // USB device
 			this.port = new DeviceUsbPortImpl(this.deviceConfig, this.application);
 		}
+		else if (this.deviceConfig.getTcpPortType() != null) { // TCP connected device
+			this.port = new DeviceTcpPortImpl(this.deviceConfig, this.application);
+		}
 		else this.port = null;
 		
 		DeviceCommPort.staticPort = this.port;
@@ -132,9 +135,23 @@ public class DeviceCommPort implements IDeviceCommPort {
 		else if (this.deviceConfig.getUsbPortType() != null) { // USB device
 			this.port = new DeviceUsbPortImpl(this.deviceConfig, this.application);
 		}
+		else if (this.deviceConfig.getTcpPortType() != null) { // TCP connected device
+			this.port = new DeviceTcpPortImpl(this.deviceConfig, this.application);
+		}
 		else this.port = null;
 
 		DeviceCommPort.staticPort = this.port;
+	}
+	
+	/**
+	 * constructor to enable serial port tests without complete device construction
+	 */
+	public DeviceCommPort() {
+		this.device = null;
+		this.deviceConfig = null;
+		this.application = null;
+		this.settings = null;
+		this.port = null;
 	}
 
 	/**

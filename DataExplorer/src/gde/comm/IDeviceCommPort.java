@@ -223,6 +223,11 @@ public interface IDeviceCommPort {
 	 * @throws IOException
 	 */
 	public int getAvailableBytes() throws IOException;
+
+	/**
+	 * @param setInterruptedByUser the isInterruptedByUser to set
+	 */
+	public void setInterruptedByUser(boolean setInterruptedByUser);
 	
 	/////// USB interface starts here
   /**
