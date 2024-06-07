@@ -709,7 +709,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 
 		DeviceTcpPortImpl impl = new DeviceTcpPortImpl();
 		char[] buffer = new char[1024];
-		String writeBuf = String.format("%c\r", 'Q');
+		byte[] writeBuf = new byte[]{'Q', '\r', '\n'};
 		try {
 			impl.socket = new Socket("192.168.25.40", 23000);
 			
@@ -720,8 +720,10 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
       BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 			
 			for (int i = 0; i < 5; i++) {
-				System.out.println("\""+writeBuf+"\"");
-				writer.println(writeBuf);
+				System.out.println(StringHelper.byte2Hex2CharString(writeBuf, writeBuf.length));
+				System.out.print(new String(writeBuf));
+				writer.write(new String(writeBuf));
+				writer.flush();
 				
 				if (reader.read(buffer) > 0) {
 					System.out.println(buffer);

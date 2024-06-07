@@ -10,15 +10,9 @@
     </Device>
     <TcpPort>
         <address>127.0.0.1</address>
-        <port>2300</port>
-        <TimeOut>
-            <ReadTimeOut>500</ReadTimeOut>
-            <ReadStableIndex>5</ReadStableIndex>
-            <WriteCharDelayTime>0</WriteCharDelayTime>
-            <WriteDelayTime>0</WriteDelayTime>
-        </TimeOut>
+        <port>23000</port>
         <respond>CSV</respond>
-        <request>51</request>
+        <request>510D0A</request>
     </TcpPort>
     <TimeBase>
         <name>time</name>
