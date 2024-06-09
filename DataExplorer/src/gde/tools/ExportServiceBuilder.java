@@ -60,6 +60,7 @@ public class ExportServiceBuilder {
 	private static final String	DEVICE_MANUFACTURER_TAG		= "manufacturer";
 	private static final String	SERIAL_PORT_TAG						= "SerialPort";
 	private static final String	USB_PORT_TAG							= "UsbPort";
+	private static final String	TCP_PORT_TAG							= "TcpPort";
 	private static final String	DATA_BLOCK_TAG						= "DataBlock";
 	private static final String	DATA_BLOCK_FORMAT_TAG			= "format";
 	private static final String	DATA_BLOCK_INPUT_TYPE_TAG	= "inputType";
@@ -141,6 +142,7 @@ public class ExportServiceBuilder {
 				private boolean	isManufacturer			= false;
 				private boolean	existsSerialPort		= false;
 				private boolean	existsUsbPort				= false;
+				private boolean	existsTcpPort				= false;
 				private boolean	isDataBlock					= false;
 				private String	deviceName					= "";
 				private String	deviceManufacturer	= "";
@@ -168,6 +170,10 @@ public class ExportServiceBuilder {
 						existsUsbPort = true;
 						break;
 
+					case TCP_PORT_TAG:
+						existsTcpPort = true;
+						break;
+
 					case DATA_BLOCK_TAG:
 						isDataBlock = true;
 						break;
@@ -189,6 +195,8 @@ public class ExportServiceBuilder {
 											dataFeeds.add(DataFeed.SERIAL_IO);
 										} else if (existsUsbPort) {
 											dataFeeds.add(DataFeed.NATIVE_USB);
+										} else if (existsTcpPort) {
+											dataFeeds.add(DataFeed.NATIVE_TCP);
 										}	else {
 												dataFeeds.add(DataFeed.NO_DATA_SOURCE);//device w/o data source
 										}

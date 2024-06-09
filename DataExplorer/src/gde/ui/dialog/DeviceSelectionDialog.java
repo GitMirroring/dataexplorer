@@ -868,7 +868,7 @@ public class DeviceSelectionDialog extends org.eclipse.swt.widgets.Dialog {
 					this.deviceTypeText.setText(this.selectedActiveDeviceConfig.getDeviceGroup().name());
 					String link = this.selectedActiveDeviceConfig.getManufacturerURL() != null ? this.selectedActiveDeviceConfig.getManufacturerURL() : Messages.getString(MessageIds.GDE_MSGT0191);
 					this.internetLinkText.setText(link);
-					if (this.deviceConfigurations.get(this.activeDeviceName).getSerialPortType() != null && !this.deviceConfigurations.get(this.activeDeviceName).getSerialPortType().getPort().equals("USB")) {
+					if (this.deviceConfigurations.get(this.activeDeviceName).getSerialPortType() != null && !this.deviceConfigurations.get(this.activeDeviceName).getSerialPortType().getPort().equals("USB") && !this.deviceConfigurations.get(this.activeDeviceName).getSerialPortType().getPort().equals("TCP")) {
 						if (!this.serialPortSelectionGroup.getEnabled() || !this.portSettingsGroup.getEnabled()) {
 							enableSerialPortEntries(true);
 						}
@@ -905,6 +905,9 @@ public class DeviceSelectionDialog extends org.eclipse.swt.widgets.Dialog {
 						else 	if (this.deviceConfigurations.get(this.activeDeviceName).getUsbPortType() != null) {
 							this.portSelectCombo.setText("  USB"); //$NON-NLS-1$
 						}
+						else 	if (this.deviceConfigurations.get(this.activeDeviceName).getTcpPortType() != null) {
+							this.portSelectCombo.setText("  TCP"); //$NON-NLS-1$
+						}
 						else {
 							this.portSelectCombo.setText("  import"); //$NON-NLS-1$
 						}
@@ -916,6 +919,9 @@ public class DeviceSelectionDialog extends org.eclipse.swt.widgets.Dialog {
 						}
 						else 	if (this.deviceConfigurations.get(this.activeDeviceName).getUsbPortType() != null) {
 							this.portSelectCombo.setText("  USB"); //$NON-NLS-1$
+						}
+						else 	if (this.deviceConfigurations.get(this.activeDeviceName).getTcpPortType() != null) {
+							this.portSelectCombo.setText("  TCP"); //$NON-NLS-1$
 						}
 						else {
 							this.portSelectCombo.setText("  import"); //$NON-NLS-1$
@@ -1161,6 +1167,9 @@ public class DeviceSelectionDialog extends org.eclipse.swt.widgets.Dialog {
 												else 	if (DeviceSelectionDialog.this.deviceConfigurations.get(DeviceSelectionDialog.this.activeDeviceName).getUsbPortType() != null) {
 													DeviceSelectionDialog.this.portSelectCombo.setText("  USB"); //$NON-NLS-1$
 												}
+												else 	if (DeviceSelectionDialog.this.deviceConfigurations.get(DeviceSelectionDialog.this.activeDeviceName).getTcpPortType() != null) {
+													DeviceSelectionDialog.this.portSelectCombo.setText("  TCP"); //$NON-NLS-1$
+												}
 												else {
 													DeviceSelectionDialog.this.portSelectCombo.setText("  import"); //$NON-NLS-1$
 												}
@@ -1172,6 +1181,9 @@ public class DeviceSelectionDialog extends org.eclipse.swt.widgets.Dialog {
 												}
 												else 	if (DeviceSelectionDialog.this.deviceConfigurations.get(DeviceSelectionDialog.this.activeDeviceName).getUsbPortType() != null) {
 													DeviceSelectionDialog.this.portSelectCombo.setText("  USB"); //$NON-NLS-1$
+												}
+												else 	if (DeviceSelectionDialog.this.deviceConfigurations.get(DeviceSelectionDialog.this.activeDeviceName).getTcpPortType() != null) {
+													DeviceSelectionDialog.this.portSelectCombo.setText("  TCP"); //$NON-NLS-1$
 												}
 												else {
 													DeviceSelectionDialog.this.portSelectCombo.setText("  import"); //$NON-NLS-1$

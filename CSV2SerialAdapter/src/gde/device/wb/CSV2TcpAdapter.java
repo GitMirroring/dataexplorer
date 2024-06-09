@@ -70,7 +70,7 @@ public class CSV2TcpAdapter extends DeviceConfiguration implements IDevice {
 	final CSV2TcpAdapterDialog			dialog;
 	protected final CSV2TcpPort			tcpPort;
 	protected final Channels				channels;
-	protected GathererThread				gathererThread;
+	protected GathererThreadTcp			gathererThread;
 
 	protected boolean								isFileIO		= false;
 	protected boolean								isSerialIO	= false;
@@ -542,7 +542,7 @@ public class CSV2TcpAdapter extends DeviceConfiguration implements IDevice {
 					try {
 						Channel activChannel = Channels.getInstance().getActiveChannel();
 						if (activChannel != null) {
-							this.gathererThread = new GathererThread(this.application, this, this.tcpPort, activChannel.getNumber());
+							this.gathererThread = new GathererThreadTcp(this.application, this, this.tcpPort, activChannel.getNumber());
 							try {
 								if (this.tcpPort.isConnected()) {
 									this.gathererThread.start();

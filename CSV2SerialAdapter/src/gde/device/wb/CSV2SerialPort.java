@@ -75,6 +75,8 @@ public class CSV2SerialPort extends DeviceCommPort implements IDeviceCommPort {
 		this.tmpData = new byte[0];
 		this.isSerialRequest = this.device.getDeviceConfiguration().isSerialPortRequest();
 		this.serialRequest = this.device.getDeviceConfiguration().getSerialPortRequest();
+		if (log.isLoggable(Level.FINE))
+			log.log(Level.FINE, "EOL " + StringHelper.byte2Hex2CharString(this.device.getDataBlockEnding(), this.device.getDataBlockEnding().length));
 	}
 
 	/**

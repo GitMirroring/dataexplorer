@@ -143,7 +143,7 @@ public class DeviceConfiguration {
 
 		String basePath = "C:/Documents and Settings/brueg/Application Data/DataExplorer/Devices/"; //$NON-NLS-1$
 
-		try (FileInputStream inputStream = new FileInputStream(basePath + "DeviceProperties_V48.xsd")) {
+		try (FileInputStream inputStream = new FileInputStream(basePath + "DeviceProperties_V49.xsd")) {
 			Schema schema = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI).newSchema(new StreamSource(inputStream));
 			JAXBContext jc = JAXBContext.newInstance("gde.device"); //$NON-NLS-1$
 			Unmarshaller unmarshaller = jc.createUnmarshaller();
@@ -245,6 +245,7 @@ public class DeviceConfiguration {
 		this.device = deviceConfig.device;
 		this.serialPort = deviceConfig.serialPort;
 		this.usbPort = this.deviceProps.getUsbPort();
+		this.tcpPort = this.deviceProps.getTcpPort();
 		this.dataBlock = deviceProps.dataBlock;
 		this.state = deviceProps.state;
 		this.timeBase = deviceConfig.timeBase;
@@ -274,6 +275,7 @@ public class DeviceConfiguration {
 		this.device = this.deviceProps.getDevice();
 		this.serialPort = this.deviceProps.getSerialPort();
 		this.usbPort = this.deviceProps.getUsbPort();
+		this.tcpPort = this.deviceProps.getTcpPort();
 		this.dataBlock = this.deviceProps.getDataBlock();
 		this.state = this.deviceProps.getState();
 		this.timeBase = this.deviceProps.getTimeBase();
@@ -303,6 +305,7 @@ public class DeviceConfiguration {
 		this.device = this.deviceProps.getDevice();
 		this.serialPort = this.deviceProps.getSerialPort();
 		this.usbPort = this.deviceProps.getUsbPort();
+		this.tcpPort = this.deviceProps.getTcpPort();
 		this.dataBlock = this.deviceProps.getDataBlock();
 		this.state = this.deviceProps.getState();
 		this.timeBase = this.deviceProps.getTimeBase();
@@ -731,8 +734,8 @@ public class DeviceConfiguration {
 	}
 
 	public int getReadTimeOut() {
-		if (this.serialPort == null) createSerialPort();
-		return this.serialPort.getTimeOut() != null ? this.serialPort.getTimeOut().getReadTimeOut() : 0;
+		return this.serialPort != null && this.serialPort.getTimeOut() != null ? this.serialPort.getTimeOut().getReadTimeOut() 
+				: this.tcpPort != null && this.tcpPort.getTimeOut() != null ? this.tcpPort.getTimeOut().getReadTimeOut() : 0;
 	}
 
 	public void setReadTimeOut(int value) {
@@ -745,8 +748,8 @@ public class DeviceConfiguration {
 	}
 
 	public int getReadStableIndex() {
-		if (this.serialPort == null) createSerialPort();
-		return this.serialPort.getTimeOut() != null ? this.serialPort.getTimeOut().getReadStableIndex() : 0;
+		return this.serialPort != null && this.serialPort.getTimeOut() != null ? this.serialPort.getTimeOut().getReadStableIndex() 
+				: this.tcpPort != null && this.tcpPort.getTimeOut() != null ? this.tcpPort.getTimeOut().getReadStableIndex() : 0;
 	}
 
 	public void setReadStableIndex(int value) {
@@ -759,8 +762,8 @@ public class DeviceConfiguration {
 	}
 
 	public int getWriteCharDelayTime() {
-		if (this.serialPort == null) createSerialPort();
-		return this.serialPort.getTimeOut() != null ? this.serialPort.getTimeOut().getWriteCharDelayTime() : 0;
+		return this.serialPort != null && this.serialPort.getTimeOut() != null ? this.serialPort.getTimeOut().getWriteCharDelayTime() 
+				: this.tcpPort != null && this.tcpPort.getTimeOut() != null ? this.tcpPort.getTimeOut().getWriteCharDelayTime() : 0;
 	}
 
 	public void setWriteCharDelayTime(int value) {
@@ -773,8 +776,8 @@ public class DeviceConfiguration {
 	}
 
 	public int getWriteDelayTime() {
-		if (this.serialPort == null) createSerialPort();
-		return this.serialPort.getTimeOut() != null ? this.serialPort.getTimeOut().getWriteDelayTime() : 0;
+		return this.serialPort != null && this.serialPort.getTimeOut() != null ? this.serialPort.getTimeOut().getWriteDelayTime() 
+				: this.tcpPort != null && this.tcpPort.getTimeOut() != null ? this.tcpPort.getTimeOut().getWriteDelayTime() : 0;
 	}
 
 	public void setWriteDelayTime(int value) {
@@ -798,20 +801,20 @@ public class DeviceConfiguration {
 	 * @return true if there is a request byte array defined
 	 */
 	public boolean isSerialPortRequest() {
-		if (this.serialPort == null) createSerialPort();
-		return this.serialPort.getRequest() != null && this.serialPort.getRequest().length > 0;
+		return this.serialPort != null && this.serialPort.getRequest() != null && this.serialPort.getRequest().length > 0 
+				|| this.tcpPort != null && this.tcpPort.getRequest() != null && this.tcpPort.getRequest().length > 0;
 	}
 	
 	/**
 	 * @return byte array to write prior to read from serial port
 	 */
 	public byte[] getSerialPortRequest() {
-		if (this.serialPort == null) createSerialPort();
-		return this.serialPort.getRequest();
+		return this.serialPort != null && this.serialPort.getRequest() != null ? this.serialPort.getRequest() 
+				: this.tcpPort != null && this.tcpPort.getRequest() != null ? this.tcpPort.getRequest() : new byte[0];
 	}
 	
 	/**
-	 * set a new byte arra as serial port request
+	 * set a new byte array as serial port request
 	 * @param newRequest
 	 */
 	public void setSerialPortRequest(final byte[] newRequest) {

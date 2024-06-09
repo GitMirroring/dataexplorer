@@ -18,12 +18,9 @@
 ****************************************************************************************/
 package gde.comm;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Date;
 import java.util.Set;
@@ -46,8 +43,11 @@ import gde.GDE;
 import gde.config.Settings;
 import gde.device.DeviceConfiguration;
 import gde.device.IDevice;
+import gde.device.TcpPortType;
+import gde.exception.ApplicationConfigurationException;
 import gde.exception.FailedQueryException;
 import gde.exception.ReadWriteOutOfSyncException;
+import gde.exception.SerialPortException;
 import gde.exception.TimeOutException;
 import gde.log.Level;
 import gde.messages.MessageIds;
@@ -55,7 +55,6 @@ import gde.messages.Messages;
 import gde.ui.DataExplorer;
 import gde.utils.StringHelper;
 import gde.utils.WaitTimer;
-import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
 
@@ -76,11 +75,8 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 	protected int													timeoutErrors							= 0;
 
 	boolean																isConnected								= false;
-	String																serialPortStr							= GDE.STRING_EMPTY;
+	TcpPortType														tcpPortType;
 	Thread																closeThread;
-
-	CommPortIdentifier										portId;
-	CommPortIdentifier										saveportId;
 
 	InputStream														inputStream								= null;
 	OutputStream													outputStream							= null;
@@ -106,6 +102,91 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 	}
 
 	/**
+	 * opens the serial port specified in device configuration or settings (global)
+	 * @return reference to instance of serialPort
+	 * @throws ApplicationConfigurationException
+	 * @throws SerialPortException
+	 */
+	public Socket open() throws ApplicationConfigurationException, SerialPortException {
+		final String $METHOD_NAME = "open"; //$NON-NLS-1$
+		this.xferErrors = this.timeoutErrors = 0;
+		// Initialize tcp port
+		try {
+
+			this.tcpPortType = this.deviceConfig.getTcpPortType();
+
+			// check if the TCP port type contains required data
+			if (this.tcpPortType == null || this.tcpPortType.getAddress().contains(".") || this.tcpPortType.getPort().isEmpty()) {
+				String hostAddress = this.tcpPortType.getAddress();
+				int port = Integer.parseInt(this.tcpPortType.getPort());
+				this.socket = new Socket(hostAddress, port);
+			}
+			else {
+				throw new ApplicationConfigurationException("checkout network configuration, host/address and port");
+			}
+			log.logp(Level.FINE, DeviceJavaSerialCommPortImpl.$CLASS_NAME, $METHOD_NAME, String.format("hostAddress = %s; port = %s", this.tcpPortType.getAddress(), this.tcpPortType.getPort())); //$NON-NLS-1$
+
+			// init in and out stream for writing and reading
+			this.inputStream = this.socket.getInputStream();
+			this.outputStream = this.socket.getOutputStream();
+			this.isConnected = true;
+			if (this.application != null) this.application.setPortConnected(true);
+		}
+		catch (ApplicationConfigurationException e) {
+			log.logp(Level.SEVERE, DeviceJavaSerialCommPortImpl.$CLASS_NAME, $METHOD_NAME, e.getMessage(), e);
+			if (this.socket != null) try {
+				this.socket.close();
+			}
+			catch (IOException e1) {
+				// ignore
+			}
+			throw e;
+		}
+		catch (Throwable e) {
+			SerialPortException en = new SerialPortException(e.getMessage());
+			log.logp(Level.SEVERE, DeviceTcpPortImpl.$CLASS_NAME, $METHOD_NAME, e.getMessage(), e);
+			if (this.socket != null) try {
+				this.socket.close();
+			}
+			catch (IOException e1) {
+				// ignore
+			}
+			throw en;
+		}
+		return this.socket;
+	}
+	
+	/**
+	 * function to close the communication port
+	 * this is done within a tread since the port can't close if it stays open for a long time period ??
+	 */
+	public void close() {
+		if (this.socket != null) 
+			try {
+			this.socket.close();
+		}
+		catch (IOException e1) {
+			// ignore
+		}
+		try {
+			this.inputStream.close();
+		}
+		catch (IOException e) {
+			// ignore
+		}
+		try {
+			this.outputStream.close();
+		}
+		catch (IOException e) {
+			// ignore
+		};
+		
+		this.isConnected = false;
+		if (this.application != null) this.application.setPortConnected(false);
+
+	}
+
+	/**
 	 * write bytes to serial port output stream, cleans receive buffer if available byes prior to send data 
 	 * @param writeBuffer writes size of writeBuffer to output stream
 	 * @throws IOException
@@ -118,9 +199,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 			cleanInputStream();
 
 			this.outputStream.write(writeBuffer);
-			if (GDE.IS_LINUX && GDE.IS_ARCH_DATA_MODEL_64) {
-				this.outputStream.flush();
-			}
+			this.outputStream.flush();
 
 			if (log.isLoggable(Level.FINE)) log.logp(Level.FINE, DeviceTcpPortImpl.$CLASS_NAME, $METHOD_NAME, "Write : " + StringHelper.byte2Hex2CharString(writeBuffer, writeBuffer.length));
 		}
@@ -668,7 +747,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 	 * @return the serialPortStr
 	 */
 	public String getSerialPortStr() {
-		return this.serialPortStr == null ? this.deviceConfig.getPort() : this.serialPortStr;
+		return "";
 	}
 
 	/**
@@ -708,25 +787,23 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 		logger.setLevel(Level.OFF);
 
 		DeviceTcpPortImpl impl = new DeviceTcpPortImpl();
-		char[] buffer = new char[1024];
+		byte[] buffer = new byte[1024];
 		byte[] writeBuf = new byte[]{'Q', '\r', '\n'};
 		try {
 			impl.socket = new Socket("192.168.25.40", 23000);
 			
       OutputStream output = impl.socket.getOutputStream();
-      PrintWriter writer = new PrintWriter(output, true);
       
       InputStream input = impl.socket.getInputStream();
-      BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 			
 			for (int i = 0; i < 5; i++) {
 				System.out.println(StringHelper.byte2Hex2CharString(writeBuf, writeBuf.length));
 				System.out.print(new String(writeBuf));
-				writer.write(new String(writeBuf));
-				writer.flush();
+				output.write(writeBuf);
+				output.flush();
 				
-				if (reader.read(buffer) > 0) {
-					System.out.println(buffer);
+				if (input.read(buffer) > 0) {
+					System.out.println(new String(buffer));
 				} 
 			}
 			//close begin

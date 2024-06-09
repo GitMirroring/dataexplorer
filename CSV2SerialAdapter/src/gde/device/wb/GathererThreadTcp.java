@@ -46,14 +46,14 @@ import org.eclipse.swt.SWT;
  * Thread implementation to gather data from eStation device
  * @author Winfied Brügmann
  */
-public class GathererThread extends Thread {
-	final static String			$CLASS_NAME									= GathererThread.class.getName();
-	final static Logger			log													= Logger.getLogger(GathererThread.class.getName());
+public class GathererThreadTcp extends Thread {
+	final static String			$CLASS_NAME									= GathererThreadTcp.class.getName();
+	final static Logger			log													= Logger.getLogger(GathererThreadTcp.class.getName());
 	final static int				WAIT_TIME_RETRYS						= 36;
 
 	final DataExplorer			application;
-	final CSV2SerialPort		serialPort;
-	final CSV2SerialAdapter	device;
+	final CSV2TcpPort				tcpPort;
+	final CSV2TcpAdapter		device;
 	final Channels					channels;
 	final DataParser				parser;
 	
@@ -64,7 +64,7 @@ public class GathererThread extends Thread {
 	int											stateNumber									= 1;
 	String									recordSetKey;
 	boolean									isPortOpenedByLiveGatherer	= false;
-	int											retryCounter								= GathererThread.WAIT_TIME_RETRYS;									// 36 * 5 sec timeout = 180 sec
+	int											retryCounter								= GathererThreadTcp.WAIT_TIME_RETRYS;									// 36 * 5 sec timeout = 180 sec
 	int											lastNumberDisplayableRecords	= 0;
 
 	/**
@@ -73,20 +73,20 @@ public class GathererThread extends Thread {
 	 * @throws ApplicationConfigurationException 
 	 * @throws Exception 
 	 */
-	public GathererThread(DataExplorer currentApplication, CSV2SerialAdapter useDevice, CSV2SerialPort useSerialPort, int channelConfigNumber)
+	public GathererThreadTcp(DataExplorer currentApplication, CSV2TcpAdapter useDevice, CSV2TcpPort useTcpPort, int channelConfigNumber)
 			throws ApplicationConfigurationException, SerialPortException {
 		super("dataGatherer");
 		this.application = currentApplication;
 		this.device = useDevice;
-		this.serialPort = useSerialPort;
+		this.tcpPort = useTcpPort;
 		this.channels = Channels.getInstance();
 		this.channelNumber = channelConfigNumber;
 		this.channel = this.channels.get(this.channelNumber);
 		this.recordSetKey = GDE.STRING_BLANK + this.device.getRecordSetStateNameReplacement(this.stateNumber);
 		this.parser = new DataParser(this.device.getDataBlockTimeUnitFactor(), this.device.getDataBlockLeader(), this.device.getDataBlockSeparator().value(), this.device.getDataBlockCheckSumType(), this.device.getDataBlockSize(InputTypes.FILE_IO)); //$NON-NLS-1$  //$NON-NLS-2$
 
-		if (!this.serialPort.isConnected()) {
-			this.serialPort.open();
+		if (!this.tcpPort.isConnected()) {
+			this.tcpPort.open();
 			this.isPortOpenedByLiveGatherer = true;
 		}
 		this.setPriority(Thread.MAX_PRIORITY);
@@ -107,30 +107,31 @@ public class GathererThread extends Thread {
 		//StringBuilder sb = new StringBuilder();
 		byte[] dataBuffer = null;
 
-		this.serialPort.isInterruptedByUser = false;
-		if (log.isLoggable(Level.TIME)) log.logp(Level.TIME, GathererThread.$CLASS_NAME, $METHOD_NAME, "====> entry initial time step ms = " + this.device.getTimeStep_ms()); //$NON-NLS-1$
+		this.tcpPort.isInterruptedByUser = false;
+		if (log.isLoggable(Level.TIME)) log.logp(Level.TIME, GathererThreadTcp.$CLASS_NAME, $METHOD_NAME, "====> entry initial time step ms = " + this.device.getTimeStep_ms()); //$NON-NLS-1$
 
 		try {
-			this.serialPort.cleanInputStream();
+			this.tcpPort.cleanInputStream();
 		}
 		catch (IOException e) {
 			log.log(java.util.logging.Level.SEVERE, e.getMessage(), e);
 		}
-		lastTmpCycleTime = System.nanoTime()/1000000;
-		while (!this.serialPort.isInterruptedByUser) {
+		lastTmpCycleTime = System.currentTimeMillis();
+		while (!this.tcpPort.isInterruptedByUser) {
 			try {
 				if (this.application != null) this.application.setPortConnected(true);
 				for (int i = 0; i < device.getChannelCount(); i++) {
-					if (this.serialPort.isInterruptedByUser) 
+					if (this.tcpPort.isInterruptedByUser) 
 						break;
 					// get data from device
-					dataBuffer = this.serialPort.getData();
+					dataBuffer = this.tcpPort.getData();
+					if (log.isLoggable(Level.FINE)) log.log(Level.FINE, new String(dataBuffer));
 					// check if device is ready for data capturing else wait for 180 seconds max. for actions
 					
 					try {
 						this.channelNumber = Integer.valueOf(GDE.STRING_EMPTY+(char)dataBuffer[1]);
 						this.stateNumber = Integer.valueOf(GDE.STRING_EMPTY+(char)dataBuffer[3]);
-						if (log.isLoggable(Level.FINE)) log.logp(Level.FINE, GathererThread.$CLASS_NAME, $METHOD_NAME,	device.getChannelCount() + " - data for channel = " + channelNumber + " state = " + stateNumber);
+						if (log.isLoggable(Level.FINE)) log.logp(Level.FINE, GathererThreadTcp.$CLASS_NAME, $METHOD_NAME,	device.getChannelCount() + " - data for channel = " + channelNumber + " state = " + stateNumber);
 						if (this.channelNumber > device.getChannelCount()) 
 							continue; //skip data if not configured
 						this.channel = this.channels.get(this.channelNumber);
@@ -141,7 +142,7 @@ public class GathererThread extends Thread {
 						else 
 							throw new DevicePropertiesInconsistenceException(Messages.getString(MessageIds.GDE_MSGW1702, new Object[] {this.stateNumber}));
 						
-						if (log.isLoggable(Level.FINER)) log.logp(Level.FINER, GathererThread.$CLASS_NAME, $METHOD_NAME,	"processing mode = " + processName ); //$NON-NLS-1$
+						if (log.isLoggable(Level.FINER)) log.logp(Level.FINER, GathererThreadTcp.$CLASS_NAME, $METHOD_NAME,	"processing mode = " + processName ); //$NON-NLS-1$
 						channelRecordSet = this.channel.get(this.channel.getLastActiveRecordSetName());
 					}
 					catch (Exception e) {
@@ -156,12 +157,12 @@ public class GathererThread extends Thread {
 					// check if a record set matching for re-use is available and prepare a new if required
 					if (this.channel.size() == 0 || channelRecordSet == null || !this.recordSetKey.endsWith(GDE.STRING_BLANK + processName)) { //$NON-NLS-1$
 						this.application.setStatusMessage(GDE.STRING_EMPTY);
-						setRetryCounter(GathererThread.WAIT_TIME_RETRYS); // 36 * receive timeout sec timeout = 180 sec
+						setRetryCounter(GathererThreadTcp.WAIT_TIME_RETRYS); // 36 * receive timeout sec timeout = 180 sec
 						// record set does not exist or is outdated, build a new name and create, in case of ChannelTypes.TYPE_CONFIG try sync with channel number
 						this.recordSetKey = (device.recordSetNumberFollowChannel() && this.channel.getType() == ChannelTypes.TYPE_CONFIG ? this.channel.getNextRecordSetNumber(this.channelNumber) : this.channel.getNextRecordSetNumber())	
 								+ GDE.STRING_RIGHT_PARENTHESIS_BLANK + processName;
 						this.channel.put(this.recordSetKey, RecordSet.createRecordSet(this.recordSetKey, this.application.getActiveDevice(), channel.getNumber(), true, false, true));
-						if (log.isLoggable(Level.FINE)) log.logp(Level.FINE, GathererThread.$CLASS_NAME, $METHOD_NAME, this.recordSetKey + " created for channel " + this.channel.getName()); //$NON-NLS-1$
+						if (log.isLoggable(Level.FINE)) log.logp(Level.FINE, GathererThreadTcp.$CLASS_NAME, $METHOD_NAME, this.recordSetKey + " created for channel " + this.channel.getName()); //$NON-NLS-1$
 						if (this.channel.getActiveRecordSet() == null) 
 							this.channel.setActiveRecordSet(this.recordSetKey);
 						channelRecordSet = this.channel.get(this.recordSetKey);
@@ -180,21 +181,21 @@ public class GathererThread extends Thread {
 						startCycleTime = 0;
 					}
 
+					tmpCycleTime = System.currentTimeMillis();
 					// prepare the data for adding to record set
-					tmpCycleTime = System.nanoTime()/1000000;
 					if (measurementCount++ == 0) {
 						startCycleTime = tmpCycleTime;
 					}
  
 					if (channelRecordSet != null) {
-						if (this.serialPort.isInterruptedByUser) break;
+						if (this.tcpPort.isInterruptedByUser) break;
 						this.parser.parse(new String(dataBuffer), 42);
 						if (this.parser.getValues().length == channelRecordSet.size()) 
 							channelRecordSet.addPoints(this.parser.getValues(), (tmpCycleTime - startCycleTime));
 						else
 							this.application.setStatusMessage(String.format("Miss match record set size = %d to parsed values length = %d, please correct!", channelRecordSet.size(), this.parser.getValues().length), SWT.COLOR_RED);
 							
-						if (log.isLoggable(Level.FINER)) log.logp(Level.TIME, GathererThread.$CLASS_NAME, $METHOD_NAME, "time after add = " + TimeLine.getFomatedTimeWithUnit(tmpCycleTime - startCycleTime)); //$NON-NLS-1$
+						if (log.isLoggable(Level.FINER)) log.logp(Level.TIME, GathererThreadTcp.$CLASS_NAME, $METHOD_NAME, "time after add = " + TimeLine.getFomatedTimeWithUnit(tmpCycleTime - startCycleTime)); //$NON-NLS-1$
 						if (measurementCount > 0 && measurementCount % 10 == 0) {
 							this.activeChannel = this.channels.getActiveChannel();
 							if (activeChannel != null) {
@@ -204,35 +205,35 @@ public class GathererThread extends Thread {
 						}
 						RecordSet activeRecordSet = this.channels.getActiveChannel().getActiveRecordSet();
 						if (activeRecordSet != null && channelRecordSet.size() > 0 && channelRecordSet.isChildOfActiveChannel() && channelRecordSet.equals(activeRecordSet)) {
-							GathererThread.this.application.updateAllTabs(false, this.lastNumberDisplayableRecords != channelRecordSet.getConfiguredDisplayable());
+							GathererThreadTcp.this.application.updateAllTabs(false, this.lastNumberDisplayableRecords != channelRecordSet.getConfiguredDisplayable());
 							this.lastNumberDisplayableRecords = channelRecordSet.getConfiguredDisplayable();
 						}
 					}
 				}
 				if (deviceTimeStep_ms > 0) { //time step is constant
-					delayTime = (long) ((deviceTimeStep_ms - 3) - (tmpCycleTime - lastTmpCycleTime));
+					delayTime = (long) ((deviceTimeStep_ms - 5) - (tmpCycleTime - lastTmpCycleTime));
 					if (delayTime > 0) {
 						WaitTimer.delay(delayTime);
 					}
-					lastTmpCycleTime = System.nanoTime()/1000000;
+					lastTmpCycleTime = System.currentTimeMillis();;
 				}
-				if (log.isLoggable(Level.TIME)) log.logp(Level.TIME, GathererThread.$CLASS_NAME, $METHOD_NAME, "delayTime = " + TimeLine.getFomatedTimeWithUnit(delayTime)); //$NON-NLS-1$
-				if (log.isLoggable(Level.TIME)) log.logp(Level.TIME, GathererThread.$CLASS_NAME, $METHOD_NAME, "time = " + TimeLine.getFomatedTimeWithUnit(tmpCycleTime - startCycleTime)); //$NON-NLS-1$
+				if (log.isLoggable(Level.TIME)) log.logp(Level.TIME, GathererThreadTcp.$CLASS_NAME, $METHOD_NAME, "delayTime = " + TimeLine.getFomatedTimeWithUnit(delayTime)); //$NON-NLS-1$
+				if (log.isLoggable(Level.TIME)) log.logp(Level.TIME, GathererThreadTcp.$CLASS_NAME, $METHOD_NAME, "time = " + TimeLine.getFomatedTimeWithUnit(tmpCycleTime - startCycleTime)); //$NON-NLS-1$
 			}
 			catch (DataInconsitsentException e) {
 				log.log(Level.WARNING, e.getMessage(), e);
 			}
 			catch (Throwable e) {
-				if (!this.serialPort.isInterruptedByUser) {
+				if (!this.tcpPort.isInterruptedByUser) {
 					// this case will be reached while eStation program is started, checked and the check not asap committed, stop pressed
 					if (e instanceof TimeOutException) {
 						if (measurementCount > 0) {
 							this.application.setStatusMessage(Messages.getString(MessageIds.GDE_MSGW1701));
-							log.logp(Level.FINE, GathererThread.$CLASS_NAME, $METHOD_NAME, "timeout!"); //$NON-NLS-1$
+							log.logp(Level.FINE, GathererThreadTcp.$CLASS_NAME, $METHOD_NAME, "timeout!"); //$NON-NLS-1$
 						}
 						else {
 							this.application.setStatusMessage(Messages.getString(MessageIds.GDE_MSGI1702));
-							log.logp(Level.FINE, GathererThread.$CLASS_NAME, $METHOD_NAME, "wait for activation ..."); //$NON-NLS-1$
+							log.logp(Level.FINE, GathererThreadTcp.$CLASS_NAME, $METHOD_NAME, "wait for activation ..."); //$NON-NLS-1$
 							if (0 == (setRetryCounter(getRetryCounter() - 1))) {
 								log.log(Level.FINE, "activation timeout"); //$NON-NLS-1$
 								this.application.openMessageDialogAsync(Messages.getString(MessageIds.GDE_MSGW1700));
@@ -249,7 +250,7 @@ public class GathererThread extends Thread {
 			}
 		}
 		this.application.setStatusMessage(""); //$NON-NLS-1$
-		log.logp(Level.FINE, GathererThread.$CLASS_NAME, $METHOD_NAME, "======> exit"); //$NON-NLS-1$
+		log.logp(Level.FINE, GathererThreadTcp.$CLASS_NAME, $METHOD_NAME, "======> exit"); //$NON-NLS-1$
 	}
 
 	/**
@@ -264,7 +265,7 @@ public class GathererThread extends Thread {
 			log.logp(Level.WARNING, $CLASS_NAME, $METHOD_NAME, throwable.getMessage(), throwable);
 		}
 		
-		this.serialPort.isInterruptedByUser = true;
+		this.tcpPort.isInterruptedByUser = true;
 
 		try {
 			for (int i = 1; i <= this.channels.size(); i++) {
@@ -277,11 +278,11 @@ public class GathererThread extends Thread {
 			}
 		}
 		finally {
-			if (this.serialPort != null && this.serialPort.getXferErrors() > 0) {
-				log.log(Level.WARNING, "During complete data transfer " + this.serialPort.getXferErrors() + " number of errors occured!"); //$NON-NLS-1$ //$NON-NLS-2$
+			if (this.tcpPort != null && this.tcpPort.getXferErrors() > 0) {
+				log.log(Level.WARNING, "During complete data transfer " + this.tcpPort.getXferErrors() + " number of errors occured!"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			if (this.serialPort != null && this.serialPort.isConnected() && this.isPortOpenedByLiveGatherer == true && this.serialPort.isConnected()) {
-				this.serialPort.close();
+			if (this.tcpPort != null && this.tcpPort.isConnected() && this.isPortOpenedByLiveGatherer == true && this.tcpPort.isConnected()) {
+				this.tcpPort.close();
 			}
 		}		
 	}
@@ -290,7 +291,7 @@ public class GathererThread extends Thread {
 	 * close port, set isDisplayable according channel configuration and calculate slope
 	 */
 	void finalizeRecordSet(RecordSet tmpRecordSet, boolean doClosePort) {
-		if (doClosePort && this.isPortOpenedByLiveGatherer && this.serialPort.isConnected()) this.serialPort.close();
+		if (doClosePort && this.isPortOpenedByLiveGatherer && this.tcpPort.isConnected()) this.tcpPort.close();
 
 		if (tmpRecordSet != null) {
 			this.device.updateVisibilityStatus(tmpRecordSet, true);
@@ -323,10 +324,10 @@ public class GathererThread extends Thread {
 					final String useRecordSetKey = this.recordSetKey;
 					GDE.display.asyncExec(new Runnable() {
 						public void run() {
-							GathererThread.this.application.getMenuToolBar().updateRecordSetSelectCombo();
-							GathererThread.this.application.updateStatisticsData();
-							GathererThread.this.application.updateDataTable(useRecordSetKey, true);
-							GathererThread.this.application.openMessageDialog(message);
+							GathererThreadTcp.this.application.getMenuToolBar().updateRecordSetSelectCombo();
+							GathererThreadTcp.this.application.updateStatisticsData();
+							GathererThreadTcp.this.application.updateDataTable(useRecordSetKey, true);
+							GathererThreadTcp.this.application.openMessageDialog(message);
 						}
 					});
 				}
@@ -340,14 +341,14 @@ public class GathererThread extends Thread {
 	 * @param enabled the isCollectDataStopped to set
 	 */
 	void setCollectDataStopped(boolean enabled) {
-		this.serialPort.isInterruptedByUser = enabled;
+		this.tcpPort.isInterruptedByUser = enabled;
 	}
 
 	/**
 	 * @return the isCollectDataStopped
 	 */
 	boolean isCollectDataStopped() {
-		return this.serialPort.isInterruptedByUser;
+		return this.tcpPort.isInterruptedByUser;
 	}
 
 	/**

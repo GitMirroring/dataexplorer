@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <DeviceProperties xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="DeviceProperties_V49.xsd">
     <Device>
-        <name implementation="CsvTcpAdapter">CSV2TCP</name>
+        <name implementation="CSV2TcpAdapter">CSV2TCP1</name>
         <manufacturer>WB</manufacturer>
         <manufacturerURL>https://www.nongnu.org/dataexplorer</manufacturerURL>
         <group>charger</group>
@@ -9,8 +9,14 @@
         <usage>false</usage>
     </Device>
     <TcpPort>
-        <address>127.0.0.1</address>
+        <address>192.168.25.40</address>
         <port>23000</port>
+        <TimeOut>
+            <ReadTimeOut>500</ReadTimeOut>
+            <ReadStableIndex>5</ReadStableIndex>
+            <WriteCharDelayTime>0</WriteCharDelayTime>
+            <WriteDelayTime>0</WriteDelayTime>
+        </TimeOut>
         <respond>CSV</respond>
         <request>510D0A</request>
     </TcpPort>
@@ -19,9 +25,11 @@
         <symbol>t</symbol>
         <unit>msec</unit>
         <timeStep>1000.0</timeStep>
+        <avarage_timeStep>1000.0</avarage_timeStep>
     </TimeBase>
     <DataBlock>
         <format inputType="SERIAL_IO" formatType="BYTE" size="-100"/>
+        <format inputType="FILE_IO" formatType="VALUE" size="-8"/>
         <timeUnit>msec</timeUnit>
         <separator>semicolon</separator>
         <leader>$</leader>
@@ -55,7 +63,7 @@
                 <active>true</active>
                 <statistics min="true" max="true" avg="false" sigma="false"/>
                 <property name="factor" value="0.0001" type="Double" description="factor to input value"/>
-                <property name="scale_sync_ref_ordinal" value="0" type="Integer" />
+                <property name="scale_sync_ref_ordinal" value="0" type="Integer"/>
             </Measurement>
             <Measurement>
                 <name>voltage_i_in S2</name>
@@ -64,7 +72,7 @@
                 <active>true</active>
                 <statistics min="true" max="true" avg="false" sigma="false"/>
                 <property name="factor" value="0.0001" type="Double" description="factor to input value"/>
-                <property name="scale_sync_ref_ordinal" value="1" type="Integer" />
+                <property name="scale_sync_ref_ordinal" value="1" type="Integer"/>
             </Measurement>
             <Measurement>
                 <name>voltage S3</name>
@@ -73,7 +81,7 @@
                 <active>true</active>
                 <statistics min="true" max="true" avg="false" sigma="false"/>
                 <property name="factor" value="0.0001" type="Double" description="factor to input value"/>
-                <property name="scale_sync_ref_ordinal" value="0" type="Integer" />
+                <property name="scale_sync_ref_ordinal" value="0" type="Integer"/>
             </Measurement>
             <Measurement>
                 <name>voltage_i_in S3</name>
@@ -82,7 +90,7 @@
                 <active>true</active>
                 <statistics min="true" max="true" avg="false" sigma="false"/>
                 <property name="factor" value="0.0001" type="Double" description="factor to input value"/>
-                <property name="scale_sync_ref_ordinal" value="1" type="Integer" />
+                <property name="scale_sync_ref_ordinal" value="1" type="Integer"/>
             </Measurement>
             <Measurement>
                 <name>voltage S4</name>
@@ -91,7 +99,7 @@
                 <active>true</active>
                 <statistics min="true" max="true" avg="false" sigma="false"/>
                 <property name="factor" value="0.0001" type="Double" description="factor to input value"/>
-                <property name="scale_sync_ref_ordinal" value="0" type="Integer" />
+                <property name="scale_sync_ref_ordinal" value="0" type="Integer"/>
             </Measurement>
             <Measurement>
                 <name>voltage_i_in S4</name>
@@ -100,14 +108,19 @@
                 <active>true</active>
                 <statistics min="true" max="true" avg="false" sigma="false"/>
                 <property name="factor" value="0.0001" type="Double" description="factor to input value"/>
-                <property name="scale_sync_ref_ordinal" value="1" type="Integer" />
+                <property name="scale_sync_ref_ordinal" value="1" type="Integer"/>
             </Measurement>
+            <Settlements/>
+            <ReferenceGroups/>
+            <TransitionGroups/>
+            <Transitions/>
+            <ScoreGroups/>
         </Channel>
     </Channels>
     <Desktop>
         <property name="table_tab" value="true"/>
         <property name="digital_tab" value="true"/>
-        <property name="analog_tab" value="true"/>
+        <property name="analog_tab" value="false"/>
         <property name="voltage_per_cell_tab" value="false"/>
         <property name="utility_garphics_tab" value="false" description="UTILITY_GRAPHICS_TAB"/>
         <property name="utility_device_tab" value="false" description="UTILITY_DEVICE_TAB"/>

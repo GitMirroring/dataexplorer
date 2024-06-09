@@ -42,7 +42,8 @@ public class ExportService {
 		NO_DATA_SOURCE(GDE.STRING_MESSAGE_CONCAT), //
 		SERIAL_IO(MessageIds.GDE_MSGT0955), //
 		FILE(MessageIds.GDE_MSGT0956), //
-		NATIVE_USB(MessageIds.GDE_MSGT0957);
+		NATIVE_USB(MessageIds.GDE_MSGT0957),
+		NATIVE_TCP(MessageIds.GDE_MSGT0974);
 
 		private String messageId;
 

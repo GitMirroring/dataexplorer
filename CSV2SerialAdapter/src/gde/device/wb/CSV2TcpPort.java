@@ -54,8 +54,8 @@ public class CSV2TcpPort extends DeviceCommPort implements IDeviceCommPort {
 	boolean							isDataReceived	= false;
 	int									index						= 0;
 	
-	final boolean				isSerialRequest;
-	final byte[]				serialRequest;
+	final boolean				isTcpRequest;
+	final byte[]				tcpRequest;
 
 	/**
 	 * constructor of default implementation
@@ -73,8 +73,10 @@ public class CSV2TcpPort extends DeviceCommPort implements IDeviceCommPort {
 		this.isDataReceived = false;
 		this.index = 0;
 		this.tmpData = new byte[0];
-		this.isSerialRequest = this.device.getDeviceConfiguration().isSerialPortRequest();
-		this.serialRequest = this.device.getDeviceConfiguration().getSerialPortRequest();
+		this.isTcpRequest = this.device.getDeviceConfiguration().getTcpPortType().getRequest() != null;
+		this.tcpRequest = this.device.getDeviceConfiguration().getTcpPortType().getRequest();
+		if (log.isLoggable(Level.FINE))
+			log.log(Level.FINE, "EOL " + StringHelper.byte2Hex2CharString(this.device.getDataBlockEnding(), this.device.getDataBlockEnding().length));
 	}
 
 	/**
@@ -87,8 +89,8 @@ public class CSV2TcpPort extends DeviceCommPort implements IDeviceCommPort {
 		int startIndex;
 
 		try {
-			if (this.isSerialRequest)
-				this.write(this.serialRequest); 
+			if (this.isTcpRequest)
+				this.write(this.tcpRequest); 
 			
 			//receive data while needed
 			readNewData();
@@ -117,6 +119,8 @@ public class CSV2TcpPort extends DeviceCommPort implements IDeviceCommPort {
 			}
 			throw e;
 		}
+		this.isDataReceived = false;
+		this.index = 0;
 		return this.data;
 	}
 

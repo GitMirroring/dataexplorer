@@ -7,6 +7,7 @@ Generic changes/fixes
 	* remove Java 8 support - attention using old 32 bit OS
 	* allow usage of Java 21 without warning, ref. bug #65816
 	* build using Java 21 and update build integrated runtime accordingly
+	* update device XSD to Version 49 and enable TCP socket communication
 	
 	Device specific changes/fixes
 	* IGCAdapter - update to new start altitude 250m
