@@ -557,12 +557,12 @@ public class CSV2TcpAdapter extends DeviceConfiguration implements IDevice {
 						}
 					}
 					catch (SerialPortException e) {
-						log.log(Level.SEVERE, e.getMessage(), e);
-						this.application.openMessageDialog(Messages.getString(gde.messages.MessageIds.GDE_MSGE0015, new Object[] { e.getClass().getSimpleName() + GDE.STRING_BLANK_COLON_BLANK + e.getMessage() }));
+						log.log(Level.SEVERE, e.getLocalizedMessage(), e);
+						this.application.openMessageDialog(Messages.getString(gde.messages.MessageIds.GDE_MSGE0053, new Object[] { "TCP Port Exception" + GDE.STRING_BLANK_COLON_BLANK + e.getLocalizedMessage() }));
 					}
 					catch (ApplicationConfigurationException e) {
 						log.log(Level.SEVERE, e.getMessage(), e);
-						this.application.openMessageDialog(Messages.getString(gde.messages.MessageIds.GDE_MSGE0010));
+						this.application.openMessageDialog(Messages.getString(gde.messages.MessageIds.GDE_MSGE0054));
 						this.application.getDeviceSelectionDialog().open();
 					}
 					catch (Throwable e) {

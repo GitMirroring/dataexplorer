@@ -116,7 +116,7 @@ public class GathererThreadTcp extends Thread {
 		catch (IOException e) {
 			log.log(java.util.logging.Level.SEVERE, e.getMessage(), e);
 		}
-		lastTmpCycleTime = System.currentTimeMillis();
+		startCycleTime = lastTmpCycleTime = System.currentTimeMillis();
 		while (!this.tcpPort.isInterruptedByUser) {
 			try {
 				if (this.application != null) this.application.setPortConnected(true);
@@ -181,12 +181,6 @@ public class GathererThreadTcp extends Thread {
 						startCycleTime = 0;
 					}
 
-					tmpCycleTime = System.currentTimeMillis();
-					// prepare the data for adding to record set
-					if (measurementCount++ == 0) {
-						startCycleTime = tmpCycleTime;
-					}
- 
 					if (channelRecordSet != null) {
 						if (this.tcpPort.isInterruptedByUser) break;
 						this.parser.parse(new String(dataBuffer), 42);
@@ -211,7 +205,7 @@ public class GathererThreadTcp extends Thread {
 					}
 				}
 				if (deviceTimeStep_ms > 0) { //time step is constant
-					delayTime = (long) ((deviceTimeStep_ms - 5) - (tmpCycleTime - lastTmpCycleTime));
+					delayTime = (long) (deviceTimeStep_ms - (System.currentTimeMillis() - lastTmpCycleTime + 3));
 					if (delayTime > 0) {
 						WaitTimer.delay(delayTime);
 					}
@@ -249,7 +243,10 @@ public class GathererThreadTcp extends Thread {
 				}
 			}
 		}
-		this.application.setStatusMessage(""); //$NON-NLS-1$
+		if (this.application != null) {
+			this.application.setPortConnected(false);
+			this.application.setStatusMessage(""); //$NON-NLS-1$
+		}
 		log.logp(Level.FINE, GathererThreadTcp.$CLASS_NAME, $METHOD_NAME, "======> exit"); //$NON-NLS-1$
 	}
 

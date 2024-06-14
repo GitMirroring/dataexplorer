@@ -26,6 +26,7 @@ import gde.messages.MessageIds;
 import gde.messages.Messages;
 import gde.ui.DataExplorer;
 import gde.utils.Checksum;
+import gde.utils.StringHelper;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -66,6 +67,7 @@ public class DataParser extends NMEAParser implements IDataParser {
 		this.dataFormatType = FormatTypes.VALUE; //dataBlockSize specifies the number of contained values
 		this.isMultiply1000 = true;
 		this.isRedirectChannel1 = false;
+		log.log(Level.FINE, useTimeFactor + ", " + useLeaderChar + ", " + useSeparator + ", " + useCheckSumType + ", " + useDataSize + ", " + isMultiply1000);
 	}
 
 	/**
@@ -87,6 +89,7 @@ public class DataParser extends NMEAParser implements IDataParser {
 		this.dataFormatType = useDataFormatType; //dataBlockSize specifies the number of contained values if FormatTypes.TEXT else FormatTypes.BINARY the contained byte size
 		this.isMultiply1000 = doMultiply1000;
 		this.isRedirectChannel1 = false;
+		log.log(Level.FINE, useTimeFactor + ", " + useLeaderChar + ", " + useSeparator + ", " + useCheckSumType + ", " + useDataSize + ", " + isMultiply1000);
 	}
 
 	/**
@@ -118,6 +121,7 @@ public class DataParser extends NMEAParser implements IDataParser {
 
 	@Override
 	public void parse(String inputLine, int lineNum) throws DevicePropertiesInconsistenceException, Exception {
+		if (log.isLoggable(Level.FINER)) log.log(Level.FINER, inputLine + " - " + lineNum);
 		try {
 			String[] strValues = inputLine.split(this.separator); // {$1, 1, 0, 14780, 0,598, 1,000, 8,838, 22}
 			try {
@@ -154,6 +158,7 @@ public class DataParser extends NMEAParser implements IDataParser {
 	 */
 	@Override
 	public void parse(String inputLine, String[] strValues) throws DevicePropertiesInconsistenceException {
+		if (log.isLoggable(Level.FINE)) log.log(Level.FINE, inputLine + " - " + StringHelper.arrayToString(strValues));
 		String strValue = strValues[0].trim().substring(1);
 		this.channelConfigNumber = isRedirectChannel1 ? 1 : Integer.parseInt(strValue);
 

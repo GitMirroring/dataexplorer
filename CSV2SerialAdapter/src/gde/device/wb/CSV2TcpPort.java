@@ -76,9 +76,13 @@ public class CSV2TcpPort extends DeviceCommPort implements IDeviceCommPort {
 		this.isTcpRequest = this.device.getDeviceConfiguration().getTcpPortType().getRequest() != null;
 		this.tcpRequest = this.device.getDeviceConfiguration().getTcpPortType().getRequest();
 		if (log.isLoggable(Level.FINE))
-			log.log(Level.FINE, "EOL " + StringHelper.byte2Hex2CharString(this.device.getDataBlockEnding(), this.device.getDataBlockEnding().length));
+			printDefinedEOL();
 	}
 
+	public void printDefinedEOL() {
+		log.log(Level.FINE, System.identityHashCode(this) + " EOL in use " + StringHelper.byte2Hex2CharString(this.device.getDataBlockEnding(), this.device.getDataBlockEnding().length));
+	}
+	
 	/**
 	 * method to gather data from device, implementation is individual for device
 	 * @return byte array containing gathered data - this can individual specified per device
@@ -133,15 +137,19 @@ public class CSV2TcpPort extends DeviceCommPort implements IDeviceCommPort {
 	protected byte[] findDataEnd(int startIndex) throws IOException, TimeOutException {
 		final String $METHOD_NAME = "findDataEnd";
 		int endIndex;
-		if (this.endByte_1 != 0x00) //two char line ending CR/LF
+		if (this.endByte_1 != 0x00) {//two char line ending CR/LF
 			while (this.index < this.answer.length && !((this.endByte_1 != 0x00 || this.answer[this.index - 1] == this.endByte_1) && this.answer[this.index] == this.endByte))
 				++this.index;
-		else //this.endByte_1 == 0x00 -> single line end character
+			if (log.isLoggable(Level.FINE)) log.log(Level.FINE, System.identityHashCode(this) + String.format(" 2 0x%02X 0x%02X", this.endByte_1, this.endByte));
+		}
+		else {//this.endByte_1 == 0x00 -> single line end character
 			while (this.index < this.answer.length && !(this.answer[this.index] == this.endByte))
 				++this.index;
+			if (log.isLoggable(Level.FINE)) log.log(Level.FINE, System.identityHashCode(this) + String.format(" 1 0x%02X 0x%02X", this.endByte_1, this.endByte));
+		}
 		
 		if (this.index < this.answer.length && (this.tmpData.length + this.index - startIndex) > 8) {
-			endIndex = this.index;
+			endIndex = this.endByte_1 != 0x00 && this.answer[this.index] == this.endByte ? this.index-=1 : this.index;
 			this.data = new byte[this.tmpData.length + endIndex - startIndex];
 			//System.out.println(startIndex + " - " + this.tmpData.length + " - " + endIndex);
 			System.arraycopy(this.tmpData, 0, this.data, 0, this.tmpData.length);
