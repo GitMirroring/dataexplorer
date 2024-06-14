@@ -389,7 +389,7 @@ public class DeviceConfiguration {
 	}
 
 	/**
-	 * @return the serialPort
+	 * @return the tcpPort definition
 	 */
 	public TcpPortType getTcpPortType() {
 		return this.tcpPort;
@@ -401,6 +401,56 @@ public class DeviceConfiguration {
 	public void removeTcpPortType() {
 		this.isChangePropery = true;
 		this.tcpPort = this.deviceProps.tcpPort = null;
+	}
+
+	/**
+	 * @return the tcpPort communication respond type
+	 */
+	public TcpRespondType getTcpRespondType() {
+		return this.tcpPort.getRespond();
+	}
+
+	/**
+	 * remove the tcpPort communication respond type
+	 */
+	public void setTcpRespondType(TcpRespondType newRespond) {
+		this.isChangePropery = true;
+		if (this.tcpPort != null)
+		this.tcpPort.respond = this.deviceProps.tcpPort.respond = newRespond;
+	}
+
+	/**
+	 * remove the tcpPort communication respond type
+	 */
+	public void removeTcpRespondType() {
+		this.isChangePropery = true;
+		if (this.tcpPort != null)
+		this.tcpPort.respond = this.deviceProps.tcpPort.respond = null;
+	}
+
+	/**
+	 * @return the tcpPort communication request
+	 */
+	public byte[] getTcpRequest() {
+		return this.tcpPort != null && this.tcpPort.getRequest() != null ? this.tcpPort.getRequest() : new byte[0];
+	}
+
+	/**
+	 * remove the tcpPort communication respond type
+	 */
+	public void setTcpRequest(byte[] newRequest) {
+		this.isChangePropery = true;
+		if (this.tcpPort != null)
+		this.tcpPort.request = this.deviceProps.tcpPort.request = newRequest;
+	}
+
+	/**
+	 * remove the tcpPort communication respond type
+	 */
+	public void removeTcpRequest() {
+		this.isChangePropery = true;
+		if (this.tcpPort != null)
+		this.tcpPort.request = this.deviceProps.tcpPort.request = null;
 	}
 
 	/**
@@ -740,7 +790,7 @@ public class DeviceConfiguration {
 
 	public void setReadTimeOut(int value) {
 		this.isChangePropery = true;
-		if (this.serialPort == null) createSerialPort();
+		if (this.serialPort == null) return;
 		if (this.serialPort.getTimeOut() == null) {
 			this.serialPort.setTimeOut(new ObjectFactory().createTimeOutType());
 		}
@@ -754,7 +804,7 @@ public class DeviceConfiguration {
 
 	public void setReadStableIndex(int value) {
 		this.isChangePropery = true;
-		if (this.serialPort == null) createSerialPort();
+		if (this.serialPort == null) return;
 		if (this.serialPort.getTimeOut() == null) {
 			this.serialPort.setTimeOut(new ObjectFactory().createTimeOutType());
 		}
@@ -768,7 +818,7 @@ public class DeviceConfiguration {
 
 	public void setWriteCharDelayTime(int value) {
 		this.isChangePropery = true;
-		if (this.serialPort == null) createSerialPort();
+		if (this.serialPort == null) return;
 		if (this.serialPort.getTimeOut() == null) {
 			this.serialPort.setTimeOut(new ObjectFactory().createTimeOutType());
 		}
@@ -782,7 +832,7 @@ public class DeviceConfiguration {
 
 	public void setWriteDelayTime(int value) {
 		this.isChangePropery = true;
-		if (this.serialPort == null) createSerialPort();
+		if (this.serialPort == null) return;
 		if (this.serialPort.getTimeOut() == null) {
 			this.serialPort.setTimeOut(new ObjectFactory().createTimeOutType());
 		}
@@ -791,7 +841,7 @@ public class DeviceConfiguration {
 
 	public void removeSerialPortTimeOut() {
 		this.isChangePropery = true;
-		if (this.serialPort == null) createSerialPort();
+		if (this.serialPort == null) return;
 		if (this.serialPort.getTimeOut() != null) {
 			this.serialPort.setTimeOut(null);
 		}
@@ -823,6 +873,26 @@ public class DeviceConfiguration {
 		this.serialPort.setRequest(newRequest);
 	}
 
+	/**
+	 * set a new host address to be used for TCP communication
+	 * @param newHostAddress
+	 */
+	public void setTcpHostAddress(final String newHostAddress) {
+		this.isChangePropery = true;
+		if (this.tcpPort == null) return;
+		this.tcpPort.setAddress(newHostAddress);
+	}
+
+	/**
+	 * set a new port number to be used for TCP communication
+	 * @param newPortNumber
+	 */
+	public void setTcpPortNumber(final String newPortNumber) {
+		this.isChangePropery = true;
+		if (this.tcpPort == null) return;
+		this.tcpPort.setPort(newPortNumber);
+	}
+	
 	public UsbInterfaceType getUsbInterfaceType() {
 		return this.usbPort.getUsbInterface();
 	}

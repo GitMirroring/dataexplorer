@@ -11,6 +11,8 @@ package gde.device;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlType;
 
+import gde.GDE;
+
 
 /**
  * <p>Java class for tcp_respond_type.
@@ -42,4 +44,11 @@ public enum TcpRespondType {
         return valueOf(v);
     }
 
+  	public static String[] valuesAsStingArray() {
+  		StringBuilder sb = new StringBuilder();
+  		for (TcpRespondType element : TcpRespondType.values()) {
+  			sb.append(element.value()).append(GDE.STRING_SEMICOLON);
+  		}
+  		return sb.toString().split(GDE.STRING_SEMICOLON);
+  	}
 }

@@ -27,6 +27,7 @@ import gde.GDE;
  *     &lt;enumeration value="Double"/>
  *     &lt;enumeration value="Boolean"/>
  *     &lt;enumeration value="String"/>
+ *     &lt;enumeration value="Hexadecimal"/>
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
@@ -43,7 +44,9 @@ public enum DataTypes {
     @XmlEnumValue("Boolean") //$NON-NLS-1$
     BOOLEAN("Boolean"), //$NON-NLS-1$
     @XmlEnumValue("String") //$NON-NLS-1$
-    STRING("String"); //$NON-NLS-1$
+    STRING("String"), //$NON-NLS-1$
+    @XmlEnumValue("Hexadecimal") //$NON-NLS-1$
+    HEXADECIMAL("Hexadecimal"); //$NON-NLS-1$
     private final String value;
 
     DataTypes(String v) {

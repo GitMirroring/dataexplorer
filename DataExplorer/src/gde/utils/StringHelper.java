@@ -223,6 +223,21 @@ public class StringHelper {
 		return array;
 	}
 
+	public static byte[] byteString2ByteArray(String values) {
+		byte[] array = new byte[(values.length()+1)/2];
+		for (int i = 0,j = 0; i < array.length && array.length > 1; i++, j+=2) {
+			String subStr;
+			try {
+				subStr = values.substring(j, j+2);
+			}
+			catch (Exception e) {
+				subStr = values.substring(j, j+1);
+			}
+			array[i] = Byte.valueOf(subStr,16);
+		}
+		return array;
+	}
+
 	public static String pointArrayToString(Point[] points) {
 		StringBuffer sb = new StringBuffer();
 
@@ -501,6 +516,15 @@ public class StringHelper {
 		case BOOLEAN:
 			try {
 				Boolean.parseBoolean(eventText.trim());
+			}
+			catch (Exception e) {
+				doIt = false;
+			}
+			break;
+		case HEXADECIMAL:
+			try {
+				doIt = eventText.chars()
+		        .allMatch(c -> "0123456789ABCDEFabcdef".indexOf(c) >= 0);
 			}
 			catch (Exception e) {
 				doIt = false;
@@ -1018,6 +1042,7 @@ public class StringHelper {
 		for (Object object : inputArray) {
 			sb.append(object).append(GDE.STRING_COMMA_BLANK);
 		}
+		sb.deleteCharAt(sb.length()-2);
 		return sb.toString();
 	}
 	
