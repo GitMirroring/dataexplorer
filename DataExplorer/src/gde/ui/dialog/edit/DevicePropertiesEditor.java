@@ -89,7 +89,6 @@ import gde.ui.DataExplorer;
 import gde.ui.SWTResourceManager;
 import gde.ui.dialog.DeviceSelectionDialog;
 import gde.ui.dialog.HelpInfoDialog;
-import gde.ui.menu.MenuBar;
 import gde.utils.FileUtils;
 import gde.utils.StringHelper;
 
@@ -134,6 +133,7 @@ public class DevicePropertiesEditor extends Composite {
 	DeviceTypes														deviceGroup															= DeviceTypes.LOGGER;
 
 	SeriaPortTypeTabItem									serialPortTabItem;
+	TcpPortTypeTabItem										tcpPortTabItem;
 
 	CTabItem															timeBaseTabItem;
 	Composite															timeBaseComposite;
@@ -293,8 +293,9 @@ public class DevicePropertiesEditor extends Composite {
 				if (!display.readAndDispatch()) display.sleep();
 			}
 			DataExplorer.getInstance().resetShellIcon();
+			DataExplorer.getInstance().setActiveDevice(null);
 			DeviceSelectionDialog deviceSelect = DataExplorer.getInstance().getDeviceSelectionDialog();
-			deviceSelect.setActiveConfig(useDeviceConfiguration);
+			deviceSelect.setActiveConfig(this.deviceConfig);
 			deviceSelect.setupDevice();
 		}
 		catch (Throwable e) {
@@ -371,7 +372,7 @@ public class DevicePropertiesEditor extends Composite {
 							}
 						}
 					}
-					DevicePropertiesEditor.this.deviceConfig = null; //signal properties editor shut down
+					//DevicePropertiesEditor.this.deviceConfig = null; //signal properties editor shut down
 				}
 			});
 			{
@@ -755,7 +756,10 @@ public class DevicePropertiesEditor extends Composite {
 					}
 				}
 				{
-					this.serialPortTabItem = new SeriaPortTypeTabItem(this.tabFolder, SWT.CLOSE, 1);
+					if (this.deviceConfig != null && this.deviceConfig.getSerialPortType() != null)
+						this.serialPortTabItem = new SeriaPortTypeTabItem(this.tabFolder, SWT.CLOSE, 1);
+					else if (this.deviceConfig != null && this.deviceConfig.getTcpPortType() != null)
+						this.tcpPortTabItem = new TcpPortTypeTabItem(this.tabFolder, SWT.CLOSE, 1);
 				}
 				{
 					this.timeBaseTabItem = new CTabItem(this.tabFolder, SWT.NONE);
@@ -1020,6 +1024,11 @@ public class DevicePropertiesEditor extends Composite {
 							DevicePropertiesEditor.this.serialPortTabItem = null;
 							if (DevicePropertiesEditor.this.deviceConfig != null) DevicePropertiesEditor.this.deviceConfig.removeSerialPortType();
 						}
+						else if (tabItem.getText().equals(Messages.getString(MessageIds.GDE_MSGT0975))) {
+							tabItem.dispose();
+							DevicePropertiesEditor.this.tcpPortTabItem = null;
+							if (DevicePropertiesEditor.this.deviceConfig != null) DevicePropertiesEditor.this.deviceConfig.removeTcpPortType();
+						}
 						else if (tabItem.getText().equals(Messages.getString(MessageIds.GDE_MSGT0515))) {
 							tabItem.dispose();
 							DevicePropertiesEditor.this.dataBlockTabItem = null;
@@ -1055,6 +1064,9 @@ public class DevicePropertiesEditor extends Composite {
 
 		if (tabItemName.equals(Messages.getString(MessageIds.GDE_MSGT0510))) { // Serial port
 			this.serialPortTabItem.enableContextmenu(enable);
+		}
+		else if (tabItemName.equals(Messages.getString(MessageIds.GDE_MSGT0975))) { // TCP port
+			this.tcpPortTabItem.enableContextmenu(enable);
 		}
 		else {
 			if (enable && (this.popupMenu == null || this.contextMenu == null)) {
@@ -1791,20 +1803,17 @@ public class DevicePropertiesEditor extends Composite {
 					if (DevicePropertiesEditor.dialogShell != null && !DevicePropertiesEditor.dialogShell.isDisposed()) {
 						DevicePropertiesEditor.dialogShell.setCursor(SWTResourceManager.getCursor(SWT.CURSOR_WAIT));
 						//SerialPortType begin
-						if (DevicePropertiesEditor.this.deviceConfig.getSerialPortType() == null && DevicePropertiesEditor.this.serialPortTabItem != null
-								&& !DevicePropertiesEditor.this.serialPortTabItem.isDisposed()) {
-							DevicePropertiesEditor.this.serialPortTabItem.dispose();
-							DevicePropertiesEditor.this.serialPortTabItem = null;
-						}
-						else if (DevicePropertiesEditor.this.deviceConfig.getSerialPortType() != null
+						if (DevicePropertiesEditor.this.deviceConfig.getSerialPortType() != null
 								&& (DevicePropertiesEditor.this.serialPortTabItem == null || DevicePropertiesEditor.this.serialPortTabItem.isDisposed())) {
 							DevicePropertiesEditor.this.serialPortTabItem = new SeriaPortTypeTabItem(DevicePropertiesEditor.this.tabFolder, SWT.CLOSE, 1);
 						}
-						if (DevicePropertiesEditor.this.deviceConfig.getSerialPortType() != null && DevicePropertiesEditor.this.serialPortTabItem != null
-								&& !DevicePropertiesEditor.this.serialPortTabItem.isDisposed()) {
-							DevicePropertiesEditor.this.serialPortTabItem.setDeviceConfig(DevicePropertiesEditor.this.deviceConfig);
-						}
 						//SerialPortType end
+						//TcpPortType begin
+						else if (DevicePropertiesEditor.this.deviceConfig.getTcpPortType() != null 
+								&& DevicePropertiesEditor.this.tcpPortTabItem == null || DevicePropertiesEditor.this.tcpPortTabItem.isDisposed()) {
+							DevicePropertiesEditor.this.tcpPortTabItem = new TcpPortTypeTabItem(DevicePropertiesEditor.this.tabFolder, SWT.CLOSE, 1);
+						}
+						//TcpPortType end
 						//TimeBaseType begin
 						DevicePropertiesEditor.this.timeStep_ms = DevicePropertiesEditor.this.deviceConfig.getTimeStep_ms();
 						DevicePropertiesEditor.this.utcDelta = DevicePropertiesEditor.this.deviceConfig.getUTCdelta();
