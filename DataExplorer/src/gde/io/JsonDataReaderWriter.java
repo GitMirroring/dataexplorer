@@ -57,8 +57,8 @@ import gde.ui.DataExplorer;
  * All properties around the textual data in this line has to be specified in DataBlockType (type=TEXT, size number of values, separator=;, ...), refer to DeviceProperties_XY.XSD
  * @author Winfried Brügmann
  */
-public class CSVSerialDataReaderWriter {
-	static Logger					log			= Logger.getLogger(CSVSerialDataReaderWriter.class.getName());
+public class JsonDataReaderWriter {
+	static Logger					log			= Logger.getLogger(JsonDataReaderWriter.class.getName());
 
 	static String					lineSep	= GDE.LINE_SEPARATOR;
 	static DecimalFormat	df3			= new DecimalFormat("0.000"); //$NON-NLS-1$
@@ -96,11 +96,7 @@ public class CSVSerialDataReaderWriter {
 		RecordSet channelRecordSet = null;
 		int lastRecordSetNumberOffset = 0;
 		Vector<RecordSet> createdRecordSets = new Vector<RecordSet>(1);
-		StringBuilder inputLineBuffer = new StringBuilder();
-		boolean isRedirect2Channel1 = data.isRedirectChannel1();
-		int endIndex = 0;
-		int dataBlockNumber = 1;
-		String firmwareHardwareDescription = new String();
+
 		long lastRecordEndTimeStamp_ms = 0;
 		boolean isDataConsistentChecked = false;
 
@@ -142,47 +138,9 @@ public class CSVSerialDataReaderWriter {
 							log.log(Level.WARNING, filePath + " - skipped " + lineNumber + ", ends with " + device.getDataBlockSeparator().value()); //$NON-NLS-1$
 							continue;
 						}
-					}
-					else {//skip all lines which does not match the configured data block leader
-						if (line.startsWith("@Model")) {//iCharger model and hardware/firmware level
-							//System.out.println("!" + line.substring(1) + "! " + line.substring(1).length());
-							//System.out.println("!" + line.substring(1).trim() + "! " + line.substring(1).trim().length());
-							//attention, special character has influence to file pointer calculation while writing OSD file
-							firmwareHardwareDescription = line.substring(1).trim().replace(GDE.CHAR_COLON, GDE.CHAR_BLANK); //this line contains some special character, remove it using trim()
-						} else
-							log.log(Level.WARNING, filePath + " - skipped " + lineNumber + ", it does not start with " + device.getDataBlockLeader()); //$NON-NLS-1$
-						continue;
-					}
-
-					if (isRedirect2Channel1) {
-						if (log.isLoggable(Level.FINE)) log.log(Level.FINE, "number of values inputLineBuffer " + inputLineBuffer.toString().split(device.getDataBlockSeparator().value()).length);
-						if (line.startsWith("$1")) { //start new $1 segment
-							int numValues = dataBlockNumber == 2 ? 58 : dataBlockNumber == 3 ? 75 : Math.abs(device.getDataBlockSize(InputTypes.FILE_IO)) - 25;
-							if (inputLineBuffer.toString().split(device.getDataBlockSeparator().value()).length > numValues) {
-								data.parse(inputLineBuffer.toString(), lineNumber);
-								endIndex = line.lastIndexOf(GDE.CHAR_SEMICOLON, line.lastIndexOf(GDE.CHAR_SEMICOLON) - 3);
-								inputLineBuffer = new StringBuilder().append(line.substring(0, endIndex));
-							}
-							else {
-								endIndex = line.lastIndexOf(GDE.CHAR_SEMICOLON, line.lastIndexOf(GDE.CHAR_SEMICOLON) - 3);
-								inputLineBuffer = new StringBuilder().append(line.substring(0, endIndex));
-								continue;
-							}
+						else { //normal behavior
+							data.parse(line, lineNumber);
 						}
-						else {
-							try {
-								dataBlockNumber = line.charAt(1)-48;
-							}
-							catch (Exception e) {
-								dataBlockNumber = 1;
-							}
-							endIndex = line.lastIndexOf(GDE.CHAR_SEMICOLON);
-							inputLineBuffer.append(line.substring(line.indexOf(device.getDataBlockSeparator().value(), 6), endIndex));
-							continue;
-						}
-					}
-					else { //normal behavior
-						data.parse(line, lineNumber);
 					}
 
 					try {
@@ -194,8 +152,7 @@ public class CSVSerialDataReaderWriter {
 						if (log.isLoggable(Level.FINE)) log.log(Level.FINE, device.getChannelCount() + " - data for channel = " + activeChannelConfigNumber + " state = " + data.getState());
 						
 						if (!isDataConsistentChecked) {
-							//$1;1;0; 14780;  598;  1000;  8838;  0002
-							//$channelConfigNumber;stateNumber;timeStepSeconds;firstIntValue;secondIntValue;.....;checkSumIntValue;
+							//{"dataSetNumber":1,"state":1,"time":1000,"measurements":[1001,1002,1003,1004,1005,1006,1007,1008],"checksum":0}
 							int measurementSize = device.getNumberOfMeasurements(activeChannelConfigNumber);
 							int dataBlockSize = device.getDataBlockSize(InputTypes.FILE_IO); // measurements size must not match data block size, there are some measurements which are result of calculation
 							if (log.isLoggable(Level.FINE)) log.log(Level.FINE, "measurementSize = " + measurementSize + "; dataBlockSize = " + dataBlockSize);  //$NON-NLS-1$ //$NON-NLS-2$
@@ -204,14 +161,6 @@ public class CSVSerialDataReaderWriter {
 							isDataConsistentChecked = true;
 						}
 
-						//enable adding iCharger Ri values
-						boolean isJunsiChargerSpecialState = (device.getName().startsWith("iCharger") && data.getState() >= 128);
-						recordSetNameExtend = isJunsiChargerSpecialState  
-								? recordSetNameExtend 
-								: device.getRecordSetStateNameReplacement(data.getState());
-						if (recordNameExtend.length() > 0 && !isJunsiChargerSpecialState) {
-							recordSetNameExtend = recordSetNameExtend + GDE.STRING_BLANK + GDE.STRING_LEFT_BRACKET + recordNameExtend + GDE.STRING_RIGHT_BRACKET;
-						}
 						channelRecordSet = activeChannel.get(device.recordSetNumberFollowChannel() && activeChannel.getType() == ChannelTypes.TYPE_CONFIG ? activeChannel.getLastActiveRecordSetName() : recordSetName);
 						recordSetNameExtend = recordSetNameExtend.length() <= RecordSet.MAX_NAME_LENGTH - 4 /* '99) '*/ ? recordSetNameExtend : recordSetNameExtend.substring(0, RecordSet.MAX_NAME_LENGTH - 5) + GDE.STRING_RIGHT_BRACKET;
 					}
@@ -263,8 +212,6 @@ public class CSVSerialDataReaderWriter {
 							channelRecordSet = activeChannel.get(recordSetName);
 							createdRecordSets.add(channelRecordSet);
 							recordSetName = channelRecordSet.getName(); // cut/correct length
-							if (firmwareHardwareDescription.length() > 10 && !activeChannel.getFileDescription().contains(firmwareHardwareDescription))
-								activeChannel.setFileDescription(activeChannel.getFileDescription() + GDE.STRING_MESSAGE_CONCAT + firmwareHardwareDescription);
 							device.updateVisibilityStatus(activeChannel.get(recordSetName), true);
 							lastRecordEndTimeStamp_ms = data.getTime_ms();
 						}
@@ -331,8 +278,6 @@ public class CSVSerialDataReaderWriter {
 					}
 					//write filename after import to record description
 					tmpRecordSet.descriptionAppendFilename(filePath.substring(filePath.lastIndexOf(GDE.CHAR_FILE_SEPARATOR_UNIX)+1));
-					if (firmwareHardwareDescription.length() > 10 && !tmpRecordSet.getDescription().contains(firmwareHardwareDescription))
-						tmpRecordSet.setRecordSetDescription(tmpRecordSet.getDescription()+ GDE.STRING_NEW_LINE + firmwareHardwareDescription);
 				}
 
 				if (GDE.isWithUi()) {

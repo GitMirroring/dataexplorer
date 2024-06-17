@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <DeviceProperties xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="DeviceProperties_V49.xsd">
     <Device>
-        <name implementation="CSV2TcpAdapter">CSV2TCP1</name>
+        <name implementation="CSV2TcpAdapter">JSON2TCP1</name>
         <manufacturer>WB</manufacturer>
         <manufacturerURL>https://www.nongnu.org/dataexplorer</manufacturerURL>
         <group>charger</group>
         <image>CSV2SerialAdapter.png</image>
-        <usage>false</usage>
+        <usage>true</usage>
     </Device>
     <TcpPort>
         <address>192.168.25.40</address>
@@ -17,7 +17,7 @@
             <WriteCharDelayTime>0</WriteCharDelayTime>
             <WriteDelayTime>0</WriteDelayTime>
         </TimeOut>
-        <respond>CSV</respond>
+        <respond>JSON</respond>
         <request>510D0A</request>
     </TcpPort>
     <TimeBase>
@@ -28,13 +28,13 @@
         <avarage_timeStep>1000.0</avarage_timeStep>
     </TimeBase>
     <DataBlock>
-        <format inputType="SERIAL_IO" formatType="BYTE" size="-100"/>
+        <format inputType="SERIAL_IO" formatType="BYTE" size="-150"/>
         <format inputType="FILE_IO" formatType="VALUE" size="-8"/>
         <timeUnit>msec</timeUnit>
-        <separator>semicolon</separator>
-        <leader>$</leader>
+        <separator>comma</separator>
+        <leader>{</leader>
         <trailer>0D0A</trailer>
-		<preferredFileExtention>*.csv</preferredFileExtention>
+		<preferredFileExtention>*.json</preferredFileExtention>
     </DataBlock>
     <State>
         <property name="state_data_recording" value="01" type="Integer"/>

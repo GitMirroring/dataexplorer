@@ -53,6 +53,8 @@ import gde.exception.SerialPortException;
 import gde.io.CSVSerialDataReaderWriter;
 import gde.io.DataParser;
 import gde.io.FileHandler;
+import gde.io.JsonDataParser;
+import gde.io.JsonDataReaderWriter;
 import gde.log.Level;
 import gde.messages.Messages;
 import gde.ui.DataExplorer;
@@ -68,7 +70,7 @@ public class CSV2TcpAdapter extends DeviceConfiguration implements IDevice {
 
 	final DataExplorer							application;
 	final CSV2TcpAdapterDialog			dialog;
-	protected final CSV2TcpPort			tcpPort;
+	protected final TcpSocketPort			tcpPort;
 	protected final Channels				channels;
 	protected GathererThreadTcp			gathererThread;
 
@@ -87,7 +89,7 @@ public class CSV2TcpAdapter extends DeviceConfiguration implements IDevice {
 
 		this.application = DataExplorer.getInstance();
 		this.dialog = new CSV2TcpAdapterDialog(this.application.getShell(), this);
-		this.tcpPort = new CSV2TcpPort(this, this.application);
+		this.tcpPort = new TcpSocketPort(this, this.application);
 		this.channels = Channels.getInstance();
 		if (this.application.getMenuToolBar() != null) {
 			for (DataBlockType.Format format : this.getDataBlockType().getFormat()) {
@@ -115,7 +117,7 @@ public class CSV2TcpAdapter extends DeviceConfiguration implements IDevice {
 
 		this.application = DataExplorer.getInstance();
 		this.dialog = new CSV2TcpAdapterDialog(this.application.getShell(), this);
-		this.tcpPort = new CSV2TcpPort(this, this.application);
+		this.tcpPort = new TcpSocketPort(this, this.application);
 		this.channels = Channels.getInstance();
 		if (this.application.getMenuToolBar() != null) {
 			for (DataBlockType.Format format : this.getDataBlockType().getFormat()) {
@@ -614,9 +616,17 @@ public class CSV2TcpAdapter extends DeviceConfiguration implements IDevice {
 									}
 								}
 								Integer channelConfigNumber = dialog != null && !dialog.isDisposed() ? dialog.getTabFolderSelectionIndex() + 1 : null;
-								CSVSerialDataReaderWriter.read(selectedImportFile, CSV2TcpAdapter.this, recordNameExtend, channelConfigNumber,
-										new DataParser(CSV2TcpAdapter.this.getDataBlockTimeUnitFactor(), CSV2TcpAdapter.this.getDataBlockLeader(), CSV2TcpAdapter.this.getDataBlockSeparator().value(),
-												CSV2TcpAdapter.this.getDataBlockCheckSumType(), CSV2TcpAdapter.this.getDataBlockSize(InputTypes.FILE_IO)));
+								if (CSV2TcpAdapter.this.getTcpPortType().getRespond().name().equals("CSV"))
+									CSVSerialDataReaderWriter.read(selectedImportFile, CSV2TcpAdapter.this, recordNameExtend, channelConfigNumber,
+											new DataParser(CSV2TcpAdapter.this.getDataBlockTimeUnitFactor(), CSV2TcpAdapter.this.getDataBlockLeader(), CSV2TcpAdapter.this.getDataBlockSeparator().value(),
+													CSV2TcpAdapter.this.getDataBlockCheckSumType(), CSV2TcpAdapter.this.getDataBlockSize(InputTypes.FILE_IO)));
+								else if (CSV2TcpAdapter.this.getTcpPortType().getRespond().name().equals("JSON"))
+									JsonDataReaderWriter.read(selectedImportFile, CSV2TcpAdapter.this, recordNameExtend, channelConfigNumber,
+											new JsonDataParser(CSV2TcpAdapter.this.getDataBlockTimeUnitFactor(), CSV2TcpAdapter.this.getDataBlockLeader(), CSV2TcpAdapter.this.getDataBlockSeparator().value(),
+													CSV2TcpAdapter.this.getDataBlockCheckSumType(), CSV2TcpAdapter.this.getDataBlockSize(InputTypes.FILE_IO)));
+								else {
+									throw new ApplicationConfigurationException("check TCP connection respond type");
+								}
 							}
 							catch (Throwable e) {
 								log.log(Level.WARNING, e.getMessage(), e);

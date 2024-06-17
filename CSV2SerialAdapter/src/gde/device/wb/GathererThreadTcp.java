@@ -31,6 +31,8 @@ import gde.exception.DevicePropertiesInconsistenceException;
 import gde.exception.SerialPortException;
 import gde.exception.TimeOutException;
 import gde.io.DataParser;
+import gde.io.IDataParser;
+import gde.io.JsonDataParser;
 import gde.log.Level;
 import gde.messages.Messages;
 import gde.ui.DataExplorer;
@@ -52,10 +54,10 @@ public class GathererThreadTcp extends Thread {
 	final static int				WAIT_TIME_RETRYS						= 36;
 
 	final DataExplorer			application;
-	final CSV2TcpPort				tcpPort;
+	final TcpSocketPort			tcpPort;
 	final CSV2TcpAdapter		device;
 	final Channels					channels;
-	final DataParser				parser;
+	final IDataParser				parser;
 	
 	Channel									activeChannel;
 	RecordSet								activeRecordSet;
@@ -73,7 +75,7 @@ public class GathererThreadTcp extends Thread {
 	 * @throws ApplicationConfigurationException 
 	 * @throws Exception 
 	 */
-	public GathererThreadTcp(DataExplorer currentApplication, CSV2TcpAdapter useDevice, CSV2TcpPort useTcpPort, int channelConfigNumber)
+	public GathererThreadTcp(DataExplorer currentApplication, CSV2TcpAdapter useDevice, TcpSocketPort useTcpPort, int channelConfigNumber)
 			throws ApplicationConfigurationException, SerialPortException {
 		super("dataGatherer");
 		this.application = currentApplication;
@@ -83,7 +85,14 @@ public class GathererThreadTcp extends Thread {
 		this.channelNumber = channelConfigNumber;
 		this.channel = this.channels.get(this.channelNumber);
 		this.recordSetKey = GDE.STRING_BLANK + this.device.getRecordSetStateNameReplacement(this.stateNumber);
-		this.parser = new DataParser(this.device.getDataBlockTimeUnitFactor(), this.device.getDataBlockLeader(), this.device.getDataBlockSeparator().value(), this.device.getDataBlockCheckSumType(), this.device.getDataBlockSize(InputTypes.FILE_IO)); //$NON-NLS-1$  //$NON-NLS-2$
+		if (this.device.getTcpPortType().getRespond().name().equals("CSV"))
+				this.parser = new DataParser(this.device.getDataBlockTimeUnitFactor(), this.device.getDataBlockLeader(), this.device.getDataBlockSeparator().value(), this.device.getDataBlockCheckSumType(), this.device.getDataBlockSize(InputTypes.FILE_IO)); //$NON-NLS-1$  //$NON-NLS-2$
+		else if (this.device.getTcpPortType().getRespond().name().equals("JSON"))
+				this.parser = new JsonDataParser(this.device.getDataBlockTimeUnitFactor(), this.device.getDataBlockLeader(), this.device.getDataBlockSeparator().value(), this.device.getDataBlockCheckSumType(), this.device.getDataBlockSize(InputTypes.FILE_IO)); //$NON-NLS-1$  //$NON-NLS-2$
+		else {
+			this.parser = null;
+			throw new ApplicationConfigurationException("check TCP connection respond type");
+		}
 
 		if (!this.tcpPort.isConnected()) {
 			this.tcpPort.open();
@@ -127,10 +136,10 @@ public class GathererThreadTcp extends Thread {
 					dataBuffer = this.tcpPort.getData();
 					if (log.isLoggable(Level.FINE)) log.log(Level.FINE, new String(dataBuffer));
 					// check if device is ready for data capturing else wait for 180 seconds max. for actions
-					
+					this.parser.parse(new String(dataBuffer), 42);
 					try {
-						this.channelNumber = Integer.valueOf(GDE.STRING_EMPTY+(char)dataBuffer[1]);
-						this.stateNumber = Integer.valueOf(GDE.STRING_EMPTY+(char)dataBuffer[3]);
+						this.channelNumber = this.parser.getChannelConfigNumber();
+						this.stateNumber = this.parser.getState();
 						if (log.isLoggable(Level.FINE)) log.logp(Level.FINE, GathererThreadTcp.$CLASS_NAME, $METHOD_NAME,	device.getChannelCount() + " - data for channel = " + channelNumber + " state = " + stateNumber);
 						if (this.channelNumber > device.getChannelCount()) 
 							continue; //skip data if not configured
@@ -183,7 +192,6 @@ public class GathererThreadTcp extends Thread {
 
 					if (channelRecordSet != null) {
 						if (this.tcpPort.isInterruptedByUser) break;
-						this.parser.parse(new String(dataBuffer), 42);
 						if (this.parser.getValues().length == channelRecordSet.size()) 
 							channelRecordSet.addPoints(this.parser.getValues(), (tmpCycleTime - startCycleTime));
 						else
@@ -205,7 +213,7 @@ public class GathererThreadTcp extends Thread {
 					}
 				}
 				if (deviceTimeStep_ms > 0) { //time step is constant
-					delayTime = (long) (deviceTimeStep_ms - (System.currentTimeMillis() - lastTmpCycleTime + 3));
+					delayTime = (long) (deviceTimeStep_ms - (System.currentTimeMillis() - lastTmpCycleTime));
 					if (delayTime > 0) {
 						WaitTimer.delay(delayTime);
 					}

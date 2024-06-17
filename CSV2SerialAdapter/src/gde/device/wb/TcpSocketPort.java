@@ -35,9 +35,9 @@ import gde.utils.StringHelper;
  * eStation serial port implementation
  * @author Winfried Brügmann
  */
-public class CSV2TcpPort extends DeviceCommPort implements IDeviceCommPort {
-	final static String	$CLASS_NAME			= CSV2TcpPort.class.getName();
-	final static Logger	log							= Logger.getLogger(CSV2TcpPort.$CLASS_NAME);
+public class TcpSocketPort extends DeviceCommPort implements IDeviceCommPort {
+	final static String	$CLASS_NAME			= TcpSocketPort.class.getName();
+	final static Logger	log							= Logger.getLogger(TcpSocketPort.$CLASS_NAME);
 
 	final byte					startByte;
 	final byte					endByte;
@@ -62,7 +62,7 @@ public class CSV2TcpPort extends DeviceCommPort implements IDeviceCommPort {
 	 * @param currentDeviceConfig - required by super class to initialize the serial communication port
 	 * @param currentApplication - may be used to reflect serial receive,transmit on/off status or overall status by progress bar 
 	 */
-	public CSV2TcpPort(IDevice currentDevice, DataExplorer currentApplication) {
+	public TcpSocketPort(IDevice currentDevice, DataExplorer currentApplication) {
 		super(currentDevice, currentApplication);
 		this.startByte = (byte) this.device.getDataBlockLeader().charAt(0);
 		this.endByte = this.device.getDataBlockEnding()[this.device.getDataBlockEnding().length - 1];
@@ -119,7 +119,7 @@ public class CSV2TcpPort extends DeviceCommPort implements IDeviceCommPort {
 		}
 		catch (Exception e) {
 			if (!(e instanceof TimeOutException)) {
-				CSV2TcpPort.log.logp(Level.SEVERE, CSV2TcpPort.$CLASS_NAME, $METHOD_NAME, e.getMessage(), e);
+				TcpSocketPort.log.logp(Level.SEVERE, TcpSocketPort.$CLASS_NAME, $METHOD_NAME, e.getMessage(), e);
 			}
 			throw e;
 		}
@@ -154,14 +154,14 @@ public class CSV2TcpPort extends DeviceCommPort implements IDeviceCommPort {
 			//System.out.println(startIndex + " - " + this.tmpData.length + " - " + endIndex);
 			System.arraycopy(this.tmpData, 0, this.data, 0, this.tmpData.length);
 			System.arraycopy(this.answer, startIndex, this.data, this.tmpData.length, endIndex - startIndex);
-			if (CSV2TcpPort.log.isLoggable(Level.FINER)) {
+			if (TcpSocketPort.log.isLoggable(Level.FINER)) {
 				StringBuilder sb = new StringBuilder();
 				for (byte b : this.data) {
 					sb.append((char) b);
 				}
 				while (sb.length() > 5 && (sb.charAt(sb.length() - 1) == '\n' || sb.charAt(sb.length() - 1) == '\r'))
 					sb.deleteCharAt(sb.length() - 1);
-				CSV2TcpPort.log.logp(Level.FINER, CSV2TcpPort.$CLASS_NAME, $METHOD_NAME, sb.toString());
+				TcpSocketPort.log.logp(Level.FINER, TcpSocketPort.$CLASS_NAME, $METHOD_NAME, sb.toString());
 			}
 			return this.data;
 		}
@@ -204,8 +204,8 @@ public class CSV2TcpPort extends DeviceCommPort implements IDeviceCommPort {
 		int lenght = this.tmpData.length;
 		while (lenght > 0 && !((this.endByte_1 != 0x00 || this.tmpData[lenght - 2] == this.endByte_1) && this.tmpData[lenght - 1] == this.endByte))
 			--lenght;
-		if (CSV2TcpPort.log.isLoggable(Level.FINER))
-			CSV2TcpPort.log.logp(Level.FINER, CSV2TcpPort.$CLASS_NAME, "getArrayLengthByCheckEnding", "array length = " + lenght);
+		if (TcpSocketPort.log.isLoggable(Level.FINER))
+			TcpSocketPort.log.logp(Level.FINER, TcpSocketPort.$CLASS_NAME, "getArrayLengthByCheckEnding", "array length = " + lenght);
 		return lenght;
 	}
 
@@ -219,7 +219,7 @@ public class CSV2TcpPort extends DeviceCommPort implements IDeviceCommPort {
 		boolean isOK = false;
 		int check_sum = Checksum.XOR(buffer, buffer.length - 4);
 		if (Integer.parseInt(String.format("%c%c", buffer[buffer.length - 4], buffer[buffer.length - 3])) == check_sum) isOK = true;
-		if (CSV2TcpPort.log.isLoggable(Level.FINER)) CSV2TcpPort.log.logp(Level.FINER, CSV2TcpPort.$CLASS_NAME, $METHOD_NAME, "Check_sum = " + isOK); //$NON-NLS-1$
+		if (TcpSocketPort.log.isLoggable(Level.FINER)) TcpSocketPort.log.logp(Level.FINER, TcpSocketPort.$CLASS_NAME, $METHOD_NAME, "Check_sum = " + isOK); //$NON-NLS-1$
 		return isOK;
 	}
 
