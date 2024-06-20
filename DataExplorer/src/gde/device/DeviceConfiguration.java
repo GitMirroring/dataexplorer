@@ -445,7 +445,7 @@ public class DeviceConfiguration {
 	}
 
 	/**
-	 * remove the tcpPort communication respond type
+	 * remove the tcpPort communication request
 	 */
 	public void removeTcpRequest() {
 		this.isChangePropery = true;
@@ -872,6 +872,16 @@ public class DeviceConfiguration {
 		if (this.serialPort == null) createSerialPort();
 		this.serialPort.setRequest(newRequest);
 	}
+
+	/**
+	 * remove the serial port request
+	 */
+	public void removeSerialPortRequest() {
+		this.isChangePropery = true;
+		if (this.serialPort != null)
+		this.serialPort.request = this.deviceProps.serialPort.request = null;
+	}
+
 
 	/**
 	 * set a new host address to be used for TCP communication

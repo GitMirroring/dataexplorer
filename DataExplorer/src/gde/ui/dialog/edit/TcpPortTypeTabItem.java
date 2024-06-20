@@ -36,6 +36,7 @@ import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Text;
@@ -63,7 +64,7 @@ public class TcpPortTypeTabItem extends CTabItem {
 	Label													tcpHostAddressLabel, portNumberLabel, respondLabel, requestLabel, timeOutLabel;
 	Text													tcpHostAddressText, portNumberText, requestText;
 	CCombo												respondCombo;
-	Button												timeOutButton;
+	Button												requestButton, timeOutButton;
 	Label													_RTOCharDelayTimeLabel, _RTOExtraDelayTimeLabel, _WTOCharDelayTimeLabel, _WTOExtraDelayTimeLabel;
 	Text													_RTOCharDelayTimeText, _RTOExtraDelayTimeText, _WTOCharDelayTimeText, _WTOExtraDelayTimeText;
 
@@ -71,6 +72,7 @@ public class TcpPortTypeTabItem extends CTabItem {
 	String												portNumber					= GDE.STRING_EMPTY;
 	TcpRespondType								respondType					= TcpRespondType.fromValue("CSV");
 	String												request							= GDE.STRING_EMPTY;
+	boolean												isUseRequest				= false;
 	boolean												useTimeOut					= false;
 	int														RTOCharDelayTime		= 0;
 	int														RTOExtraDelayTime		= 0;
@@ -126,10 +128,10 @@ public class TcpPortTypeTabItem extends CTabItem {
 					this.serialPortDescriptionLabel.setBounds(12, 6, 602, 56);
 				}
 				{
-					this.tcpHostAddressLabel = new Label(this.tcpPortComposite, SWT.RIGHT);
+					this.tcpHostAddressLabel = new Label(this.tcpPortComposite, SWT.LEFT);
 					this.tcpHostAddressLabel.setText(Messages.getString(MessageIds.GDE_MSGT0977));
 					this.tcpHostAddressLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
-					this.tcpHostAddressLabel.setBounds(5, 74, 100, 20);
+					this.tcpHostAddressLabel.setBounds(15, 74, 100, 20);
 				}
 				{
 					this.tcpHostAddressText = new Text(this.tcpPortComposite, SWT.BORDER);
@@ -149,10 +151,10 @@ public class TcpPortTypeTabItem extends CTabItem {
 					});
 				}
 				{
-					this.portNumberLabel = new Label(this.tcpPortComposite, SWT.RIGHT);
+					this.portNumberLabel = new Label(this.tcpPortComposite, SWT.LEFT);
 					this.portNumberLabel.setText(Messages.getString(MessageIds.GDE_MSGT0978));
 					this.portNumberLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
-					this.portNumberLabel.setBounds(5, 104, 100, 20);
+					this.portNumberLabel.setBounds(15, 104, 100, 20);
 				}
 				{
 					this.portNumberText = new Text(this.tcpPortComposite, SWT.BORDER);
@@ -178,10 +180,10 @@ public class TcpPortTypeTabItem extends CTabItem {
 					});
 				}
 				{
-					this.respondLabel = new Label(this.tcpPortComposite, SWT.RIGHT);
+					this.respondLabel = new Label(this.tcpPortComposite, SWT.LEFT);
 					this.respondLabel.setText("Respond Type");
 					this.respondLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
-					this.respondLabel.setBounds(5, 200, 150, 20);
+					this.respondLabel.setBounds(25, 200, 150, 20);
 				}
 				{
 					this.respondCombo = new CCombo(this.tcpPortComposite, SWT.BORDER);
@@ -196,39 +198,79 @@ public class TcpPortTypeTabItem extends CTabItem {
 								TcpPortTypeTabItem.this.deviceConfig.setTcpRespondType(TcpRespondType.fromValue(TcpRespondType.valuesAsStingArray()[TcpPortTypeTabItem.this.respondCombo.getSelectionIndex()]));
 								TcpPortTypeTabItem.this.propsEditor.enableSaveButton(true);
 							}
-							//TcpPortTypeTabItem.this.flowControlIndex = TcpPortTypeTabItem.this.respondCombo.getSelectionIndex();
 						}
 					});
 				}
 				{
-					this.requestLabel = new Label(this.tcpPortComposite, SWT.RIGHT);
-					this.requestLabel.setText("Request (byte array)");
-					this.requestLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
-					this.requestLabel.setBounds(5, 230, 150, 20);
-				}
-				{
-					this.requestText = new Text(this.tcpPortComposite, SWT.BORDER);
-					this.requestText.setBounds(160, 230, 100, 20);
-					this.requestText.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
-					this.requestText.setEditable(true);
-					this.requestText.addVerifyListener(new VerifyListener() {
-						public void verifyText(VerifyEvent evt) {
-							log.log(java.util.logging.Level.FINEST, "requestText.verifyText, event=" + evt); //$NON-NLS-1$
-							evt.doit = StringHelper.verifyTypedInput(DataTypes.HEXADECIMAL, evt.text);
-						}
-					});
-					this.requestText.addKeyListener(new KeyAdapter() {
-						@Override
-						public void keyReleased(KeyEvent evt) {
-							log.log(java.util.logging.Level.FINEST, "requestText.keyReleased, event=" + evt); //$NON-NLS-1$
-							TcpPortTypeTabItem.this.request = TcpPortTypeTabItem.this.requestText.getText();
-							if (TcpPortTypeTabItem.this.deviceConfig != null) {
-								byte[] request = StringHelper.byteString2ByteArray(TcpPortTypeTabItem.this.requestText.getText());
-								TcpPortTypeTabItem.this.deviceConfig.setTcpRequest(request);
-								TcpPortTypeTabItem.this.propsEditor.enableSaveButton(true);
+					Group requestGroup = new Group(this.tcpPortComposite, SWT.BORDER);
+					requestGroup.setText("Request (optional)");
+					requestGroup.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+					requestGroup.setBounds(15, 230, 320, 120);
+
+					{
+						Label requestGroupLabel = new Label(requestGroup, SWT.CENTER | SWT.WRAP);
+						requestGroupLabel.setText("Optional request, will be send as byte array, if required to request a respond");
+						requestGroupLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+						requestGroupLabel.setBounds(10, 10, 250, 40);
+					}
+					{
+						this.requestButton = new Button(requestGroup, SWT.CHECK | SWT.BORDER);
+						this.requestButton.setBounds(8, 62, 15, 15);
+						this.requestButton.addSelectionListener(new SelectionAdapter() {
+							@Override
+							public void widgetSelected(SelectionEvent evt) {
+								log.log(java.util.logging.Level.FINEST, "requestButton.widgetSelected, event=" + evt); //$NON-NLS-1$
+								TcpPortTypeTabItem.this.isUseRequest = requestButton.getSelection();
+								TcpPortTypeTabItem.this.requestLabel.setEnabled(isUseRequest);
+								TcpPortTypeTabItem.this.requestText.setEnabled(isUseRequest);
+								TcpPortTypeTabItem.this.requestText.setEditable(isUseRequest);
+
+								if (TcpPortTypeTabItem.this.isUseRequest) {
+									if (TcpPortTypeTabItem.this.deviceConfig != null) {
+										TcpPortTypeTabItem.this.deviceConfig.setTcpRequest( new byte[] {0x51});
+										TcpPortTypeTabItem.this.propsEditor.enableSaveButton(true);
+									}
+								}
+								else {
+									if (TcpPortTypeTabItem.this.deviceConfig != null) {
+										TcpPortTypeTabItem.this.deviceConfig.removeTcpRequest();
+										TcpPortTypeTabItem.this.propsEditor.enableSaveButton(true);
+									}
+								}
+								TcpPortTypeTabItem.this.enableTimeout();
 							}
-						}
-					});
+						});
+					}
+					{
+						this.requestLabel = new Label(requestGroup, SWT.LEFT);
+						this.requestLabel.setText("two char per byte");
+						this.requestLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+						this.requestLabel.setBounds(30, 60, 140, 20);
+					}
+					{
+						this.requestText = new Text(requestGroup, SWT.BORDER);
+						this.requestText.setBounds(160, 60, 100, 20);
+						this.requestText.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+						this.requestText.setEditable(true);
+						this.requestText.addVerifyListener(new VerifyListener() {
+							public void verifyText(VerifyEvent evt) {
+								log.log(java.util.logging.Level.FINEST, "requestText.verifyText, event=" + evt); //$NON-NLS-1$
+								evt.doit = StringHelper.verifyTypedInput(DataTypes.HEXADECIMAL, evt.text);
+							}
+						});
+						this.requestText.addKeyListener(new KeyAdapter() {
+							@Override
+							public void keyReleased(KeyEvent evt) {
+								log.log(java.util.logging.Level.FINEST, "requestText.keyReleased, event=" + evt); //$NON-NLS-1$
+								TcpPortTypeTabItem.this.request = TcpPortTypeTabItem.this.requestText.getText();
+								if (TcpPortTypeTabItem.this.deviceConfig != null) {
+									byte[] request = StringHelper.byteString2ByteArray(TcpPortTypeTabItem.this.requestText.getText());
+									TcpPortTypeTabItem.this.deviceConfig.setTcpRequest(request);
+									TcpPortTypeTabItem.this.propsEditor.enableSaveButton(true);
+								}
+							}
+						});
+					}
 				}
 				{
 					this.timeOutComposite = new Composite(this.tcpPortComposite, SWT.BORDER);
@@ -442,10 +484,16 @@ public class TcpPortTypeTabItem extends CTabItem {
 		this.portNumber = deviceConfig.getTcpPortType().getPort();
 		
 		this.respondType = deviceConfig.getTcpPortType().getRespond();
-		StringBuilder sb = new StringBuilder();
-		for (byte b : deviceConfig.getTcpPortType().getRequest())
-			sb.append(String.format("%02X",b));		
-		this.request = sb.toString();
+		if (deviceConfig.getTcpPortType().getRequest() != null) {
+			this.requestButton.setSelection(this.isUseRequest = true);
+			StringBuilder sb = new StringBuilder();
+			for (byte b : deviceConfig.getTcpPortType().getRequest())
+				sb.append(String.format("%02X",b));		
+			this.request = sb.toString();
+		}
+		else {
+			this.requestButton.setSelection(this.isUseRequest = false);
+		}			
 
 		if (deviceConfig.getTcpPortType().getTimeOut() != null) {
 			this.timeOutButton.setSelection(this.useTimeOut = true);
@@ -485,7 +533,13 @@ public class TcpPortTypeTabItem extends CTabItem {
 		TcpPortTypeTabItem.this.portNumberText.setText(TcpPortTypeTabItem.this.portNumber);
 		
 		TcpPortTypeTabItem.this.respondCombo.select(getSelectionIndex(TcpPortTypeTabItem.this.respondCombo, TcpPortTypeTabItem.this.respondType.toString()));
-		TcpPortTypeTabItem.this.requestText.setText(TcpPortTypeTabItem.this.request);
+
+		this.requestText.setEnabled(isUseRequest);
+		this.requestText.setEditable(isUseRequest);
+		if (this.isUseRequest) {
+			TcpPortTypeTabItem.this.requestButton.setSelection(true);
+			TcpPortTypeTabItem.this.requestText.setText(TcpPortTypeTabItem.this.request);
+		}
 		
 		TcpPortTypeTabItem.this._RTOCharDelayTimeText.setText(GDE.STRING_EMPTY + TcpPortTypeTabItem.this.RTOCharDelayTime);
 		TcpPortTypeTabItem.this._RTOExtraDelayTimeText.setText(GDE.STRING_EMPTY + TcpPortTypeTabItem.this.RTOExtraDelayTime);

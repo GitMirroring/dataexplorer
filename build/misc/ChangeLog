@@ -9,13 +9,15 @@ Generic changes/fixes
 	* build using Java 21 and update build integrated runtime accordingly
 	* update device XSD to Version 49 and enable TCP socket communication
 	* enable simple JSON support in combination with TCP communication
+	* make serial port request editable using DevicePropertiesEditor
 	
 	Device specific changes/fixes
 	* IGCAdapter - update to new start altitude 250m
 	* iCharger 4512DUO - update device selection picture
 	* OpenTx-Telemtry - update parsing algorithm to allow single empty values
 	* CSV2Serial - fix "Line ending [bytes]" works only with <CR><LF>, ref. bug #65818
-	* CSV2TCP - initial release supporting TCP socket communication
+	* CSV2TCP1 - initial release supporting TCP socket communication with CSV respond
+	* JSON2TCP1 - initial release supporting TCP socket communication with JSON respond
 	
 
 Version 3.8.6 - 12 Apr 2024
