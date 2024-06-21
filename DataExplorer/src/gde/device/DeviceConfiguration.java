@@ -790,11 +790,18 @@ public class DeviceConfiguration {
 
 	public void setReadTimeOut(int value) {
 		this.isChangePropery = true;
-		if (this.serialPort == null) return;
-		if (this.serialPort.getTimeOut() == null) {
-			this.serialPort.setTimeOut(new ObjectFactory().createTimeOutType());
+		if (this.serialPort != null) {
+			if (this.serialPort.getTimeOut() == null) {
+				this.serialPort.setTimeOut(new ObjectFactory().createTimeOutType());
+			}
+			this.serialPort.getTimeOut().setReadTimeOut(value);
 		}
-		this.serialPort.getTimeOut().setReadTimeOut(value);
+		else if (this.tcpPort != null) {
+			if (this.tcpPort.getTimeOut() == null) {
+				this.tcpPort.setTimeOut(new ObjectFactory().createTimeOutType());
+			}
+			this.tcpPort.getTimeOut().setReadTimeOut(value);
+		}
 	}
 
 	public int getReadStableIndex() {
@@ -804,11 +811,18 @@ public class DeviceConfiguration {
 
 	public void setReadStableIndex(int value) {
 		this.isChangePropery = true;
-		if (this.serialPort == null) return;
-		if (this.serialPort.getTimeOut() == null) {
-			this.serialPort.setTimeOut(new ObjectFactory().createTimeOutType());
+		if (this.serialPort != null) {
+			if (this.serialPort.getTimeOut() == null) {
+				this.serialPort.setTimeOut(new ObjectFactory().createTimeOutType());
+			}
+			this.serialPort.getTimeOut().setReadStableIndex(value);
 		}
-		this.serialPort.getTimeOut().setReadStableIndex(value);
+		else if (this.tcpPort != null) {
+			if (this.tcpPort.getTimeOut() == null) {
+				this.tcpPort.setTimeOut(new ObjectFactory().createTimeOutType());
+			}
+			this.tcpPort.getTimeOut().setReadStableIndex(value);
+		}
 	}
 
 	public int getWriteCharDelayTime() {
@@ -818,11 +832,18 @@ public class DeviceConfiguration {
 
 	public void setWriteCharDelayTime(int value) {
 		this.isChangePropery = true;
-		if (this.serialPort == null) return;
-		if (this.serialPort.getTimeOut() == null) {
-			this.serialPort.setTimeOut(new ObjectFactory().createTimeOutType());
+		if (this.serialPort != null) {
+			if (this.serialPort.getTimeOut() == null) {
+				this.serialPort.setTimeOut(new ObjectFactory().createTimeOutType());
+			}
+			this.serialPort.getTimeOut().setWriteCharDelayTime(value);
 		}
-		this.serialPort.getTimeOut().setWriteCharDelayTime(value);
+		else if (this.tcpPort != null) {
+			if (this.tcpPort.getTimeOut() == null) {
+				this.tcpPort.setTimeOut(new ObjectFactory().createTimeOutType());
+			}
+			this.tcpPort.getTimeOut().setWriteCharDelayTime(value);
+		}
 	}
 
 	public int getWriteDelayTime() {
@@ -832,18 +853,31 @@ public class DeviceConfiguration {
 
 	public void setWriteDelayTime(int value) {
 		this.isChangePropery = true;
-		if (this.serialPort == null) return;
-		if (this.serialPort.getTimeOut() == null) {
-			this.serialPort.setTimeOut(new ObjectFactory().createTimeOutType());
+		if (this.serialPort != null) {
+			if (this.serialPort.getTimeOut() == null) {
+				this.serialPort.setTimeOut(new ObjectFactory().createTimeOutType());
+			}
+			this.serialPort.getTimeOut().setWriteDelayTime(value);
 		}
-		this.serialPort.getTimeOut().setWriteDelayTime(value);
+		else if (this.tcpPort != null) {
+			if (this.tcpPort.getTimeOut() == null) {
+				this.tcpPort.setTimeOut(new ObjectFactory().createTimeOutType());
+			}
+			this.tcpPort.getTimeOut().setWriteDelayTime(value);
+		}
 	}
 
 	public void removeSerialPortTimeOut() {
 		this.isChangePropery = true;
-		if (this.serialPort == null) return;
-		if (this.serialPort.getTimeOut() != null) {
-			this.serialPort.setTimeOut(null);
+		if (this.serialPort != null) {
+			if (this.serialPort.getTimeOut() != null) {
+				this.serialPort.setTimeOut(null);
+			}
+		}
+		else if (this.tcpPort != null) {
+			if (this.tcpPort.getTimeOut() != null) {
+				this.tcpPort.setTimeOut(null);
+			}
 		}
 	}
 	
