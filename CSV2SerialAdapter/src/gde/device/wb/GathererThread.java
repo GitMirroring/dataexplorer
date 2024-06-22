@@ -116,7 +116,7 @@ public class GathererThread extends Thread {
 		catch (IOException e) {
 			log.log(java.util.logging.Level.SEVERE, e.getMessage(), e);
 		}
-		lastTmpCycleTime = System.nanoTime()/1000000;
+		startCycleTime = lastTmpCycleTime = System.currentTimeMillis();
 		while (!this.serialPort.isInterruptedByUser) {
 			try {
 				if (this.application != null) this.application.setPortConnected(true);
@@ -125,11 +125,12 @@ public class GathererThread extends Thread {
 						break;
 					// get data from device
 					dataBuffer = this.serialPort.getData();
+					if (log.isLoggable(Level.FINE)) log.log(Level.FINE, new String(dataBuffer));
 					// check if device is ready for data capturing else wait for 180 seconds max. for actions
-					
+					this.parser.parse(new String(dataBuffer), 42);					
 					try {
-						this.channelNumber = Integer.valueOf(GDE.STRING_EMPTY+(char)dataBuffer[1]);
-						this.stateNumber = Integer.valueOf(GDE.STRING_EMPTY+(char)dataBuffer[3]);
+						this.channelNumber = this.parser.getChannelConfigNumber();
+						this.stateNumber = this.parser.getState();
 						if (log.isLoggable(Level.FINE)) log.logp(Level.FINE, GathererThread.$CLASS_NAME, $METHOD_NAME,	device.getChannelCount() + " - data for channel = " + channelNumber + " state = " + stateNumber);
 						if (this.channelNumber > device.getChannelCount()) 
 							continue; //skip data if not configured
@@ -179,12 +180,6 @@ public class GathererThread extends Thread {
 						measurementCount = 0;
 						startCycleTime = 0;
 					}
-
-					// prepare the data for adding to record set
-					tmpCycleTime = System.nanoTime()/1000000;
-					if (measurementCount++ == 0) {
-						startCycleTime = tmpCycleTime;
-					}
  
 					if (channelRecordSet != null) {
 						if (this.serialPort.isInterruptedByUser) break;
@@ -210,11 +205,11 @@ public class GathererThread extends Thread {
 					}
 				}
 				if (deviceTimeStep_ms > 0) { //time step is constant
-					delayTime = (long) ((deviceTimeStep_ms - 3) - (tmpCycleTime - lastTmpCycleTime));
+					delayTime = (long) (deviceTimeStep_ms - (System.currentTimeMillis() - lastTmpCycleTime));
 					if (delayTime > 0) {
 						WaitTimer.delay(delayTime);
 					}
-					lastTmpCycleTime = System.nanoTime()/1000000;
+					lastTmpCycleTime = System.currentTimeMillis();;
 				}
 				if (log.isLoggable(Level.TIME)) log.logp(Level.TIME, GathererThread.$CLASS_NAME, $METHOD_NAME, "delayTime = " + TimeLine.getFomatedTimeWithUnit(delayTime)); //$NON-NLS-1$
 				if (log.isLoggable(Level.TIME)) log.logp(Level.TIME, GathererThread.$CLASS_NAME, $METHOD_NAME, "time = " + TimeLine.getFomatedTimeWithUnit(tmpCycleTime - startCycleTime)); //$NON-NLS-1$
@@ -248,7 +243,10 @@ public class GathererThread extends Thread {
 				}
 			}
 		}
-		this.application.setStatusMessage(""); //$NON-NLS-1$
+		if (this.application != null) {
+			this.application.setPortConnected(false);
+			this.application.setStatusMessage(""); //$NON-NLS-1$
+		}
 		log.logp(Level.FINE, GathererThread.$CLASS_NAME, $METHOD_NAME, "======> exit"); //$NON-NLS-1$
 	}
 
