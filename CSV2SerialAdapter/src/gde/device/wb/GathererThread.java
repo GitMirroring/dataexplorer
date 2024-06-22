@@ -180,7 +180,12 @@ public class GathererThread extends Thread {
 						measurementCount = 0;
 						startCycleTime = 0;
 					}
- 
+					// prepare the data for adding to record set
+					tmpCycleTime = System.nanoTime()/1000000;
+					if (measurementCount++ == 0) {
+						startCycleTime = tmpCycleTime;
+					}
+
 					if (channelRecordSet != null) {
 						if (this.serialPort.isInterruptedByUser) break;
 						this.parser.parse(new String(dataBuffer), 42);
@@ -209,9 +214,9 @@ public class GathererThread extends Thread {
 					if (delayTime > 0) {
 						WaitTimer.delay(delayTime);
 					}
+					if (log.isLoggable(Level.TIME)) log.logp(Level.TIME, GathererThread.$CLASS_NAME, $METHOD_NAME, "delayTime = " + TimeLine.getFomatedTimeWithUnit(delayTime)); //$NON-NLS-1$
 					lastTmpCycleTime = System.currentTimeMillis();;
 				}
-				if (log.isLoggable(Level.TIME)) log.logp(Level.TIME, GathererThread.$CLASS_NAME, $METHOD_NAME, "delayTime = " + TimeLine.getFomatedTimeWithUnit(delayTime)); //$NON-NLS-1$
 				if (log.isLoggable(Level.TIME)) log.logp(Level.TIME, GathererThread.$CLASS_NAME, $METHOD_NAME, "time = " + TimeLine.getFomatedTimeWithUnit(tmpCycleTime - startCycleTime)); //$NON-NLS-1$
 			}
 			catch (DataInconsitsentException e) {
