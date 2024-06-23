@@ -9,7 +9,7 @@
         <usage>true</usage>
     </Device>
     <TcpPort>
-        <address>192.168.25.40</address>
+        <address>127.0.0.1</address>
         <port>23000</port>
         <TimeOut>
             <ReadTimeOut>500</ReadTimeOut>
