@@ -227,7 +227,10 @@ public class TcpPortTypeTabItem extends CTabItem {
 
 								if (TcpPortTypeTabItem.this.isUseRequest) {								
 									if (TcpPortTypeTabItem.this.deviceConfig != null) {
-										TcpPortTypeTabItem.this.deviceConfig.setTcpRequest( new byte[] {0x51});
+										TcpPortTypeTabItem.this.request = "51";
+										TcpPortTypeTabItem.this.requestText.setText(TcpPortTypeTabItem.this.request);
+										byte[] request = StringHelper.byteString2ByteArray(TcpPortTypeTabItem.this.requestText.getText());
+										TcpPortTypeTabItem.this.deviceConfig.setTcpRequest(request);									
 										TcpPortTypeTabItem.this.propsEditor.enableSaveButton(true);
 									}
 								}

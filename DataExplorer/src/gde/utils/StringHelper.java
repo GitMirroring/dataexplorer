@@ -225,7 +225,7 @@ public class StringHelper {
 
 	public static byte[] byteString2ByteArray(String values) {
 		byte[] array = new byte[(values.length()+1)/2];
-		for (int i = 0,j = 0; i < array.length && array.length > 1; i++, j+=2) {
+		for (int i = 0,j = 0; i < array.length; i++, j+=2) {
 			String subStr;
 			try {
 				subStr = values.substring(j, j+2);
