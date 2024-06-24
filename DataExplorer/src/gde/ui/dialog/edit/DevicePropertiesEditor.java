@@ -188,6 +188,7 @@ public class DevicePropertiesEditor extends Composite {
 	Label																	desktopDescriptionLabel;
 	CTabFolder														desktopTabFolder;
 
+	boolean																isChangeSaved = false;
 	//cross over fields
 	DeviceConfiguration										deviceConfig;
 	final Settings												settings;
@@ -292,14 +293,19 @@ public class DevicePropertiesEditor extends Composite {
 			while (!DevicePropertiesEditor.dialogShell.isDisposed()) {
 				if (!display.readAndDispatch()) display.sleep();
 			}
-			DataExplorer.getInstance().resetShellIcon();
-			DataExplorer.getInstance().setActiveDevice(null);
-			DeviceSelectionDialog deviceSelect = DataExplorer.getInstance().getDeviceSelectionDialog();
-			deviceSelect.setActiveConfig(this.deviceConfig);
-			deviceSelect.setupDevice();
 		}
 		catch (Throwable e) {
 			log.log(java.util.logging.Level.SEVERE, e.getMessage(), e);
+		}
+		DataExplorer.getInstance().resetShellIcon();
+		if (this.isChangeSaved) { //some entries was changed and saved, so a reload of XML is required
+			DeviceSelectionDialog deviceSelect = DataExplorer.getInstance().getDeviceSelectionDialog();
+			if (!deviceSelect.checkDataSaved()) {
+				new gde.io.FileHandler().saveOsdFile(Messages.getString(MessageIds.GDE_MSGT0006), GDE.STRING_EMPTY);
+			}
+			DataExplorer.getInstance().setActiveDevice(null);
+			deviceSelect.setActiveConfig(this.deviceConfig);
+			deviceSelect.setupDevice();
 		}
 	}
 
@@ -366,6 +372,7 @@ public class DevicePropertiesEditor extends Composite {
 						if (DevicePropertiesEditor.this.openYesNoMessageDialog(msg) == SWT.YES) {
 							DevicePropertiesEditor.this.deviceConfig.storeDeviceProperties();
 							DevicePropertiesEditor.this.saveButton.setEnabled(false);
+							DevicePropertiesEditor.this.isChangeSaved = true;
 
 							if (DevicePropertiesEditor.this.openYesNoMessageDialog(Messages.getString(MessageIds.GDE_MSGI0042)) == SWT.YES) {
 								FileUtils.updateFileInDeviceJar(DevicePropertiesEditor.this.deviceConfig, DevicePropertiesEditor.this.deviceConfig.getPropertiesFileName());
@@ -497,6 +504,7 @@ public class DevicePropertiesEditor extends Composite {
 						log.log(java.util.logging.Level.FINEST, "saveButton.widgetSelected, event=" + evt); //$NON-NLS-1$
 						DevicePropertiesEditor.this.deviceConfig.storeDeviceProperties();
 						DevicePropertiesEditor.this.saveButton.setEnabled(false);
+						DevicePropertiesEditor.this.isChangeSaved = true;
 					}
 				});
 			}
@@ -1998,7 +2006,8 @@ public class DevicePropertiesEditor extends Composite {
 	 * @param enable = true to set the save button to the enabled state
 	 */
 	public void enableSaveButton(boolean enable) {
-		this.saveButton.setEnabled(enable);
+		if (this.saveButton != null && !this.saveButton.isDisposed())
+			this.saveButton.setEnabled(enable);
 	}
 
 	/**

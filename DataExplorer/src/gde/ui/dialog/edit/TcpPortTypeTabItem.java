@@ -89,7 +89,7 @@ public class TcpPortTypeTabItem extends CTabItem {
 		super(parent, style, index);
 		this.tabFolder = parent;
 		this.propsEditor = DevicePropertiesEditor.getInstance();
-		log.log(java.util.logging.Level.FINE, "SeriaPortTypeTabItem "); //$NON-NLS-1$
+		log.log(java.util.logging.Level.FINE, "TcpPortTypeTabItem "); //$NON-NLS-1$
 		initGUI();
 	}
 
@@ -225,7 +225,7 @@ public class TcpPortTypeTabItem extends CTabItem {
 								TcpPortTypeTabItem.this.requestText.setEnabled(isUseRequest);
 								TcpPortTypeTabItem.this.requestText.setEditable(isUseRequest);
 
-								if (TcpPortTypeTabItem.this.isUseRequest) {
+								if (TcpPortTypeTabItem.this.isUseRequest) {								
 									if (TcpPortTypeTabItem.this.deviceConfig != null) {
 										TcpPortTypeTabItem.this.deviceConfig.setTcpRequest( new byte[] {0x51});
 										TcpPortTypeTabItem.this.propsEditor.enableSaveButton(true);
