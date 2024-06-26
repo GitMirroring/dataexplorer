@@ -59,7 +59,7 @@ public class TcpPortType {
     @XmlElement(name = "TimeOut")
     protected TimeOutType timeOut;
     @XmlElement(required = true)
-    protected TcpRespondType respond;
+    protected RespondType respond;
     @XmlElement(type = String.class)
     @XmlJavaTypeAdapter(HexBinaryAdapter.class)
     @XmlSchemaType(name = "hexBinary")
@@ -142,10 +142,10 @@ public class TcpPortType {
      * 
      * @return
      *     possible object is
-     *     {@link TcpRespondType }
+     *     {@link RespondType }
      *     
      */
-    public TcpRespondType getRespond() {
+    public RespondType getRespond() {
         return respond;
     }
 
@@ -154,10 +154,10 @@ public class TcpPortType {
      * 
      * @param value
      *     allowed object is
-     *     {@link TcpRespondType }
+     *     {@link RespondType }
      *     
      */
-    public void setRespond(TcpRespondType value) {
+    public void setRespond(RespondType value) {
         this.respond = value;
     }
 

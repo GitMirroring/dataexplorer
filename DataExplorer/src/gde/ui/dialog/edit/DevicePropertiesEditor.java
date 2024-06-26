@@ -886,7 +886,7 @@ public class DevicePropertiesEditor extends Composite {
 								public void keyReleased(KeyEvent evt) {
 									log.log(java.util.logging.Level.FINEST, "timeBaseUtcDeltaText.keyReleased, event=" + evt); //$NON-NLS-1$
 									try {
-										DevicePropertiesEditor.this.utcDelta = Integer.parseInt(DevicePropertiesEditor.this.timeBaseUtcDeltaText.getText());
+										DevicePropertiesEditor.this.utcDelta = DevicePropertiesEditor.this.timeBaseUtcDeltaText.getText().equals(GDE.STRING_EMPTY) ? 0 : Integer.parseInt(DevicePropertiesEditor.this.timeBaseUtcDeltaText.getText());
 										DevicePropertiesEditor.this.utcDelta = Integer.parseInt(String.format(Locale.ENGLISH, "%d", DevicePropertiesEditor.this.utcDelta)); //$NON-NLS-1$
 										if (DevicePropertiesEditor.this.deviceConfig != null) {
 											DevicePropertiesEditor.this.deviceConfig.setUTCdelta(DevicePropertiesEditor.this.utcDelta);
@@ -1339,7 +1339,7 @@ public class DevicePropertiesEditor extends Composite {
 						@Override
 						public void keyReleased(KeyEvent evt) {
 							log.log(java.util.logging.Level.FINEST, "dataBlockSizeText.keyReleased, event=" + evt); //$NON-NLS-1$
-							DevicePropertiesEditor.this.dataBlockSize1 = Integer.parseInt(DevicePropertiesEditor.this.dataBlockSizeText1.getText());
+							DevicePropertiesEditor.this.dataBlockSize1 = DevicePropertiesEditor.this.dataBlockSizeText1.getText().equals(GDE.STRING_EMPTY) ? 0 : Integer.parseInt(DevicePropertiesEditor.this.dataBlockSizeText1.getText());
 							if (DevicePropertiesEditor.this.deviceConfig != null) {
 								DevicePropertiesEditor.this.dataBlockFormatType1 = FormatTypes.valueOf(DevicePropertiesEditor.this.dataBlockFormatCombo1.getText());
 								DevicePropertiesEditor.this.dataBlockInputType1 = InputTypes.valueOf(DevicePropertiesEditor.this.dataBlockInputCombo1.getText());
@@ -1364,7 +1364,7 @@ public class DevicePropertiesEditor extends Composite {
 						@Override
 						public void keyReleased(KeyEvent evt) {
 							log.log(java.util.logging.Level.FINEST, "dataBlockSizeText.keyReleased, event=" + evt); //$NON-NLS-1$
-							DevicePropertiesEditor.this.dataBlockSize2 = Integer.parseInt(DevicePropertiesEditor.this.dataBlockSizeText2.getText());
+							DevicePropertiesEditor.this.dataBlockSize2 = DevicePropertiesEditor.this.dataBlockSizeText2.getText().equals(GDE.STRING_EMPTY) ? 0 : Integer.parseInt(DevicePropertiesEditor.this.dataBlockSizeText2.getText());
 							if (DevicePropertiesEditor.this.deviceConfig != null) {
 								DevicePropertiesEditor.this.dataBlockFormatType2 = FormatTypes.valueOf(DevicePropertiesEditor.this.dataBlockFormatCombo2.getText());
 								DevicePropertiesEditor.this.dataBlockInputType2 = InputTypes.valueOf(DevicePropertiesEditor.this.dataBlockInputCombo2.getText());

@@ -44,7 +44,7 @@ import org.eclipse.swt.widgets.Text;
 import gde.GDE;
 import gde.device.DataTypes;
 import gde.device.DeviceConfiguration;
-import gde.device.TcpRespondType;
+import gde.device.RespondType;
 import gde.log.Level;
 import gde.messages.MessageIds;
 import gde.messages.Messages;
@@ -65,17 +65,17 @@ public class TcpPortTypeTabItem extends CTabItem {
 	Text													tcpHostAddressText, portNumberText, requestText;
 	CCombo												respondCombo;
 	Button												requestButton, timeOutButton;
-	Label													_RTOCharDelayTimeLabel, _RTOExtraDelayTimeLabel, _WTOCharDelayTimeLabel, _WTOExtraDelayTimeLabel;
-	Text													_RTOCharDelayTimeText, _RTOExtraDelayTimeText, _WTOCharDelayTimeText, _WTOExtraDelayTimeText;
+	Label													ReadTimeoutLabel, ReadStableIndexLabel, _WTOCharDelayTimeLabel, _WTOExtraDelayTimeLabel;
+	Text													ReadTimeoutText, ReadStableIndexText, _WTOCharDelayTimeText, _WTOExtraDelayTimeText;
 
 	String												tcpHostAddress			= GDE.STRING_EMPTY;
 	String												portNumber					= GDE.STRING_EMPTY;
-	TcpRespondType								respondType					= TcpRespondType.fromValue("CSV");
+	RespondType										respondType					= RespondType.fromValue("CSV");
 	String												request							= GDE.STRING_EMPTY;
 	boolean												isUseRequest				= false;
 	boolean												useTimeOut					= false;
-	int														RTOCharDelayTime		= 0;
-	int														RTOExtraDelayTime		= 0;
+	int														ReadTimeout					= 0;
+	int														ReadStableIndex			= 0;
 	int														WTOCharDelayTime		= 0;
 	int														WTOExtraDelayTime		= 0;
 	DeviceConfiguration						deviceConfig;
@@ -188,14 +188,14 @@ public class TcpPortTypeTabItem extends CTabItem {
 				{
 					this.respondCombo = new CCombo(this.tcpPortComposite, SWT.BORDER);
 					this.respondCombo.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
-					this.respondCombo.setItems(TcpRespondType.valuesAsStingArray());
+					this.respondCombo.setItems(RespondType.valuesAsStingArray());
 					this.respondCombo.setBounds(160, 201, 100, 20);
 					this.respondCombo.addSelectionListener(new SelectionAdapter() {
 						@Override
 						public void widgetSelected(SelectionEvent evt) {
 							log.log(java.util.logging.Level.FINEST, "flowControlCombo.widgetSelected, event=" + evt); //$NON-NLS-1$
 							if (TcpPortTypeTabItem.this.deviceConfig != null) {
-								TcpPortTypeTabItem.this.deviceConfig.setTcpRespondType(TcpRespondType.fromValue(TcpRespondType.valuesAsStingArray()[TcpPortTypeTabItem.this.respondCombo.getSelectionIndex()]));
+								TcpPortTypeTabItem.this.deviceConfig.setTcpRespondType(RespondType.fromValue(RespondType.valuesAsStingArray()[TcpPortTypeTabItem.this.respondCombo.getSelectionIndex()]));
 								TcpPortTypeTabItem.this.propsEditor.enableSaveButton(true);
 							}
 						}
@@ -302,15 +302,15 @@ public class TcpPortTypeTabItem extends CTabItem {
 								TcpPortTypeTabItem.this.useTimeOut = TcpPortTypeTabItem.this.timeOutButton.getSelection();
 								if (TcpPortTypeTabItem.this.useTimeOut) {
 									if (TcpPortTypeTabItem.this.deviceConfig != null) {
-										TcpPortTypeTabItem.this.deviceConfig.setReadTimeOut(TcpPortTypeTabItem.this.RTOCharDelayTime = TcpPortTypeTabItem.this.deviceConfig.getReadTimeOut());
-										TcpPortTypeTabItem.this.deviceConfig.setReadStableIndex(TcpPortTypeTabItem.this.RTOExtraDelayTime = TcpPortTypeTabItem.this.deviceConfig.getReadStableIndex());
+										TcpPortTypeTabItem.this.deviceConfig.setReadTimeOut(TcpPortTypeTabItem.this.ReadTimeout = TcpPortTypeTabItem.this.deviceConfig.getReadTimeOut());
+										TcpPortTypeTabItem.this.deviceConfig.setReadStableIndex(TcpPortTypeTabItem.this.ReadStableIndex = TcpPortTypeTabItem.this.deviceConfig.getReadStableIndex());
 										TcpPortTypeTabItem.this.deviceConfig.setWriteCharDelayTime(TcpPortTypeTabItem.this.WTOCharDelayTime = TcpPortTypeTabItem.this.deviceConfig.getWriteCharDelayTime());
 										TcpPortTypeTabItem.this.deviceConfig.setWriteDelayTime(TcpPortTypeTabItem.this.WTOExtraDelayTime = TcpPortTypeTabItem.this.deviceConfig.getWriteDelayTime());
 										TcpPortTypeTabItem.this.propsEditor.enableSaveButton(true);
 									}
 									else {
-										TcpPortTypeTabItem.this.RTOCharDelayTime = 0;
-										TcpPortTypeTabItem.this.RTOExtraDelayTime = 0;
+										TcpPortTypeTabItem.this.ReadTimeout = 0;
+										TcpPortTypeTabItem.this.ReadStableIndex = 0;
 										TcpPortTypeTabItem.this.WTOCharDelayTime = 0;
 										TcpPortTypeTabItem.this.WTOExtraDelayTime = 0;
 									}
@@ -319,8 +319,8 @@ public class TcpPortTypeTabItem extends CTabItem {
 									if (TcpPortTypeTabItem.this.deviceConfig != null) {
 										TcpPortTypeTabItem.this.deviceConfig.removeSerialPortTimeOut();
 									}
-									TcpPortTypeTabItem.this.RTOCharDelayTime = 0;
-									TcpPortTypeTabItem.this.RTOExtraDelayTime = 0;
+									TcpPortTypeTabItem.this.ReadTimeout = 0;
+									TcpPortTypeTabItem.this.ReadStableIndex = 0;
 									TcpPortTypeTabItem.this.WTOCharDelayTime = 0;
 									TcpPortTypeTabItem.this.WTOExtraDelayTime = 0;
 								}
@@ -329,56 +329,56 @@ public class TcpPortTypeTabItem extends CTabItem {
 						});
 					}
 					{
-						this._RTOCharDelayTimeLabel = new Label(this.timeOutComposite, SWT.RIGHT);
-						this._RTOCharDelayTimeLabel.setText(Messages.getString(MessageIds.GDE_MSGT0587));
-						this._RTOCharDelayTimeLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
-						this._RTOCharDelayTimeLabel.setBounds(6, 100, 140, 20);
+						this.ReadTimeoutLabel = new Label(this.timeOutComposite, SWT.RIGHT);
+						this.ReadTimeoutLabel.setText(Messages.getString(MessageIds.GDE_MSGT0587));
+						this.ReadTimeoutLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+						this.ReadTimeoutLabel.setBounds(6, 100, 140, 20);
 					}
 					{
-						this._RTOCharDelayTimeText = new Text(this.timeOutComposite, SWT.BORDER);
-						this._RTOCharDelayTimeText.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
-						this._RTOCharDelayTimeText.setBounds(162, 100, 70, 20);
-						this._RTOCharDelayTimeText.addVerifyListener(new VerifyListener() {
+						this.ReadTimeoutText = new Text(this.timeOutComposite, SWT.BORDER);
+						this.ReadTimeoutText.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+						this.ReadTimeoutText.setBounds(162, 100, 70, 20);
+						this.ReadTimeoutText.addVerifyListener(new VerifyListener() {
 							public void verifyText(VerifyEvent evt) {
-								log.log(java.util.logging.Level.FINEST, "_RTOCharDelayTimeText.verifyText, event=" + evt); //$NON-NLS-1$
+								log.log(java.util.logging.Level.FINEST, "ReadTimeoutText.verifyText, event=" + evt); //$NON-NLS-1$
 								evt.doit = StringHelper.verifyTypedInput(DataTypes.INTEGER, evt.text);
 							}
 						});
-						this._RTOCharDelayTimeText.addKeyListener(new KeyAdapter() {
+						this.ReadTimeoutText.addKeyListener(new KeyAdapter() {
 							@Override
 							public void keyReleased(KeyEvent evt) {
-								log.log(java.util.logging.Level.FINEST, "_RTOCharDelayTimeText.keyReleased, event=" + evt); //$NON-NLS-1$
-								TcpPortTypeTabItem.this.RTOCharDelayTime = Integer.parseInt(TcpPortTypeTabItem.this._RTOCharDelayTimeText.getText());
+								log.log(java.util.logging.Level.FINEST, "ReadTimeoutText.keyReleased, event=" + evt); //$NON-NLS-1$
+								TcpPortTypeTabItem.this.ReadTimeout = TcpPortTypeTabItem.this.ReadTimeoutText.getText().equals(GDE.STRING_EMPTY) ? 0 : Integer.parseInt(TcpPortTypeTabItem.this.ReadTimeoutText.getText());
 								if (TcpPortTypeTabItem.this.deviceConfig != null) {
-									TcpPortTypeTabItem.this.deviceConfig.setReadTimeOut(TcpPortTypeTabItem.this.RTOCharDelayTime);
+									TcpPortTypeTabItem.this.deviceConfig.setReadTimeOut(TcpPortTypeTabItem.this.ReadTimeout);
 									TcpPortTypeTabItem.this.propsEditor.enableSaveButton(true);
 								}
 							}
 						});
 					}
 					{
-						this._RTOExtraDelayTimeLabel = new Label(this.timeOutComposite, SWT.RIGHT);
-						this._RTOExtraDelayTimeLabel.setText(Messages.getString(MessageIds.GDE_MSGT0588));
-						this._RTOExtraDelayTimeLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
-						this._RTOExtraDelayTimeLabel.setBounds(6, 130, 140, 20);
+						this.ReadStableIndexLabel = new Label(this.timeOutComposite, SWT.RIGHT);
+						this.ReadStableIndexLabel.setText(Messages.getString(MessageIds.GDE_MSGT0588));
+						this.ReadStableIndexLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+						this.ReadStableIndexLabel.setBounds(6, 130, 140, 20);
 					}
 					{
-						this._RTOExtraDelayTimeText = new Text(this.timeOutComposite, SWT.BORDER);
-						this._RTOExtraDelayTimeText.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
-						this._RTOExtraDelayTimeText.setBounds(162, 130, 70, 20);
-						this._RTOExtraDelayTimeText.addVerifyListener(new VerifyListener() {
+						this.ReadStableIndexText = new Text(this.timeOutComposite, SWT.BORDER);
+						this.ReadStableIndexText.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+						this.ReadStableIndexText.setBounds(162, 130, 70, 20);
+						this.ReadStableIndexText.addVerifyListener(new VerifyListener() {
 							public void verifyText(VerifyEvent evt) {
-								log.log(java.util.logging.Level.FINEST, "_RTOExtraDelayTimeText.verifyText, event=" + evt); //$NON-NLS-1$
+								log.log(java.util.logging.Level.FINEST, "ReadStableIndexText.verifyText, event=" + evt); //$NON-NLS-1$
 								evt.doit = StringHelper.verifyTypedInput(DataTypes.INTEGER, evt.text);
 							}
 						});
-						this._RTOExtraDelayTimeText.addKeyListener(new KeyAdapter() {
+						this.ReadStableIndexText.addKeyListener(new KeyAdapter() {
 							@Override
 							public void keyReleased(KeyEvent evt) {
-								log.log(java.util.logging.Level.FINEST, "_RTOExtraDelayTimeText.keyReleased, event=" + evt); //$NON-NLS-1$
-								TcpPortTypeTabItem.this.RTOExtraDelayTime = Integer.parseInt(TcpPortTypeTabItem.this._RTOExtraDelayTimeText.getText());
+								log.log(java.util.logging.Level.FINEST, "ReadStableIndexText.keyReleased, event=" + evt); //$NON-NLS-1$
+								TcpPortTypeTabItem.this.ReadStableIndex = TcpPortTypeTabItem.this.ReadStableIndexText.getText().equals(GDE.STRING_EMPTY) ? 0 : Integer.parseInt(TcpPortTypeTabItem.this.ReadStableIndexText.getText());
 								if (TcpPortTypeTabItem.this.deviceConfig != null) {
-									TcpPortTypeTabItem.this.deviceConfig.setReadStableIndex(TcpPortTypeTabItem.this.RTOExtraDelayTime);
+									TcpPortTypeTabItem.this.deviceConfig.setReadStableIndex(TcpPortTypeTabItem.this.ReadStableIndex);
 									TcpPortTypeTabItem.this.propsEditor.enableSaveButton(true);
 								}
 							}
@@ -404,7 +404,7 @@ public class TcpPortTypeTabItem extends CTabItem {
 							@Override
 							public void keyReleased(KeyEvent evt) {
 								log.log(java.util.logging.Level.FINEST, "_WRTOCharDelayTimeText.keyReleased, event=" + evt); //$NON-NLS-1$
-								TcpPortTypeTabItem.this.WTOCharDelayTime = Integer.parseInt(TcpPortTypeTabItem.this._WTOCharDelayTimeText.getText());
+								TcpPortTypeTabItem.this.WTOCharDelayTime = TcpPortTypeTabItem.this._WTOCharDelayTimeText.getText().equals(GDE.STRING_EMPTY) ? 0 : Integer.parseInt(TcpPortTypeTabItem.this._WTOCharDelayTimeText.getText());
 								if (TcpPortTypeTabItem.this.deviceConfig != null) {
 									TcpPortTypeTabItem.this.deviceConfig.setWriteCharDelayTime(TcpPortTypeTabItem.this.WTOCharDelayTime);
 									TcpPortTypeTabItem.this.propsEditor.enableSaveButton(true);
@@ -432,7 +432,7 @@ public class TcpPortTypeTabItem extends CTabItem {
 							@Override
 							public void keyReleased(KeyEvent evt) {
 								log.log(java.util.logging.Level.FINEST, "_WTOExtraDelayTimeText.keyReleased, event=" + evt); //$NON-NLS-1$
-								TcpPortTypeTabItem.this.WTOExtraDelayTime = Integer.parseInt(TcpPortTypeTabItem.this._WTOExtraDelayTimeText.getText());
+								TcpPortTypeTabItem.this.WTOExtraDelayTime = TcpPortTypeTabItem.this._WTOExtraDelayTimeText.getText().equals(GDE.STRING_EMPTY) ? 0 : Integer.parseInt(TcpPortTypeTabItem.this._WTOExtraDelayTimeText.getText());
 								if (TcpPortTypeTabItem.this.deviceConfig != null) {
 									TcpPortTypeTabItem.this.deviceConfig.setWriteDelayTime(TcpPortTypeTabItem.this.WTOExtraDelayTime);
 									TcpPortTypeTabItem.this.propsEditor.enableSaveButton(true);
@@ -470,8 +470,8 @@ public class TcpPortTypeTabItem extends CTabItem {
 		this.timeOutComposite.setMenu(this.popupMenu);
 		this.timeOutLabel.setMenu(this.popupMenu);
 		this.timeOutButton.setMenu(this.popupMenu);
-		this._RTOCharDelayTimeLabel.setMenu(this.popupMenu);
-		this._RTOExtraDelayTimeLabel.setMenu(this.popupMenu);
+		this.ReadTimeoutLabel.setMenu(this.popupMenu);
+		this.ReadStableIndexLabel.setMenu(this.popupMenu);
 		this._WTOCharDelayTimeLabel.setMenu(this.popupMenu);
 		this._WTOExtraDelayTimeLabel.setMenu(this.popupMenu);
 		this.timeOutDescriptionLabel.setMenu(this.popupMenu);
@@ -487,6 +487,7 @@ public class TcpPortTypeTabItem extends CTabItem {
 		this.portNumber = deviceConfig.getTcpPortType().getPort();
 		
 		this.respondType = deviceConfig.getTcpPortType().getRespond();
+		
 		if (deviceConfig.getTcpPortType().getRequest() != null) {
 			this.requestButton.setSelection(this.isUseRequest = true);
 			StringBuilder sb = new StringBuilder();
@@ -504,8 +505,8 @@ public class TcpPortTypeTabItem extends CTabItem {
 		else {
 			this.timeOutButton.setSelection(this.useTimeOut = false);
 		}
-		this.RTOCharDelayTime = deviceConfig.getReadTimeOut();
-		this.RTOExtraDelayTime = deviceConfig.getReadStableIndex();
+		this.ReadTimeout = deviceConfig.getReadTimeOut();
+		this.ReadStableIndex = deviceConfig.getReadStableIndex();
 		this.WTOCharDelayTime = deviceConfig.getWriteCharDelayTime();
 		this.WTOExtraDelayTime = deviceConfig.getWriteDelayTime();
 		this.timeOutComposite.redraw();
@@ -544,8 +545,8 @@ public class TcpPortTypeTabItem extends CTabItem {
 			TcpPortTypeTabItem.this.requestText.setText(TcpPortTypeTabItem.this.request);
 		}
 		
-		TcpPortTypeTabItem.this._RTOCharDelayTimeText.setText(GDE.STRING_EMPTY + TcpPortTypeTabItem.this.RTOCharDelayTime);
-		TcpPortTypeTabItem.this._RTOExtraDelayTimeText.setText(GDE.STRING_EMPTY + TcpPortTypeTabItem.this.RTOExtraDelayTime);
+		TcpPortTypeTabItem.this.ReadTimeoutText.setText(GDE.STRING_EMPTY + TcpPortTypeTabItem.this.ReadTimeout);
+		TcpPortTypeTabItem.this.ReadStableIndexText.setText(GDE.STRING_EMPTY + TcpPortTypeTabItem.this.ReadStableIndex);
 		TcpPortTypeTabItem.this._WTOCharDelayTimeText.setText(GDE.STRING_EMPTY + TcpPortTypeTabItem.this.WTOCharDelayTime);
 		TcpPortTypeTabItem.this._WTOExtraDelayTimeText.setText(GDE.STRING_EMPTY + TcpPortTypeTabItem.this.WTOExtraDelayTime);
 
@@ -555,20 +556,20 @@ public class TcpPortTypeTabItem extends CTabItem {
 
 	private void enableTimeout() {
 		if (TcpPortTypeTabItem.this.timeOutButton.getSelection()) {
-			TcpPortTypeTabItem.this._RTOCharDelayTimeLabel.setEnabled(true);
-			TcpPortTypeTabItem.this._RTOCharDelayTimeText.setEnabled(true);
-			TcpPortTypeTabItem.this._RTOExtraDelayTimeLabel.setEnabled(true);
-			TcpPortTypeTabItem.this._RTOExtraDelayTimeText.setEnabled(true);
+			TcpPortTypeTabItem.this.ReadTimeoutLabel.setEnabled(true);
+			TcpPortTypeTabItem.this.ReadTimeoutText.setEnabled(true);
+			TcpPortTypeTabItem.this.ReadStableIndexLabel.setEnabled(true);
+			TcpPortTypeTabItem.this.ReadStableIndexText.setEnabled(true);
 			TcpPortTypeTabItem.this._WTOCharDelayTimeLabel.setEnabled(true);
 			TcpPortTypeTabItem.this._WTOCharDelayTimeText.setEnabled(true);
 			TcpPortTypeTabItem.this._WTOExtraDelayTimeLabel.setEnabled(true);
 			TcpPortTypeTabItem.this._WTOExtraDelayTimeText.setEnabled(true);
 		}
 		else {
-			TcpPortTypeTabItem.this._RTOCharDelayTimeLabel.setEnabled(false);
-			TcpPortTypeTabItem.this._RTOCharDelayTimeText.setEnabled(false);
-			TcpPortTypeTabItem.this._RTOExtraDelayTimeLabel.setEnabled(false);
-			TcpPortTypeTabItem.this._RTOExtraDelayTimeText.setEnabled(false);
+			TcpPortTypeTabItem.this.ReadTimeoutLabel.setEnabled(false);
+			TcpPortTypeTabItem.this.ReadTimeoutText.setEnabled(false);
+			TcpPortTypeTabItem.this.ReadStableIndexLabel.setEnabled(false);
+			TcpPortTypeTabItem.this.ReadStableIndexText.setEnabled(false);
 			TcpPortTypeTabItem.this._WTOCharDelayTimeLabel.setEnabled(false);
 			TcpPortTypeTabItem.this._WTOCharDelayTimeText.setEnabled(false);
 			TcpPortTypeTabItem.this._WTOExtraDelayTimeLabel.setEnabled(false);

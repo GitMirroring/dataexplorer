@@ -18,6 +18,11 @@
 ****************************************************************************************/
 package gde.device.wb;
 
+import java.io.IOException;
+import java.util.logging.Logger;
+
+import org.eclipse.swt.SWT;
+
 import gde.GDE;
 import gde.data.Channel;
 import gde.data.Channels;
@@ -31,16 +36,13 @@ import gde.exception.DevicePropertiesInconsistenceException;
 import gde.exception.SerialPortException;
 import gde.exception.TimeOutException;
 import gde.io.DataParser;
+import gde.io.IDataParser;
+import gde.io.JsonDataParser;
 import gde.log.Level;
 import gde.messages.Messages;
 import gde.ui.DataExplorer;
 import gde.utils.TimeLine;
 import gde.utils.WaitTimer;
-
-import java.io.IOException;
-import java.util.logging.Logger;
-
-import org.eclipse.swt.SWT;
 
 /**
  * Thread implementation to gather data from eStation device
@@ -55,7 +57,7 @@ public class GathererThread extends Thread {
 	final CSV2SerialPort		serialPort;
 	final CSV2SerialAdapter	device;
 	final Channels					channels;
-	final DataParser				parser;
+	final IDataParser				parser;
 	
 	Channel									activeChannel;
 	RecordSet								activeRecordSet;
@@ -83,7 +85,11 @@ public class GathererThread extends Thread {
 		this.channelNumber = channelConfigNumber;
 		this.channel = this.channels.get(this.channelNumber);
 		this.recordSetKey = GDE.STRING_BLANK + this.device.getRecordSetStateNameReplacement(this.stateNumber);
-		this.parser = new DataParser(this.device.getDataBlockTimeUnitFactor(), this.device.getDataBlockLeader(), this.device.getDataBlockSeparator().value(), this.device.getDataBlockCheckSumType(), this.device.getDataBlockSize(InputTypes.FILE_IO)); //$NON-NLS-1$  //$NON-NLS-2$
+		if (this.device.getSerialPortType().getRespond() != null && this.device.getSerialPortType().getRespond().name().equals("JSON"))
+				this.parser = new JsonDataParser(this.device.getDataBlockTimeUnitFactor(), this.device.getDataBlockLeader(), this.device.getDataBlockSeparator().value(), this.device.getDataBlockCheckSumType(), this.device.getDataBlockSize(InputTypes.FILE_IO)); //$NON-NLS-1$  //$NON-NLS-2$
+		else {
+			this.parser = new DataParser(this.device.getDataBlockTimeUnitFactor(), this.device.getDataBlockLeader(), this.device.getDataBlockSeparator().value(), this.device.getDataBlockCheckSumType(), this.device.getDataBlockSize(InputTypes.FILE_IO)); //$NON-NLS-1$  //$NON-NLS-2$
+		}
 
 		if (!this.serialPort.isConnected()) {
 			this.serialPort.open();
@@ -181,14 +187,13 @@ public class GathererThread extends Thread {
 						startCycleTime = 0;
 					}
 					// prepare the data for adding to record set
-					tmpCycleTime = System.nanoTime()/1000000;
+					tmpCycleTime = System.currentTimeMillis();
 					if (measurementCount++ == 0) {
 						startCycleTime = tmpCycleTime;
 					}
 
 					if (channelRecordSet != null) {
 						if (this.serialPort.isInterruptedByUser) break;
-						this.parser.parse(new String(dataBuffer), 42);
 						if (this.parser.getValues().length == channelRecordSet.size()) 
 							channelRecordSet.addPoints(this.parser.getValues(), (tmpCycleTime - startCycleTime));
 						else

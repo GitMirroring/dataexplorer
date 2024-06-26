@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <DeviceProperties xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="DeviceProperties_V49.xsd">
     <Device>
-        <name implementation="CSV2SerialAdapter">CSV2Serial2</name>
+        <name implementation="CSV2SerialAdapter">JSON2Serial2</name>
         <manufacturer>WB</manufacturer>
         <manufacturerURL>https://www.nongnu.org/dataexplorer</manufacturerURL>
         <group>charger</group>
@@ -18,12 +18,12 @@
         <isRTS>true</isRTS>
         <isDTR>true</isDTR>
         <TimeOut>
-            <ReadTimeOut>390</ReadTimeOut>
+            <ReadTimeOut>500</ReadTimeOut>
             <ReadStableIndex>5</ReadStableIndex>
             <WriteCharDelayTime>0</WriteCharDelayTime>
             <WriteDelayTime>0</WriteDelayTime>
         </TimeOut>
-        <respond>CSV</respond>
+        <respond>JSON</respond>
         <request>510D0A</request>
     </SerialPort>
     <TimeBase>
@@ -33,11 +33,11 @@
         <timeStep>1000.0</timeStep>
     </TimeBase>
     <DataBlock>
-        <format inputType="SERIAL_IO" formatType="BYTE" size="-57"/>
+        <format inputType="SERIAL_IO" formatType="BYTE" size="-150"/>
         <format inputType="FILE_IO" formatType="VALUE" size="-8"/>
         <timeUnit>msec</timeUnit>
         <separator>semicolon</separator>
-        <leader>$</leader>
+        <leader>{</leader>
         <trailer>0D0A</trailer>
     </DataBlock>
     <State>

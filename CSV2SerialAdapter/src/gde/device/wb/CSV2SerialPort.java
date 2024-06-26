@@ -134,18 +134,18 @@ public class CSV2SerialPort extends DeviceCommPort implements IDeviceCommPort {
 		if (this.endByte_1 != 0x00) {//two char line ending CR/LF
 			while (this.index < this.answer.length && !((this.endByte_1 != 0x00 || this.answer[this.index - 1] == this.endByte_1) && this.answer[this.index] == this.endByte))
 				++this.index;
-			if (log.isLoggable(Level.FINE)) log.log(Level.FINE, System.identityHashCode(this) + String.format(" 2 0x%02X 0x%02X", this.endByte_1, this.endByte));
 		}
 		else {//this.endByte_1 == 0x00 -> single line end character
 			while (this.index < this.answer.length && !(this.answer[this.index] == this.endByte))
 				++this.index;
-			if (log.isLoggable(Level.FINE)) log.log(Level.FINE, System.identityHashCode(this) + String.format(" 1 0x%02X 0x%02X", this.endByte_1, this.endByte));
 		}
 		
 		if (this.index < this.answer.length && (this.tmpData.length + this.index - startIndex) > 8) {
-			endIndex = this.endByte_1 != 0x00 && this.answer[this.index] == this.endByte ? this.index-=1 : this.index;
+			endIndex = this.index > 1 && this.endByte_1 != 0x00 && this.answer[this.index] == this.endByte 
+					? this.index-=1 
+					: this.index;
 			this.data = new byte[this.tmpData.length + endIndex - startIndex];
-			//System.out.println(startIndex + " - " + this.tmpData.length + " - " + endIndex);
+			log.log(Level.OFF, this.tmpData.length + " + " + endIndex + " - " + startIndex);
 			System.arraycopy(this.tmpData, 0, this.data, 0, this.tmpData.length);
 			System.arraycopy(this.answer, startIndex, this.data, this.tmpData.length, endIndex - startIndex);
 			if (CSV2SerialPort.log.isLoggable(Level.FINER)) {
@@ -160,6 +160,7 @@ public class CSV2SerialPort extends DeviceCommPort implements IDeviceCommPort {
 			return this.data;
 		}
 		//endIndex not found, save temporary data, read new data
+		log.log(Level.OFF,"endIndex not found, save temporary data, read new data " );
 		this.data = new byte[this.tmpData.length];
 		System.arraycopy(this.tmpData, 0, this.data, 0, this.data.length);
 

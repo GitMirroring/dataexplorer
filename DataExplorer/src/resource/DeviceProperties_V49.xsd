@@ -50,6 +50,11 @@
 			<xs:sequence>
 				<xs:element name="TimeOut" type="TimeOutType" minOccurs="0" maxOccurs="1" />
 			</xs:sequence>
+			<xs:element name="respond" type="respond_type" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>respond, CSV or JSON string, if not specified device specific binary is assumed</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 			<xs:element name="request" type="xs:hexBinary" minOccurs="0" maxOccurs="1">
 				<xs:annotation>
 					<xs:documentation>write byte array, in hex nomenclature without blanks, prior to read from serial port</xs:documentation>
@@ -82,7 +87,7 @@
 			<xs:element name="productId" type="xs:string" />
 			<xs:element name="productString" type="xs:string" maxOccurs="1" minOccurs="0"/>
 			<xs:element name="usbInterface" type="UsbInterfaceType" minOccurs="1" />
-			<xs:element name="TimeOut" type="TimeOutType" minOccurs="0" />
+			<xs:element name="TimeOut" type="TimeOutType" minOccurs="0" maxOccurs="1" />
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="TcpPortType">
@@ -92,7 +97,7 @@
 			<xs:sequence>
 				<xs:element name="TimeOut" type="TimeOutType" minOccurs="0" maxOccurs="1" />
 			</xs:sequence>
-			<xs:element name="respond" type="tcp_respond_type" />
+			<xs:element name="respond" type="respond_type" />
 			<xs:element name="request" type="xs:hexBinary" minOccurs="0" maxOccurs="1">
 				<xs:annotation>
 					<xs:documentation>write byte array, in hex nomenclature without blanks, prior to read from tcp port</xs:documentation>
@@ -107,17 +112,17 @@
 					<xs:documentation>Defines device specific global properties</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="SerialPort" type="SerialPortType" minOccurs="0">
+			<xs:element name="SerialPort" type="SerialPortType" minOccurs="0" maxOccurs="1">
 				<xs:annotation>
 					<xs:documentation>Defines the serial port configuration</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="UsbPort" type="UsbPortType" minOccurs="0">
+			<xs:element name="UsbPort" type="UsbPortType" minOccurs="0" maxOccurs="1">
 				<xs:annotation>
 					<xs:documentation>Defines the USB port configuration</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="TcpPort" type="TcpPortType" minOccurs="0">
+			<xs:element name="TcpPort" type="TcpPortType" minOccurs="0" maxOccurs="1">
 				<xs:annotation>
 					<xs:documentation>Defines the TCP port configuration</xs:documentation>
 				</xs:annotation>
@@ -129,9 +134,9 @@
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="DataBlock" type="DataBlockType" minOccurs="0">
+			<xs:element name="DataBlock" type="DataBlockType" minOccurs="0" maxOccurs="1">
 				<xs:annotation>
-					<xs:documentation>This describes the data as to be interpreted as input. Nomally this is
+					<xs:documentation>This describes the data as to be interpreted as input. Normally this is
 						handled by individual device plug-in
 					</xs:documentation>
 				</xs:annotation>
@@ -968,7 +973,7 @@
 			<xs:enumeration value="256000" />
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name="tcp_respond_type">
+	<xs:simpleType name="respond_type">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="CSV" />
 			<xs:enumeration value="JSON" />

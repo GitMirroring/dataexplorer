@@ -20,7 +20,7 @@ import gde.GDE;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
- * &lt;simpleType name="tcp_respond_type">
+ * &lt;simpleType name="respond_type">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
  *     &lt;enumeration value="CSV"/>
  *     &lt;enumeration value="JSON"/>
@@ -31,7 +31,7 @@ import gde.GDE;
  */
 @XmlType(name = "tcp_respond_type")
 @XmlEnum
-public enum TcpRespondType {
+public enum RespondType {
 
     CSV,
     JSON;
@@ -40,13 +40,13 @@ public enum TcpRespondType {
         return name();
     }
 
-    public static TcpRespondType fromValue(String v) {
+    public static RespondType fromValue(String v) {
         return valueOf(v);
     }
 
   	public static String[] valuesAsStingArray() {
   		StringBuilder sb = new StringBuilder();
-  		for (TcpRespondType element : TcpRespondType.values()) {
+  		for (RespondType element : RespondType.values()) {
   			sb.append(element.value()).append(GDE.STRING_SEMICOLON);
   		}
   		return sb.toString().split(GDE.STRING_SEMICOLON);

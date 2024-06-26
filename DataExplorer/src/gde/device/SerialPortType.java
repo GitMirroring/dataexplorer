@@ -39,6 +39,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *         &lt;sequence>
  *           &lt;element name="TimeOut" type="{}TimeOutType" minOccurs="0"/>
  *         &lt;/sequence>
+ *         &lt;element name="respond" type="{}tcp_respond_type"/>
+ *         &lt;element name="request" type="{http://www.w3.org/2001/XMLSchema}hexBinary" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -58,6 +60,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "isRTS", //$NON-NLS-1$
     "isDTR", //$NON-NLS-1$
     "timeOut", //$NON-NLS-1$
+    "respond", //$NON-NLS-1$
     "request" //$NON-NLS-1$
 })
 public class SerialPortType {
@@ -78,6 +81,8 @@ public class SerialPortType {
   protected boolean isDTR;
   @XmlElement(name = "TimeOut") //$NON-NLS-1$
   protected TimeOutType timeOut;
+  @XmlElement(required = false)
+  protected RespondType respond;
   @XmlElement(type = String.class)
   @XmlJavaTypeAdapter(HexBinaryAdapter.class)
   @XmlSchemaType(name = "hexBinary") //$NON-NLS-1$
@@ -303,6 +308,30 @@ public class SerialPortType {
      */
     public void setTimeOut(TimeOutType value) {
         this.timeOut = value;
+    }
+
+    /**
+     * Gets the value of the respond property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link RespondType }
+     *     
+     */
+    public RespondType getRespond() {
+        return respond;
+    }
+
+    /**
+     * Sets the value of the respond property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link RespondType }
+     *     
+     */
+    public void setRespond(RespondType value) {
+        this.respond = value;
     }
 
     /**

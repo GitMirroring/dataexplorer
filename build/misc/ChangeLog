@@ -15,9 +15,10 @@ Generic changes/fixes
 	* IGCAdapter - update to new start altitude 250m
 	* iCharger 4512DUO - update device selection picture
 	* OpenTx-Telemtry - update parsing algorithm to allow single empty values
-	* CSV2Serial - fix "Line ending [bytes]" works only with <CR><LF>, ref. bug #65818
+	* CSV2Serial* - fix "Line ending [bytes]" works only with <CR><LF>, ref. bug #65818
 	* CSV2TCP1 - initial release supporting TCP socket communication with CSV respond
 	* JSON2TCP1 - initial release supporting TCP socket communication with JSON respond
+	* JSON2Serial2 - initial release supporting serial port communication with JSON respond
 	
 
 Version 3.8.6 - 12 Apr 2024

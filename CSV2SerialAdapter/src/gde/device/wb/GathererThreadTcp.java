@@ -18,6 +18,11 @@
 ****************************************************************************************/
 package gde.device.wb;
 
+import java.io.IOException;
+import java.util.logging.Logger;
+
+import org.eclipse.swt.SWT;
+
 import gde.GDE;
 import gde.data.Channel;
 import gde.data.Channels;
@@ -38,11 +43,6 @@ import gde.messages.Messages;
 import gde.ui.DataExplorer;
 import gde.utils.TimeLine;
 import gde.utils.WaitTimer;
-
-import java.io.IOException;
-import java.util.logging.Logger;
-
-import org.eclipse.swt.SWT;
 
 /**
  * Thread implementation to gather data from eStation device
@@ -85,13 +85,10 @@ public class GathererThreadTcp extends Thread {
 		this.channelNumber = channelConfigNumber;
 		this.channel = this.channels.get(this.channelNumber);
 		this.recordSetKey = GDE.STRING_BLANK + this.device.getRecordSetStateNameReplacement(this.stateNumber);
-		if (this.device.getTcpPortType().getRespond().name().equals("CSV"))
-				this.parser = new DataParser(this.device.getDataBlockTimeUnitFactor(), this.device.getDataBlockLeader(), this.device.getDataBlockSeparator().value(), this.device.getDataBlockCheckSumType(), this.device.getDataBlockSize(InputTypes.FILE_IO)); //$NON-NLS-1$  //$NON-NLS-2$
-		else if (this.device.getTcpPortType().getRespond().name().equals("JSON"))
+		if (this.device.getTcpPortType().getRespond() != null && this.device.getTcpPortType().getRespond().name().equals("JSON"))
 				this.parser = new JsonDataParser(this.device.getDataBlockTimeUnitFactor(), this.device.getDataBlockLeader(), this.device.getDataBlockSeparator().value(), this.device.getDataBlockCheckSumType(), this.device.getDataBlockSize(InputTypes.FILE_IO)); //$NON-NLS-1$  //$NON-NLS-2$
 		else {
-			this.parser = null;
-			throw new ApplicationConfigurationException("check TCP connection respond type");
+			this.parser = new DataParser(this.device.getDataBlockTimeUnitFactor(), this.device.getDataBlockLeader(), this.device.getDataBlockSeparator().value(), this.device.getDataBlockCheckSumType(), this.device.getDataBlockSize(InputTypes.FILE_IO)); //$NON-NLS-1$  //$NON-NLS-2$
 		}
 
 		if (!this.tcpPort.isConnected()) {
@@ -223,8 +220,8 @@ public class GathererThreadTcp extends Thread {
 					if (delayTime > 0) {
 						WaitTimer.delay(delayTime);
 					}
-					lastTmpCycleTime = System.currentTimeMillis();
 					if (log.isLoggable(Level.TIME)) log.logp(Level.TIME, GathererThreadTcp.$CLASS_NAME, $METHOD_NAME, "delayTime = " + TimeLine.getFomatedTimeWithUnit(delayTime)); //$NON-NLS-1$
+					lastTmpCycleTime = System.currentTimeMillis();
 				}
 				if (log.isLoggable(Level.TIME)) log.logp(Level.TIME, GathererThreadTcp.$CLASS_NAME, $METHOD_NAME, "time = " + TimeLine.getFomatedTimeWithUnit(tmpCycleTime - startCycleTime)); //$NON-NLS-1$
 			}

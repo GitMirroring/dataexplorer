@@ -32,11 +32,12 @@ public class JsonDataParser extends DataParser implements IDataParser {
 	
 	public static class Data {
 
-		int dataSetNumber;
-		int state;
-		long time;
-		List<Integer> measurements;
-		byte checksum;
+		//{"dsn":1,"st":1,"tm":1000,"data":[],"crc":0
+		int dsn; 			//dataSetNumber
+		int st; 			//state;
+		long tm; 			//time;
+		List<Integer> data; //measurements;
+		byte crc; 		//checksum;
 		
 		Data(int dsn, int st, long t, ArrayList<Integer> l, byte q) {
 			setDataSetNumber(dsn);
@@ -48,17 +49,17 @@ public class JsonDataParser extends DataParser implements IDataParser {
 
 		@Override
 		public String toString() {
-			return "Data [dataSetNumber=" + dataSetNumber + ", state=" + state + ", time=" + time + ", measurements=" + measurements + ", checksum=" + checksum + "]";
+			return "Data [dsn=" + dsn + ", st=" + st + ", tm=" + tm + ", data=" + data + ", crc=" + crc + "]";
 		}
 
 		public String[] toStringArray() {
 			ArrayList<String> strArray = new ArrayList<>();
-			strArray.add("$" + dataSetNumber);
-			strArray.add(""+state);
-			strArray.add(""+time);
-			for (int i : measurements) 
+			strArray.add("$" + dsn);
+			strArray.add(""+st);
+			strArray.add(""+tm);
+			for (int i : data) 
 				strArray.add(""+i);
-			strArray.add(""+checksum);		
+			strArray.add(""+crc);		
 			return strArray.toArray(new String[0]);
 		}
 
@@ -66,70 +67,70 @@ public class JsonDataParser extends DataParser implements IDataParser {
 		 * @return the dataSetNumber
 		 */
 		public int getDataSetNumber() {
-			return dataSetNumber;
+			return dsn;
 		}
 		/**
 		 * @param dataSetNumber the dataSetNumber to set
 		 */
 		public void setDataSetNumber(int dataSetNumber) {
-			this.dataSetNumber = dataSetNumber;
+			this.dsn = dataSetNumber;
 		}
 		/**
 		 * @return the state
 		 */
 		public int getState() {
-			return state;
+			return st;
 		}
 		/**
 		 * @param state the state to set
 		 */
 		public void setState(int state) {
-			this.state = state;
+			this.st = state;
 		}
 		/**
 		 * @return the time
 		 */
 		public long getTime() {
-			return time;
+			return tm;
 		}
 		/**
 		 * @param time the time to set
 		 */
 		public void setTime(long time) {
-			this.time = time;
+			this.tm = time;
 		}
 		/**
 		 * @return the measurements
 		 */
 		public List<Integer> getMeasurements() {
-			return measurements;
+			return data;
 		}
 		/**
 		 * @param measurements the measurements to set
 		 */
 		public void setMeasurements(List<Integer> measurements) {
-			this.measurements = measurements;
+			this.data = measurements;
 		}
 
 		/**
 		 * @return the checksum
 		 */
 		public byte getChecksum() {
-			return checksum;
+			return crc;
 		}
 		
 		/**
 		 * @param checksum the checksum to set
 		 */
 		public void setChecksum(byte checksum) {
-			this.checksum = checksum;
+			this.crc = checksum;
 		}
 		
 	}
 	
 	public static void main(String[] args) {
 		
-		String jsonLine = "{\"dataSetNumber\":1,\"state\":2,\"time\":1000,\"measurements\":[1000,1001,1002,1003,1004,1005,1006,1007],\"checksum\":0}";
+		String jsonLine = "{\"dsn\":1,\"st\":2,\"tm\":1000,\"data\":[1000,1001,1002,1003,1004,1005,1006,1007],\"crc\":0}";
 		ArrayList<Integer> measurements = new ArrayList<Integer>(8);
 		int val = 1000;
 		for (int i=0; i<8; i++)

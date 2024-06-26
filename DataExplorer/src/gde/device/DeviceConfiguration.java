@@ -374,6 +374,31 @@ public class DeviceConfiguration {
 	}
 
 	/**
+	 * @return the tcpPort communication respond type
+	 */
+	public RespondType getSerialRespondType() {
+		return this.serialPort.getRespond();
+	}
+
+	/**
+	 * remove the tcpPort communication respond type
+	 */
+	public void setSerialRespondType(RespondType newRespond) {
+		this.isChangePropery = true;
+		if (this.serialPort != null)
+		this.serialPort.respond = this.deviceProps.serialPort.respond = newRespond;
+	}
+
+	/**
+	 * remove the tcpPort communication respond type
+	 */
+	public void removeSerialRespondType() {
+		this.isChangePropery = true;
+		if (this.serialPort != null)
+		this.serialPort.respond = this.deviceProps.serialPort.respond = null;
+	}
+
+	/**
 	 * @return the serialPort
 	 */
 	public UsbPortType getUsbPortType() {
@@ -406,14 +431,14 @@ public class DeviceConfiguration {
 	/**
 	 * @return the tcpPort communication respond type
 	 */
-	public TcpRespondType getTcpRespondType() {
+	public RespondType getTcpRespondType() {
 		return this.tcpPort.getRespond();
 	}
 
 	/**
 	 * remove the tcpPort communication respond type
 	 */
-	public void setTcpRespondType(TcpRespondType newRespond) {
+	public void setTcpRespondType(RespondType newRespond) {
 		this.isChangePropery = true;
 		if (this.tcpPort != null)
 		this.tcpPort.respond = this.deviceProps.tcpPort.respond = newRespond;
