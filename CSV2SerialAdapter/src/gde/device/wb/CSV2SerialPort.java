@@ -145,7 +145,7 @@ public class CSV2SerialPort extends DeviceCommPort implements IDeviceCommPort {
 					? this.index-=1 
 					: this.index;
 			this.data = new byte[this.tmpData.length + endIndex - startIndex];
-			log.log(Level.OFF, this.tmpData.length + " + " + endIndex + " - " + startIndex);
+			if (log.isLoggable(Level.FINER)) log.log(Level.FINER, this.tmpData.length + " + " + endIndex + " - " + startIndex);
 			System.arraycopy(this.tmpData, 0, this.data, 0, this.tmpData.length);
 			System.arraycopy(this.answer, startIndex, this.data, this.tmpData.length, endIndex - startIndex);
 			if (CSV2SerialPort.log.isLoggable(Level.FINER)) {
@@ -160,7 +160,7 @@ public class CSV2SerialPort extends DeviceCommPort implements IDeviceCommPort {
 			return this.data;
 		}
 		//endIndex not found, save temporary data, read new data
-		log.log(Level.OFF,"endIndex not found, save temporary data, read new data " );
+		if (log.isLoggable(Level.FINER)) log.log(Level.FINER,"endIndex not found, save temporary data, read new data " );
 		this.data = new byte[this.tmpData.length];
 		System.arraycopy(this.tmpData, 0, this.data, 0, this.data.length);
 
