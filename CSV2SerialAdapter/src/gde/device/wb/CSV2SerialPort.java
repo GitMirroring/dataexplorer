@@ -119,6 +119,8 @@ public class CSV2SerialPort extends DeviceCommPort implements IDeviceCommPort {
 			}
 			throw e;
 		}
+		this.isDataReceived = false;
+		this.index = 0;
 		return this.data;
 	}
 
@@ -141,9 +143,7 @@ public class CSV2SerialPort extends DeviceCommPort implements IDeviceCommPort {
 		}
 		
 		if (this.index < this.answer.length && (this.tmpData.length + this.index - startIndex) > 8) {
-			endIndex = this.index > 1 && this.endByte_1 != 0x00 && this.answer[this.index] == this.endByte 
-					? this.index-=1 
-					: this.index;
+			endIndex = this.index > 1 && this.endByte_1 != 0x00 && this.answer[this.index] == this.endByte ? this.index-=1 : this.index;
 			this.data = new byte[this.tmpData.length + endIndex - startIndex];
 			if (log.isLoggable(Level.FINER)) log.log(Level.FINER, this.tmpData.length + " + " + endIndex + " - " + startIndex);
 			System.arraycopy(this.tmpData, 0, this.data, 0, this.tmpData.length);
