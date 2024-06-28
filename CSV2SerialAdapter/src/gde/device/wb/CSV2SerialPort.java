@@ -96,19 +96,7 @@ public class CSV2SerialPort extends DeviceCommPort implements IDeviceCommPort {
 			readNewData();
 
 			//find start index
-			while (this.index < this.answer.length && this.answer[this.index] != this.startByte)
-				++this.index;
-
-			if (this.index < this.answer.length) {
-				startIndex = this.index;
-				++this.index;
-				this.tmpData = new byte[0];
-			}
-			else { //startIndex not found, read new data
-				this.isDataReceived = false;
-				this.index = 0;
-				return getData();
-			}
+			startIndex = findStartIndex(0);
 
 			//find end index
 			findDataEnd(startIndex);
@@ -119,11 +107,38 @@ public class CSV2SerialPort extends DeviceCommPort implements IDeviceCommPort {
 			}
 			throw e;
 		}
+		log.log(Level.INFO, "return received data");
 		this.isDataReceived = false;
-		this.index = 0;
 		return this.data;
 	}
 
+	/**
+	 * recursive find start character index
+	 * @param searchIndex
+	 * @return startIndex
+	 * @throws IOException
+	 * @throws TimeOutException
+	 */
+	private int findStartIndex(int searchIndex) throws IOException, TimeOutException {
+		this.index = searchIndex;
+		while (this.index < this.answer.length && this.answer[this.index] != this.startByte)
+			++this.index;
+		
+		if (this.index < this.answer.length) {
+			searchIndex = this.index;
+			++this.index;
+			this.tmpData = new byte[0];
+		}
+		else { //startIndex not found, read new data
+			log.log(Level.WARNING, "startIndex not found, check leading character defined");
+			this.isDataReceived = false;
+			//this.index = 0;
+			readNewData();
+			return findStartIndex(0);
+		}
+		return searchIndex;
+	}
+	
 	/**
 	 * recursive find the end of data, normal exit is not at the end of the method
 	 * @param startIndex
@@ -160,7 +175,7 @@ public class CSV2SerialPort extends DeviceCommPort implements IDeviceCommPort {
 			return this.data;
 		}
 		//endIndex not found, save temporary data, read new data
-		if (log.isLoggable(Level.FINER)) log.log(Level.FINER,"endIndex not found, save temporary data, read new data " );
+		log.log(Level.INFO,"endIndex not found, save temporary data, read new data " );
 		this.data = new byte[this.tmpData.length];
 		System.arraycopy(this.tmpData, 0, this.data, 0, this.data.length);
 
@@ -181,7 +196,7 @@ public class CSV2SerialPort extends DeviceCommPort implements IDeviceCommPort {
 	 * @throws TimeOutException
 	 */
 	protected void readNewData() throws IOException, TimeOutException {
-		if (!this.isDataReceived && this.port.isConnected()) {
+		if (!this.isDataReceived) {
 			this.answer = new byte[this.tmpDataLength];
 			this.answer = this.read(this.answer, this.timeout, this.stableIndex);
 			this.isDataReceived = true;

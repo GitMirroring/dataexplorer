@@ -100,19 +100,7 @@ public class TcpSocketPort extends DeviceCommPort implements IDeviceCommPort {
 			readNewData();
 
 			//find start index
-			while (this.index < this.answer.length && this.answer[this.index] != this.startByte)
-				++this.index;
-
-			if (this.index < this.answer.length) {
-				startIndex = this.index;
-				++this.index;
-				this.tmpData = new byte[0];
-			}
-			else { //startIndex not found, read new data
-				this.isDataReceived = false;
-				this.index = 0;
-				return getData();
-			}
+			startIndex = findStartIndex(0);
 
 			//find end index
 			findDataEnd(startIndex);
@@ -124,8 +112,34 @@ public class TcpSocketPort extends DeviceCommPort implements IDeviceCommPort {
 			throw e;
 		}
 		this.isDataReceived = false;
-		this.index = 0;
 		return this.data;
+	}
+
+	/**
+	 * recursive find start character index
+	 * @param searchIndex
+	 * @return startIndex
+	 * @throws IOException
+	 * @throws TimeOutException
+	 */
+	private int findStartIndex(int searchIndex) throws IOException, TimeOutException {
+		this.index = searchIndex;
+		while (this.index < this.answer.length && this.answer[this.index] != this.startByte)
+			++this.index;
+		
+		if (this.index < this.answer.length) {
+			searchIndex = this.index;
+			++this.index;
+			this.tmpData = new byte[0];
+		}
+		else { //startIndex not found, read new data
+			log.log(Level.WARNING, "startIndex not found, check leading character defined");
+			this.isDataReceived = false;
+			//this.index = 0;
+			readNewData();
+			return findStartIndex(0);
+		}
+		return searchIndex;
 	}
 
 	/**
@@ -164,6 +178,7 @@ public class TcpSocketPort extends DeviceCommPort implements IDeviceCommPort {
 			return this.data;
 		}
 		//endIndex not found, save temporary data, read new data
+		log.log(Level.INFO,"endIndex not found, save temporary data, read new data " );
 		this.data = new byte[this.tmpData.length];
 		System.arraycopy(this.tmpData, 0, this.data, 0, this.data.length);
 

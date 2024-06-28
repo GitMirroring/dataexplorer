@@ -222,7 +222,7 @@ public class GathererThread extends Thread {
 					if (log.isLoggable(Level.TIME)) log.logp(Level.TIME, GathererThread.$CLASS_NAME, $METHOD_NAME, "delayTime = " + TimeLine.getFomatedTimeWithUnit(delayTime)); //$NON-NLS-1$
 					lastTmpCycleTime = System.currentTimeMillis();;
 				}
-				if (log.isLoggable(Level.TIME)) log.logp(Level.TIME, GathererThread.$CLASS_NAME, $METHOD_NAME, "time = " + TimeLine.getFomatedTimeWithUnit(tmpCycleTime - startCycleTime)); //$NON-NLS-1$
+				if (log.isLoggable(Level.TIME)) log.logp(Level.TIME, GathererThread.$CLASS_NAME, $METHOD_NAME, "time = " + TimeLine.getFomatedTimeWithUnit(lastTmpCycleTime - startCycleTime)); //$NON-NLS-1$
 			}
 			catch (DataInconsitsentException e) {
 				log.log(Level.WARNING, e.getMessage(), e);
