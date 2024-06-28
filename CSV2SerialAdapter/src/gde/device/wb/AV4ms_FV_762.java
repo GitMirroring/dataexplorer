@@ -18,7 +18,14 @@
 ****************************************************************************************/
 package gde.device.wb;
 
+import gde.GDE;
+import gde.data.Channel;
+import gde.data.Channels;
 import gde.device.DeviceConfiguration;
+import gde.exception.ApplicationConfigurationException;
+import gde.exception.SerialPortException;
+import gde.log.Level;
+import gde.messages.Messages;
 
 import java.io.FileNotFoundException;
 
@@ -29,6 +36,9 @@ import javax.xml.bind.JAXBException;
  *
  */
 public class AV4ms_FV_762 extends CSV2SerialAdapter {
+	protected final AV4msSerialPort					serialPort;
+	protected GathererThread_AV4ms				gathererThread;
+
 
 	/**
 	 * @param deviceProperties
@@ -37,6 +47,7 @@ public class AV4ms_FV_762 extends CSV2SerialAdapter {
 	 */
 	public AV4ms_FV_762(String deviceProperties) throws FileNotFoundException, JAXBException {
 		super(deviceProperties);
+		this.serialPort = new AV4msSerialPort(this, this.application);
 	}
 
 	/**
@@ -44,6 +55,7 @@ public class AV4ms_FV_762 extends CSV2SerialAdapter {
 	 */
 	public AV4ms_FV_762(DeviceConfiguration deviceConfig) {
 		super(deviceConfig);
+		this.serialPort = new AV4msSerialPort(this, this.application);
 	}
 
 	/**
@@ -61,4 +73,56 @@ public class AV4ms_FV_762 extends CSV2SerialAdapter {
 	 */
 	@Override
 	public boolean useChannelWithSyncedDescription() { return true; }
+	
+	/**
+	 * method toggle open close serial port or start/stop gathering data from device
+	 * if the device does not use serial port communication this place could be used for other device related actions which makes sense here
+	 * as example a file selection dialog could be opened to import serialized ASCII data 
+	 */
+	public void open_closeCommPort() {
+		if (this.isSerialIO) {
+			if (this.serialPort != null) {
+				if (!this.serialPort.isConnected()) {
+					try {
+						Channel activChannel = Channels.getInstance().getActiveChannel();
+						if (activChannel != null) {
+							this.gathererThread = new GathererThread_AV4ms(this.application, this, this.serialPort, activChannel.getNumber());
+							try {
+								if (this.serialPort.isConnected()) {
+									this.gathererThread.start();
+								}
+							}
+							catch (RuntimeException e) {
+								log.log(Level.SEVERE, e.getMessage(), e);
+							}
+							catch (Throwable e) {
+								log.log(Level.SEVERE, e.getMessage(), e);
+							}
+						}
+					}
+					catch (SerialPortException e) {
+						log.log(Level.SEVERE, e.getMessage(), e);
+						this.application.openMessageDialog(Messages.getString(gde.messages.MessageIds.GDE_MSGE0015, new Object[] { e.getClass().getSimpleName() + GDE.STRING_BLANK_COLON_BLANK + e.getMessage() }));
+					}
+					catch (ApplicationConfigurationException e) {
+						log.log(Level.SEVERE, e.getMessage(), e);
+						this.application.openMessageDialog(Messages.getString(gde.messages.MessageIds.GDE_MSGE0010));
+						this.application.getDeviceSelectionDialog().open();
+					}
+					catch (Throwable e) {
+						log.log(Level.SEVERE, e.getMessage(), e);
+					}
+				}
+				else {
+					if (this.gathererThread != null) {
+						this.gathererThread.stopDataGatheringThread(false, null);
+					}
+					this.serialPort.close();
+				}
+			}
+		}
+		else { //InputTypes.FILE_IO
+			importCsvFiles();
+		}
+	}
 }

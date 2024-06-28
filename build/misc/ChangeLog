@@ -19,6 +19,8 @@ Generic changes/fixes
 	* CSV2TCP1 - initial release supporting TCP socket communication with CSV respond
 	* JSON2TCP1 - initial release supporting TCP socket communication with JSON respond
 	* JSON2Serial2 - initial release supporting serial port communication with JSON respond
+	* AV4ms_FV_762 - refine data gathering
+	* *2TCP*, *2Serial* - refine getData recursion to eliminate secondary request
 	
 
 Version 3.8.6 - 12 Apr 2024
