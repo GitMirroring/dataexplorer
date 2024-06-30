@@ -10,6 +10,7 @@ Generic changes/fixes
 	* update device XSD to Version 49 and enable TCP socket communication
 	* enable simple JSON support in combination with TCP communication
 	* make serial port request editable using DevicePropertiesEditor
+	* update jSerialComm library to 2.11.0
 	
 	Device specific changes/fixes
 	* IGCAdapter - update to new start altitude 250m

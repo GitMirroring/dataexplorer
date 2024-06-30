@@ -2,10 +2,10 @@
  * SerialPortDataListenerWithExceptions.java
  *
  *       Created on:  Jul 11, 2019
- *  Last Updated on:  Aug 28, 2019
+ *  Last Updated on:  Jun 08, 2022
  *           Author:  Will Hedgecock
  *
- * Copyright (C) 2012-2020 Fazecast, Inc.
+ * Copyright (C) 2012-2022 Fazecast, Inc.
  *
  * This file is part of jSerialComm.
  *
@@ -28,8 +28,6 @@ package com.fazecast.jSerialComm;
 /**
  * This interface must be implemented to enable simple event-based serial port I/O with a custom Exception callback.
  *
- * @author Will Hedgecock &lt;will.hedgecock@fazecast.com&gt;
- * @version 2.7.0
  * @see com.fazecast.jSerialComm.SerialPortDataListener
  * @see java.util.EventListener
  */
@@ -40,5 +38,5 @@ public interface SerialPortDataListenerWithExceptions extends SerialPortDataList
 	 *
 	 * @param e An {@link Exception} object containing information about the exception that occurred.
 	 */
-	public abstract void catchException(Exception e);
+	void catchException(Exception e);
 }

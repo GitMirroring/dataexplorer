@@ -2,10 +2,10 @@
  * SerialPortPacketListener.java
  *
  *       Created on:  Feb 25, 2015
- *  Last Updated on:  Jan 03, 2018
+ *  Last Updated on:  Jun 08, 2022
  *           Author:  Will Hedgecock
  *
- * Copyright (C) 2012-2020 Fazecast, Inc.
+ * Copyright (C) 2012-2022 Fazecast, Inc.
  *
  * This file is part of jSerialComm.
  *
@@ -30,8 +30,6 @@ package com.fazecast.jSerialComm;
  * <p>
  * <i>Note</i>: Using this interface will negate any serial port read timeout settings since they make no sense in an asynchronous context.
  * 
- * @author Will Hedgecock &lt;will.hedgecock@fazecast.com&gt;
- * @version 2.7.0
  * @see com.fazecast.jSerialComm.SerialPortDataListener
  * @see java.util.EventListener
  */
@@ -42,5 +40,5 @@ public interface SerialPortPacketListener extends SerialPortDataListener
 	 * 
 	 * @return The number of bytes that must be read before the {@link #serialEvent(SerialPortEvent)} callback is triggered.
 	 */
-	public abstract int getPacketSize();
+	int getPacketSize();
 }

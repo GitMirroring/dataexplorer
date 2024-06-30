@@ -11,24 +11,28 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
-        <javaElement handleIdentifier="=jSerialComm/src\/main\/resources&lt;Windows.x86"/>
+        <file path="/jSerialComm/AUTHORS.md"/>
         <file path="/jSerialComm/COPYING"/>
         <file path="/jSerialComm/COPYING.LESSER"/>
-        <file path="/jSerialComm/NOTICE"/>
-        <javaElement handleIdentifier="=jSerialComm/src\/main\/resources&lt;Windows.x86_64"/>
-        <javaElement handleIdentifier="=jSerialComm/src\/main\/resources&lt;Linux.armv8_32"/>
-        <javaElement handleIdentifier="=jSerialComm/src\/main\/resources&lt;Linux.x86_64"/>
-        <javaElement handleIdentifier="=jSerialComm/src\/main\/resources&lt;Linux.armv6"/>
-        <javaElement handleIdentifier="=jSerialComm/src\/main\/resources&lt;Linux.x86"/>
-        <javaElement handleIdentifier="=jSerialComm/src\/main\/resources&lt;Linux"/>
         <file path="/jSerialComm/LICENSE-APACHE-2.0"/>
-        <file path="/jSerialComm/README.md"/>
         <file path="/jSerialComm/LICENSE-LGPL-3.0"/>
-        <javaElement handleIdentifier="=jSerialComm/src\/main\/resources&lt;OSX.x86_64"/>
-        <javaElement handleIdentifier="=jSerialComm/src\/main\/resources&lt;Linux.armv7"/>
-        <file path="/jSerialComm/AUTHORS.md"/>
+        <file path="/jSerialComm/NOTICE"/>
+        <file path="/jSerialComm/README.md"/>
+        <javaElement handleIdentifier="=jSerialComm/src\/main\/resources&lt;Linux"/>
         <javaElement handleIdentifier="=jSerialComm/src\/main\/resources&lt;Linux.armv5"/>
+        <javaElement handleIdentifier="=jSerialComm/src\/main\/resources&lt;Linux.armv6hf"/>
+        <javaElement handleIdentifier="=jSerialComm/src\/main\/resources&lt;Linux.armv7hf"/>
+        <javaElement handleIdentifier="=jSerialComm/src\/main\/resources&lt;Linux.armv8_32"/>
         <javaElement handleIdentifier="=jSerialComm/src\/main\/resources&lt;Linux.armv8_64"/>
+        <javaElement handleIdentifier="=jSerialComm/src\/main\/resources&lt;Linux.x86"/>
+        <javaElement handleIdentifier="=jSerialComm/src\/main\/resources&lt;Linux.x86_64"/>
+        <javaElement handleIdentifier="=jSerialComm/src\/main\/resources&lt;OSX.aarch64"/>
+        <javaElement handleIdentifier="=jSerialComm/src\/main\/resources&lt;OSX.x86"/>
+        <javaElement handleIdentifier="=jSerialComm/src\/main\/resources&lt;OSX.x86_64"/>
+        <javaElement handleIdentifier="=jSerialComm/src\/main\/resources&lt;Windows.aarch64"/>
+        <javaElement handleIdentifier="=jSerialComm/src\/main\/resources&lt;Windows.armv7"/>
+        <javaElement handleIdentifier="=jSerialComm/src\/main\/resources&lt;Windows.x86"/>
+        <javaElement handleIdentifier="=jSerialComm/src\/main\/resources&lt;Windows.x86_64"/>
         <javaElement handleIdentifier="=jSerialComm/src\/main\/java"/>
     </selectedElements>
 </jardesc>

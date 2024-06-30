@@ -106,7 +106,7 @@ public class GDE {
 	private static boolean									isWithUi													= false;
 
 	// ****** begin global constants section *******
-	public static final String							VERSION														= "Version 3.8.7 beta 10"; // check device update list in settings getServiceUpdateList()																																																			//$NON-NLS-1$
+	public static final String							VERSION														= "Version 3.8.7 beta 11"; // check device update list in settings getServiceUpdateList()																																																			//$NON-NLS-1$
 	public static final int									VERSION_NUMBER										= GDE.VERSION.contains("beta") 
 															? Integer.parseInt(GDE.VERSION.substring(8, 8+5).replace(GDE.STRING_DOT, GDE.STRING_EMPTY)) - 1
 															: Integer.parseInt(GDE.VERSION.substring(8, 8+5).replace(GDE.STRING_DOT, GDE.STRING_EMPTY));
@@ -433,7 +433,7 @@ public class GDE {
 
 	public final static Map<String, String>	deviceMap													= new HashMap<String, String>();
 
-	/** access to progrss bar and status message  */
+	/** access to progress bar and status message  */
 	public static UiNotification						uiNotification;
 
 	private static Thread										settingsThread;
@@ -464,6 +464,7 @@ public class GDE {
 		try {
 			System.setProperty("https.protocols", "SSLv3,TLSv1,TLSv1.1,TLSv1.2");
 			System.setProperty("file.encoding", "UTF-8");
+			System.setProperty("fazecast.jSerialComm.appid", "GDE");
 			GDE.initLogger();
 			log.log(Level.INFO, "initLogger  done ");
 

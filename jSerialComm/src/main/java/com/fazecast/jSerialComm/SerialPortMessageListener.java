@@ -2,7 +2,7 @@
  * SerialPortMessageListener.java
  *
  *       Created on:  Mar 14, 2019
- *  Last Updated on:  Mar 19, 2019
+ *  Last Updated on:  Jun 08, 2022
  *           Author:  Will Hedgecock
  *
  * Copyright (C) 2012-2020 Fazecast, Inc.
@@ -30,8 +30,6 @@ package com.fazecast.jSerialComm;
  * <p>
  * <i>Note</i>: Using this interface will negate any serial port read timeout settings since they make no sense in an asynchronous context.
  * 
- * @author Will Hedgecock &lt;will.hedgecock@fazecast.com&gt;
- * @version 2.7.0
  * @see com.fazecast.jSerialComm.SerialPortDataListener
  * @see java.util.EventListener
  */
@@ -42,12 +40,12 @@ public interface SerialPortMessageListener extends SerialPortDataListener
 	 * 
 	 * @return A byte array containing the expected message delimiters that must be encountered before the {@link #serialEvent(SerialPortEvent)} callback is triggered.
 	 */
-	public abstract byte[] getMessageDelimiter();
+	byte[] getMessageDelimiter();
 
 	/**
 	 * Must be overridden to return whether the message delimiter indicates the end or the beginning of a message.
 	 * 
 	 * @return A boolean indicating whether the message delimiter indicates the end or the beginning of a message.
 	 */
-	public abstract boolean delimiterIndicatesEndOfMessage();
+	boolean delimiterIndicatesEndOfMessage();
 }

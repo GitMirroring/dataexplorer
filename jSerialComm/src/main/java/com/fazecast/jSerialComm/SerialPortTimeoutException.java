@@ -2,10 +2,10 @@
  * SerialPortTimeoutException.java
  *
  *       Created on:  Aug 08, 2018
- *  Last Updated on:  Aug 20, 2018
+ *  Last Updated on:  Jun 08, 2022
  *           Author:  Will Hedgecock
  *
- * Copyright (C) 2018-2020 Fazecast, Inc.
+ * Copyright (C) 2012-2022 Fazecast, Inc.
  *
  * This file is part of jSerialComm.
  *
@@ -30,8 +30,6 @@ import java.io.InterruptedIOException;
 /**
  * This class describes a serial port timeout exception.
  * 
- * @author Will Hedgecock &lt;will.hedgecock@fazecast.com&gt;
- * @version 2.7.0
  * @see java.io.InterruptedIOException
  */
 public final class SerialPortTimeoutException extends InterruptedIOException
@@ -39,18 +37,9 @@ public final class SerialPortTimeoutException extends InterruptedIOException
 	private static final long serialVersionUID = 3209035213903386044L;
 
 	/**
-	 * Constructs a {@link SerialPortTimeoutException} with {@code null} as its error detail message.
-	 */
-	public SerialPortTimeoutException()
-	{
-		super();
-		bytesTransferred = 0;
-	}
-
-	/**
 	 * Constructs a {@link SerialPortTimeoutException} with the specified detail message.
 	 * 
-	 * @param message The detail message (which is saved for later retrieval by the {@link getMessage()} method).
+	 * @param message The detail message (which is saved for later retrieval by the {@link SerialPortTimeoutException#getMessage()} method).
 	 */
 	public SerialPortTimeoutException(String message)
 	{
