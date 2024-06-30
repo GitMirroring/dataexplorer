@@ -196,14 +196,6 @@
 
 	<target name="init-mac">
 		<!-- output directories -->
-		<property name="output.mac32" location="${output.dir}/Mac_32" />
-		<property name="output.mac32.app" location="${output.mac32}/DataExplorer.app" />
-		<property name="output.mac32.bundle" location="${output.mac32}/DataExplorer.app/Contents" />
-		<property name="output.mac32.bundle.bin" location="${output.mac32.bundle}/MacOS" />
-		<property name="output.mac32.program" location="${output.mac32.bundle}/Resources" />
-		<property name="output.mac32.program.devices" location="${output.mac32.program}/devices" />
-		<property name="output.mac32.java.ext" location="${output.mac32.program}/java/ext" />
-
 		<property name="output.mac64" location="${output.dir}/Mac_64" />
 		<property name="output.mac64.app" location="${output.mac64}/DataExplorer.app" />
 		<property name="output.mac64.bundle" location="${output.mac64}/DataExplorer.app/Contents" />
@@ -213,13 +205,6 @@
 		<property name="output.mac64.java.ext" location="${output.mac64.program}/java/ext" />
 
 		<!-- create output directory structure -->
-		<mkdir dir="${output.mac32}" />
-		<mkdir dir="${output.mac32.bundle}" />
-		<mkdir dir="${output.mac32.bundle.bin}" />
-		<mkdir dir="${output.mac32.program}" />
-		<mkdir dir="${output.mac32.program.devices}" />
-		<mkdir dir="${output.mac32.java.ext}" />
-
 		<mkdir dir="${output.mac64}" />
 		<mkdir dir="${output.mac64.bundle}" />
 		<mkdir dir="${output.mac64.bundle.bin}" />
@@ -930,27 +915,6 @@
 	</target>
 
 	<target name="copy-files-mac" depends="init-mac">
-		<copy todir="${output.mac32.program}" flatten="yes">
-			<fileset file="DataExplorer/build/*.jar" />
-			<fileset file="build/misc/DataExplorer.icns" />
-			<!-- fileset file="build/misc/DevicePropertiesEditor.icns" / -->
-			<fileset file="RXTXcomm/src/mac/librxtxSerial.jnilib" />
-		</copy>
-		<copy todir="${output.mac32.bundle}" flatten="yes">
-			<fileset file="build/lib/MAC/32/Info.plist" />
-			<fileset file="build/misc/PkgInfo" />
-			<fileset file="build/misc/version.plist" />
-		</copy>
-		<copy todir="${output.mac32.bundle.bin}" flatten="yes">
-			<fileset file="build/misc/DataExplorerMac32" />
-			<!-- fileset file="build/misc/DevicePropertiesEditorMac32" / -->
-		</copy>
-		<copy todir="${output.mac32.program.devices}" flatten="yes">
-			<fileset dir="${basedir}">
-				<patternset refid="DE_PLUGIN_JARS" />
-			</fileset>
-		</copy>
-
 		<copy todir="${output.mac64.program}" flatten="yes">
 			<fileset file="DataExplorer/build/*.jar" />
 			<fileset file="build/misc/DataExplorer.icns" />
@@ -973,29 +937,6 @@
 		</copy>
 
 		<!-- java extenssions -->
-		<copy todir="${output.mac32.java.ext}" flatten="yes">
-			<fileset file="build/lib/RXTXcomm.jar" />
-			<fileset file="build/lib/jSerialComm.jar" />
-			<fileset file="build/lib/MAC/32/swt.jar" />
-			<fileset file="build/misc/*.LICENSE" />
-			<fileset file="build/misc/*.README" />		
-			<fileset file="${basedir}/HoTTMdlViewer/lib/HoTTMdlViewer.jar" />
-			<fileset file="build/lib/gson.jar" />
-			<fileset file="build/lib/juniversalchardet.jar" />
-			<fileset file="build/lib/jaxb-api.jar" />
-			<fileset file="build/lib/jaxb-core.jar" />
-			<fileset file="build/lib/jaxb-runtime.jar" />
-			<fileset file="build/lib/istack-commons-runtime.jar" />
-			<fileset file="build/lib/activation.jar" />
-			<fileset file="build/lib/usb4java.jar" />
-			<fileset file="build/lib/usb-api.jar" />
-			<fileset file="build/lib/usb4java-javax.jar" />
-			<fileset file="build/lib/commons-lang3.jar" />
-			<fileset file="build/lib/tlmreader.jar" />
-			<fileset file="build/lib/jtouchbar.jar" />
-			<fileset file="build/lib/jtouchbar-swt.jar" />
-			<fileset file="build/lib/MAC/32/libusb4java.jar" />
-		</copy>
 		<copy todir="${output.mac64.java.ext}" flatten="yes">
 			<fileset file="build/lib/RXTXcomm.jar" />
 			<fileset file="build/lib/jSerialComm.jar" />
@@ -1018,18 +959,6 @@
 			<fileset file="build/lib/tlmreader.jar" />
 			<fileset file="build/lib/MAC/64/libusb4java.jar" />
 		</copy>
-
-		<!-- launcher scripts, README -->
-		<!-- 
-		<copy todir="${output.mac32.app}" flatten="yes">
-			<fileset file="build/misc/README.*" />
-			<fileset file="build/misc/RXTX_Post-Install_MacOS.sh" />
-		</copy>
-		<copy todir="${output.mac64.app}" flatten="yes">
-			<fileset file="build/misc/README.*" />
-			<fileset file="build/misc/RXTX_Post-Install_MacOS.sh" />
-		</copy>
-		-->
 	</target>
 	
 	<!-- build java runtime using jlink MAC OS Intel -->
@@ -1450,151 +1379,9 @@
 
     <!-- build MAC OS disk image - this only works on MacOSX (requires hdiutil)  -->
     <target name="build_Mac_install_dmg" description="creates MAC OS disk image for install purpose">
-        <antcall target="build_dmg_32"/>
         <antcall target="build_dmg_64"/>
     </target>
-    
-    <target name="build_dmg_32" depends="init-mac" description="creates MAC OS disk image 32 bit">
-	    <property name="mountdir" value="${build.target.dir}"/>
-	    <property name="targetDmgPath" value="${build.target.dir}/${app.name}-${version.num}_Mac_32.dmg"/>
-	    <property name="tmpDmgPath" value="${mountdir}/${app.name}_32-tmp.dmg"/>
-	    	    	
-	   	<!-- Delete previously created DMG -->
-	    <delete file="${targetDmgPath}" quiet="yes" failonerror="false"/>
-	    <!-- Delete the temporary image -->
-	    <delete file="${tmpDmgPath}" quiet="yes" failonerror="false"/>
-    	
-    	<!-- sign app -->
-	    <exec executable="/usr/bin/codesign" os="Mac OS X" failonerror="true">
-	      <arg value="-f"/>
-		  <arg value="-s"/>
-		  <arg value="D9D82CX2Z9"/>
-		  <arg value="--timestamp"/>
-	      <arg value="--verbose"/>
-	      <arg value="${output.mac32}/${app.name}.app"/>
-	    </exec>
-	    <exec executable="/usr/bin/codesign" os="Mac OS X" failonerror="true">
-	      <arg value="-vvv"/>
-		  <arg value="--deep"/>
-		  <arg value="--strict"/>
-		  <arg value="--display"/>
-		  <arg value="--entitlements"/>
-		  <arg value=":-"/>
-	      <arg value="${output.mac32}/${app.name}.app"/>
-	    </exec>
-	    	
-   	    <!-- Create a temporary Disk Image -->
-	    <exec executable="/usr/bin/hdiutil" os="Mac OS X" failonerror="true">
-	      <arg value="create"/>
-		  <arg value="-fs"/>
-		  <arg value="HFS+"/>
-	      <arg value="-srcfolder"/>
-	      <arg value="${output.mac32}/${app.name}.app"/>
-	      <arg value="-volname"/>
-	      <arg value="${app.name}"/>
-	      <arg value="-ov"/>
-	      <arg value="${tmpDmgPath}"/>
-	      <arg value="-format"/>
-	      <arg value="UDRW"/>
-	    </exec>
-	
-	    <!-- Attach the temporary image -->
-	    <exec executable="/usr/bin/hdiutil" os="Mac OS X" failonerror="true">
-	      <arg value="attach"/>
-	      <arg value="${tmpDmgPath}"/>
-	      <arg value="-mountroot"/>
-	      <arg value="${mountdir}/"/>
-	    </exec>
-		    
-	    <!-- make starter scripts executable -->
-	    <exec executable="chmod" os="Mac OS X" failonerror="true">
-	      <arg value="+x"/>
-	      <arg value="${mountdir}/${app.name}/${app.name}.app/Contents/MacOS/DataExplorerMac32"/>
-	    </exec>
-	    <!-- exec executable="chmod" os="Mac OS X" failonerror="true">
-	      <arg value="+x"/>
-	      <arg value="${mountdir}/${app.name}/${app.name}.app/Contents/MacOS/DevicePropertiesEditorMac32"/>
-	    </exec -->
-	    
-	    <!-- Copy the background, the volume icon and DS_Store files -->
-	    <mkdir dir="${mountdir}/${app.name}/.background"/>
-	    <copy file="${basedir}/build/misc/dmg_background.png"
-	          tofile="${mountdir}/${app.name}/.background/background.png"
-	          overwrite="true"/>
-	    <copy file="${basedir}/build/misc/DataExplorerDmg.icns"
-	          tofile="${mountdir}/${app.name}/.VolumeIcon.icns"
-	          overwrite="true"/>
-	    <copy file="${basedir}/build/misc/DS_Store"
-	          tofile="${mountdir}/${app.name}/.DS_Store"
-	          overwrite="true"/>
-	
-	    <!-- Indicate that we want a custom icon -->
-	    <exec executable="/usr/bin/SetFile" os="Mac OS X">
-	      <arg value="-a"/>
-	      <arg value="C"/>
-	      <arg value="${mountdir}/${app.name}"/>
-	    </exec>
-	
-	    <!-- Add a symbolic link to the Applications directory -->
-	    <symlink link="${mountdir}/${app.name}/Applications" resource="/Applications/"/>
-	
-	    <!-- Add a readme files and RXTX_Post-Install.sh to the Applications directory -->
-	    <copy file="${basedir}/build/misc/README.de"
-	          tofile="${mountdir}/${app.name}/README_de.txt"
-	          overwrite="true"/>
-	    <copy file="${basedir}/build/misc/README.en"
-	          tofile="${mountdir}/${app.name}/README_en.txt"
-	          overwrite="true"/>
-	    <copy file="${basedir}/build/misc/RXTX_Post-Install_MacOS.sh"
-	          tofile="${mountdir}/${app.name}/RXTX_Post-Install"
-	          overwrite="true"/>
-	   
-	    <exec executable="chmod" os="Mac OS X" failonerror="true">
-	      <arg value="+x"/>
-	      <arg value="${mountdir}/${app.name}/RXTX_Post-Install"/>
-	    </exec>
-	    	
-	    <!-- Detach the temporary image -->
-	    <exec executable="/usr/bin/hdiutil" os="Mac OS X" failonerror="true">
-	      <arg value="detach"/>
-	      <arg value="${mountdir}/${app.name}"/>
-	    </exec>
-	
-	    <!-- Compress it to a new image -->
-	    <exec executable="/usr/bin/hdiutil" os="Mac OS X" failonerror="true">
-	      <arg value="convert"/>
-	      <arg value="${tmpDmgPath}"/>
-	      <arg value="-format"/>
-	      <arg value="UDZO"/>
-	      <arg value="-o"/>
-	      <arg value="${targetDmgPath}"/>
-	    </exec>
-    	
-    	<!-- sign dmg -->
-	    <exec executable="/usr/bin/codesign" os="Mac OS X" failonerror="true">
-	      <arg value="-f"/>
-		  <arg value="-s"/>
-		  <arg value="D9D82CX2Z9"/>
-		  <arg value="-i"/>
-		  <arg value="gde.DataExplorer"/>
-		  <arg value="--timestamp"/>
-	      <arg value="--verbose"/>
-	      <arg value="${targetDmgPath}"/>
-	    </exec>
-	    <exec executable="/usr/bin/codesign" os="Mac OS X" failonerror="true">
-	      <arg value="-vvv"/>
-		  <arg value="--deep"/>
-		  <arg value="--strict"/>
-		  <arg value="--display"/>
-		  <arg value="--entitlements"/>
-		  <arg value=":-"/>
-	      <arg value="${targetDmgPath}"/>
-	    </exec>
-	
-	    <!-- Delete the temporary image -->
-	    <delete file="${tmpDmgPath}" quiet="yes" failonerror="false"/>
-    </target>
-    
+        
     <target name="build_dmg_64" depends="init-mac" description="creates MAC OS disk image 64 bit">
     	<!-- temporary call jlink to build self contained JRE -->
 	    <antcall target="jlink_mac_intel" description="building java runtime" />		
@@ -1689,21 +1476,13 @@
 	    <!-- Add a symbolic link to the Applications directory -->
 	    <symlink link="${mountdir}/${app.name}/Applications" resource="/Applications/"/>
 	
-	    <!-- Add a readme files and RXTX_Post-Install.sh to the Applications directory -->
+	    <!-- Add a readme files to the Applications directory -->
 	    <copy file="${basedir}/build/misc/README.de"
 	          tofile="${mountdir}/${app.name}/README_de.txt"
 	          overwrite="true"/>
 	    <copy file="${basedir}/build/misc/README.en"
 	          tofile="${mountdir}/${app.name}/README_en.txt"
 	          overwrite="true"/>
-	    <copy file="${basedir}/build/misc/RXTX_Post-Install_MacOS.sh"
-	          tofile="${mountdir}/${app.name}/RXTX_Post-Install"
-	          overwrite="true"/>
-	   
-	    <exec executable="chmod" os="Mac OS X" failonerror="true">
-	      <arg value="+x"/>
-	      <arg value="${mountdir}/${app.name}/RXTX_Post-Install"/>
-	    </exec>
     	
 
 	    <!-- Detach the temporary image -->
