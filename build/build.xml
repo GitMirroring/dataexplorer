@@ -124,22 +124,12 @@
 
 	<target name="init-windows">
 		<!-- output directories -->
-		<property name="output.windows32" location="${output.dir}/Windows_32" />
-		<property name="output.windows32.program" location="${output.windows32}/DataExplorer" />
-		<property name="output.windows32.program.devices" location="${output.windows32}/DataExplorer/devices" />
-		<property name="output.windows32.java.ext" location="${output.windows32}/DataExplorer/java/ext" />
-
 		<property name="output.windows64" location="${output.dir}/Windows_64" />
 		<property name="output.windows64.program" location="${output.windows64}/DataExplorer" />
 		<property name="output.windows64.program.devices" location="${output.windows64}/DataExplorer/devices" />
 		<property name="output.windows64.java.ext" location="${output.windows64}/DataExplorer/java/ext" />
 
 		<!-- create output directory structure -->
-		<mkdir dir="${output.windows32}" />
-		<mkdir dir="${output.windows32.program}" />
-		<mkdir dir="${output.windows32.program.devices}" />
-		<mkdir dir="${output.windows32.java.ext}" />
-
 		<mkdir dir="${output.windows64}" />
 		<mkdir dir="${output.windows64.program}" />
 		<mkdir dir="${output.windows64.program.devices}" />
@@ -631,24 +621,6 @@
 
 	<target name="copy-files-windows" depends="init-windows">
 		<!-- programm directory -->
-		<copy file="build/misc/DataExplorer32.exe" tofile="${output.windows32.program}/DataExplorer.exe" />
-		<copy file="build/misc/DataExplorer32.cmd" tofile="${output.windows32.program}/DataExplorer.cmd" />
-		<copy file="build/misc/DevicePropertiesEditor32.exe" tofile="${output.windows32.program}/DevicePropertiesEditor.exe" />
-		<copy todir="${output.windows32.program}" flatten="yes">
-			<fileset file="DataExplorer/build/*.jar" excludes="**/*NonUi*.jar" />
-			<!--
-            <fileset file="build/misc/DataExplorer.ico" />
-            <fileset file="build/misc/DevicePropertiesEditor.ico" />
-            -->
-			<fileset file="RXTXcomm/src/win32/rxtxSerial.dll" />
-			<fileset file="DataExplorer/src/WinHelper32.dll" />
-		</copy>
-		<copy todir="${output.windows32.program.devices}" flatten="yes">
-			<fileset dir="${basedir}" excludes="**/*NonUi*.jar">
-				<patternset refid="DE_PLUGIN_JARS" />
-			</fileset>
-		</copy>
-
 		<copy file="build/misc/DataExplorer64.exe" tofile="${output.windows64.program}/DataExplorer.exe" />
 		<copy file="build/misc/DataExplorer64.cmd" tofile="${output.windows64.program}/DataExplorer.cmd" />
 		<copy file="build/misc/DevicePropertiesEditor64.exe" tofile="${output.windows64.program}/DevicePropertiesEditor.exe" />
@@ -668,29 +640,6 @@
 		</copy>
 		
 		<!-- java extenssions -->
-		<copy todir="${output.windows32.java.ext}" flatten="yes">
-			<fileset file="build/lib/RXTXcomm.jar" />
-			<fileset file="build/lib/jSerialComm.jar" />
-			<fileset file="build/lib/Windows/32/swt.jar" />
-			<fileset file="build/misc/*.LICENSE" />
-			<fileset file="build/misc/*.README" />
-			<fileset file="${basedir}/HoTTMdlViewer/lib/HoTTMdlViewer.jar" />		
-			<fileset file="build/lib/gson.jar" />
-			<fileset file="build/lib/juniversalchardet.jar" />
-			<fileset file="build/lib/jaxb-api.jar" />
-			<fileset file="build/lib/jaxb-core.jar" />
-			<fileset file="build/lib/jaxb-runtime.jar" />
-			<fileset file="build/lib/istack-commons-runtime.jar" />
-			<fileset file="build/lib/activation.jar" />
-			<fileset file="build/lib/usb4java.jar" />
-			<fileset file="build/lib/usb-api.jar" />
-			<fileset file="build/lib/usb4java-javax.jar" />
-			<fileset file="build/lib/commons-lang3.jar" />
-			<fileset file="build/lib/tlmreader.jar" />
-			<fileset file="build/lib/jtouchbar.jar" />
-			<fileset file="build/lib/jtouchbar-swt.jar" />
-			<fileset file="build/lib/Windows/32/libusb4java.jar" />
-		</copy>
 		<copy todir="${output.windows64.java.ext}" flatten="yes">
 			<fileset file="build/lib/RXTXcomm.jar" />
 			<fileset file="build/lib/jSerialComm.jar" />
@@ -716,9 +665,6 @@
 		</copy>
 		
 		<!-- launcher scripts, README -->
-		<copy todir="${output.windows32}/DataExplorer" flatten="yes">
-			<fileset file="build/misc/README.*" />
-		</copy>
 		<copy todir="${output.windows64}/DataExplorer" flatten="yes">
 			<fileset file="build/misc/README.*" />
 		</copy>
@@ -1357,15 +1303,6 @@
         -->
         <taskdef name="nsis" classname="net.sf.nsisant.Task" classpath="build/lib/nsisant-1.2.jar" />
 
-           <nsis script="build/installer.nsi" verbosity="3">
-               <define name="VERSION" value="${nsis.version}" />
-               <define name="DISTDIR" value="${nsis.dist32}" />
-               <define name="OUTDIR" value="${nsis.outputdir}" />
-               <define name="OUTFILENAME" value="${nsis.outputfilename}_win32.exe" />
-               <define name="EXEFILENAME" value="${launch4j.outputfilename}" />
-           	<!--- do not define 64bit here -->
-           </nsis>
-           
            <nsis script="build/installer.nsi" verbosity="3">
                <define name="VERSION" value="${nsis.version}" />
                <define name="DISTDIR" value="${nsis.dist64}" />
