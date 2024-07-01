@@ -46,6 +46,8 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.usb4java.DeviceHandle;
 import org.usb4java.LibUsbException;
 
+import com.fazecast.jSerialComm.SerialPort;
+
 import gde.GDE;
 import gde.config.Settings;
 import gde.device.FormatTypes;
@@ -64,7 +66,6 @@ import gde.ui.DataExplorer;
 import gde.utils.FileUtils;
 import gde.utils.StringHelper;
 import gde.utils.WaitTimer;
-import gnu.io.SerialPort;
 
 /**
  * class to simulate serial port where bytes read form input file

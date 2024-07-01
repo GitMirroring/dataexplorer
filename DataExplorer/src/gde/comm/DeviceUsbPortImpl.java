@@ -39,6 +39,8 @@ import org.usb4java.DeviceList;
 import org.usb4java.LibUsb;
 import org.usb4java.LibUsbException;
 
+import com.fazecast.jSerialComm.SerialPort;
+
 import gde.GDE;
 import gde.config.Settings;
 import gde.device.DeviceConfiguration;
@@ -53,7 +55,6 @@ import gde.messages.Messages;
 import gde.ui.DataExplorer;
 import gde.ui.dialog.UsbDeviceSelectionDialog;
 import gde.utils.WaitTimer;
-import gnu.io.SerialPort;
 
 public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort {
 	private final static Logger					log							= Logger.getLogger(DeviceUsbPortImpl.class.getName());

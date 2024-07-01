@@ -391,7 +391,6 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 					try {
 						if (DataExplorer.this.getActiveDevice() != null && DataExplorer.this.getActiveDevice().getDeviceConfiguration() != null
 								&& DataExplorer.this.getActiveDevice().getDeviceConfiguration().getSerialPortType() != null) {
-							//RXTXcomm usage: DeviceSerialPortImpl.listConfiguredSerialPorts(...);
 							DeviceCommPort.listConfiguredSerialPorts(DataExplorer.this.settings.doPortAvailabilityCheck(),
 									DataExplorer.this.settings.isSerialPortBlackListEnabled() ? DataExplorer.this.settings.getSerialPortBlackList() : GDE.STRING_EMPTY,
 									DataExplorer.this.settings.isSerialPortWhiteListEnabled() ? DataExplorer.this.settings.getSerialPortWhiteList() : new Vector<String>());

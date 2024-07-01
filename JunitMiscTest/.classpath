@@ -9,7 +9,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/DataExplorer"/>
 	<classpathentry kind="var" path="SWT_JAR_PATH"/>
-	<classpathentry kind="lib" path="/build/lib/RXTXcomm.jar" sourcepath="/RXTXcomm/src"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/HoTTAdapter"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/JetiAdapter"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/GPXAdapter"/>

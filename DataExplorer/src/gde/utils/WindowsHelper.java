@@ -136,13 +136,6 @@ public class WindowsHelper {
 			for (int number : winPorts.keySet()) {
 				sb.append(WINDOWS_SERIAL_PORT_COM).append(number).append(File.pathSeparator);
 			}
-			if (log.isLoggable(Level.FINE)) 
-				log.log(Level.FINE, "set property gnu.io.rxtx.SerialPorts = " + sb.toString()); //$NON-NLS-1$
-			System.setProperty("gnu.io.rxtx.SerialPorts", sb.toString()); //$NON-NLS-1$
-		}
-		else {
-			System.setProperty("gnu.io.rxtx.SerialPorts", GDE.STRING_EMPTY); //$NON-NLS-1$
-			//System.clearProperty("gnu.io.rxtx.SerialPorts");
 		}
 		if (log.isLoggable(Level.FINE)) 
 			log.log(Level.FINE, "enum Windows ports  takes = " + StringHelper.getFormatedTime("ss:SSS", (new Date().getTime() - startTime))); //$NON-NLS-1$ //$NON-NLS-2$

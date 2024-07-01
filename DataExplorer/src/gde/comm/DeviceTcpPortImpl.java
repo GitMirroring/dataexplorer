@@ -55,14 +55,12 @@ import gde.messages.Messages;
 import gde.ui.DataExplorer;
 import gde.utils.StringHelper;
 import gde.utils.WaitTimer;
-import gnu.io.SerialPortEvent;
-import gnu.io.SerialPortEventListener;
 
 /**
  * DeviceSerialPort is the abstract class of the serial port implementation as parent for a device specific serial port implementation
  * @author Winfried Brügmann
  */
-public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort, SerialPortEventListener {
+public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort {
 	final static String										$CLASS_NAME								= DeviceTcpPortImpl.class.getName();
 	final static Logger										log												= Logger.getLogger(DeviceTcpPortImpl.$CLASS_NAME);
 
@@ -820,11 +818,6 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 			impl.close();
 			//close end
 		}
-	}
-
-	@Override
-	public void serialEvent(SerialPortEvent ev) {
-		// TODO Auto-generated method stub		
 	}
 
 	/////// USB interface starts here

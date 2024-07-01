@@ -96,10 +96,8 @@ public class DeviceCommPort implements IDeviceCommPort {
 						: (System.getProperty("GDE_SIMULATION_TIME_STEP_MSEC") != null ? Integer.parseInt(System.getProperty("GDE_SIMULATION_TIME_STEP_MSEC")) : (int)this.device.getTimeStep_ms())));
 		}
 		else  if (this.deviceConfig.getSerialPortType() != null) {
-			if (this.settings.isRXTXcommToBeUsed()) //RXTXcomm
-				this.port = new DeviceSerialPortImpl(this.deviceConfig, this.application);
-			else //jSerialCommPort: 
-				this.port = new DeviceJavaSerialCommPortImpl(this.deviceConfig, this.application);
+			//jSerialComm Port: 
+			this.port = new DeviceJavaSerialCommPortImpl(this.deviceConfig, this.application);
 		}
 		else if (this.deviceConfig.getUsbPortType() != null) { // USB device
 			this.port = new DeviceUsbPortImpl(this.deviceConfig, this.application);
@@ -128,7 +126,6 @@ public class DeviceCommPort implements IDeviceCommPort {
 						: (System.getProperty("GDE_SIMULATION_TIME_STEP_MSEC") != null ? Integer.parseInt(System.getProperty("GDE_SIMULATION_TIME_STEP_MSEC")) : (int)this.deviceConfig.getTimeStep_ms())));
 		}
 		else  if (this.deviceConfig.getSerialPortType() != null) {
-			//RXTXcomm usage: this.port = new DeviceSerialPortImpl(this.deviceConfig, this.application);
 			//jSerialCommPort: 
 			this.port = new DeviceJavaSerialCommPortImpl(this.deviceConfig, this.application);
 		}
@@ -161,9 +158,7 @@ public class DeviceCommPort implements IDeviceCommPort {
 	 * @param portWhiteList
 	 */
 	public static TreeMap<String, String> listConfiguredSerialPorts(final boolean doAvialabilityCheck, final String portBlackList, final Vector<String> portWhiteList) {
-		if (DeviceCommPort.staticPort != null && DeviceCommPort.staticPort instanceof DeviceSerialPortImpl) //RXTXcomm
-			return DeviceSerialPortImpl.listConfiguredSerialPorts(doAvialabilityCheck, portBlackList, portWhiteList);
-		else if (DeviceCommPort.staticPort != null && DeviceCommPort.staticPort instanceof DeviceJavaSerialCommPortImpl) //JSerialCommPort: 
+		if (DeviceCommPort.staticPort != null && DeviceCommPort.staticPort instanceof DeviceJavaSerialCommPortImpl) //JSerialCommPort: 
 			return DeviceJavaSerialCommPortImpl.listConfiguredSerialPorts(doAvialabilityCheck, portBlackList, portWhiteList);
 		else {
 			DeviceCommPort.availablePorts.clear();
@@ -176,9 +171,7 @@ public class DeviceCommPort implements IDeviceCommPort {
 	 * @return available serial port list
 	 */
 	public static String[] prepareSerialPortList() {
-		if (DeviceCommPort.staticPort != null && DeviceCommPort.staticPort instanceof DeviceSerialPortImpl) //RXTXcomm
-			return DeviceSerialPortImpl.prepareSerialPortList();
-		else if (DeviceCommPort.staticPort != null && DeviceCommPort.staticPort instanceof DeviceJavaSerialCommPortImpl) //JSerialCommPort: 
+		if (DeviceCommPort.staticPort != null && DeviceCommPort.staticPort instanceof DeviceJavaSerialCommPortImpl) //JSerialCommPort: 
 			return DeviceJavaSerialCommPortImpl.prepareSerialPortList();
 		else
 			return new String[0];

@@ -620,7 +620,6 @@
             <fileset file="build/misc/DataExplorer.ico" />
             <fileset file="build/misc/DevicePropertiesEditor.ico" />
             -->
-			<fileset file="RXTXcomm/src/win64/rxtxSerial.dll" />
 			<fileset file="DataExplorer/src/WinHelper64.dll" />
 		</copy>
 		<copy todir="${output.windows64.program.devices}" flatten="yes">
@@ -631,7 +630,6 @@
 		
 		<!-- java extenssions -->
 		<copy todir="${output.windows64.java.ext}" flatten="yes">
-			<fileset file="build/lib/RXTXcomm.jar" />
 			<fileset file="build/lib/jSerialComm.jar" />
 			<fileset file="build/lib/Windows/64/swt.jar" />
 			<fileset file="build/misc/*.LICENSE" />
@@ -671,7 +669,6 @@
 			<fileset file="build/misc/DataExplorer.desktop" />
 			<fileset file="build/misc/DevicePropertiesEditor" />
 			<fileset file="build/misc/DevicePropertiesEditor.desktop" />
-			<fileset file="RXTXcomm/src/arm32/librxtxSerial.so" />
 		</copy>
 		<copy todir="${output.raspbian32.program.devices}" flatten="yes">
 			<fileset dir="${basedir}">
@@ -689,7 +686,6 @@
 			<fileset file="build/misc/DataExplorer.desktop" />
 			<fileset file="build/misc/DevicePropertiesEditor" />
 			<fileset file="build/misc/DevicePropertiesEditor.desktop" />
-			<!-- fileset file="RXTXcomm/src/arm64/librxtxSerial.so" / -->
 		</copy>
 		<copy todir="${output.raspbian64.program.devices}" flatten="yes">
 			<fileset dir="${basedir}">
@@ -699,7 +695,6 @@
 
 		<!-- java extenssions -->
 		<copy todir="${output.raspbian32.java.ext}" flatten="yes">
-			<fileset file="build/lib/RXTXcomm.jar" />
 			<fileset file="build/lib/jSerialComm.jar" />
 			<fileset file="build/lib/Raspbian/32/swt.jar" />
 			<fileset file="build/misc/*.LICENSE" />
@@ -723,7 +718,6 @@
 		</copy>
 		
 		<copy todir="${output.raspbian64.java.ext}" flatten="yes">
-			<fileset file="build/lib/RXTXcomm.jar" />
 			<fileset file="build/lib/jSerialComm.jar" />
 			<fileset file="build/lib/Raspbian/64/swt.jar" />
 			<fileset file="build/misc/*.LICENSE" />
@@ -767,7 +761,6 @@
 			<fileset file="build/misc/DataExplorer.desktop" />
 			<fileset file="build/misc/DevicePropertiesEditor" />
 			<fileset file="build/misc/DevicePropertiesEditor.desktop" />
-			<fileset file="RXTXcomm/src/lnx64/librxtxSerial.so" />
 		</copy>
 		<copy todir="${output.gnulinux64.program.devices}" flatten="yes">
 			<fileset dir="${basedir}">
@@ -777,7 +770,6 @@
 		
 		<!-- java extenssions -->
 		<copy todir="${output.gnulinux64.java.ext}" flatten="yes">
-			<fileset file="build/lib/RXTXcomm.jar" />
 			<fileset file="build/lib/jSerialComm.jar" />
 			<fileset file="build/lib/GNULinux/64/swt.jar" />
 			<fileset file="build/misc/*.LICENSE" />
@@ -811,7 +803,6 @@
 			<fileset file="DataExplorer/build/*.jar" />
 			<fileset file="build/misc/DataExplorer.icns" />
 			<!-- fileset file="build/misc/DevicePropertiesEditor.icns" / -->
-			<fileset file="RXTXcomm/src/mac/librxtxSerial.jnilib" />
 		</copy>
 		<copy todir="${output.mac64.bundle}" flatten="yes">
 			<fileset file="build/lib/MAC/64/Info.plist" />
@@ -830,7 +821,6 @@
 
 		<!-- java extenssions -->
 		<copy todir="${output.mac64.java.ext}" flatten="yes">
-			<fileset file="build/lib/RXTXcomm.jar" />
 			<fileset file="build/lib/jSerialComm.jar" />
 			<fileset file="build/lib/MAC/64/swt.jar" />
 			<fileset file="build/misc/*.LICENSE" />
@@ -1036,7 +1026,6 @@
 				<exclude name="launch4j/**" />
 				<exclude name="Port*/**" />
 				<exclude name="Print*/**" />
-				<include name="RXTXcomm/**" />
 				<include name="jSerialComm/**" />
 				<exclude name="X-Tools/**" />
 			</tarfileset>
@@ -1075,7 +1064,6 @@
 				<pathelement path="${java.home}/bin/rt.jar" />
 				<pathelement path="${basedir}/thirdparty/Junit5/junit.jar" />
 				<pathelement path="${basedir}/build/lib/${build.os.shortname}/${sun.arch.data.model}/swt.jar" />
-				<pathelement path="${basedir}/build/lib/RXTXcomm.jar" />
 				<pathelement path="${basedir}/build/lib/jSerialComm.jar" />
 				<pathelement path="${basedir}/build/target/${build.os.shortname}_${sun.arch.data.model}/DataExplorer/DataExplorer.jar" />
 				<pathelement location="${basedir}/JunitMiscTest/bin" />

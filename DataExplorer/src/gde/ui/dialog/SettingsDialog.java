@@ -668,7 +668,6 @@ public class SettingsDialog extends Dialog {
 									@Override
 									public void widgetSelected(SelectionEvent evt) {
 										SettingsDialog.log.log(Level.FINEST, "enableBlackListButton.widgetSelected, event=" + evt); //$NON-NLS-1$
-										System.clearProperty("gnu.io.rxtx.SerialPorts"); //$NON-NLS-1$
 										if (SettingsDialog.this.enableBlackListButton.getSelection()) {
 											SettingsDialog.this.settings.setSerialPortBlackListEnabled(true);
 											SettingsDialog.this.serialPortBlackList.setEditable(true);
@@ -730,7 +729,6 @@ public class SettingsDialog extends Dialog {
 											SettingsDialog.this.settings.setSerialPortWhiteListEnabled(false);
 											SettingsDialog.this.serialPortWhiteList.setEditable(false);
 											SettingsDialog.this.serialPortWhiteList.setEnabled(false);
-											System.clearProperty("gnu.io.rxtx.SerialPorts"); //$NON-NLS-1$
 										}
 									}
 								});
@@ -2224,14 +2222,9 @@ public class SettingsDialog extends Dialog {
 					// check if black or white list enabled and some chars typed but not accepted
 					if (SettingsDialog.this.settings.isSerialPortBlackListEnabled()) {
 						SettingsDialog.this.settings.setSerialPortBlackList(SettingsDialog.this.serialPortBlackList.getText());
-						System.clearProperty("gnu.io.rxtx.SerialPorts"); //$NON-NLS-1$
 					}
 					else if (SettingsDialog.this.settings.isSerialPortWhiteListEnabled()) {
 						SettingsDialog.this.settings.setSerialPortWhiteList(SettingsDialog.this.serialPortWhiteList.getText());
-						//System.setProperty("gnu.io.rxtx.SerialPorts", "COMx"); set by setSerialPortWhiteList()
-					}
-					else {
-						System.clearProperty("gnu.io.rxtx.SerialPorts"); //$NON-NLS-1$
 					}
 					// check for changed local
 					if (SettingsDialog.this.isLocaleLanguageChanged) {

@@ -225,7 +225,6 @@ public final class Settings extends Properties {
 	public final static String			IS_ALL_IN_ONE_RECORDSET					= "is_all_in_one_record_set";																																			//$NON-NLS-1$
 	public final static String			IS_PARTIAL_DATA_TABLE						= "is_partial_data_table";																																				//$NON-NLS-1$
 	public final static String			IS_DATA_TABLE_EDITABLE					= "is_data_table_editable";																																				//$NON-NLS-1$
-	public final static String			IS_RXTX_COMM_TO_BE_USED					= "is_rxtx_comm_to_be_used";																																				//$NON-NLS-1$
 	public final static String			IS_START_DEV_COMM_AFTER_START		= "is_start_device_comm_after_startup";																																				//$NON-NLS-1$
 	public final static String			IS_MAC_TOUCHBAR									= "is_mac_touchbar";																																				//$NON-NLS-1$
 	public final static String			GLOBAL_LOG_LEVEL								= "global_log_level";																																							//$NON-NLS-1$
@@ -852,7 +851,6 @@ public final class Settings extends Properties {
 			writer.write(String.format("%-40s \t=\t %s\n", Settings.IS_ALL_IN_ONE_RECORDSET, this.isContinuousRecordSet())); //$NON-NLS-1$
 			writer.write(String.format("%-40s \t=\t %s\n", Settings.IS_PARTIAL_DATA_TABLE, this.isPartialDataTable())); //$NON-NLS-1$
 			writer.write(String.format("%-40s \t=\t %s\n", Settings.IS_START_DEV_COMM_AFTER_START, this.isStartDeviceCommunicationAfterStartup())); //$NON-NLS-1$
-			writer.write(String.format("%-40s \t=\t %s\n", Settings.IS_RXTX_COMM_TO_BE_USED, this.isRXTXcommToBeUsed())); //$NON-NLS-1$
 
 			writer.write(String.format("%s\n", Settings.TABLE_BLOCK)); // [Tabellen Einstellungen] //$NON-NLS-1$
 			writer.write(String.format("%-40s \t=\t %s\n", Settings.LIST_SEPARATOR, getListSeparator())); //$NON-NLS-1$
@@ -1842,14 +1840,14 @@ public final class Settings extends Properties {
 	}
 
 	/**
-	 * query value if a hint was displayed to enalble uucp locking used on UNIX based systems with RXTXcomm
+	 * query value if a hint was displayed to enable uucp locking used on UNIX based systems with serial comm
 	 */
 	public boolean isLockUucpHinted() {
 		return Boolean.valueOf(this.getProperty(Settings.IS_LOCK_UUCP_HINTED, "false")); //$NON-NLS-1$
 	}
 
 	/**
-	 * query value if a hint was displayed to enalble uucp locking used on UNIX based systems with RXTXcomm
+	 * query value if a hint was displayed to enable uucp locking used on UNIX based systems with serial comm
 	 */
 	public boolean isUpdateChecked() {
 		return this.getProperty(Settings.LAST_UPDATE_CHECK, "2000-01-01").equals(StringHelper.getDate()); //$NON-NLS-1$
@@ -3279,10 +3277,6 @@ public final class Settings extends Properties {
 		return DataExplorer.getInstance().COLOR_BACKGROUND.getRed() + DataExplorer.getInstance().COLOR_BACKGROUND.getGreen() + DataExplorer.getInstance().COLOR_BACKGROUND.getBlue() > 500 ? "light/" : "dark/";
 	}
 
-	public boolean isRXTXcommToBeUsed() {
-		return Boolean.valueOf(this.getProperty(Settings.IS_RXTX_COMM_TO_BE_USED, "false"));
-	}
-	
 	public boolean isStartDeviceCommunicationAfterStartup() {
 		return Boolean.valueOf(this.getProperty(Settings.IS_START_DEV_COMM_AFTER_START, "false"));
 	}

@@ -35,7 +35,6 @@
 
 	<path id="compile.classpath">
 		<pathelement location="../build/lib/gson.jar" />
-		<pathelement location="../build/lib/RXTXcomm.jar" />
 		<pathelement location="../build/lib/jSerialComm.jar" />
 		<pathelement location="../build/lib/jaxb-api.jar"/>
 		<pathelement location="../build/lib/jaxb-core.jar"/>
@@ -81,7 +80,7 @@
 			<attribute name="Created-By" value="${user.name}"/>
 			<attribute name="Built-Date" value="${TODAY}"/> 
 			<attribute name="Main-Class" value="gde.GDE"/>
-			<attribute name="Class-Path" value="java/ext/juniversalchardet.jar java/ext/jaxb-api.jar java/ext/jaxb-core.jar java/ext/jaxb-runtime.jar java/ext/istack-commons-runtime.jar java/ext/activation.jar java/ext/gson.jar java/ext/swt.jar java/ext/jSerialComm.jar java/ext/RXTXcomm.jar java/ext/usb-api.jar java/ext/usb4java-javax.jar java/ext/usb4java.jar java/ext/commons-lang3.jar java/ext/libusb4java.jar java/ext/jtouchbar.jar java/ext/jtouchbar-swt.jar"/>
+			<attribute name="Class-Path" value="java/ext/juniversalchardet.jar java/ext/jaxb-api.jar java/ext/jaxb-core.jar java/ext/jaxb-runtime.jar java/ext/istack-commons-runtime.jar java/ext/activation.jar java/ext/gson.jar java/ext/swt.jar java/ext/jSerialComm.jar java/ext/usb-api.jar java/ext/usb4java-javax.jar java/ext/usb4java.jar java/ext/commons-lang3.jar java/ext/libusb4java.jar java/ext/jtouchbar.jar java/ext/jtouchbar-swt.jar"/>
    		</manifest>
  	    <jar manifest="src/META-INF/MANIFEST.MF" jarfile="build/${ant.project.name}.jar" compress="true" >
 	       	<fileset dir="${module.output}" includes="**/*.class"/>

@@ -18,7 +18,7 @@ Sprachenunterstützung ist vorhanden, wobei aktuell Deutsch und Englisch vorhand
 systemübergreifende Gedanke. Für nicht Windowsbenutzer soll eine
 ähnliche Funktionalität zur Verfügung gestellt werden, wie es LogView
 für Windowsbenutzer heute schon bietet. Deshalb basiert die
-Implementierung auf Java unter Verwendung der freien jSerialComm/RXTXcomm
+Implementierung auf Java unter Verwendung der freien jSerialComm
 Bibliothek, für die serielle Anbindung und der eclipse SWT Bibliothek
 für die Benutzeroberfläche. Für beide Basisbibliotheken gibt es die
 native Anbindung für Windows, GNU/Linux und Mac OS. Entwickelt wird mit
@@ -64,7 +64,7 @@ Javaprogramme stehen anderen direkt in Maschinensprache übersetzten
 Programmen in nichts nach. Durch das "Java Native Interface" kann man
 sozusagen in Java auf die Hardware durchgreifen. Hier sind es dann meist
 auch C-Programme, die hier angesprochen werden. Das ist bei dem
-verwendeten jSerialComm/RXTXcomm und beim SWT der Fall. </BR>
+verwendeten jSerialComm und beim SWT der Fall. </BR>
 Wie man sieht bekommt man mit der Programmiersprache Java,
 beziehungsweise der Laufzeitumgebung, eine unglaubliche Anzahl von
 Bibliotheken zur Verfügung gestellt. Des weiteren gibt es unter der GPL
@@ -162,7 +162,6 @@ Vermessen der Kurven entstehen.</P>
 	Systemen spielt das, zeitlich gesehen, keinen Rolle. Diese Einstellung
 	wirkt sich auch auf den Ger&auml;teauswahldialog aus, der seinerseits
 	auch nach verf&uuml;gbaren serielle Ports sucht.
-	</BR><B>Hinweis: </B>Bei Windows werden Bluetooth-Ports ausgeblendet, es kommt hier mit dem verwendeten RXTXcomm Paket zu Funktionseinschr&auml;nkungen!</LI>
 	<LI>wenn es systemweit nur einen seriellen Anschluss (Port) gibt,
 	kann man hier die globale Einstellung vornehmen, meist sucht sich das
 	Programm aber selbst den seriellen Port zur Ger&auml;tekommunikation.

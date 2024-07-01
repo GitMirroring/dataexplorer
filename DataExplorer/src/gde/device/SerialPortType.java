@@ -17,6 +17,8 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import com.fazecast.jSerialComm.SerialPort;
+
 
 /**
  * <p>Java class for SerialPortType complex type.
@@ -220,11 +222,11 @@ public class SerialPortType {
     	switch (this.flowControlMode) {
     	default:
 			case FLOWCONTROL_NONE:
-        return gnu.io.SerialPort.FLOWCONTROL_NONE;
+        return SerialPort.FLOW_CONTROL_DISABLED;
 			case FLOWCONTROL_XON_XOFF:
-        return gnu.io.SerialPort.FLOWCONTROL_XONXOFF_IN | gnu.io.SerialPort.FLOWCONTROL_XONXOFF_OUT;
+        return SerialPort.FLOW_CONTROL_XONXOFF_IN_ENABLED | SerialPort.FLOW_CONTROL_XONXOFF_OUT_ENABLED;
 			case FLOWCONTROL_HARDWARE:
-        return gnu.io.SerialPort.FLOWCONTROL_RTSCTS_IN | gnu.io.SerialPort.FLOWCONTROL_RTSCTS_OUT;
+        return SerialPort.FLOW_CONTROL_CTS_ENABLED | SerialPort.FLOW_CONTROL_RTS_ENABLED;
 			}
     }
     
