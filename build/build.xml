@@ -117,7 +117,7 @@
 		<property name="source.dir" location="${basedir}" />
 		
 		<antcall target="init-windows" if:set="isWindows" />
-		<antcall target="init-raspbian" unless:set="isWindows" />
+		<antcall target="init-armLnx" unless:set="isWindows" />
 		<antcall target="init-linux" if:set="isLinux" />
 		<antcall target="init-mac" if:set="isMac" />
 	</target>
@@ -136,28 +136,28 @@
 		<mkdir dir="${output.windows64.java.ext}" />
 	</target>
 
-	<target name="init-raspbian">
+	<target name="init-armLnx">
 		<!-- output directories -->
-		<property name="output.raspbian32" location="${output.dir}/Raspbian_32" />
-		<property name="output.raspbian32.program" location="${output.raspbian32}/DataExplorer" />
-		<property name="output.raspbian32.program.devices" location="${output.raspbian32}/DataExplorer/devices" />
-		<property name="output.raspbian32.java.ext" location="${output.raspbian32}/DataExplorer/java/ext" />
+		<property name="output.armLnx32" location="${output.dir}/Linux_ARM_32" />
+		<property name="output.armLnx32.program" location="${output.armLnx32}/DataExplorer" />
+		<property name="output.armLnx32.program.devices" location="${output.armLnx32}/DataExplorer/devices" />
+		<property name="output.armLnx32.java.ext" location="${output.armLnx32}/DataExplorer/java/ext" />
 
-		<property name="output.raspbian64" location="${output.dir}/Raspbian_64" />
-		<property name="output.raspbian64.program" location="${output.raspbian64}/DataExplorer" />
-		<property name="output.raspbian64.program.devices" location="${output.raspbian64}/DataExplorer/devices" />
-		<property name="output.raspbian64.java.ext" location="${output.raspbian64}/DataExplorer/java/ext" />
+		<property name="output.armLnx64" location="${output.dir}/Linux_ARM_64" />
+		<property name="output.armLnx64.program" location="${output.armLnx64}/DataExplorer" />
+		<property name="output.armLnx64.program.devices" location="${output.armLnx64}/DataExplorer/devices" />
+		<property name="output.armLnx64.java.ext" location="${output.armLnx64}/DataExplorer/java/ext" />
 
 		<!-- create output directory structure -->
-		<mkdir dir="${output.raspbian32}" />
-		<mkdir dir="${output.raspbian32.program}" />
-		<mkdir dir="${output.raspbian32.program.devices}" />
-		<mkdir dir="${output.raspbian32.java.ext}" />
+		<mkdir dir="${output.armLnx32}" />
+		<mkdir dir="${output.armLnx32.program}" />
+		<mkdir dir="${output.armLnx32.program.devices}" />
+		<mkdir dir="${output.armLnx32.java.ext}" />
 		
-		<mkdir dir="${output.raspbian64}" />
-		<mkdir dir="${output.raspbian64.program}" />
-		<mkdir dir="${output.raspbian64.program.devices}" />
-		<mkdir dir="${output.raspbian64.java.ext}" />
+		<mkdir dir="${output.armLnx64}" />
+		<mkdir dir="${output.armLnx64.program}" />
+		<mkdir dir="${output.armLnx64.program.devices}" />
+		<mkdir dir="${output.armLnx64.java.ext}" />
 	</target>
 
 	<target name="init-linux">
@@ -604,7 +604,7 @@
 	<!-- create internal temporay file structure -->
 	<target name="copy-files" depends="package,create_HoTTMdlViewer_lib">
 		<antcall target="copy-files-windows" if:set="isWindows" />
-		<antcall target="copy-files-raspbian" unless:set="isWindows" />
+		<antcall target="copy-files-armLnx" unless:set="isWindows" />
 		<antcall target="copy-files-linux" if:set="isLinux" />
 		<antcall target="copy-files-mac" if:set="isMac" />
 	</target>
@@ -658,9 +658,9 @@
 		</copy>
 	</target>
 	
-	<target name="copy-files-raspbian" depends="init-raspbian">
-		<copy file="build/misc/DataExplorer32" tofile="${output.raspbian32.program}/DataExplorer" />
-		<copy todir="${output.raspbian32.program}" flatten="yes">
+	<target name="copy-files-armLnx" depends="init-armLnx">
+		<copy file="build/misc/DataExplorer32" tofile="${output.armLnx32.program}/DataExplorer" />
+		<copy todir="${output.armLnx32.program}" flatten="yes">
 			<fileset file="DataExplorer/build/*.jar" />
 			<fileset file="build/misc/DataExplorer-mime.xml" />
 			<fileset file="build/misc/DevicePropertiesEditor.xpm" />
@@ -670,14 +670,14 @@
 			<fileset file="build/misc/DevicePropertiesEditor" />
 			<fileset file="build/misc/DevicePropertiesEditor.desktop" />
 		</copy>
-		<copy todir="${output.raspbian32.program.devices}" flatten="yes">
+		<copy todir="${output.armLnx32.program.devices}" flatten="yes">
 			<fileset dir="${basedir}">
 				<patternset refid="DE_PLUGIN_JARS" />
 			</fileset>
 		</copy>
 
-		<copy file="build/misc/DataExplorer64" tofile="${output.raspbian64.program}/DataExplorer" />
-		<copy todir="${output.raspbian64.program}" flatten="yes">
+		<copy file="build/misc/DataExplorer64" tofile="${output.armLnx64.program}/DataExplorer" />
+		<copy todir="${output.armLnx64.program}" flatten="yes">
 			<fileset file="DataExplorer/build/*.jar" />
 			<fileset file="build/misc/DataExplorer-mime.xml" />
 			<fileset file="build/misc/DevicePropertiesEditor.xpm" />
@@ -687,16 +687,16 @@
 			<fileset file="build/misc/DevicePropertiesEditor" />
 			<fileset file="build/misc/DevicePropertiesEditor.desktop" />
 		</copy>
-		<copy todir="${output.raspbian64.program.devices}" flatten="yes">
+		<copy todir="${output.armLnx64.program.devices}" flatten="yes">
 			<fileset dir="${basedir}">
 				<patternset refid="DE_PLUGIN_JARS" />
 			</fileset>
 		</copy>
 
 		<!-- java extenssions -->
-		<copy todir="${output.raspbian32.java.ext}" flatten="yes">
+		<copy todir="${output.armLnx32.java.ext}" flatten="yes">
 			<fileset file="build/lib/jSerialComm.jar" />
-			<fileset file="build/lib/Raspbian/32/swt.jar" />
+			<fileset file="build/lib/Linux_ARM/32/swt.jar" />
 			<fileset file="build/misc/*.LICENSE" />
 			<fileset file="build/misc/*.README" />
 			<fileset file="${basedir}/HoTTMdlViewer/lib/HoTTMdlViewer.jar" />
@@ -714,12 +714,12 @@
 			<fileset file="build/lib/tlmreader.jar" />
 			<fileset file="build/lib/jtouchbar.jar" />
 			<fileset file="build/lib/jtouchbar-swt.jar" />
-			<fileset file="build/lib/Raspbian/32/libusb4java.jar" />
+			<fileset file="build/lib/Linux_ARM/32/libusb4java.jar" />
 		</copy>
 		
-		<copy todir="${output.raspbian64.java.ext}" flatten="yes">
+		<copy todir="${output.armLnx64.java.ext}" flatten="yes">
 			<fileset file="build/lib/jSerialComm.jar" />
-			<fileset file="build/lib/Raspbian/64/swt.jar" />
+			<fileset file="build/lib/Linux_ARM/64/swt.jar" />
 			<fileset file="build/misc/*.LICENSE" />
 			<fileset file="build/misc/*.README" />
 			<fileset file="${basedir}/HoTTMdlViewer/lib/HoTTMdlViewer.jar" />
@@ -737,15 +737,15 @@
 			<fileset file="build/lib/tlmreader.jar" />
 			<fileset file="build/lib/jtouchbar.jar" />
 			<fileset file="build/lib/jtouchbar-swt.jar" />
-			<fileset file="build/lib/Raspbian/64/libusb4java.jar" />
+			<fileset file="build/lib/Linux_ARM/64/libusb4java.jar" />
 		</copy>
 		
 		<!-- launcher scripts, README -->
-		<copy todir="${output.raspbian32}/DataExplorer" flatten="yes">
+		<copy todir="${output.armLnx32}/DataExplorer" flatten="yes">
 			<fileset file="build/misc/README.*" />
 		</copy>
 		
-		<copy todir="${output.raspbian64}/DataExplorer" flatten="yes">
+		<copy todir="${output.armLnx64}/DataExplorer" flatten="yes">
 			<fileset file="build/misc/README.*" />
 		</copy>
 	</target>
@@ -878,23 +878,23 @@
 	<!-- package, build Windows installer, MAC OS disk image, tar for GNULinux -->
 	<target name="binary_package" depends="copy-files">		
 	    <antcall target="build_Windows_NSIS_installer" description="building NSIS Windows installer" if:set="isWindows" />		
-		<antcall target="binary_package-raspbian" description="build raspbian tarball" unless:set="isWindows" />
+		<antcall target="binary_package-armLnx" description="build armLnx tarball" unless:set="isWindows" />
 		<antcall target="binary_package-linux" description="build Linux tarball" if:set="isLinux" />
 		<antcall target="build_Mac_install_dmg" description="build Mac disk images, replaces building zip archives" if:set="isMac" />
 	</target>
 	
-	<target name="binary_package-raspbian" depends="init-raspbian">
-		<echo message="tar Raspbian Linux 32 bit files" />
-		<tar destfile="${build.target.dir}/dataexplorer-${version.num}-bin_RaspbianLinux_ARM_32.tar.gz" compression="gzip">
-			<tarfileset dir="${output.raspbian32}" casesensitive="true" mode="755">
+	<target name="binary_package-armLnx" depends="init-armLnx">
+		<echo message="tar ARM Linux 32 bit files" />
+		<tar destfile="${build.target.dir}/dataexplorer-${version.num}-bin_Linux_ARM_32.tar.gz" compression="gzip">
+			<tarfileset dir="${output.armLnx32}" casesensitive="true" mode="755">
 				<include name="*/DataExplorer" />
 				<include name="*/DevicePropertiesEditor" />
 			</tarfileset>
-			<tarfileset dir="${output.raspbian32}" casesensitive="true" mode="766">
+			<tarfileset dir="${output.armLnx32}" casesensitive="true" mode="766">
 				<include name="*/DataExplorer.desktop" />
 				<include name="*/DevicePropertiesEditor.desktop" />
 			</tarfileset>
-			<tarfileset dir="${output.raspbian32}" casesensitive="true" mode="644">
+			<tarfileset dir="${output.armLnx32}" casesensitive="true" mode="644">
 				<include name="**" />
 				<exclude name="*/DataExplorer" />
 				<exclude name="*/DevicePropertiesEditor" />
@@ -903,17 +903,17 @@
 			</tarfileset>
 		</tar>		
 	
-		<echo message="tar Raspbian Linux 64 bit files" />
-		<tar destfile="${build.target.dir}/dataexplorer-${version.num}-bin_RaspbianLinux_ARM_64.tar.gz" compression="gzip">
-			<tarfileset dir="${output.raspbian64}" casesensitive="true" mode="755">
+		<echo message="tar ARM Linux 64 bit files" />
+		<tar destfile="${build.target.dir}/dataexplorer-${version.num}-bin_Linux_ARM_64.tar.gz" compression="gzip">
+			<tarfileset dir="${output.armLnx64}" casesensitive="true" mode="755">
 				<include name="*/DataExplorer" />
 				<include name="*/DevicePropertiesEditor" />
 			</tarfileset>
-			<tarfileset dir="${output.raspbian64}" casesensitive="true" mode="766">
+			<tarfileset dir="${output.armLnx64}" casesensitive="true" mode="766">
 				<include name="*/DataExplorer.desktop" />
 				<include name="*/DevicePropertiesEditor.desktop" />
 			</tarfileset>
-			<tarfileset dir="${output.raspbian64}" casesensitive="true" mode="644">
+			<tarfileset dir="${output.armLnx64}" casesensitive="true" mode="644">
 				<include name="**" />
 				<exclude name="*/DataExplorer" />
 				<exclude name="*/DevicePropertiesEditor" />
