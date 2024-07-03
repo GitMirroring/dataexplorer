@@ -5,7 +5,7 @@
         <manufacturer>WB</manufacturer>
         <manufacturerURL>https://www.nongnu.org/dataexplorer</manufacturerURL>
         <group>charger</group>
-        <image>CSV2SerialAdapter.png</image>
+        <image>JSON2TCP.png</image>
         <usage>true</usage>
     </Device>
     <TcpPort>
@@ -18,7 +18,7 @@
             <WriteDelayTime>0</WriteDelayTime>
         </TimeOut>
         <respond>JSON</respond>
-        <request>510D0A</request>
+        <request>510A</request>
     </TcpPort>
     <TimeBase>
         <name>time</name>
@@ -33,7 +33,7 @@
         <timeUnit>msec</timeUnit>
         <separator>comma</separator>
         <leader>{</leader>
-        <trailer>0D0A</trailer>
+        <trailer>0A</trailer>
 		<preferredFileExtention>*.json</preferredFileExtention>
     </DataBlock>
     <State>

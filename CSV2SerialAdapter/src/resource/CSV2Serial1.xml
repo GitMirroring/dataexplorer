@@ -5,7 +5,7 @@
         <manufacturer>WB</manufacturer>
         <manufacturerURL>https://www.nongnu.org/dataexplorer</manufacturerURL>
         <group>logger</group>
-        <image>CSV2SerialAdapter.png</image>
+        <image>CSV2Serial.png</image>
         <usage>false</usage>
     </Device>
     <TimeBase>

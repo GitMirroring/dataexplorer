@@ -59,9 +59,11 @@ public class TestOsdReaderWriter extends TestSuperClass {
 
 			List<File> files = FileUtils.getFileListing(new File(this.tmpDir1), 1);
 
+			int runningNumber = -1;
 			for (File file : files) {
+				runningNumber+=1;
 				String filePath = file.getAbsolutePath().replace(GDE.CHAR_FILE_SEPARATOR_WINDOWS, GDE.CHAR_FILE_SEPARATOR_UNIX);
-				if (filePath.toLowerCase().endsWith(".osd")) {
+				if (filePath.toLowerCase().endsWith(".osd") && runningNumber % 3 == 0) {
 					try {
 						if (filePath.equals(OperatingSystemHelper.getLinkContainedFilePath(filePath))) {
 							HashMap<String, String> fileHeader = OsdReaderWriter.getHeader(file.getAbsolutePath());

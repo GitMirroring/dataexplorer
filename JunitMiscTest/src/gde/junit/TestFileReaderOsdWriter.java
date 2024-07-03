@@ -56,6 +56,7 @@ import gde.exception.NotSupportedFileFormatException;
 import gde.io.CSVReaderWriter;
 import gde.io.CSVSerialDataReaderWriter;
 import gde.io.DataParser;
+import gde.io.JsonDataReaderWriter;
 import gde.io.LogViewReader;
 import gde.io.NMEAReaderWriter;
 import gde.io.OsdReaderWriter;
@@ -691,6 +692,82 @@ public class TestFileReaderOsdWriter extends TestSuperClass {
 
 						String absolutFilePath = this.tmpDir1 + file.getName();
 						absolutFilePath = absolutFilePath.substring(0, absolutFilePath.length() - 4) + "_cvs.osd";
+						System.out.println("writing as   : " + absolutFilePath);
+						OsdReaderWriter.write(absolutFilePath, this.channels.getActiveChannel(), GDE.DATA_EXPLORER_FILE_VERSION_INT);
+					}
+					catch (Exception e) {
+						e.printStackTrace();
+						failures.put(file.getAbsolutePath(), e);
+					}
+				}
+			}
+
+		}
+		catch (FileNotFoundException e) {
+			e.printStackTrace();
+			fail(e.toString());
+		}
+
+		StringBuilder sb = new StringBuilder();
+		for (String key : failures.keySet()) {
+			sb.append(key).append(" - ").append(failures.get(key).getMessage()).append("\n");
+		}
+		if (failures.size() > 0) fail(sb.toString());
+	}
+
+	/**
+	 * test reading CSV generic import files from device directory and writes OSD files to %TEMP%\Write_1_OSD
+	 * all consistent files must red without failures
+	 */
+	public final void testJsonImportOsdWriter() {
+		HashMap<String, Exception> failures = new HashMap<String, Exception>();
+
+		this.setDataPath(); //set the dataPath variable
+
+		try {
+			List<File> files = FileUtils.getFileListing(this.dataPath, 1);
+
+			for (File file : files) {
+				if (file.getAbsolutePath().toLowerCase().endsWith(".json") 
+						&& (file.getPath().toLowerCase().contains("json"))) {
+					System.out.println("working with : " + file);
+
+					try {
+						//System.out.println("file.getPath() = " + file.getPath());
+						String deviceName = file.getPath().toLowerCase().contains("tcp") ? "JSON2TCP1" : file.getPath().toLowerCase().contains("serial") ? "JSON2Serial2" : "JSON2TCP1";
+						//System.out.println("deviceName = " + deviceName);
+						DeviceConfiguration deviceConfig = this.deviceConfigurations.get(deviceName);
+						if (deviceConfig == null) throw new NotSupportedException("device = " + deviceName + " is not supported or in list of active devices");
+
+						IDevice device = this.getInstanceOfDevice(deviceConfig);
+						this.analyzer.setActiveDevice(device);
+
+						setupDataChannels(device);
+
+						this.channels.setActiveChannelNumber(1);
+						Channel activeChannel = this.channels.getActiveChannel();
+						activeChannel.setFileName(file.getAbsolutePath());
+						activeChannel.setFileDescription(StringHelper.getDateAndTime() + " - imported from JSON file");
+						activeChannel.setSaved(true);
+
+						JsonDataReaderWriter.read(file.getAbsolutePath(), device, "RecordSet", 1,
+								new DataParser(device.getDataBlockTimeUnitFactor(),
+										device.getDataBlockLeader(), device.getDataBlockSeparator().value(),
+										device.getDataBlockCheckSumType(), device.getDataBlockSize(InputTypes.FILE_IO)));
+						RecordSet recordSet = activeChannel.getActiveRecordSet();
+
+						if (recordSet != null) {
+							activeChannel.setActiveRecordSet(recordSet);
+							activeChannel.applyTemplate(recordSet.getName(), true);
+							//device.makeInActiveDisplayable(recordSet);
+							drawCurves(recordSet, 1024, 768);
+						}
+
+						if (!new File(this.tmpDir1).exists())
+							throw new FileNotFoundException(this.tmpDir1);
+
+						String absolutFilePath = this.tmpDir1 + file.getName();
+						absolutFilePath = absolutFilePath.substring(0, absolutFilePath.length() - 5) + "_json.osd";
 						System.out.println("writing as   : " + absolutFilePath);
 						OsdReaderWriter.write(absolutFilePath, this.channels.getActiveChannel(), GDE.DATA_EXPLORER_FILE_VERSION_INT);
 					}

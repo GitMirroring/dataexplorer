@@ -11,7 +11,8 @@ Generic changes/fixes
 	* enable simple JSON support in combination with TCP communication
 	* make serial port request editable using DevicePropertiesEditor
 	* update jSerialComm library to 2.11.0
-	* final remove RxTxComm library since it does not support all supported execution platforms 
+	* final remove RxTxComm library since it does not support all supported execution platforms
+	* enhance junit test with JSON import
 	
 	Device specific changes/fixes
 	* IGCAdapter - update to new start altitude 250m
