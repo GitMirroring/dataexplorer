@@ -1812,14 +1812,16 @@ public class DevicePropertiesEditor extends Composite {
 						DevicePropertiesEditor.dialogShell.setCursor(SWTResourceManager.getCursor(SWT.CURSOR_WAIT));
 						//SerialPortType begin
 						if (DevicePropertiesEditor.this.deviceConfig.getSerialPortType() != null
-								&& (DevicePropertiesEditor.this.serialPortTabItem == null || DevicePropertiesEditor.this.serialPortTabItem.isDisposed())) {
+								&& (DevicePropertiesEditor.this.serialPortTabItem == null 
+									|| (DevicePropertiesEditor.this.serialPortTabItem != null && DevicePropertiesEditor.this.serialPortTabItem.isDisposed()))) {
 							DevicePropertiesEditor.this.serialPortTabItem = new SeriaPortTypeTabItem(DevicePropertiesEditor.this.tabFolder, SWT.CLOSE, 1);
 							DevicePropertiesEditor.this.serialPortTabItem.setDeviceConfig(DevicePropertiesEditor.this.deviceConfig);
 						}
 						//SerialPortType end
 						//TcpPortType begin
 						else if (DevicePropertiesEditor.this.deviceConfig.getTcpPortType() != null 
-								&& DevicePropertiesEditor.this.tcpPortTabItem == null || DevicePropertiesEditor.this.tcpPortTabItem.isDisposed()) {
+								&& (DevicePropertiesEditor.this.tcpPortTabItem == null 
+									|| (DevicePropertiesEditor.this.tcpPortTabItem != null && DevicePropertiesEditor.this.tcpPortTabItem.isDisposed()))) {
 							DevicePropertiesEditor.this.tcpPortTabItem = new TcpPortTypeTabItem(DevicePropertiesEditor.this.tabFolder, SWT.CLOSE, 1);
 							DevicePropertiesEditor.this.tcpPortTabItem.setDeviceConfig(DevicePropertiesEditor.this.deviceConfig);
 						}
