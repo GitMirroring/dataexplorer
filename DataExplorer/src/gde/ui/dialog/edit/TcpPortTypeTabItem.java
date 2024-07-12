@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with GNU DataExplorer.  If not, see <https://www.gnu.org/licenses/>.
     
-    Copyright (c) 2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024 Winfried Bruegmann
+    Copyright (c) 2024 Winfried Bruegmann
 ****************************************************************************************/
 package gde.ui.dialog.edit;
 
@@ -60,7 +60,7 @@ public class TcpPortTypeTabItem extends CTabItem {
 	final static Logger						log								= Logger.getLogger(ChannelTypeTabItem.class.getName());
 
 	Composite											tcpPortComposite, timeOutComposite;
-	Label													serialPortDescriptionLabel, timeOutDescriptionLabel;
+	Label													tcpPortDescriptionLabel, timeOutDescriptionLabel;
 	Label													tcpHostAddressLabel, portNumberLabel, respondLabel, requestLabel, timeOutLabel;
 	Text													tcpHostAddressText, portNumberText, requestText;
 	CCombo												respondCombo;
@@ -122,10 +122,10 @@ public class TcpPortTypeTabItem extends CTabItem {
 					}
 				});
 				{
-					this.serialPortDescriptionLabel = new Label(this.tcpPortComposite, SWT.CENTER | SWT.WRAP);
-					this.serialPortDescriptionLabel.setText(Messages.getString(MessageIds.GDE_MSGT0976));
-					this.serialPortDescriptionLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
-					this.serialPortDescriptionLabel.setBounds(12, 6, 602, 56);
+					this.tcpPortDescriptionLabel = new Label(this.tcpPortComposite, SWT.CENTER | SWT.WRAP);
+					this.tcpPortDescriptionLabel.setText(Messages.getString(MessageIds.GDE_MSGT0976));
+					this.tcpPortDescriptionLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+					this.tcpPortDescriptionLabel.setBounds(12, 6, 602, 56);
 				}
 				{
 					this.tcpHostAddressLabel = new Label(this.tcpPortComposite, SWT.LEFT);
@@ -464,7 +464,7 @@ public class TcpPortTypeTabItem extends CTabItem {
 			this.contextMenu = null;
 		}
 		this.tcpPortComposite.setMenu(this.popupMenu);
-		this.serialPortDescriptionLabel.setMenu(this.popupMenu);
+		this.tcpPortDescriptionLabel.setMenu(this.popupMenu);
 		this.portNumberLabel.setMenu(this.popupMenu);
 
 		this.timeOutComposite.setMenu(this.popupMenu);

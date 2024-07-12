@@ -967,6 +967,14 @@ public class DeviceConfiguration {
 	}
 
 	/**
+	 * set the vendor ID of the USB port to be used for device communication
+	 */
+	public void setUsbVendorId(String newVendorId) {
+		if (this.usbPort != null)
+			this.usbPort.setVendorId(newVendorId);
+	}
+
+	/**
 	 * @return the vendor ID of the USB port to be used for device communication
 	 */
 	public short getUsbVendorId() {
@@ -974,24 +982,78 @@ public class DeviceConfiguration {
 	}
 
 	/**
-	 * @return the product ID of the device to be used for communication
+	 * set the product ID of the USB port to be used for device communication
+	 */
+	public void setUsbProductId(String newProductId) {
+		if (this.usbPort != null)
+			this.usbPort.setProductId(newProductId);
+	}
+
+	/**
+	 * @return the product ID of the USB port to be used for device communication
 	 */
 	public short getUsbProductId() {
 		return Short.valueOf(this.usbPort.getProductId().substring(2), 16);
 	}
 
 	/**
-	 * @return the product string of the device to be used for communication
+	 * set the product string of the USB port to be used for device communication
+	 */
+	public void setUsbProductString(String newProductString) {
+		if (this.usbPort != null)
+			this.usbPort.setProductString(newProductString);
+	}
+
+	/**
+	 * @return the product string of the USB port to be used for device communication
 	 */
 	public String getUsbProductString() {
 		return this.usbPort.getProductString();
 	}
 
 	/**
-	 * @return the interface address to be used for communication
+	 * remove the product string of the USB port to be used for device communication
+	 */
+	public void removeUsbProductString() {
+		if (this.usbPort != null)
+			this.usbPort.setProductString(null);
+	}
+
+	/**
+	 * set the interface address to be used for USB communication
+	 */
+	public void setUsbInterface(String newValue) {
+		if (this.usbPort != null && this.usbPort.getUsbInterface() != null)
+			this.usbPort.getUsbInterface().getInterface().setValue(newValue);
+	}
+
+	/**
+	 * @return the interface address to be used for USB communication
+	 */
+	public String getUsbInterfaceString() {
+		return this.usbPort != null && this.usbPort.getUsbInterface() != null ? this.usbPort.getUsbInterface().getInterface().getValue() : "0x01";
+	}
+
+	/**
+	 * @return the interface address to be used for USB communication
 	 */
 	public byte getUsbInterface() {
-		return Byte.valueOf(this.usbPort.getUsbInterface().getInterface().getValue().substring(2), 16);
+		return this.usbPort != null && this.usbPort.getUsbInterface() != null ? Byte.valueOf(this.usbPort.getUsbInterface().getInterface().getValue().substring(2), 16) : 0x01;
+	}
+
+	/**
+	 * set the end point address of the interface to be used for write communication
+	 */
+	public void setUsbEndpointIn(String newValue) {
+		if (this.usbPort != null && this.usbPort.getUsbInterface() != null)
+			this.usbPort.getUsbInterface().setEndPointIn(newValue);
+	}
+
+	/**
+	 * @return the end point address of the interface to be used for write communication
+	 */
+	public String getUsbEndpointInString() {
+		return this.usbPort != null && this.usbPort.getUsbInterface() != null ? this.usbPort.getUsbInterface().getEndPointIn() : "0x01";
 	}
 
 	/**
@@ -1004,8 +1066,23 @@ public class DeviceConfiguration {
 	/**
 	 * @return the end point address of the interface to be used for read communication
 	 */
+	public void setUsbEndpointOut(String newValue) {
+		if (this.usbPort != null && this.usbPort.getUsbInterface() != null)
+			this.usbPort.getUsbInterface().setEndPointOut(newValue);
+	}
+
+	/**
+	 * @return the end point address of the interface to be used for read communication
+	 */
+	public String getUsbEndpointOutString() {
+		return this.usbPort != null && this.usbPort.getUsbInterface() != null ? this.usbPort.getUsbInterface().getEndPointOut() : "0x81";
+	}
+
+	/**
+	 * @return the end point address of the interface to be used for read communication
+	 */
 	public byte getUsbEndpointOut() {
-		return Short.valueOf(this.usbPort.getUsbInterface().getEndPointOut().substring(2), 16).byteValue();
+		return this.usbPort != null && this.usbPort.getUsbInterface() != null ? Short.valueOf(this.usbPort.getUsbInterface().getEndPointOut().substring(2), 16).byteValue() : (byte)0x81;
 	}
 
 	/**

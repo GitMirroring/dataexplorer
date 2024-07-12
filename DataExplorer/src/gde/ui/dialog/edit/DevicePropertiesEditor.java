@@ -134,6 +134,7 @@ public class DevicePropertiesEditor extends Composite {
 
 	SeriaPortTypeTabItem									serialPortTabItem;
 	TcpPortTypeTabItem										tcpPortTabItem;
+	UsbPortTypeTabItem										usbPortTabItem;
 
 	CTabItem															timeBaseTabItem;
 	Composite															timeBaseComposite;
@@ -768,6 +769,8 @@ public class DevicePropertiesEditor extends Composite {
 						this.serialPortTabItem = new SeriaPortTypeTabItem(this.tabFolder, SWT.CLOSE, 1);
 					else if (this.deviceConfig != null && this.deviceConfig.getTcpPortType() != null)
 						this.tcpPortTabItem = new TcpPortTypeTabItem(this.tabFolder, SWT.CLOSE, 1);
+					else if (this.deviceConfig != null && this.deviceConfig.getUsbPortType() != null)
+						this.usbPortTabItem = new UsbPortTypeTabItem(this.tabFolder, SWT.CLOSE, 1);
 				}
 				{
 					this.timeBaseTabItem = new CTabItem(this.tabFolder, SWT.NONE);
@@ -1037,6 +1040,11 @@ public class DevicePropertiesEditor extends Composite {
 							DevicePropertiesEditor.this.tcpPortTabItem = null;
 							if (DevicePropertiesEditor.this.deviceConfig != null) DevicePropertiesEditor.this.deviceConfig.removeTcpPortType();
 						}
+						else if (tabItem.getText().equals(Messages.getString(MessageIds.GDE_MSGT0979))) {
+							tabItem.dispose();
+							DevicePropertiesEditor.this.usbPortTabItem = null;
+							if (DevicePropertiesEditor.this.deviceConfig != null) DevicePropertiesEditor.this.deviceConfig.removeUsbPortType();
+						}
 						else if (tabItem.getText().equals(Messages.getString(MessageIds.GDE_MSGT0515))) {
 							tabItem.dispose();
 							DevicePropertiesEditor.this.dataBlockTabItem = null;
@@ -1075,6 +1083,9 @@ public class DevicePropertiesEditor extends Composite {
 		}
 		else if (tabItemName.equals(Messages.getString(MessageIds.GDE_MSGT0975))) { // TCP port
 			this.tcpPortTabItem.enableContextmenu(enable);
+		}
+		else if (tabItemName.equals(Messages.getString(MessageIds.GDE_MSGT0979))) { // USB port
+			this.usbPortTabItem.enableContextmenu(enable);
 		}
 		else {
 			if (enable && (this.popupMenu == null || this.contextMenu == null)) {
@@ -1826,6 +1837,14 @@ public class DevicePropertiesEditor extends Composite {
 							DevicePropertiesEditor.this.tcpPortTabItem.setDeviceConfig(DevicePropertiesEditor.this.deviceConfig);
 						}
 						//TcpPortType end
+						//UsbPortType begin
+						else if (DevicePropertiesEditor.this.deviceConfig.getUsbPortType() != null 
+								&& (DevicePropertiesEditor.this.usbPortTabItem == null 
+									|| (DevicePropertiesEditor.this.usbPortTabItem != null && DevicePropertiesEditor.this.usbPortTabItem.isDisposed()))) {
+							DevicePropertiesEditor.this.usbPortTabItem = new UsbPortTypeTabItem(DevicePropertiesEditor.this.tabFolder, SWT.CLOSE, 1);
+							DevicePropertiesEditor.this.usbPortTabItem.setDeviceConfig(DevicePropertiesEditor.this.deviceConfig);
+						}
+						//UsbPortType end
 						//TimeBaseType begin
 						DevicePropertiesEditor.this.timeStep_ms = DevicePropertiesEditor.this.deviceConfig.getTimeStep_ms();
 						DevicePropertiesEditor.this.utcDelta = DevicePropertiesEditor.this.deviceConfig.getUTCdelta();

@@ -1,26 +1,49 @@
-GNU DataExplorer - News - comes with Version 3.8.6 - 12 Apr 2024
+GNU DataExplorer - News - comes with Version 3.9.0 - 12 jul 2024
 
 Generic changes/fixes 
-	* restrict XML update while update install version <= 3.8.3
-	* adapt TimeSteps.findBestIndex algorithm to cover big time deviations in short logs
-	* adapt master build XML for Windows 11
-	* allow writing triangle track while KMZ export for IGCAdapter only
+	* remove Java 8 support - attention using old 32 bit OS, latest supported stable version is 3.8.6!
+	* change update dialog text background
+	* update DevicePropertiesEditor launcher for Windows using bundled Java runtime
+	* allow usage of Java 21 without warning, ref. bug #65816
+	* build using Java 21 and update build integrated runtime accordingly
+	* update device XSD to Version 49 and enable TCP socket communication
+	* enable simple JSON support in combination with TCP communication
+	* make serial port request editable using DevicePropertiesEditor
+	* update jSerialComm library to 2.11.0
+	* final remove RxTxComm library since it does not support all supported execution platforms
+	* enhance junit test with JSON import
 	
 Device specific changes/fixes
-	* HoTTAdapter* - rework *.log parsing to match FUS 
-	* HoTTAdapter* - restrict XML update while update install version 383
-	* HoTTAdapter* - enhance *.log parsing for EAM Deutsch PowerBox
-	* PeakTech* - correct device name typo
-	* IGCAdapter - update to use double for lap index
+	* IGCAdapter - update to new start altitude 250m
+	* iCharger 4512DUO - update device selection picture
+	* OpenTx-Telemtry - update parsing algorithm to allow single empty values
+	* CSV2Serial* - fix "Line ending [bytes]" works only with <CR><LF>, ref. bug #65818
+	* CSV2TCP1 - initial release supporting TCP socket communication with CSV respond
+	* JSON2TCP1 - initial release supporting TCP socket communication with JSON respond
+	* JSON2Serial2 - initial release supporting serial port communication with JSON respond
+	* AV4ms_FV_762 - refine data gathering
+	* *2TCP*, *2Serial* - refine getData recursion to eliminate secondary request
 	
 Allgemeine Änderungen/Korrekturen
-	* erlaube einen XML Austaush nur bei Update 3.8.3 oder kleiner
-	* Apassung TimeSteps.findBestIndex Algorithmus, um große Zeitunterschiede in kurzen Logs abzudecken
-	* Anpassung Master build XML für Windows 11
-	* KMZ Dreieck Track wird nur noch beim IGCAdapter geschrieben
+	* Java 8 Unterstützung entfernt - Achtung bei Verwendung eines alten 32 Bit OS, letzte stabile unterstützte Version ist 3.8.6!
+	* Update-Dialog Hintergrund angepasst
+	* DevicePropertiesEditor, außerhalb gestartet für Windows, verwendet jetzt die beigefügte Java Runtime
+	* erlaube die Verwendung von Java 21 ohne Warnung (Linux), ref. Fehler #65816
+	* Baue mit Java 21 und verwende auch die mitgelieferte Java Runtime entsprechend
+	* Geräte XSD auf Version 49 angehoben, um TCP Netzwerk Kommunikation zu ermöglichen
+	* Ermögliche einfache JSON Unterstützung, seriell und Netzwerk Kommunikation
+	* Ermögliche das Ändern des seriellen Port Request, sowie auch für die Netzwerk Kommunikation mittels DevicePropertiesEditor
+	* jSerialComm Bibliothek angehoben auf 2.11.0
+	* final entferne die optionale RxTxComm Bibliothek, weil sie zu wenig Betrisbssysteme unterstützt
+	* Erweitere junit Test mit JSON Import
 	  
 Gerätespezifische Änderungen/Korrekturen
-	* HoTTAdapter* - Überarbeitung *.log Analyse, damit es zum FUS passt 
-	* HoTTAdapter* - Erweiteung *.log Analyse für Deutsch PowerBox als EAM
-	* PeakTech* - Korreektur Gerätename
-	* IGCAdapter - Nutze double für Dreiecks Index
+	* IGCAdapter - Angepasst auf die neue Starthöhe von 250m
+	* iCharger 4512DUO - Geräte Bild erneuert
+	* OpenTx-Telemtry - Parsing Algorithmus angepasst, um leere Felder zu unterstützen
+	* CSV2Serial* - Endzeichen Überprüfung korrigiert, ref. Fehler #65818
+	* CSV2TCP1 - initiale Unterstützung TCP Netzwerk Kommunikation mit CSV Antwort
+	* JSON2TCP1 - initiale Unterstützung TCP Netzwerk Kommunikation mit JSON Antwort
+	* JSON2Serial2 - initiale Unterstützung serielle Kommunikation mit JSON Antwort
+	* AV4ms_FV_762 - Datensammlung verfeinert
+	* *2TCP*, *2Serial* - getData Datensammlung mittels Rekursion verfeinert, um weitere Anfragen auszusparen

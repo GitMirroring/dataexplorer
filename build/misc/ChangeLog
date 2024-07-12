@@ -2,7 +2,7 @@ Development history / change log, please read from bottom up
 
 Version 3.9.0 - xx yyy 2024
 Generic changes/fixes 
-	* remove Java 8 support - attention using old 32 bit OS, latest supported version is 3.3.6!
+	* remove Java 8 support - attention using old 32 bit OS, latest supported stable version is 3.8.6!
 	* change update dialog text background
 	* update DevicePropertiesEditor launcher for Windows using bundled Java runtime
 	* allow usage of Java 21 without warning, ref. bug #65816
