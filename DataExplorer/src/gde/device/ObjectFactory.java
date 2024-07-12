@@ -57,6 +57,38 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link TcpPortType }
+     * 
+     */
+    public TcpPortType createTcpPortType() {
+        return new TcpPortType();
+    }
+
+    /**
+     * Create an instance of {@link UsbPortType }
+     * 
+     */
+    public UsbPortType createUsbPortType() {
+        return new UsbPortType();
+    }
+
+    /**
+     * Create an instance of {@link UsbInterfaceType }
+     * 
+     */
+    public UsbInterfaceType createUsbInterfaceType() {
+        return new UsbInterfaceType();
+    }
+
+    /**
+     * Create an instance of {@link UsbInterfaceType.Interface }
+     * 
+     */
+    public UsbInterfaceType.Interface createUsbInterface() {
+        return new UsbInterfaceType.Interface();
+    }
+
+    /**
      * Create an instance of {@link SerialPortType }
      * 
      */

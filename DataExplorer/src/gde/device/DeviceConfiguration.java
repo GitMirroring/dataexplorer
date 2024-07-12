@@ -941,6 +941,18 @@ public class DeviceConfiguration {
 		this.serialPort.request = this.deviceProps.serialPort.request = null;
 	}
 
+	/**
+	 * create a TCP port type with default values
+	 */
+	public void createTcpPort() {
+		this.deviceProps.tcpPort = this.tcpPort = new ObjectFactory().createTcpPortType();
+		this.tcpPort.setAddress("127.0.0.1");
+		this.tcpPort.setPort("4300");
+		getTcpRespondType();
+		this.tcpPort.setRespond(RespondType.CSV);
+		this.tcpPort.setRequest(new byte[] {0x51});
+		this.isChangePropery = true;
+	}
 
 	/**
 	 * set a new host address to be used for TCP communication
@@ -962,6 +974,23 @@ public class DeviceConfiguration {
 		this.tcpPort.setPort(newPortNumber);
 	}
 	
+
+	/**
+	 * create a TCP port type with default values
+	 */
+	public void createUsbPort() {
+		this.deviceProps.usbPort = this.usbPort = new ObjectFactory().createUsbPortType();
+		this.usbPort.setVendorId("0x4711");
+		this.usbPort.setProductId("0x1234");
+		this.usbPort.setProductString(this.getName());
+		this.usbPort.setUsbInterface(new ObjectFactory().createUsbInterfaceType());
+		this.usbPort.getUsbInterface().setInterface(new ObjectFactory().createUsbInterface());
+		this.usbPort.getUsbInterface().getInterface().setValue("0x00");
+		this.usbPort.getUsbInterface().setEndPointIn("0x01");
+		this.usbPort.getUsbInterface().setEndPointOut("0x81");
+		this.isChangePropery = true;
+	}
+
 	public UsbInterfaceType getUsbInterfaceType() {
 		return this.usbPort.getUsbInterface();
 	}

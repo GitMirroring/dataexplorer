@@ -482,6 +482,9 @@ public class TcpPortTypeTabItem extends CTabItem {
 	 */
 	public void setDeviceConfig(DeviceConfiguration deviceConfig) {
 		this.deviceConfig = deviceConfig;
+		
+		if (deviceConfig.getTcpPortType() == null)
+			deviceConfig.createTcpPort();
 
 		this.tcpHostAddress = deviceConfig.getTcpPortType().getAddress();
 		this.portNumber = deviceConfig.getTcpPortType().getPort();

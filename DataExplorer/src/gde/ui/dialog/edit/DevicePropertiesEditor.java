@@ -1051,7 +1051,6 @@ public class DevicePropertiesEditor extends Composite {
 							if (DevicePropertiesEditor.this.deviceConfig != null) DevicePropertiesEditor.this.deviceConfig.removeDataBlockType();
 						}
 						if (DevicePropertiesEditor.this.deviceConfig != null) {
-							DevicePropertiesEditor.this.enableSaveButton(true);
 							update();
 						}
 					}
@@ -1773,6 +1772,25 @@ public class DevicePropertiesEditor extends Composite {
 	public void createSerialPortTabItem() {
 		this.serialPortTabItem = new SeriaPortTypeTabItem(this.tabFolder, SWT.CLOSE, 1);
 		this.serialPortTabItem.setDeviceConfig(this.deviceConfig);
+		this.enableSaveButton(true);
+	}
+
+	/**
+	 * create a new serial port tabulator
+	 */
+	public void createUsbPortTabItem() {
+		this.usbPortTabItem = new UsbPortTypeTabItem(this.tabFolder, SWT.CLOSE, 1);
+		this.usbPortTabItem.setDeviceConfig(this.deviceConfig);
+		this.enableSaveButton(true);
+	}
+
+	/**
+	 * create a new serial port tabulator
+	 */
+	public void createTcpPortTabItem() {
+		this.tcpPortTabItem = new TcpPortTypeTabItem(this.tabFolder, SWT.CLOSE, 1);
+		this.tcpPortTabItem.setDeviceConfig(this.deviceConfig);
+		this.enableSaveButton(true);
 	}
 
 	/**

@@ -44,7 +44,7 @@ public class ContextMenu {
 	final Menu					menu;
 	final CTabFolder		parentTabFolder;
 
-	MenuItem						addSerialPortTypeMenuItem, addDataBlockTypeMenuItem, addStateTypeMenuItem;
+	MenuItem						addSerialPortTypeMenuItem, addUsbPortTypeMenuItem, addTcpPortTypeMenuItem, addDataBlockTypeMenuItem, addStateTypeMenuItem;
 
 	public ContextMenu(Menu useMenu, CTabFolder parent) {
 		this.menu = useMenu;
@@ -57,11 +57,17 @@ public class ContextMenu {
 			public void menuShown(MenuEvent e) {
 				log.log(java.util.logging.Level.FINEST, "menuShown action performed! " + e); //$NON-NLS-1$
 				ContextMenu.this.addSerialPortTypeMenuItem.setEnabled(true);
+				ContextMenu.this.addUsbPortTypeMenuItem.setEnabled(true);
+				ContextMenu.this.addTcpPortTypeMenuItem.setEnabled(true);
 				ContextMenu.this.addDataBlockTypeMenuItem.setEnabled(true);
 				ContextMenu.this.addStateTypeMenuItem.setEnabled(true);
 				for (CTabItem tabItem : ContextMenu.this.parentTabFolder.getItems()) {
-					if (tabItem.getText().equals(Messages.getString(MessageIds.GDE_MSGT0510))) {
+					if (tabItem.getText().equals(Messages.getString(MessageIds.GDE_MSGT0510))
+							|| tabItem.getText().equals(Messages.getString(MessageIds.GDE_MSGT0979))
+									|| tabItem.getText().equals(Messages.getString(MessageIds.GDE_MSGT0975))) {
 						ContextMenu.this.addSerialPortTypeMenuItem.setEnabled(false);
+						ContextMenu.this.addUsbPortTypeMenuItem.setEnabled(false);
+						ContextMenu.this.addTcpPortTypeMenuItem.setEnabled(false);
 					}
 					else if (tabItem.getText().equals(Messages.getString(MessageIds.GDE_MSGT0515))) {
 						ContextMenu.this.addDataBlockTypeMenuItem.setEnabled(false);
@@ -80,6 +86,22 @@ public class ContextMenu {
 			public void handleEvent(Event e) {
 				log.log(java.util.logging.Level.FINEST, "addSerialPortTypeMenuItem action performed! " + e); //$NON-NLS-1$
 				DevicePropertiesEditor.getInstance().createSerialPortTabItem();
+			}
+		});
+		this.addUsbPortTypeMenuItem = new MenuItem(this.menu, SWT.PUSH);
+		this.addUsbPortTypeMenuItem.setText(Messages.getString(MessageIds.GDE_MSGT0981));
+		this.addUsbPortTypeMenuItem.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event e) {
+				log.log(java.util.logging.Level.FINEST, "addUsbPortTypeMenuItem action performed! " + e); //$NON-NLS-1$
+				DevicePropertiesEditor.getInstance().createUsbPortTabItem();
+			}
+		});
+		this.addTcpPortTypeMenuItem = new MenuItem(this.menu, SWT.PUSH);
+		this.addTcpPortTypeMenuItem.setText(Messages.getString(MessageIds.GDE_MSGT0982));
+		this.addTcpPortTypeMenuItem.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event e) {
+				log.log(java.util.logging.Level.FINEST, "addTcpPortTypeMenuItem action performed! " + e); //$NON-NLS-1$
+				DevicePropertiesEditor.getInstance().createTcpPortTabItem();
 			}
 		});
 		new MenuItem(this.menu, SWT.SEPARATOR);

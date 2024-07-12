@@ -547,6 +547,9 @@ public class UsbPortTypeTabItem extends CTabItem {
 	public void setDeviceConfig(DeviceConfiguration deviceConfig) {
 		this.deviceConfig = deviceConfig;
 
+		if (deviceConfig.getUsbPortType() == null)
+			deviceConfig.createUsbPort();
+			
 		this.vendorID = deviceConfig.getUsbPortType().getVendorId();
 		this.productID = deviceConfig.getUsbPortType().getProductId();
 		
