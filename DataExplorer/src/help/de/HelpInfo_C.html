@@ -100,6 +100,14 @@ Siehe hierzu auch die Beschreibung des DevicePropertiesEditor <A HREF="HelpInfo_
 Das Bild zeigt die Zuordnung der jeweils zu konfigurierenden Werte in Relation zu den Textdaten.
 </P>
 <P ALIGN=CENTER><IMG SRC="images/CSV2SerialDataFormat.png" NAME="CSV2SerialDataFormat" ALIGN=MIDDLE></P>
+<P>
+Als Pendant können die Daten auch als JSON Zeichenkette gesendet werden. Beispielhaft so:
+</BR>
+<B>{"dsn":1,"st":1,"tm":0,"data":[1001,1002,1003,1004,1005,1006,1007,1008],"crc":0}</B>
+</BR>
+Da der JSON Paser die vorgegebenen Feldnamen verwendet, „dsn“ steht für  Datensatznummer, ist es wichtig sich daran zu halten. 
+Ist das nicht der Fall wird das im Parser zu einem Fehler führen.
+</P>
 <P ALIGN=LEFT><A HREF="HelpInfo_B.html">&lt;&lt;== zur&uuml;ck</A></P>
 </DIV>
 </BODY>

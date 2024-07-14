@@ -88,24 +88,24 @@
 
 <DIV ID="Content">
 <H1><A CLASS="an" NAME="introduction"></A>Einleitung</H1>
-<P>Der GNU DataExplorer ist ein Werkzeug zum Aufnehmen, Betrachten und Auswerten von Daten aus Geräten,
-die es erlauben Daten entweder über eine serielle Schnittstelle auszulesen oder ihre Daten durch Datenimport zugänglich machen. 
-Der GNU DataExplorer ist unter vielen Betriebssystemen mit 32 und 64 Bit lauffähig (GNU/Linux, Windows, Mac OS X). 
+<P>Der GNU DataExplorer ist ein Werkzeug zum Aufnehmen, Betrachten und Auswerten von Daten aus Geräten, die es erlauben
+Daten entweder über eine serielle Schnittstelle, USB oder Netzwerk auszulesen oder ihre Daten durch Datenimport zugänglich machen. 
+Der GNU DataExplorer ist unter vielen Betriebssystemen mit 32 und 64 Bit lauffähig (GNU/Linux, Windows, Mac OS X).
+Ab dem Jahr 2019 geht die Verwendung von 32 Bit Systemen immer weiter zurück, deshalb werden einige externen Komponenten und
+Bibliotheken nur in der 64 Bit Version gewartet.
+Mit Unterstützung von Java 21 LTS entfällt die Möglichkeit Java 8 Bytecode zu bauen. Dadurch werden 32 Bit OS nur noch als Linux ARM_32 frei gegeben. 
 Sprachenunterstützung ist vorhanden, wobei aktuell Deutsch und Englisch vorhanden sind.
 </P>
-<P>Ein wesentlicher Aspekt für die Entwicklung war der
-systemübergreifende Gedanke. 
+<P>Ein wesentlicher Aspekt für die Entwicklung war der systemübergreifende Gedanke. 
 Für alle im Privatgebrauch befindlichen Computerbetriebssysteme soll die Möglichkeit bereitgestellt werden, 
 Messdaten von den verschiedensten Gelegenheiten grafisch aufzubereiten. 
 Seien es Str&ouml;me und Spannungen von Batterieladeger&auml;ten,  Daten von Elektromotoren oder Telemetriedaten aus dem Bereich des Modellbaus.
-Deshalb basiert die Implementierung auf Java unter Verwendung der freien jSerialComm
-Bibliothek, für die serielle Anbindung und der eclipse SWT Bibliothek
-für die Benutzeroberfläche. Für beide Basisbibliotheken gibt es die
-native Anbindung für Windows, GNU/Linux und Mac OS X. Entwickelt wird mit
-einer frei verfügbaren eclipse IDE (integrated development environment)
-und einer Java 6 runtime.</P>
-<P>Wie sind die seriellen Ports auf den verschiedenen
-Betriebssystemen benannt: </BR>
+Deshalb basiert die Implementierung auf Java unter Verwendung der freien jSerialComm-Bibliothek, für die serielle Anbindung, 
+libusb4java für die native USB Kommuniktion und der eclipse-SWT-Bibliothek für die Benutzeroberfläche. 
+Für diiese Basisbibliotheken gibt es die native Anbindung für Windows, GNU/Linux und Mac OS X. 
+</P>
+<P>
+Wie sind die seriellen Ports auf den verschiedenen Betriebssystemen benannt: </BR>
 <IMG SRC="images/SerialPortAssignements.jpg"></P>
 </BR>
 <H2>Warum freie Software unter der GPL</H2>
