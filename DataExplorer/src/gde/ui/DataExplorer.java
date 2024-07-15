@@ -2513,9 +2513,10 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 			}
 			this.helpDialog.open(deviceName, fileName, SWT.NONE, false);
 		} catch (Error e) {
-			if (log.isLoggable(Level.FINE)) log.logp(Level.FINE, $CLASS_NAME, $METHOD_NAME, "using OS registered web browser"); //$NON-NLS-1$
+			String message = "using OS registered web browser\n" + e.getMessage();//$NON-NLS-1$
+			log.logp(Level.WARNING, $CLASS_NAME, $METHOD_NAME, message);
 			WebBrowser.openURL(deviceName, fileName);
-			application.openMessageDialogAsync(Messages.getString(MessageIds.GDE_MSGI0025));
+			application.openMessageDialogAsync(message);
 		} catch (Throwable t) {
 			application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGE0007) + t.getClass().getSimpleName() + GDE.STRING_MESSAGE_CONCAT + t.getMessage());
 		}
@@ -2534,8 +2535,8 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 			}
 			this.helpDialog.open(deviceName, fileName, SWT.NONE, extractBase);
 		} catch (Error e) {
-			String message = "using OS registered web browser\n" + e.getMessage();
-			log.logp(Level.WARNING, $CLASS_NAME, $METHOD_NAME, message);//$NON-NLS-1$
+			String message = "using OS registered web browser\n" + e.getMessage();//$NON-NLS-1$
+			log.logp(Level.WARNING, $CLASS_NAME, $METHOD_NAME, message);
 			WebBrowser.openURL(deviceName, fileName);
 			application.openMessageDialogAsync(message);
 		} catch (Throwable t) {
