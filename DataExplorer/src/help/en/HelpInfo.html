@@ -90,10 +90,14 @@
 
 <DIV ID="Content" DIR="LTR">
 <H1>Introduction</H1>
-<P>The GNU DataExplorer is a tool to gather, view and analyze data which comes from devices 
-with a serial data port or other like CSV-file or USB port. 
-The application itself runs on several operating system with 32 or 64 bit processor (GNU/Linux, Windows, Mac OS) 
+<P>The GNU DataExplorer is a tool to gather, view and analyze data which comes from devices with a serial data port, 
+USB, TCP communication or import like CSV-file. 
+The application itself runs on several operating system with 32 or 64 bit processor (GNU/Linux, Windows, Mac OS X) 
 and is enabled for national language support. 
+Beginning 2019, the use of 32-bit systems continues to decline, which is why some external components and libraries 
+are only maintained in the 64-bit version. 
+Starting support of Java 21 it is no longer possible to compile byte-code for Java 8. 
+Therefore only Linux for ARM_32 will be available as future release.
 Actual English and German is packaged. 
 Devices might be data logger, measurement devices, charging devices or similar. 
 </P>
@@ -101,12 +105,10 @@ Devices might be data logger, measurement devices, charging devices or similar.
 For all variants usual computer operating system it should be possible to gather measurement data and present this graphically.
 Calculate statistics on the data as well.
 For instance current and voltage of charging devices, data measurable working with electric motors or back channel data transmitted from radio controlled vehicles.
-This is the reason to base the implementation on Java using the free
-available jSerialComm library, for the serial communication and the eclipse
-SWT library for the graphical user interface. For both libraries a
-native interface for Windows, GNU/Linux and Mac OS is available. For
-development the eclipse IDE (integrated development environment)
-together with the Java 6 runtime is used.
+This is the reason to base the implementation on Java using the free available jSerialComm library, for the serial communication, 
+libusb4java and the eclipse SWT library for the graphical user interface For both libraries a native interface for Windows, 
+GNU/Linux and Mac OS is available. 
+For development the eclipse IDE (integrated development environment) is used.
 </P>
 <P>What is the naming for serial interfaces on different operating
 systems: 

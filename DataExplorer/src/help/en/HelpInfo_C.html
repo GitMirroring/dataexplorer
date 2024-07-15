@@ -101,6 +101,13 @@ Refer to the DevicePropertiesEditor <A HREF="HelpInfo_A1.html#device_properties_
 The sample showing the assignment of the values in relation to the text data and how they gets interpreted.
 </P>
 <P ALIGN=CENTER><IMG SRC="images/CSV2SerialDataFormat.png" NAME="CSV2SerialDataFormat" ALIGN=MIDDLE></P>
+<P>
+As pendant data can be send as a JSON string. This looks like this example:
+</BR>
+<B>{"dsn":1,"st":1,"tm":0,"data":[1001,1002,1003,1004,1005,1006,1007,1008],"crc":0}</B>
+</BR>
+Since the JSON parser relay on the field names, „dsn“ stands for dataset-number, it is important to use this defined names. Otherwise parsing will fail.
+</P>
 <P ALIGN=LEFT><A HREF="HelpInfo_B.html">&lt;&lt;== previous</A></P>
 </DIV>
 </BODY>
