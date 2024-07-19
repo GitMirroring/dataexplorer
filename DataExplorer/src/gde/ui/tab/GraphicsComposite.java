@@ -18,14 +18,18 @@
 ****************************************************************************************/
 package gde.ui.tab;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 import java.util.logging.Logger;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.GestureEvent;
@@ -46,11 +50,13 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import gde.GDE;
@@ -167,6 +173,9 @@ public class GraphicsComposite extends Composite {
 	int												xPosCut									= 0;
 
 	boolean										isScopeMode							= false;
+	
+	Shell 										popup;
+	StyledText 								styledText;
 
 	GraphicsComposite(final SashForm useParent, GraphicsType useGraphicsType) {
 		super(useParent, SWT.NONE);
@@ -204,7 +213,7 @@ public class GraphicsComposite extends Composite {
 		this.setLayout(null);
 		this.setDragDetect(false);
 		this.setBackground(this.surroundingBackground);
-
+		
 		this.contextMenu.createMenu(this.popupmenu, this.graphicsType.toTabType());
 
 		// help lister does not get active on Composite as well as on Canvas
@@ -1059,7 +1068,10 @@ public class GraphicsComposite extends Composite {
 				drawVerticalLine(canvasGC, this.xPosMeasure, 0, this.curveAreaBounds.height);
 				drawHorizontalLine(canvasGC, this.yPosMeasure, 0, this.curveAreaBounds.width);
 
-				this.recordSetComment.setText(this.getSelectedMeasurementsAsTable());
+				this.hideMeasurePopUp();
+				this.callMeasurePopUp();
+				
+				//this.recordSetComment.setText(this.getSelectedMeasurementsAsTable());
 				int indexPosMeasure = record.getHorizontalPointIndexFromDisplayPoint(this.xPosMeasure);
 				this.calculateMeasurementStatusMessage(actualDevice, record, indexPosMeasure);
 			}
@@ -1217,6 +1229,8 @@ public class GraphicsComposite extends Composite {
 	 * clean (old) measurement pointer - check pointer in curve area
 	 */
 	public void cleanMeasurementPointer() {
+		//log.log(Level.OFF, "cleanMeasurementPointer");
+		this.cleanMeasurePopUp();
 		try {
 			if (this.recordSetCommentText != null) {
 				this.recordSetComment.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE + 1, SWT.NORMAL));
@@ -1591,6 +1605,9 @@ public class GraphicsComposite extends Composite {
 				Point point = checkCurveBounds(evt.x, evt.y);
 				this.xDown = point.x;
 				this.yDown = point.y;
+				
+				if (measureRecordKey != null && !recordSet.isMeasurementMode(measureRecordKey))
+					cleanMeasurePopUp();
 
 				if (measureRecordKey != null && (recordSet.isMeasurementMode(measureRecordKey) || recordSet.isDeltaMeasurementMode(measureRecordKey) || recordSet.isAvgMedianMeasurementMode(measureRecordKey)) && this.xPosMeasure + 1 >= this.xDown
 						&& this.xPosMeasure - 1 <= this.xDown) { // snap mouse pointer
@@ -1928,7 +1945,7 @@ public class GraphicsComposite extends Composite {
 		}
 	}
 
-	private String getSelectedMeasurementsAsTable() {
+	public String getSelectedMeasurementsAsTable() {
 		Properties displayProps = this.settings.getMeasurementDisplayProperties();
 		RecordSet activeRecordSet = this.application.getActiveRecordSet();
 		if (activeRecordSet != null) {
@@ -1956,5 +1973,69 @@ public class GraphicsComposite extends Composite {
 		}
 		this.recordSetComment.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE + 1, SWT.NORMAL));
 		return this.recordSetCommentText != null ? this.recordSetCommentText : GDE.STRING_EMPTY;
+	}
+	
+	private void cleanMeasurePopUp() {
+		//log.log(Level.OFF, "cleanMeasurePopUp");
+		if (popup != null && !popup.isDisposed()) {
+			popup.setAlpha(0);
+			popup.pack();
+			if (styledText != null && !styledText.isDisposed()) {
+				styledText.dispose();
+				styledText = null;
+			}
+			popup.close();
+			popup = null;
+		}
+	}
+
+	private void hideMeasurePopUp() {
+		if (popup != null && !popup.isDisposed()) {
+			popup.setAlpha(0);
+			popup.pack();
+		}
+	}
+
+	private void callMeasurePopUp() {
+		if (popup == null || (popup != null && popup.isDisposed())) {
+			popup = new Shell(GDE.display, SWT.NO_TRIM | SWT.MODELESS);
+			popup.setParent(this);
+			popup.setLayout(new FillLayout());
+		}
+
+		if (styledText == null || (styledText != null && styledText.isDisposed())) {
+			styledText = new StyledText(popup, SWT.NONE);
+			styledText.setEditable(false);
+			styledText.setEnabled(false);
+			styledText.setFont(SWTResourceManager.getFont("Courier New", GDE.WIDGET_FONT_SIZE + 1, SWT.BOLD));
+		}
+
+		RecordSet activeRecordSet = this.application.getActiveRecordSet();
+		if (activeRecordSet != null) {
+			int indexPosMeasure = activeRecordSet.get(0).getHorizontalPointIndexFromDisplayPoint(this.xPosMeasure);
+			Vector<Record> records = activeRecordSet.getVisibleAndDisplayableRecords();
+			String formattedTimeWithUnit = records.firstElement().getHorizontalDisplayPointAsFormattedTimeWithUnit(this.xPosMeasure);
+			StringBuilder sb = new StringBuilder().append(formattedTimeWithUnit);
+			List<StyleRange> styleRanges = new ArrayList<>();
+			styleRanges.add(new StyleRange(0, sb.length(), this.application.COLOR_BLACK, null));
+			int startIndex = sb.length();
+			for (Record record : records) {
+				sb.append(
+						String.format("\n%-15s %s %s", record.getName(), record.getDecimalFormat().format(record.getDevice().translateValue(record, record.realGet(indexPosMeasure) / 1000.0)), record.getUnit()));
+				styleRanges.add(new StyleRange(startIndex, sb.length() - startIndex, SWTResourceManager.getColor(record.getRGB()), null));
+				startIndex = sb.length();
+			}
+			styledText.setText(sb.toString());
+			styledText.setStyleRanges(styleRanges.toArray(new StyleRange[0]));
+		}
+
+		popup.setAlpha(180);
+		popup.pack();
+		popup.open();
+		//System.out.println("CREATE " + GDE.shell.getLocation().x+" "+this.getParent().getChildren()[0].getBounds().width+" "+this.offSetX+" "+this.xPosMeasure);
+		//System.out.println("CREATE " + GDE.shell.getLocation().y+" "+this.application.getTabFolder().getLocation().y+" "+this.offSetY+" "+this.graphicsHeader.getBounds().height+" "+this.yPosMeasure);
+
+		popup.setLocation(GDE.shell.getLocation().x + this.getParent().getChildren()[0].getBounds().width + this.offSetX + this.xPosMeasure + 20,
+				GDE.shell.getLocation().y + this.application.getTabFolder().getLocation().y + this.offSetY + this.graphicsHeader.getBounds().height + this.yPosMeasure + 25);
 	}
 }

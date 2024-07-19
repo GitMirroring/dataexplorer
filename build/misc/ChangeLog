@@ -1,5 +1,12 @@
 Development history / change log, please read from bottom up
 
+Version 3.9.1 - xx yyy 2024
+Generic changes/fixes 
+	* Improve experience for Measuring feature, show a values pop-up (sr #111082)
+	
+Device specific changes/fixes
+	*
+	
 Version 3.9.0 - 15 Jun 2024
 Generic changes/fixes 
 	* remove Java 8 support - attention using old 32 bit OS, latest supported stable version is 3.8.6!
