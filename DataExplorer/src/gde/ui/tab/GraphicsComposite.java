@@ -1998,7 +1998,7 @@ public class GraphicsComposite extends Composite {
 
 	private void callMeasurePopUp() {
 		if (popup == null || (popup != null && popup.isDisposed())) {
-			popup = new Shell(GDE.display, SWT.NO_TRIM | SWT.MODELESS);
+			popup = new Shell(GDE.shell, SWT.NO_TRIM | SWT.MODELESS);
 			popup.setParent(this);
 			popup.setLayout(new FillLayout());
 		}
@@ -2029,13 +2029,15 @@ public class GraphicsComposite extends Composite {
 			styledText.setStyleRanges(styleRanges.toArray(new StyleRange[0]));
 		}
 
-		popup.setAlpha(180);
+		popup.setAlpha(200);
 		popup.pack();
-		popup.open();
-		//System.out.println("CREATE " + GDE.shell.getLocation().x+" "+this.getParent().getChildren()[0].getBounds().width+" "+this.offSetX+" "+this.xPosMeasure);
-		//System.out.println("CREATE " + GDE.shell.getLocation().y+" "+this.application.getTabFolder().getLocation().y+" "+this.offSetY+" "+this.graphicsHeader.getBounds().height+" "+this.yPosMeasure);
+		System.out.println("set x " + GDE.shell.getLocation().x+" "+this.getParent().getChildren()[0].getBounds().width+" "+this.offSetX+" "+this.xPosMeasure + " = " + (GDE.shell.getLocation().x + this.getParent().getChildren()[0].getBounds().width + this.offSetX + this.xPosMeasure));
+		System.out.println("set y " + GDE.shell.getLocation().y+" "+this.application.getTabFolder().getLocation().y+" "+this.offSetY+" "+this.graphicsHeader.getBounds().height+" "+this.yPosMeasure + " = " + (GDE.shell.getLocation().y + this.application.getTabFolder().getLocation().y + this.offSetY + this.graphicsHeader.getBounds().height + this.yPosMeasure));
 
-		popup.setLocation(GDE.shell.getLocation().x + this.getParent().getChildren()[0].getBounds().width + this.offSetX + this.xPosMeasure + 20,
+		popup.setLocation(
+				GDE.shell.getLocation().x + this.getParent().getChildren()[0].getBounds().width + this.offSetX + this.xPosMeasure + 20,
 				GDE.shell.getLocation().y + this.application.getTabFolder().getLocation().y + this.offSetY + this.graphicsHeader.getBounds().height + this.yPosMeasure + 25);
+		popup.open();
+		System.out.println("result in " + popup.getLocation());
 	}
 }
