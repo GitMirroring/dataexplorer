@@ -5,6 +5,7 @@ Generic changes/fixes
 	* Improve experience for Measuring feature, show a values pop-up (sr #111082)
 	* SWT.jar for Linux Intel updated
 	* SWT.jar for Windows Intel updated
+	* SWT.jar for macOS Intel updated
 	
 Device specific changes/fixes
 	*
