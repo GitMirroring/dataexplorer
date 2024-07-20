@@ -3,7 +3,8 @@ Development history / change log, please read from bottom up
 Version 3.9.1 - xx yyy 2024
 Generic changes/fixes 
 	* Improve experience for Measuring feature, show a values pop-up (sr #111082)
-	* SWT.jar for Linux updated
+	* SWT.jar for Linux Intel updated
+	* SWT.jar for Windows Intel updated
 	
 Device specific changes/fixes
 	*
