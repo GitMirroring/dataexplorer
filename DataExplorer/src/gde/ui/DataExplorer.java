@@ -712,7 +712,9 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 						DataExplorer.this.compareTabItem.setSashFormWeights(DataExplorer.this.compareTabItem.getCurveSelectorComposite().getSelectorColumnWidth());
 					} else if (isRecordSetVisible(GraphicsType.UTIL) && DataExplorer.this.utilGraphicsTabItem != null) {
 						DataExplorer.this.utilGraphicsTabItem.setSashFormWeights(DataExplorer.this.utilGraphicsTabItem.getCurveSelectorComposite().getSelectorColumnWidth());
-					}
+					} else
+						DataExplorer.this.graphicsTabItem.getGraphicsComposite().cleanMeasurePopUp();
+
 					if (DataExplorer.this.objectDescriptionTabItem != null) {
 						if (DataExplorer.this.objectDescriptionTabItem.isVisible()) {
 							if (log.isLoggable(Level.FINER)) log.logp(Level.FINER, $CLASS_NAME, $METHOD_NAME, "displayTab.focusGained " + evt); //$NON-NLS-1$

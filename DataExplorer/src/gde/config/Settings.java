@@ -111,6 +111,7 @@ public final class Settings extends Properties {
 	final static String							IS_GRAPHICS_SCALE_COLOR					= "is_graphics_scale_color";																																			//$NON-NLS-1$
 	final static String							IS_GRAPHICS_NUMBERS_COLOR				= "is_graphics_number_color";																																			//$NON-NLS-1$
 	final static String							IS_GRAPHICS_NAME_COLOR					= "is_graphics_text_color";																																				//$NON-NLS-1$
+	final static String							IS_GRAPHICS_MEASURE_POPUP				= "is_graphics_measure_popup";																																				//$NON-NLS-1$
 	final static String							IS_GRAPHICS_TICKS_10						= "is_graphics_ticks_bound_10";																																				//$NON-NLS-1$
 	final static String							COMPARE_AREA_BACKGROUND					= "compare_area_background";																																			//$NON-NLS-1$
 	final static String							COMPARE_SURROUND_BACKGRD				= "compare_surround_backgrd";																																			//$NON-NLS-1$
@@ -793,6 +794,7 @@ public final class Settings extends Properties {
 			writer.write(String.format("%-40s \t=\t %s\n", Settings.IS_GRAPHICS_NAME_COLOR, isDrawNameInRecordColor())); //$NON-NLS-1$
 			writer.write(String.format("%-40s \t=\t %s\n", Settings.IS_GRAPHICS_TICKS_10, isDraw10TicksPerRecord())); //$NON-NLS-1$
 			writer.write(String.format("%-40s \t=\t %s\n", Settings.IS_GRAPHICS_NUMBERS_COLOR, isDrawNumbersInRecordColor())); //$NON-NLS-1$
+			writer.write(String.format("%-40s \t=\t %s\n", Settings.IS_GRAPHICS_MEASURE_POPUP, isUseMeasurementPopUp())); //$NON-NLS-1$
 			writer.write(String.format("%-40s \t=\t %s\n", Settings.COMPARE_AREA_BACKGROUND, getCompareCurveAreaBackgroundStr())); //$NON-NLS-1$
 			writer.write(String.format("%-40s \t=\t %s\n", Settings.COMPARE_SURROUND_BACKGRD, getCompareSurroundingBackgroundStr())); //$NON-NLS-1$
 			writer.write(String.format("%-40s \t=\t %s\n", Settings.COMPARE_BORDER_COLOR, getCurveCompareBorderColorStr())); //$NON-NLS-1$
@@ -2449,6 +2451,21 @@ public final class Settings extends Properties {
 	}
 
 	/**
+	 * set boolean value to signal use of measurement pop up
+	 * @param isUseRecordColor
+	 */
+	public void setUseMeasurementPopUp(boolean isUseMeasurementPopUp) {
+		this.setProperty(Settings.IS_GRAPHICS_MEASURE_POPUP, GDE.STRING_EMPTY + isUseMeasurementPopUp);
+	}
+
+	/**
+	 * @return boolean value of true if measurement pop up should be used
+	 */
+	public boolean isUseMeasurementPopUp() {
+		return Boolean.valueOf(this.getProperty(Settings.IS_GRAPHICS_MEASURE_POPUP, "true")); //$NON-NLS-1$
+	}
+
+	/**
 	 * set boolean value if the channel/configuration name should be used as leader of record name in curve compare
 	 * @param isUseChannelConfigName
 	 */
@@ -3304,10 +3321,10 @@ public final class Settings extends Properties {
 	 */
 	public List<String> getServiceUpdateList() {
 		List<String> deviceList = new ArrayList<>();
-		deviceList.add("HoTTAdapter");
-		deviceList.add("HoTTAdapterM");
-		deviceList.add("HoTTAdapter2");
-		deviceList.add("HoTTAdapter2M");
+//		deviceList.add("HoTTAdapter");
+//		deviceList.add("HoTTAdapterM");
+//		deviceList.add("HoTTAdapter2");
+//		deviceList.add("HoTTAdapter2M");
 		return deviceList;
 	}
 }

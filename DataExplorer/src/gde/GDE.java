@@ -521,7 +521,8 @@ public class GDE {
 				}
 			}
 
-			Settings.getInstance().checkUpdateDeviceProperties(Settings.getDevicesPath());
+			//special handling replacing device XML without schema update
+			//Settings.getInstance().checkUpdateDeviceProperties(Settings.getDevicesPath());
 
 			// list system properties
 			StringBuilder sb = new StringBuilder().append("Environment : \n"); //$NON-NLS-1$

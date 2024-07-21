@@ -184,7 +184,7 @@ public class SettingsDialog extends Dialog {
 	Button															removeLauncherButton;
 	Button															createLauncherButton;
 	Button															partialDataTableButton, blankChargeDischargeButton, continiousRecordSetButton, startCommunicationAfterStartupButton;
-	Button															drawScaleInRecordColorButton, drawNameInRecordColorButton, drawNumbersInRecordColorButton, draw10TicksPerRecordButton, addChannelConfigNameCurveCompareButton;
+	Button															drawScaleInRecordColorButton, drawNameInRecordColorButton, drawNumbersInRecordColorButton, useMeasurementPopUpButton, draw10TicksPerRecordButton, addChannelConfigNameCurveCompareButton;
 	ParameterConfigControl							fontSizeCorrectionSlider, kmzExportTimeStepSlider;
 	int[]																fontCorrection					= new int[1];
 	int[]																exportTimeStep_ms				= new int[1];
@@ -1454,6 +1454,25 @@ public class SettingsDialog extends Dialog {
 									public void widgetSelected(SelectionEvent evt) {
 										SettingsDialog.log.log(Level.FINEST, "drawNumbersInRecordColorButton.widgetSelected, event=" + evt); //$NON-NLS-1$
 										SettingsDialog.this.settings.setDrawNumbersInRecordColor(SettingsDialog.this.drawNumbersInRecordColorButton.getSelection());
+										SettingsDialog.this.application.getHistoExplorer().ifPresent(h -> h.updateHistoTabs(false, false, true));
+									}
+								});
+							}
+							{
+								this.useMeasurementPopUpButton = new Button(this.graphicsView, SWT.CHECK);
+								this.useMeasurementPopUpButton.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+								this.useMeasurementPopUpButton.setText(Messages.getString(MessageIds.GDE_MSGT0983));
+								this.useMeasurementPopUpButton.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0984));
+								this.useMeasurementPopUpButton.setSelection(this.settings.isUseMeasurementPopUp());
+								RowData createLauncerButtonLData = new RowData();
+								createLauncerButtonLData.width = 460;
+								createLauncerButtonLData.height = GDE.IS_LINUX ? 22 : GDE.IS_MAC ? 20 : 18;
+								this.useMeasurementPopUpButton.setLayoutData(createLauncerButtonLData);
+								this.useMeasurementPopUpButton.addSelectionListener(new SelectionAdapter() {
+									@Override
+									public void widgetSelected(SelectionEvent evt) {
+										SettingsDialog.log.log(Level.FINEST, "useMeasurementPopUpButton.widgetSelected, event=" + evt); //$NON-NLS-1$
+										SettingsDialog.this.settings.setUseMeasurementPopUp(SettingsDialog.this.useMeasurementPopUpButton.getSelection());
 										SettingsDialog.this.application.getHistoExplorer().ifPresent(h -> h.updateHistoTabs(false, false, true));
 									}
 								});

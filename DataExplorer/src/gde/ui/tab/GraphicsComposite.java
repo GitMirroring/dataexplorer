@@ -174,7 +174,7 @@ public class GraphicsComposite extends Composite {
 
 	boolean										isScopeMode							= false;
 	
-	Shell 										popup;
+	Shell 										measurePopUp;
 	StyledText 								styledText;
 
 	GraphicsComposite(final SashForm useParent, GraphicsType useGraphicsType) {
@@ -1068,10 +1068,11 @@ public class GraphicsComposite extends Composite {
 				drawVerticalLine(canvasGC, this.xPosMeasure, 0, this.curveAreaBounds.height);
 				drawHorizontalLine(canvasGC, this.yPosMeasure, 0, this.curveAreaBounds.width);
 
-				this.hideMeasurePopUp();
-				this.callMeasurePopUp();
+				if (this.settings.isUseMeasurementPopUp())
+					this.callMeasurePopUp();
+				else
+					this.recordSetComment.setText(this.getSelectedMeasurementsAsTable());
 				
-				//this.recordSetComment.setText(this.getSelectedMeasurementsAsTable());
 				int indexPosMeasure = record.getHorizontalPointIndexFromDisplayPoint(this.xPosMeasure);
 				this.calculateMeasurementStatusMessage(actualDevice, record, indexPosMeasure);
 			}
@@ -1229,7 +1230,7 @@ public class GraphicsComposite extends Composite {
 	 * clean (old) measurement pointer - check pointer in curve area
 	 */
 	public void cleanMeasurementPointer() {
-		//log.log(Level.OFF, "cleanMeasurementPointer");
+		log.log(Level.OFF, "cleanMeasurementPointer");
 		this.cleanMeasurePopUp();
 		try {
 			if (this.recordSetCommentText != null) {
@@ -1975,36 +1976,27 @@ public class GraphicsComposite extends Composite {
 		return this.recordSetCommentText != null ? this.recordSetCommentText : GDE.STRING_EMPTY;
 	}
 	
-	private void cleanMeasurePopUp() {
-		//log.log(Level.OFF, "cleanMeasurePopUp");
-		if (popup != null && !popup.isDisposed()) {
-			popup.setAlpha(0);
-			popup.pack();
+	public void cleanMeasurePopUp() {
+		if (measurePopUp != null && !measurePopUp.isDisposed()) {
+			log.log(Level.OFF, "cleanMeasurePopUp");
 			if (styledText != null && !styledText.isDisposed()) {
 				styledText.dispose();
 				styledText = null;
 			}
-			popup.close();
-			popup = null;
-		}
-	}
-
-	private void hideMeasurePopUp() {
-		if (popup != null && !popup.isDisposed()) {
-			popup.setAlpha(0);
-			popup.pack();
+			measurePopUp.close();
+			measurePopUp = null;
 		}
 	}
 
 	private void callMeasurePopUp() {
-		if (popup == null || (popup != null && popup.isDisposed())) {
-			popup = new Shell(GDE.shell, SWT.NO_TRIM | SWT.MODELESS);
-			popup.setParent(this);
-			popup.setLayout(new FillLayout());
+		if (measurePopUp == null || (measurePopUp != null && measurePopUp.isDisposed())) {
+			measurePopUp = new Shell(GDE.shell, SWT.NO_TRIM | SWT.MODELESS);
+			measurePopUp.setParent(this);
+			measurePopUp.setLayout(new FillLayout());
 		}
 
 		if (styledText == null || (styledText != null && styledText.isDisposed())) {
-			styledText = new StyledText(popup, SWT.NONE);
+			styledText = new StyledText(measurePopUp, SWT.NONE);
 			styledText.setEditable(false);
 			styledText.setEnabled(false);
 			styledText.setFont(SWTResourceManager.getFont("Courier New", GDE.WIDGET_FONT_SIZE + 1, SWT.BOLD));
@@ -2029,15 +2021,16 @@ public class GraphicsComposite extends Composite {
 			styledText.setStyleRanges(styleRanges.toArray(new StyleRange[0]));
 		}
 
-		popup.setAlpha(200);
-		popup.pack();
-		System.out.println("set x " + GDE.shell.getLocation().x+" "+this.getParent().getChildren()[0].getBounds().width+" "+this.offSetX+" "+this.xPosMeasure + " = " + (GDE.shell.getLocation().x + this.getParent().getChildren()[0].getBounds().width + this.offSetX + this.xPosMeasure));
-		System.out.println("set y " + GDE.shell.getLocation().y+" "+this.application.getTabFolder().getLocation().y+" "+this.offSetY+" "+this.graphicsHeader.getBounds().height+" "+this.yPosMeasure + " = " + (GDE.shell.getLocation().y + this.application.getTabFolder().getLocation().y + this.offSetY + this.graphicsHeader.getBounds().height + this.yPosMeasure));
+		measurePopUp.setAlpha(200);
+		measurePopUp.pack();
+		measurePopUp.open();
 
-		popup.setLocation(
+		//System.out.println("set x " + GDE.shell.getLocation().x+" "+this.getParent().getChildren()[0].getBounds().width+" "+this.offSetX+" "+this.xPosMeasure + " = " + (GDE.shell.getLocation().x + this.getParent().getChildren()[0].getBounds().width + this.offSetX + this.xPosMeasure));
+		//System.out.println("set y " + GDE.shell.getLocation().y+" "+this.application.getTabFolder().getLocation().y+" "+this.offSetY+" "+this.graphicsHeader.getBounds().height+" "+this.yPosMeasure + " = " + (GDE.shell.getLocation().y + this.application.getTabFolder().getLocation().y + this.offSetY + this.graphicsHeader.getBounds().height + this.yPosMeasure));
+
+		measurePopUp.setLocation(
 				GDE.shell.getLocation().x + this.getParent().getChildren()[0].getBounds().width + this.offSetX + this.xPosMeasure + 20,
 				GDE.shell.getLocation().y + this.application.getTabFolder().getLocation().y + this.offSetY + this.graphicsHeader.getBounds().height + this.yPosMeasure + 25);
-		popup.open();
-		System.out.println("result in " + popup.getLocation());
+		//System.out.println("result in " + measurePopUp.getLocation());
 	}
 }
