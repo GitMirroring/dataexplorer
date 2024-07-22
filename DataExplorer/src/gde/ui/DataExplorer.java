@@ -756,6 +756,7 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 						DataExplorer.this.menuToolBar.enableScopePointsCombo(true);
 						DataExplorer.this.enableZoomMenuButtons(true);
 						DataExplorer.this.updateGraphicsWindow();
+						DataExplorer.this.histoExplorer.ifPresent(h -> h.cleanMeasurePopUp());
 					} else if (tabSelectionIndex > 0) {
 						if ((DataExplorer.this.displayTab.getItem(tabSelectionIndex) instanceof GraphicsWindow) && DataExplorer.this.isRecordSetVisible(GraphicsType.COMPARE)) {
 							DataExplorer.this.menuToolBar.enableScopePointsCombo(false);

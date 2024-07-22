@@ -1230,7 +1230,7 @@ public class GraphicsComposite extends Composite {
 	 * clean (old) measurement pointer - check pointer in curve area
 	 */
 	public void cleanMeasurementPointer() {
-		log.log(Level.OFF, "cleanMeasurementPointer");
+		//log.log(Level.OFF, "cleanMeasurementPointer");
 		this.cleanMeasurePopUp();
 		try {
 			if (this.recordSetCommentText != null) {
@@ -1978,7 +1978,7 @@ public class GraphicsComposite extends Composite {
 	
 	public void cleanMeasurePopUp() {
 		if (measurePopUp != null && !measurePopUp.isDisposed()) {
-			log.log(Level.OFF, "cleanMeasurePopUp");
+			//log.log(Level.OFF, "cleanMeasurePopUp");
 			if (styledText != null && !styledText.isDisposed()) {
 				styledText.dispose();
 				styledText = null;

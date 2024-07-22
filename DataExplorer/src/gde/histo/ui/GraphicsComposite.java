@@ -697,7 +697,7 @@ public final class GraphicsComposite extends AbstractChartComposite {
 	
 	public void cleanMeasurePopUp() {
 		if (measurePopUp != null && !measurePopUp.isDisposed()) {
-			log.log(Level.OFF, "cleanMeasurePopUp");
+			//log.log(Level.OFF, "cleanMeasurePopUp");
 			if (styledText != null && !styledText.isDisposed()) {
 				styledText.dispose();
 				styledText = null;
