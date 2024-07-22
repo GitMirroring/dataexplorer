@@ -34,6 +34,7 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Control;
 
 import com.sun.istack.Nullable;
 
@@ -316,6 +317,7 @@ public class HistoExplorer {
 	}
 
 	public void updateVisibleTab(SelectionEvent evt) {
+		cleanMeasurePopUp();
 		if (isHistoChartWindowVisible()) {
 			log.log(Level.FINER, "HistoChartWindow in displayTab.widgetSelected, event=", evt); //$NON-NLS-1$
 			updateHistoTabs(histoSet.getRebuildStepInvisibleTab()); // saves some time compared to HistoSet.RebuildStep.E_USER_INTERFACE
@@ -325,6 +327,12 @@ public class HistoExplorer {
 		}
 	}
 
+	public void cleanMeasurePopUp() {
+		for (AbstractChartWindow c : chartTabItems) {
+			c.cleanMeasuring();
+		}
+	}
+	
 	/**
 	 * Redraw if visible window.
 	 */

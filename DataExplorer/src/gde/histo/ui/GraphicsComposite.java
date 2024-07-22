@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.HelpEvent;
 import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.events.MouseAdapter;
@@ -43,10 +44,12 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import gde.GDE;
@@ -58,6 +61,7 @@ import gde.histo.datasources.SourceFolders;
 import gde.histo.recordings.TrailDataTags.DataTag;
 import gde.histo.recordings.TrailRecord;
 import gde.histo.recordings.TrailRecordSet;
+import gde.histo.recordings.TrailRecordSetFormatter;
 import gde.histo.ui.menu.AbstractTabAreaContextMenu.TabMenuOnDemand;
 import gde.histo.ui.menu.ChartTabAreaContextMenu;
 import gde.histo.utils.HistoCurveUtils;
@@ -220,6 +224,10 @@ public final class GraphicsComposite extends AbstractChartComposite {
 	private final HistoTimeLine			timeLine	= new HistoTimeLine();
 
 	private final AbstractChartData	chartData	= new AbstractChartData();
+	
+	private Shell 									measurePopUp;
+	private StyledText							styledText;
+
 
 	GraphicsComposite(SashForm useParent, CTabItem parentWindow) {
 		super(useParent, parentWindow, SWT.NONE);
@@ -655,6 +663,48 @@ public final class GraphicsComposite extends AbstractChartComposite {
 
 	public GraphicsLayout getChartData(TrailRecord trailRecord) {
 		return (GraphicsLayout) this.chartData.get(trailRecord.getName());
+	}
+	
+	public void callMeasurePopUp(long timestamp_ms) {
+		if (measurePopUp == null || (measurePopUp != null && measurePopUp.isDisposed())) {
+			measurePopUp = new Shell(GDE.shell, SWT.NO_TRIM | SWT.MODELESS);
+			measurePopUp.setParent(this);
+			measurePopUp.setLayout(new FillLayout());
+		}
+		if (styledText == null || (styledText != null && styledText.isDisposed())) {
+			styledText = new StyledText(measurePopUp, SWT.NONE);
+			styledText.setEditable(false);
+			styledText.setEnabled(false);
+			styledText.setFont(SWTResourceManager.getFont("Courier New", GDE.WIDGET_FONT_SIZE + 1, SWT.BOLD));
+		}
+
+		TrailRecordSetFormatter.setSelectedMeasurementsAsTable4PopUp(styledText, timestamp_ms);
+		
+		measurePopUp.setAlpha(200);
+		measurePopUp.pack();
+		measurePopUp.open();
+		
+		int locationX = GDE.shell.getLocation().x + (GDE.shell.getBounds().width - this.getBounds().width) + this.timeLine.getCurveAreaBounds().x + GraphicsMeasuring.xPosMeasure + 20;
+		int locationY = GDE.shell.getLocation().y + this.application.getTabFolder().getLocation().y + this.graphicsHeader.getBounds().height + GraphicsMeasuring.yPosMeasure + 18;
+		locationY = locationY < 0 ? GDE.shell.getLocation().y + this.application.getTabFolder().getLocation().y + this.graphicsHeader.getBounds().height + this.graphicCanvas.getBounds().height/2 : locationY;
+
+		//System.out.println("set x " + GDE.shell.getLocation().x+" "+(GDE.shell.getBounds().width - this.getBounds().width)+" "+ this.timeLine.getCurveAreaBounds().x+" "+ GraphicsMeasuring.xPosMeasure + " = " + locationX);
+		//System.out.println("set y " + GDE.shell.getLocation().y+" "+this.application.getTabFolder().getLocation().y+" "+this.graphicsHeader.getBounds().height+" "+ GraphicsMeasuring.yPosMeasure + " = " + locationY);
+
+		measurePopUp.setLocation(locationX, locationY);
+		//System.out.println("set x,y " + measurePopUp.getLocation());
+	}
+	
+	public void cleanMeasurePopUp() {
+		if (measurePopUp != null && !measurePopUp.isDisposed()) {
+			log.log(Level.OFF, "cleanMeasurePopUp");
+			if (styledText != null && !styledText.isDisposed()) {
+				styledText.dispose();
+				styledText = null;
+			}
+			measurePopUp.close();
+			measurePopUp = null;
+		}
 	}
 
 }

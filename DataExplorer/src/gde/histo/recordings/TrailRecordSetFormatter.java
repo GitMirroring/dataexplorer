@@ -21,11 +21,15 @@ package gde.histo.recordings;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 import java.util.stream.Collectors;
+
+import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.custom.StyledText;
 
 import gde.GDE;
 import gde.device.resource.DeviceXmlResource;
@@ -33,6 +37,7 @@ import gde.histo.recordings.TrailDataTags.DataTag;
 import gde.messages.MessageIds;
 import gde.messages.Messages;
 import gde.ui.DataExplorer;
+import gde.ui.SWTResourceManager;
 import gde.utils.LocalizedDateTime;
 import gde.utils.LocalizedDateTime.DateTimePattern;
 import gde.utils.StringHelper;
@@ -79,6 +84,43 @@ public final class TrailRecordSetFormatter {
 			return GDE.STRING_EMPTY;
 		}
 	}
+	
+	public static void setSelectedMeasurementsAsTable4PopUp(StyledText styledText, long timestamp_ms) {
+
+		TrailRecordSet trailRecordSet = DataExplorer.getInstance().getPresentHistoExplorer().getTrailRecordSet();
+		if (trailRecordSet != null && trailRecordSet.getTimeStepSize() > 0) {
+			Properties displayProps = trailRecordSet.getAnalyzer().getSettings().getMeasurementDisplayProperties();
+			Vector<TrailRecord> records = trailRecordSet.getVisibleAndDisplayableRecords();
+			StringBuilder sb = new StringBuilder().append(String.format("%-11.11s", Messages.getString(MessageIds.GDE_MSGT0799))); //$NON-NLS-1$
+			final int index = trailRecordSet.getIndex(timestamp_ms);
+			sb.append(String.format("%-11.11s\n", trailRecordSet.getDataTagText(index, DataTag.RECORDSET_BASE_NAME)));
+			sb.append(String.format("%-11.11s", Messages.getString(MessageIds.GDE_MSGT0652))); //$NON-NLS-1$
+			sb.append(String.format("%-16s", LocalizedDateTime.getFormatedTime(DateTimePattern.yyyyMMdd_HHmm, timestamp_ms)).substring(0, 16)); //$NON-NLS-1$
+			List<StyleRange> styleRanges = new ArrayList<>();
+			styleRanges.add(new StyleRange(0, sb.length(), DataExplorer.getInstance().COLOR_BLACK, null));
+			int startIndex = sb.length();
+
+			DeviceXmlResource xmlResource = DeviceXmlResource.getInstance();
+			for (int i = 0; i < records.size(); i++) {
+				TrailRecord record = records.get(i);
+				if (displayProps.getProperty(record.getName()) != null)
+					sb.append(String.format("\n%-10s", displayProps.getProperty(record.getName()))); //$NON-NLS-1$
+				else {
+					String unit = GDE.STRING_LEFT_BRACKET + record.getUnit() + GDE.STRING_RIGHT_BRACKET;
+					String replacedName = xmlResource.getReplacement(record.getName());
+					String name = replacedName.substring(0, replacedName.length() >= 17 - unit.length() ? 17 - unit.length() : replacedName.length());
+					String format = "\n%-" + (17 - unit.length()) + "s%" + unit.length() + "s"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					sb.append(String.format(format, name, unit));
+				}
+				sb.append(String.format(" %-10s", new TrailRecordFormatter(record).getMeasureValue(index))); //$NON-NLS-1$
+				styleRanges.add(new StyleRange(startIndex, sb.length() - startIndex, SWTResourceManager.getColor(record.getRGB()), null));
+				startIndex = sb.length();
+			}
+			//System.out.println(sb);
+			styledText.setText(sb.toString());
+			styledText.setStyleRanges(styleRanges.toArray(new StyleRange[0]));
+		}
+	}		
 
 	public static String getFileNameLines(List<Integer> indices) {
 		TrailRecordSet trailRecordSet = DataExplorer.getInstance().getPresentHistoExplorer().getTrailRecordSet();

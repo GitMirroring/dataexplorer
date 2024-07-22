@@ -75,6 +75,10 @@ public final class HistoGraphicsWindow extends AbstractChartWindow {
 	protected GraphicsComposite getGraphicsComposite() {
 		return (GraphicsComposite) this.graphicsComposite;
 	}
+	
+	protected SelectorComposite getSelectorComposite() {
+		return (SelectorComposite) this.curveSelectorComposite;
+	}
 
 	@Override
 	protected Optional<SummaryComposite> getSummaryComposite() {

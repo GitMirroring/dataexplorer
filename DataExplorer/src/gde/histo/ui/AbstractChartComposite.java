@@ -481,7 +481,7 @@ public abstract class AbstractChartComposite extends Composite {
 	 * Reset the graphic area and comment.
 	 */
 	public void cleanMeasuring() {
-		//measuring.cleanMeasuring();
+		measuring.cleanMeasuring();
 		measuring = null;
 	}
 

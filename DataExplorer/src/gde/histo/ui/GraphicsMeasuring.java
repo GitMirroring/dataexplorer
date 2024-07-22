@@ -27,6 +27,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Text;
 
 import gde.GDE;
+import gde.config.Settings;
 import gde.histo.recordings.HistoGraphicsMapper;
 import gde.histo.recordings.TrailRecordSetFormatter;
 import gde.log.Logger;
@@ -61,9 +62,13 @@ public final class GraphicsMeasuring extends AbstractMeasuring {
 
 				String statusMessage = hgm.curveSurvey.drawMeasurementGraphics();
 				hgc.windowActor.setStatusMessage(statusMessage);
-
-				hgc.recordSetComment.setText(getSelectedMeasurementsAsTable(hgc.recordSetComment, hgm.measure.getTimestampMeasure_ms()));
-				hgc.recordSetComment.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0897));
+				
+				if (Settings.getInstance().isUseMeasurementPopUp())
+					hgm.graphicsComposite.callMeasurePopUp(hgm.measure.getTimestampMeasure_ms());
+				else {
+					hgc.recordSetComment.setText(getSelectedMeasurementsAsTable(hgc.recordSetComment, hgm.measure.getTimestampMeasure_ms()));
+					hgc.recordSetComment.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0897));
+				}
 			}
 
 			@Override
@@ -233,6 +238,8 @@ public final class GraphicsMeasuring extends AbstractMeasuring {
 			//this.curveSurvey.cleanMeasurementPointer(this.graphicsComposite.canvasImage);
 			//this.canvasGC.dispose();
 		}
+		this.graphicsComposite.cleanMeasurePopUp();
+		this.graphicsComposite.graphicCanvas.redraw();
 		this.graphicsComposite.setRecordSetCommentStandard();
 	}
 
