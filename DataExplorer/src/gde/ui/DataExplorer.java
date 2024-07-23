@@ -725,11 +725,11 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 							DataExplorer.this.isObjectWindowVisible = false;
 						}
 					}
-					if (log.isLoggable(Level.FINE) && DataExplorer.this.displayTab != null && DataExplorer.this.menuCoolBar != null && DataExplorer.this.statusComposite != null && getSize().y != 0) {
-						log.logp(Level.FINE, $CLASS_NAME, $METHOD_NAME, "menuCoolBar.size = " + DataExplorer.this.menuCoolBar.getSize()); //$NON-NLS-1$
-						log.logp(Level.FINE, $CLASS_NAME, $METHOD_NAME, "shellClient.size = " + new Point(getClientArea().width, getClientArea().height)); //$NON-NLS-1$
-						log.logp(Level.FINE, $CLASS_NAME, $METHOD_NAME, "statusBar.size = " + DataExplorer.this.statusComposite.getSize()); //$NON-NLS-1$
-						log.logp(Level.FINE, $CLASS_NAME, $METHOD_NAME, "displayTab.bounds = " + DataExplorer.this.displayTab.getBounds()); //$NON-NLS-1$
+					if (log.isLoggable(Level.FINEST) && DataExplorer.this.displayTab != null && DataExplorer.this.menuCoolBar != null && DataExplorer.this.statusComposite != null && getSize().y != 0) {
+						log.logp(Level.FINEST, $CLASS_NAME, $METHOD_NAME, "menuCoolBar.size = " + DataExplorer.this.menuCoolBar.getSize()); //$NON-NLS-1$
+						log.logp(Level.FINEST, $CLASS_NAME, $METHOD_NAME, "shellClient.size = " + new Point(getClientArea().width, getClientArea().height)); //$NON-NLS-1$
+						log.logp(Level.FINEST, $CLASS_NAME, $METHOD_NAME, "statusBar.size = " + DataExplorer.this.statusComposite.getSize()); //$NON-NLS-1$
+						log.logp(Level.FINEST, $CLASS_NAME, $METHOD_NAME, "displayTab.bounds = " + DataExplorer.this.displayTab.getBounds()); //$NON-NLS-1$
 					}
 				}
 			});
