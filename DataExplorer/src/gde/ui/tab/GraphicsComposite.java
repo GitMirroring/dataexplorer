@@ -2029,6 +2029,8 @@ public class GraphicsComposite extends Composite {
 			measurePopUp = new Shell(GDE.shell, SWT.NO_TRIM | SWT.MODELESS);
 			measurePopUp.setParent(this);
 			measurePopUp.setLayout(new FillLayout());
+			measurePopUp.setAlpha(200);
+			measurePopUp.open();
 		}
 
 		if (styledText == null || (styledText != null && styledText.isDisposed())) {
@@ -2054,9 +2056,7 @@ public class GraphicsComposite extends Composite {
 		styledText.setText(sb.toString());
 		styledText.setStyleRanges(styleRanges.toArray(new StyleRange[0]));
 
-		measurePopUp.setAlpha(200);
 		measurePopUp.pack();
-		measurePopUp.open();
 
 		//System.out.println("set x " + GDE.shell.getLocation().x+" "+this.getParent().getChildren()[0].getBounds().width+" "+this.offSetX+" "+this.xPosMeasure + " = " + (GDE.shell.getLocation().x + this.getParent().getChildren()[0].getBounds().width + this.offSetX + this.xPosMeasure));
 		//System.out.println("set y " + GDE.shell.getLocation().y+" "+this.application.getTabFolder().getLocation().y+" "+this.offSetY+" "+this.graphicsHeader.getBounds().height+" "+this.yPosMeasure + " = " + (GDE.shell.getLocation().y + this.application.getTabFolder().getLocation().y + this.offSetY + this.graphicsHeader.getBounds().height + this.yPosMeasure));
