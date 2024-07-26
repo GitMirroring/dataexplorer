@@ -148,6 +148,7 @@ public class GraphicsComposite extends Composite {
 	Image											canvasImage;
 	GC												canvasImageGC;
 	Rectangle									curveAreaBounds					= new Rectangle(0, 0, 1, 1);
+	boolean										isShiftPressed					= false;
 
 	GraphicsMode 							actualModeState;
 	
@@ -355,6 +356,15 @@ public class GraphicsComposite extends Composite {
 				@Override
 				public void mouseUp(MouseEvent evt) {
 					if (log.isLoggable(Level.FINEST)) log.log(Level.FINEST, "graphicCanvas.mouseUp, event=" + evt); //$NON-NLS-1$
+					if (isShiftPressed) {
+						RecordSet recordSet = (GraphicsComposite.this.graphicsType == GraphicsType.NORMAL) ? GraphicsComposite.this.application.getActiveRecordSet() : GraphicsComposite.this.application.getCompareSet();
+						if (recordSet!= null) recordSet.resetMeasurement();
+						GraphicsComposite.this.application.resetGraphicsWindowZoomAndMeasurement();
+						GraphicsComposite.this.isLeftMouseMeasure = false;
+						GraphicsComposite.this.isRightMouseMeasure = false;
+						GraphicsComposite.this.cleanMeasurementPointer();
+					}
+
 					if (evt.button == 1) {
 						mouseUpAction(evt);
 					}
@@ -373,7 +383,11 @@ public class GraphicsComposite extends Composite {
 				@Override
 				public void keyPressed(KeyEvent e) {
 					if (log.isLoggable(Level.FINEST)) log.log(Level.FINEST, "graphicCanvas.keyPressed() , event=" + e); //$NON-NLS-1$
-					if (GraphicsComposite.this.isTransientZoom && !GraphicsComposite.this.isTransientGesture) {
+					
+					isShiftPressed = (e.keyCode == 0x20000);
+					log.log(Level.OFF, "pressed keyCode shift "+isShiftPressed);
+
+					if (!GraphicsComposite.this.isShiftPressed && GraphicsComposite.this.isTransientZoom && !GraphicsComposite.this.isTransientGesture) {
 						GraphicsComposite.this.isResetZoomPosition = false;
 						Channel activeChannel = Channels.getInstance().getActiveChannel();
 						if (activeChannel != null) {
@@ -393,13 +407,11 @@ public class GraphicsComposite extends Composite {
 								}
 								else if (e.keyCode == '+' || e.keyCode == 0x100002b) {
 									//System.out.println("enlarge");
-
 									float boundsRelation = 1.0f * GraphicsComposite.this.curveAreaBounds.width / GraphicsComposite.this.curveAreaBounds.height;
 									Point point = new Point(GraphicsComposite.this.canvasBounds.width / 2, GraphicsComposite.this.canvasBounds.height / 2);
 									float mouseRelationX = 1.0f * point.x / GraphicsComposite.this.curveAreaBounds.width * 2;
 									float mouseRelationY = 1.0f * point.y / GraphicsComposite.this.curveAreaBounds.height * 2;
 									//System.out.println(point + " - " + mouseRelationX + " - " + mouseRelationY);
-
 									int xStart, xEnd, yMin, yMax;
 									if (GraphicsComposite.this.isZoomX) {
 										xStart = (int) (50 * boundsRelation * mouseRelationX);
@@ -435,7 +447,6 @@ public class GraphicsComposite extends Composite {
 										float mouseRelationX = 1.0f * point.x / GraphicsComposite.this.curveAreaBounds.width * 2;
 										float mouseRelationY = 1.0f * point.y / GraphicsComposite.this.curveAreaBounds.height * 2;
 										//System.out.println(point + " - " + mouseRelationX + " - " + mouseRelationY);
-
 										int xStart, xEnd, yMin, yMax;
 										if (GraphicsComposite.this.isZoomX) {
 											xStart = (int) (-50 * boundsRelation * mouseRelationX);
@@ -497,6 +508,17 @@ public class GraphicsComposite extends Composite {
 					if (log.isLoggable(Level.FINEST)) log.log(Level.FINEST, "graphicCanvas.keyReleased() , event=" + e); //$NON-NLS-1$
 					//System.out.println("x,y off");
 					GraphicsComposite.this.isZoomX = GraphicsComposite.this.isZoomY = false;
+					
+					log.log(Level.OFF, "released keyCode shift "+isShiftPressed);
+					if (isShiftPressed) {
+						RecordSet recordSet = (GraphicsComposite.this.graphicsType == GraphicsType.NORMAL) ? GraphicsComposite.this.application.getActiveRecordSet() : GraphicsComposite.this.application.getCompareSet();
+						if (recordSet!= null) recordSet.resetMeasurement();
+						GraphicsComposite.this.application.resetGraphicsWindowZoomAndMeasurement();
+						GraphicsComposite.this.isLeftMouseMeasure = false;
+						GraphicsComposite.this.isRightMouseMeasure = false;
+						GraphicsComposite.this.cleanMeasurementPointer();
+						isShiftPressed = false;
+					}
 				}
 			});
 			this.graphicCanvas.addMouseWheelListener(new MouseWheelListener() {
@@ -1069,7 +1091,7 @@ public class GraphicsComposite extends Composite {
 				drawHorizontalLine(canvasGC, this.yPosMeasure, 0, this.curveAreaBounds.width);
 
 				if (this.settings.isUseMeasurementPopUp())
-					this.callMeasurePopUp();
+					this.callMeasurePopUp(recordSet);
 				else
 					this.recordSetComment.setText(this.getSelectedMeasurementsAsTable());
 				
@@ -1606,31 +1628,44 @@ public class GraphicsComposite extends Composite {
 				Point point = checkCurveBounds(evt.x, evt.y);
 				this.xDown = point.x;
 				this.yDown = point.y;
-				
-				if (measureRecordKey != null && !recordSet.isMeasurementMode(measureRecordKey))
-					cleanMeasurePopUp();
 
-				if (measureRecordKey != null && (recordSet.isMeasurementMode(measureRecordKey) || recordSet.isDeltaMeasurementMode(measureRecordKey) || recordSet.isAvgMedianMeasurementMode(measureRecordKey)) && this.xPosMeasure + 1 >= this.xDown
-						&& this.xPosMeasure - 1 <= this.xDown) { // snap mouse pointer
-					this.isLeftMouseMeasure = true;
-					this.isRightMouseMeasure = false;
-				}
-				else if (measureRecordKey != null && (recordSet.isDeltaMeasurementMode(measureRecordKey) || recordSet.isAvgMedianMeasurementMode(measureRecordKey)) && this.xPosDelta + 1 >= this.xDown && this.xPosDelta - 1 <= this.xDown) { // snap mouse pointer
-					this.isRightMouseMeasure = true;
-					this.isLeftMouseMeasure = false;
-				}
-				else if (!this.isPanMouse && !this.isLeftCutMode && !this.isRightCutMode) {
-					if (!this.isZoomMouse) //setting zoom mode is only required at the beginning of zoom actions, it will reset scale values to initial values
-						this.application.setGraphicsMode(GraphicsMode.ZOOM, true);
-					this.xLast = this.xDown;
-					this.yLast = this.yDown;
-					this.isResetZoomPosition = true;
+				if (isShiftPressed) {
+					measureRecordKey = findNearestMeasurementCurve(recordSet, point.x, point.y, this.curveAreaBounds.height);
+					if (measureRecordKey != null && measureRecordKey.length() > 3) {
+						this.application.setMeasurementActive(measureRecordKey, true);
+						this.isLeftMouseMeasure = true;
+						this.isRightMouseMeasure = false;
+						this.xPosMeasure = point.x;
+					}
 				}
 				else {
-					this.isLeftMouseMeasure = false;
-					this.isRightMouseMeasure = false;
+
+					if (measureRecordKey != null && !recordSet.isMeasurementMode(measureRecordKey)) cleanMeasurePopUp();
+
+					if (measureRecordKey != null
+							&& (recordSet.isMeasurementMode(measureRecordKey) || recordSet.isDeltaMeasurementMode(measureRecordKey) || recordSet.isAvgMedianMeasurementMode(measureRecordKey))
+							&& this.xPosMeasure + 2 >= this.xDown && this.xPosMeasure - 2 <= this.xDown) { // snap mouse pointer
+						this.isLeftMouseMeasure = true;
+						this.isRightMouseMeasure = false;
+					}
+					else if (measureRecordKey != null && (recordSet.isDeltaMeasurementMode(measureRecordKey) || recordSet.isAvgMedianMeasurementMode(measureRecordKey)) && this.xPosDelta + 1 >= this.xDown
+							&& this.xPosDelta - 1 <= this.xDown) { // snap mouse pointer
+						this.isRightMouseMeasure = true;
+						this.isLeftMouseMeasure = false;
+					}
+					else if (!this.isPanMouse && !this.isLeftCutMode && !this.isRightCutMode) {
+						if (!this.isZoomMouse) //setting zoom mode is only required at the beginning of zoom actions, it will reset scale values to initial values
+							this.application.setGraphicsMode(GraphicsMode.ZOOM, true);
+						this.xLast = this.xDown;
+						this.yLast = this.yDown;
+						this.isResetZoomPosition = true;
+					}
+					else {
+						this.isLeftMouseMeasure = false;
+						this.isRightMouseMeasure = false;
+					}
+					if (log.isLoggable(Level.FINER)) log.log(Level.FINER, "isMouseMeasure = " + this.isLeftMouseMeasure + " isMouseDeltaMeasure = " + this.isRightMouseMeasure); //$NON-NLS-1$ //$NON-NLS-2$
 				}
-				if (log.isLoggable(Level.FINER)) log.log(Level.FINER, "isMouseMeasure = " + this.isLeftMouseMeasure + " isMouseDeltaMeasure = " + this.isRightMouseMeasure); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}
@@ -1978,7 +2013,7 @@ public class GraphicsComposite extends Composite {
 	
 	public void cleanMeasurePopUp() {
 		if (measurePopUp != null && !measurePopUp.isDisposed()) {
-			//log.log(Level.OFF, "cleanMeasurePopUp");
+			log.log(Level.OFF, "cleanMeasurePopUp");
 			if (styledText != null && !styledText.isDisposed()) {
 				styledText.dispose();
 				styledText = null;
@@ -1988,8 +2023,9 @@ public class GraphicsComposite extends Composite {
 		}
 	}
 
-	private void callMeasurePopUp() {
+	private void callMeasurePopUp(RecordSet activeRecordSet) {
 		if (measurePopUp == null || (measurePopUp != null && measurePopUp.isDisposed())) {
+			log.log(Level.OFF, "setup shell for measure pop-up");
 			measurePopUp = new Shell(GDE.shell, SWT.NO_TRIM | SWT.MODELESS);
 			measurePopUp.setParent(this);
 			measurePopUp.setLayout(new FillLayout());
@@ -2002,24 +2038,21 @@ public class GraphicsComposite extends Composite {
 			styledText.setFont(SWTResourceManager.getFont("Courier New", GDE.WIDGET_FONT_SIZE + 1, SWT.BOLD));
 		}
 
-		RecordSet activeRecordSet = this.application.getActiveRecordSet();
-		if (activeRecordSet != null) {
-			int indexPosMeasure = activeRecordSet.get(0).getHorizontalPointIndexFromDisplayPoint(this.xPosMeasure);
-			Vector<Record> records = activeRecordSet.getVisibleAndDisplayableRecords();
-			String formattedTimeWithUnit = records.firstElement().getHorizontalDisplayPointAsFormattedTimeWithUnit(this.xPosMeasure);
-			StringBuilder sb = new StringBuilder().append(formattedTimeWithUnit);
-			List<StyleRange> styleRanges = new ArrayList<>();
-			styleRanges.add(new StyleRange(0, sb.length(), this.application.COLOR_BLACK, null));
-			int startIndex = sb.length();
-			for (Record record : records) {
-				sb.append(
-						String.format("\n%-15s %s %s", record.getName(), record.getDecimalFormat().format(record.getDevice().translateValue(record, record.realGet(indexPosMeasure) / 1000.0)), record.getUnit()));
-				styleRanges.add(new StyleRange(startIndex, sb.length() - startIndex, SWTResourceManager.getColor(record.getRGB()), null));
-				startIndex = sb.length();
-			}
-			styledText.setText(sb.toString());
-			styledText.setStyleRanges(styleRanges.toArray(new StyleRange[0]));
+		int indexPosMeasure = activeRecordSet.get(0).getHorizontalPointIndexFromDisplayPoint(this.xPosMeasure);
+		Vector<Record> records = activeRecordSet.getVisibleAndDisplayableRecords();
+		String formattedTimeWithUnit = records.firstElement().getHorizontalDisplayPointAsFormattedTimeWithUnit(this.xPosMeasure);
+		StringBuilder sb = new StringBuilder().append(formattedTimeWithUnit);
+		List<StyleRange> styleRanges = new ArrayList<>();
+		styleRanges.add(new StyleRange(0, sb.length(), this.application.COLOR_BLACK, null));
+		int startIndex = sb.length();
+		for (Record record : records) {
+			sb.append(
+					String.format("\n%-15.15s %s %s", record.getName(), record.getDecimalFormat().format(record.getDevice().translateValue(record, record.realGet(indexPosMeasure) / 1000.0)), record.getUnit()));
+			styleRanges.add(new StyleRange(startIndex, sb.length() - startIndex, SWTResourceManager.getColor(record.getRGB()), null));
+			startIndex = sb.length();
 		}
+		styledText.setText(sb.toString());
+		styledText.setStyleRanges(styleRanges.toArray(new StyleRange[0]));
 
 		measurePopUp.setAlpha(200);
 		measurePopUp.pack();
@@ -2028,9 +2061,32 @@ public class GraphicsComposite extends Composite {
 		//System.out.println("set x " + GDE.shell.getLocation().x+" "+this.getParent().getChildren()[0].getBounds().width+" "+this.offSetX+" "+this.xPosMeasure + " = " + (GDE.shell.getLocation().x + this.getParent().getChildren()[0].getBounds().width + this.offSetX + this.xPosMeasure));
 		//System.out.println("set y " + GDE.shell.getLocation().y+" "+this.application.getTabFolder().getLocation().y+" "+this.offSetY+" "+this.graphicsHeader.getBounds().height+" "+this.yPosMeasure + " = " + (GDE.shell.getLocation().y + this.application.getTabFolder().getLocation().y + this.offSetY + this.graphicsHeader.getBounds().height + this.yPosMeasure));
 
+		log.log(Level.OFF, "set position measure pop-up");
 		measurePopUp.setLocation(
 				GDE.shell.getLocation().x + this.getParent().getChildren()[0].getBounds().width + this.offSetX + this.xPosMeasure + 20,
 				GDE.shell.getLocation().y + this.application.getTabFolder().getLocation().y + this.offSetY + this.graphicsHeader.getBounds().height + this.yPosMeasure + 25);
 		//System.out.println("result in " + measurePopUp.getLocation());
+	}
+	
+	public String findNearestMeasurementCurve(RecordSet recordSet, int posX, int posY, int height) {
+		//log.log(Level.OFF, GDE.STRING_NEW_LINE + (this.offSetX+posX) + " - " + (posY-height+offSetY));
+		int indexPosMeasure = recordSet.get(0).getHorizontalPointIndexFromDisplayPoint(posX);
+		Vector<Record> records = recordSet.getVisibleAndDisplayableRecords();
+		int minDistance = Integer.MAX_VALUE;
+		int recordIndex = 0;
+		for (int i = 0; i < records.size(); ++i) {
+			Record record = records.get(i);
+			int actualDistance = Math.abs(record.getDisplayPoint(indexPosMeasure, this.offSetX, this.offSetY).y - (posY - height + this.offSetY));
+			//log.log(Level.OFF, record.getName() + " " + actualDistance);		
+			if (actualDistance < minDistance) {
+				recordIndex = i;
+				minDistance = actualDistance;
+			}
+		}
+		if (records.size() > 0 &&  records.size() > (recordIndex - 1)) {
+			log.log(Level.OFF, "Selected = " + records.get(recordIndex).getName());
+			return records.get(recordIndex).getName();
+		}
+		return null;
 	}
 }
