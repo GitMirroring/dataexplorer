@@ -357,12 +357,7 @@ public class GraphicsComposite extends Composite {
 				public void mouseUp(MouseEvent evt) {
 					if (log.isLoggable(Level.FINEST)) log.log(Level.FINEST, "graphicCanvas.mouseUp, event=" + evt); //$NON-NLS-1$
 					if (isShiftPressed) {
-						RecordSet recordSet = (GraphicsComposite.this.graphicsType == GraphicsType.NORMAL) ? GraphicsComposite.this.application.getActiveRecordSet() : GraphicsComposite.this.application.getCompareSet();
-						if (recordSet!= null) recordSet.resetMeasurement();
-						GraphicsComposite.this.application.resetGraphicsWindowZoomAndMeasurement();
-						GraphicsComposite.this.isLeftMouseMeasure = false;
-						GraphicsComposite.this.isRightMouseMeasure = false;
-						GraphicsComposite.this.cleanMeasurementPointer();
+						isShiftPressed = false;
 					}
 
 					if (evt.button == 1) {
@@ -2024,13 +2019,14 @@ public class GraphicsComposite extends Composite {
 	}
 
 	private void callMeasurePopUp(RecordSet activeRecordSet) {
+		boolean isCreated = false;
 		if (measurePopUp == null || (measurePopUp != null && measurePopUp.isDisposed())) {
 			log.log(Level.OFF, "setup shell for measure pop-up");
 			measurePopUp = new Shell(GDE.shell, SWT.NO_TRIM | SWT.MODELESS);
 			measurePopUp.setParent(this);
 			measurePopUp.setLayout(new FillLayout());
 			measurePopUp.setAlpha(200);
-			measurePopUp.open();
+			isCreated = true;
 		}
 
 		if (styledText == null || (styledText != null && styledText.isDisposed())) {
@@ -2057,6 +2053,11 @@ public class GraphicsComposite extends Composite {
 		styledText.setStyleRanges(styleRanges.toArray(new StyleRange[0]));
 
 		measurePopUp.pack();
+		if (isCreated) {
+			log.log(Level.OFF, "open shell for measure pop-up");
+			measurePopUp.open();
+		}
+
 
 		//System.out.println("set x " + GDE.shell.getLocation().x+" "+this.getParent().getChildren()[0].getBounds().width+" "+this.offSetX+" "+this.xPosMeasure + " = " + (GDE.shell.getLocation().x + this.getParent().getChildren()[0].getBounds().width + this.offSetX + this.xPosMeasure));
 		//System.out.println("set y " + GDE.shell.getLocation().y+" "+this.application.getTabFolder().getLocation().y+" "+this.offSetY+" "+this.graphicsHeader.getBounds().height+" "+this.yPosMeasure + " = " + (GDE.shell.getLocation().y + this.application.getTabFolder().getLocation().y + this.offSetY + this.graphicsHeader.getBounds().height + this.yPosMeasure));
