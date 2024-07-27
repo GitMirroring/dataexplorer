@@ -2052,13 +2052,11 @@ public class GraphicsComposite extends Composite {
 				styleRanges.add(new StyleRange(startIndex, sb.length() - startIndex, SWTResourceManager.getColor(record.getRGB()), null));
 				startIndex = sb.length();
 			}
+			
 			styledText.setText(sb.toString());
 			styledText.setStyleRanges(styleRanges.toArray(new StyleRange[0]));
 			measurePopUp.pack();
-			if (isCreated) {
-				log.log(Level.OFF, "open shell for measure pop-up");
-				measurePopUp.open();
-			}
+
 			//System.out.println("set x " + GDE.shell.getLocation().x+" "+this.getParent().getChildren()[0].getBounds().width+" "+this.offSetX+" "+this.xPosMeasure + " = " + (GDE.shell.getLocation().x + this.getParent().getChildren()[0].getBounds().width + this.offSetX + this.xPosMeasure));
 			//System.out.println("set y " + GDE.shell.getLocation().y+" "+this.application.getTabFolder().getLocation().y+" "+this.offSetY+" "+this.graphicsHeader.getBounds().height+" "+this.yPosMeasure + " = " + (GDE.shell.getLocation().y + this.application.getTabFolder().getLocation().y + this.offSetY + this.graphicsHeader.getBounds().height + this.yPosMeasure));
 			log.log(Level.OFF, "set position measure pop-up");
@@ -2066,6 +2064,11 @@ public class GraphicsComposite extends Composite {
 					GDE.shell.getLocation().y + this.application.getTabFolder().getLocation().y + this.offSetY + this.graphicsHeader.getBounds().height + this.yPosMeasure + 25);
 			//System.out.println("result in " + measurePopUp.getLocation());
 			lastXPositionMeasure = this.xPosMeasure;
+			
+			if (isCreated) {
+				log.log(Level.OFF, "open shell for measure pop-up");
+				measurePopUp.open();
+			}
 		}
 	}
 	
