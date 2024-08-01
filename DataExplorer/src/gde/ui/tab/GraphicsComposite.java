@@ -681,7 +681,7 @@ public class GraphicsComposite extends Composite {
 				public void paintControl(PaintEvent evt) {
 					if (log.isLoggable(Level.FINER)) log.log(Level.FINER, "graphicCanvas.paintControl, event=" + evt); //$NON-NLS-1$
 					//System.out.println("width = " + GraphicsComposite.this.getSize().x);
-					if (application.getActiveRecordSet() != null 
+					if (application.isWindowVisible(GraphicsType.NORMAL) && application.getActiveRecordSet() != null 
 							&& !application.getActiveRecordSet().isMeasurementMode(application.getActiveRecordSet().getRecordKeyMeasurement())) 
 						cleanMeasurePopUp();
 
