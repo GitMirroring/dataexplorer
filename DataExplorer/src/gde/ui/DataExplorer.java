@@ -719,8 +719,11 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 					else if (isWindowVisible(GraphicsType.UTIL) && DataExplorer.this.utilGraphicsTabItem != null) {
 						DataExplorer.this.utilGraphicsTabItem.setSashFormWeights(DataExplorer.this.utilGraphicsTabItem.getCurveSelectorComposite().getSelectorColumnWidth());
 					}						
-					else
+					else {
 						DataExplorer.this.graphicsTabItem.getGraphicsComposite().cleanMeasurePopUp();
+						if (DataExplorer.this.compareSet != null)
+							DataExplorer.this.compareTabItem.getGraphicsComposite().cleanMeasurePopUp();
+					}
 
 					if (DataExplorer.this.objectDescriptionTabItem != null) {
 						if (DataExplorer.this.objectDescriptionTabItem.isVisible()) {
