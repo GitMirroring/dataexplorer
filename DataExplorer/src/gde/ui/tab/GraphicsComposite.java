@@ -2082,22 +2082,27 @@ public class GraphicsComposite extends Composite {
 	
 	public String findNearestMeasurementCurve(RecordSet recordSet, int posX, int posY, int height) {
 		//log.log(Level.OFF, GDE.STRING_NEW_LINE + (this.offSetX+posX) + " - " + (posY-height+offSetY));
-		int indexPosMeasure = recordSet.get(0).getHorizontalPointIndexFromDisplayPoint(posX);
-		Vector<Record> records = recordSet.getVisibleAndDisplayableRecords();
-		int minDistance = Integer.MAX_VALUE;
-		int recordIndex = 0;
-		for (int i = 0; i < records.size(); ++i) {
-			Record record = records.get(i);
-			int actualDistance = Math.abs(record.getDisplayPoint(indexPosMeasure, this.offSetX, this.offSetY).y - (posY - height + this.offSetY));
-			//log.log(Level.OFF, record.getName() + " " + actualDistance);		
-			if (actualDistance < minDistance) {
-				recordIndex = i;
-				minDistance = actualDistance;
+		try {
+			int indexPosMeasure = recordSet.get(0).getHorizontalPointIndexFromDisplayPoint(posX);
+			Vector<Record> records = recordSet.getVisibleAndDisplayableRecords();
+			int minDistance = Integer.MAX_VALUE;
+			int recordIndex = 0;
+			for (int i = 0; i < records.size(); ++i) {
+				Record record = records.get(i);
+				int actualDistance = Math.abs(record.getDisplayPoint(indexPosMeasure, this.offSetX, this.offSetY).y - (posY - height + this.offSetY));
+				//log.log(Level.OFF, record.getName() + " " + actualDistance);		
+				if (actualDistance < minDistance) {
+					recordIndex = i;
+					minDistance = actualDistance;
+				}
+			}
+			if (records.size() > 0 &&  records.size() > (recordIndex - 1)) {
+				log.log(Level.OFF, "Selected = " + records.get(recordIndex).getName());
+				return records.get(recordIndex).getName();
 			}
 		}
-		if (records.size() > 0 &&  records.size() > (recordIndex - 1)) {
-			log.log(Level.OFF, "Selected = " + records.get(recordIndex).getName());
-			return records.get(recordIndex).getName();
+		catch (Exception e) {
+			log.log(Level.WARNING, e.getMessage());
 		}
 		return null;
 	}
