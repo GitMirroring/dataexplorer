@@ -703,23 +703,31 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 					if (log.isLoggable(Level.FINER) && DataExplorer.this.displayTab.getSelectionIndex() >= 0)
 						log.logp(Level.FINER, $CLASS_NAME, $METHOD_NAME, "displayTab.paintControl " + DataExplorer.this.displayTab.getItems()[DataExplorer.this.displayTab.getSelectionIndex()].getText() //$NON-NLS-1$
 								+ GDE.STRING_MESSAGE_CONCAT + DataExplorer.this.displayTab.getSelectionIndex() + GDE.STRING_MESSAGE_CONCAT + evt);
-					if (isRecordSetVisible(GraphicsType.NORMAL)) {
+					if (isWindowVisible(GraphicsType.NORMAL)) {
 						if (DataExplorer.this.graphicsTabItem.isCurveSelectorEnabled())
 							DataExplorer.this.graphicsTabItem.setSashFormWeights(DataExplorer.this.graphicsTabItem.getCurveSelectorComposite().getSelectorColumnWidth());
 						else
 							DataExplorer.this.graphicsTabItem.setSashFormWeights(0);
-					} else if (isRecordSetVisible(GraphicsType.COMPARE) && DataExplorer.this.compareTabItem != null) {
+						if (DataExplorer.this.compareSet != null)
+							DataExplorer.this.compareTabItem.getGraphicsComposite().cleanMeasurePopUp();
+					}
+					else if (isWindowVisible(GraphicsType.COMPARE) && DataExplorer.this.compareTabItem != null) {
 						DataExplorer.this.compareTabItem.setSashFormWeights(DataExplorer.this.compareTabItem.getCurveSelectorComposite().getSelectorColumnWidth());
-					} else if (isRecordSetVisible(GraphicsType.UTIL) && DataExplorer.this.utilGraphicsTabItem != null) {
+						if (DataExplorer.this.getActiveRecordSet() != null)
+							DataExplorer.this.graphicsTabItem.getGraphicsComposite().cleanMeasurePopUp();
+					}
+					else if (isWindowVisible(GraphicsType.UTIL) && DataExplorer.this.utilGraphicsTabItem != null) {
 						DataExplorer.this.utilGraphicsTabItem.setSashFormWeights(DataExplorer.this.utilGraphicsTabItem.getCurveSelectorComposite().getSelectorColumnWidth());
-					} else
+					}						
+					else
 						DataExplorer.this.graphicsTabItem.getGraphicsComposite().cleanMeasurePopUp();
 
 					if (DataExplorer.this.objectDescriptionTabItem != null) {
 						if (DataExplorer.this.objectDescriptionTabItem.isVisible()) {
 							if (log.isLoggable(Level.FINER)) log.logp(Level.FINER, $CLASS_NAME, $METHOD_NAME, "displayTab.focusGained " + evt); //$NON-NLS-1$
 							DataExplorer.this.isObjectWindowVisible = true;
-						} else if (DataExplorer.this.isObjectWindowVisible) {
+						}
+						else if (DataExplorer.this.isObjectWindowVisible) {
 							if (log.isLoggable(Level.FINER)) log.logp(Level.FINER, $CLASS_NAME, $METHOD_NAME, "displayTab.focusLost " + evt); //$NON-NLS-1$
 							DataExplorer.this.checkSaveObjectData();
 							DataExplorer.this.isObjectWindowVisible = false;
@@ -758,11 +766,11 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 						DataExplorer.this.updateGraphicsWindow();
 						DataExplorer.this.histoExplorer.ifPresent(h -> h.cleanMeasurePopUp());
 					} else if (tabSelectionIndex > 0) {
-						if ((DataExplorer.this.displayTab.getItem(tabSelectionIndex) instanceof GraphicsWindow) && DataExplorer.this.isRecordSetVisible(GraphicsType.COMPARE)) {
+						if ((DataExplorer.this.displayTab.getItem(tabSelectionIndex) instanceof GraphicsWindow) && DataExplorer.this.isWindowVisible(GraphicsType.COMPARE)) {
 							DataExplorer.this.menuToolBar.enableScopePointsCombo(false);
 							DataExplorer.this.enableZoomMenuButtons(true);
 							DataExplorer.this.updateGraphicsWindow();
-						} else if ((DataExplorer.this.displayTab.getItem(tabSelectionIndex) instanceof GraphicsWindow) && DataExplorer.this.isRecordSetVisible(GraphicsType.UTIL)) {
+						} else if ((DataExplorer.this.displayTab.getItem(tabSelectionIndex) instanceof GraphicsWindow) && DataExplorer.this.isWindowVisible(GraphicsType.UTIL)) {
 							DataExplorer.this.menuToolBar.enableScopePointsCombo(false);
 							DataExplorer.this.enableZoomMenuButtons(false);
 							DataExplorer.this.updateGraphicsWindow();
@@ -2057,9 +2065,9 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 				if (tabSelectionIndex == 0) { // graphics tab is always the first one
 					this.graphicsTabItem.redrawGraphics(refreshCurveSelector);
 				} else if (tabSelectionIndex > 0) {
-					if ((DataExplorer.this.displayTab.getItem(tabSelectionIndex) instanceof GraphicsWindow) && DataExplorer.this.isRecordSetVisible(GraphicsType.COMPARE)) {
+					if ((DataExplorer.this.displayTab.getItem(tabSelectionIndex) instanceof GraphicsWindow) && DataExplorer.this.isWindowVisible(GraphicsType.COMPARE)) {
 						this.compareTabItem.redrawGraphics(refreshCurveSelector);
-					} else if ((DataExplorer.this.displayTab.getItem(tabSelectionIndex) instanceof GraphicsWindow) && DataExplorer.this.isRecordSetVisible(GraphicsType.UTIL)) {
+					} else if ((DataExplorer.this.displayTab.getItem(tabSelectionIndex) instanceof GraphicsWindow) && DataExplorer.this.isWindowVisible(GraphicsType.UTIL)) {
 						this.utilGraphicsTabItem.redrawGraphics(refreshCurveSelector);
 					} else {
 						this.histoExplorer.ifPresent(h -> h.updateGraphicsWindow(refreshCurveSelector));
@@ -2074,9 +2082,9 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 						int tabSelectionIndex = DataExplorer.this.displayTab.getSelectionIndex();
 						if (tabSelectionIndex == 0) {
 							DataExplorer.this.graphicsTabItem.redrawGraphics(refreshCurveSelector);
-						} else if ((DataExplorer.this.displayTab.getItem(tabSelectionIndex) instanceof GraphicsWindow) && DataExplorer.this.isRecordSetVisible(GraphicsType.COMPARE)) {
+						} else if ((DataExplorer.this.displayTab.getItem(tabSelectionIndex) instanceof GraphicsWindow) && DataExplorer.this.isWindowVisible(GraphicsType.COMPARE)) {
 							DataExplorer.this.compareTabItem.redrawGraphics(refreshCurveSelector);
-						} else if ((DataExplorer.this.displayTab.getItem(tabSelectionIndex) instanceof GraphicsWindow) && DataExplorer.this.isRecordSetVisible(GraphicsType.UTIL)) {
+						} else if ((DataExplorer.this.displayTab.getItem(tabSelectionIndex) instanceof GraphicsWindow) && DataExplorer.this.isWindowVisible(GraphicsType.UTIL)) {
 							DataExplorer.this.utilGraphicsTabItem.redrawGraphics(refreshCurveSelector);
 						} else {
 							DataExplorer.this.histoExplorer.ifPresent(h -> h.updateGraphicsWindow(refreshCurveSelector));
@@ -2194,7 +2202,7 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 	 * @param type (GraphicsWindow.TYPE_NORMAL/GraphicsWindow.TYPE_COMPARE)
 	 * @return true if the the record set in it window is visible
 	 */
-	public boolean isRecordSetVisible(GraphicsType type) {
+	public boolean isWindowVisible(GraphicsType type) {
 		boolean result = false;
 		switch (type) {
 		case COMPARE:
@@ -2218,11 +2226,11 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 	 */
 	@Nullable
 	public AbstractRecordSet getRecordSetOfVisibleTab() {
-		if (this.isRecordSetVisible(GraphicsType.NORMAL))
+		if (this.isWindowVisible(GraphicsType.NORMAL))
 			return this.getActiveRecordSet();
-		else if (this.isRecordSetVisible(GraphicsType.COMPARE))
+		else if (this.isWindowVisible(GraphicsType.COMPARE))
 			return this.compareSet;
-		else if (this.isRecordSetVisible(GraphicsType.UTIL))
+		else if (this.isWindowVisible(GraphicsType.UTIL))
 			return this.utilitySet;
 		else if (this.histoExplorer.map(h -> h.isHistoChartWindowVisible()).orElse(false))
 			return this.getPresentHistoExplorer().getHistoSet().getTrailRecordSet();
@@ -2253,13 +2261,13 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 	 */
 	public void setGraphicsMode(GraphicsMode graphicsMode, boolean enabled) {
 		final String $METHOD_NAME = "setGraphicsMode"; //$NON-NLS-1$
-		if (isRecordSetVisible(GraphicsType.NORMAL)) {
+		if (isWindowVisible(GraphicsType.NORMAL)) {
 			if (log.isLoggable(Level.FINE)) log.logp(Level.FINE, $CLASS_NAME, $METHOD_NAME, "graphicsWindow.getGraphicCanvas().isVisible() == true"); //$NON-NLS-1$
 			setGraphicsWindowMode(graphicsMode, enabled);
-		} else if (isRecordSetVisible(GraphicsType.COMPARE) && graphicsMode != GraphicsMode.SCOPE) {
+		} else if (isWindowVisible(GraphicsType.COMPARE) && graphicsMode != GraphicsMode.SCOPE) {
 			if (log.isLoggable(Level.FINE)) log.logp(Level.FINE, $CLASS_NAME, $METHOD_NAME, "compareWindow.getGraphicCanvas().isVisible() == true"); //$NON-NLS-1$
 			setCompareWindowMode(graphicsMode, enabled);
-		} else if (isRecordSetVisible(GraphicsType.UTIL)) {
+		} else if (isWindowVisible(GraphicsType.UTIL)) {
 			if (log.isLoggable(Level.FINE))
 				log.logp(Level.FINE, $CLASS_NAME, $METHOD_NAME, "utilityWindow.getGraphicCanvas().isVisible() == true, it does not have a supported graphics mode"); //$NON-NLS-1$
 		}
@@ -2337,7 +2345,7 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 	 * clear measurement pointer of visible tab window.
 	 */
 	public void clearMeasurementModes() {
-		boolean isGraphicsTypeNormal = isRecordSetVisible(GraphicsType.NORMAL);
+		boolean isGraphicsTypeNormal = isWindowVisible(GraphicsType.NORMAL);
 		RecordSet recordSet = isGraphicsTypeNormal ? Channels.getInstance().getActiveChannel().getActiveRecordSet() : this.compareSet;
 		if (recordSet != null) {
 			if (isGraphicsTypeNormal) {
@@ -2358,7 +2366,7 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 	 */
 	public void setMeasurementActive(String recordKey, boolean enabled) {
 		if (log.isLoggable(Level.FINE)) log.log(Level.FINE, recordKey);
-		boolean isGraphicsTypeNormal = isRecordSetVisible(GraphicsType.NORMAL);
+		boolean isGraphicsTypeNormal = isWindowVisible(GraphicsType.NORMAL);
 		RecordSet recordSet = isGraphicsTypeNormal ? Channels.getInstance().getActiveChannel().getActiveRecordSet() : this.compareSet;
 		if (recordSet != null && recordSet.containsKey(recordKey)) {
 			if (isGraphicsTypeNormal) {
@@ -2386,7 +2394,7 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 	 */
 	public void setDeltaMeasurementActive(String recordKey, boolean enabled) {
 		if (log.isLoggable(Level.FINE)) log.log(Level.FINE, recordKey);
-		boolean isGraphicsTypeNormal = isRecordSetVisible(GraphicsType.NORMAL);
+		boolean isGraphicsTypeNormal = isWindowVisible(GraphicsType.NORMAL);
 		RecordSet recordSet = isGraphicsTypeNormal ? Channels.getInstance().getActiveChannel().getActiveRecordSet() : this.compareSet;
 		if (recordSet != null && recordSet.containsKey(recordKey)) {
 			if (isGraphicsTypeNormal) {
@@ -2414,7 +2422,7 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 	 */
 	public void setAvgMedianMeasurementActive(String recordKey, boolean enabled) {
 		if (log.isLoggable(Level.FINE)) log.log(Level.FINE, recordKey);
-		boolean isGraphicsTypeNormal = isRecordSetVisible(GraphicsType.NORMAL);
+		boolean isGraphicsTypeNormal = isWindowVisible(GraphicsType.NORMAL);
 		RecordSet recordSet = isGraphicsTypeNormal ? Channels.getInstance().getActiveChannel().getActiveRecordSet() : this.compareSet;
 		if (recordSet != null && recordSet.containsKey(recordKey)) {
 			if (isGraphicsTypeNormal) {
@@ -2651,8 +2659,8 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 	 */
 	public Image getGraphicsPrintImage() {
 		Optional<Image> histoImage = this.histoExplorer.flatMap(h -> h.getGraphicsPrintImage());
-		return this.isRecordSetVisible(GraphicsType.COMPARE) ? this.compareTabItem.getGraphicsComposite().getGraphicsPrintImage()
-				: this.isRecordSetVisible(GraphicsType.UTIL) ? this.utilGraphicsTabItem.getGraphicsComposite().getGraphicsPrintImage()
+		return this.isWindowVisible(GraphicsType.COMPARE) ? this.compareTabItem.getGraphicsComposite().getGraphicsPrintImage()
+				: this.isWindowVisible(GraphicsType.UTIL) ? this.utilGraphicsTabItem.getGraphicsComposite().getGraphicsPrintImage()
 						: histoImage.isPresent() ? histoImage.get() : this.graphicsTabItem.getGraphicsComposite().getGraphicsPrintImage();
 	}
 
@@ -2660,7 +2668,7 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 	 * return statistics window content as image
 	 */
 	public Image getGraphicsTabContentAsImage() {
-		return this.isRecordSetVisible(GraphicsType.COMPARE) ? this.compareTabItem.getContentAsImage() : this.isRecordSetVisible(GraphicsType.COMPARE)
+		return this.isWindowVisible(GraphicsType.COMPARE) ? this.compareTabItem.getContentAsImage() : this.isWindowVisible(GraphicsType.COMPARE)
 				? this.utilGraphicsTabItem.getContentAsImage() : this.graphicsTabItem.getContentAsImage();
 	}
 
@@ -2743,9 +2751,9 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 			graphicsImage = this.fileCommentTabItem.getContentAsImage();
 		} else if (DataExplorer.this.displayTab.getItem(tabSelectionIndex) instanceof ObjectDescriptionWindow) {
 			graphicsImage = this.objectDescriptionTabItem.getContentAsImage();
-		} else if ((DataExplorer.this.displayTab.getItem(tabSelectionIndex) instanceof GraphicsWindow) && DataExplorer.this.isRecordSetVisible(GraphicsType.COMPARE)) {
+		} else if ((DataExplorer.this.displayTab.getItem(tabSelectionIndex) instanceof GraphicsWindow) && DataExplorer.this.isWindowVisible(GraphicsType.COMPARE)) {
 			graphicsImage = this.compareTabItem.getContentAsImage();
-		} else if ((DataExplorer.this.displayTab.getItem(tabSelectionIndex) instanceof GraphicsWindow) && DataExplorer.this.isRecordSetVisible(GraphicsType.UTIL)) {
+		} else if ((DataExplorer.this.displayTab.getItem(tabSelectionIndex) instanceof GraphicsWindow) && DataExplorer.this.isWindowVisible(GraphicsType.UTIL)) {
 			graphicsImage = this.utilGraphicsTabItem.getContentAsImage();
 		} else {
 			Optional<Image> histoImage = this.histoExplorer.flatMap(h -> h.getContentAsImage());
@@ -2824,10 +2832,10 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 		} else if (this.displayTab.getItem(tabSelectionIndex) instanceof ObjectDescriptionWindow) {
 			this.settings.setObjectDescriptionInnerAreaBackground(innerAreaBackground);
 			this.objectDescriptionTabItem.setInnerAreaBackground(innerAreaBackground);
-		} else if ((this.displayTab.getItem(tabSelectionIndex) instanceof GraphicsWindow) && this.isRecordSetVisible(GraphicsType.COMPARE)) {
+		} else if ((this.displayTab.getItem(tabSelectionIndex) instanceof GraphicsWindow) && this.isWindowVisible(GraphicsType.COMPARE)) {
 			this.settings.setCompareCurveAreaBackground(innerAreaBackground);
 			this.compareTabItem.setCurveAreaBackground(innerAreaBackground);
-		} else if ((this.displayTab.getItem(tabSelectionIndex) instanceof GraphicsWindow) && this.isRecordSetVisible(GraphicsType.UTIL)) {
+		} else if ((this.displayTab.getItem(tabSelectionIndex) instanceof GraphicsWindow) && this.isWindowVisible(GraphicsType.UTIL)) {
 			this.settings.setUtilityCurveAreaBackground(innerAreaBackground);
 			this.utilGraphicsTabItem.setCurveAreaBackground(innerAreaBackground);
 		} else {
@@ -2845,10 +2853,10 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 			this.settings.setCurveGraphicsBorderColor(borderColor);
 			this.graphicsTabItem.setCurveAreaBorderColor(borderColor);
 		} else if (tabItemIndex > 0)
-			if ((this.displayTab.getItem(tabItemIndex) instanceof GraphicsWindow) && this.isRecordSetVisible(GraphicsType.COMPARE)) {
+			if ((this.displayTab.getItem(tabItemIndex) instanceof GraphicsWindow) && this.isWindowVisible(GraphicsType.COMPARE)) {
 			this.settings.setCurveCompareBorderColor(borderColor);
 			this.compareTabItem.setCurveAreaBorderColor(borderColor);
-			} else if ((this.displayTab.getItem(tabItemIndex) instanceof GraphicsWindow) && this.isRecordSetVisible(GraphicsType.UTIL)) {
+			} else if ((this.displayTab.getItem(tabItemIndex) instanceof GraphicsWindow) && this.isWindowVisible(GraphicsType.UTIL)) {
 			this.settings.setUtilityCurvesBorderColor(borderColor);
 			this.utilGraphicsTabItem.setCurveAreaBorderColor(borderColor);
 			} else {
@@ -2899,10 +2907,10 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 		} else if (this.displayTab.getItem(tabSelectionIndex) instanceof ObjectDescriptionWindow) {
 			this.settings.setObjectDescriptionSurroundingAreaBackground(surroundingBackground);
 			this.objectDescriptionTabItem.setSurroundingAreaBackground(surroundingBackground);
-		} else if ((this.displayTab.getItem(tabSelectionIndex) instanceof GraphicsWindow) && this.isRecordSetVisible(GraphicsType.COMPARE)) {
+		} else if ((this.displayTab.getItem(tabSelectionIndex) instanceof GraphicsWindow) && this.isWindowVisible(GraphicsType.COMPARE)) {
 			this.settings.setCompareSurroundingBackground(surroundingBackground);
 			this.compareTabItem.setSurroundingBackground(surroundingBackground);
-		} else if ((this.displayTab.getItem(tabSelectionIndex) instanceof GraphicsWindow) && this.isRecordSetVisible(GraphicsType.UTIL)) {
+		} else if ((this.displayTab.getItem(tabSelectionIndex) instanceof GraphicsWindow) && this.isWindowVisible(GraphicsType.UTIL)) {
 			this.settings.setUtilitySurroundingBackground(surroundingBackground);
 			this.utilGraphicsTabItem.setSurroundingBackground(surroundingBackground);
 		} else {

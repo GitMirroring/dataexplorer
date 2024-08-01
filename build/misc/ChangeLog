@@ -4,7 +4,7 @@ Version 3.9.1 - xx yyy 2024
 Generic changes/fixes 
 	* Improve experience for Measuring feature, show a values pop-up (sr #111082) for graphics
 	* Improve experience for Measuring feature, show a values pop-up (sr #111082) for histo-graphics
-	* automatic item selection measuring while shift pressed
+	* automatic item selection measuring while shift pressed graphics and compare tab
 	* SWT.jar for Linux Intel updated
 	* SWT.jar for Windows Intel updated
 	* SWT.jar for macOS Intel updated

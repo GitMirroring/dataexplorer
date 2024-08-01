@@ -111,8 +111,8 @@ public class CurveSelectorContextMenu {
 							CurveSelectorContextMenu.this.recordNameKey = (String) popupmenu.getData(DataExplorer.RECORD_NAME);
 							String recordNameUi = (String) popupmenu.getData(DataExplorer.NAME_REPLACEMENT) == null ? CurveSelectorContextMenu.this.recordNameKey : (String) popupmenu.getData(DataExplorer.NAME_REPLACEMENT);
 							CurveSelectorContextMenu.log.fine(() -> "===>>" + CurveSelectorContextMenu.this.recordNameKey);
-							CurveSelectorContextMenu.this.isTypeCompare = CurveSelectorContextMenu.this.application.isRecordSetVisible(GraphicsType.COMPARE);
-							CurveSelectorContextMenu.this.isTypeUtility = CurveSelectorContextMenu.this.application.isRecordSetVisible(GraphicsType.UTIL);
+							CurveSelectorContextMenu.this.isTypeCompare = CurveSelectorContextMenu.this.application.isWindowVisible(GraphicsType.COMPARE);
+							CurveSelectorContextMenu.this.isTypeUtility = CurveSelectorContextMenu.this.application.isWindowVisible(GraphicsType.UTIL);
 							CurveSelectorContextMenu.this.isTypeHisto = CurveSelectorContextMenu.this.application.getHistoExplorer().map(h -> h.isHistoChartWindowVisible()).orElse(false);
 							CurveSelectorContextMenu.this.recordSet = CurveSelectorContextMenu.this.application.getRecordSetOfVisibleTab();
 

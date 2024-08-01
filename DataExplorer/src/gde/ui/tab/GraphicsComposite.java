@@ -786,7 +786,10 @@ public class GraphicsComposite extends Composite {
 				drawZoomBounds(evt.gc);
 			}
 		}
-
+		else {
+			log.log(Level.OFF, "no recordSet visible!");
+			cleanMeasurePopUp();
+		}
 	}
 
 	/**
@@ -2016,6 +2019,7 @@ public class GraphicsComposite extends Composite {
 			}
 			measurePopUp.close();
 			measurePopUp = null;
+			lastXPositionMeasure = Integer.MAX_VALUE;
 		}
 	}
 

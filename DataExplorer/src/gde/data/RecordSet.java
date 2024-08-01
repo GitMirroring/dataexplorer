@@ -1641,7 +1641,7 @@ public final class RecordSet extends AbstractRecordSet {
 	 */
 	public boolean isCutLeftEdgeEnabled() {
 		try {
-			return DataExplorer.getInstance().isRecordSetVisible(GraphicsType.NORMAL) && this.isZoomMode && (this.get(0).zoomTimeOffset == 0);
+			return DataExplorer.getInstance().isWindowVisible(GraphicsType.NORMAL) && this.isZoomMode && (this.get(0).zoomTimeOffset == 0);
 		} catch (Exception e) {
 			return false;
 		}
@@ -1658,7 +1658,7 @@ public final class RecordSet extends AbstractRecordSet {
 		} catch (Exception e) {
 			return false;
 		}
-		return DataExplorer.getInstance().isRecordSetVisible(GraphicsType.NORMAL) && this.isZoomMode && (tmpRecord.zoomTimeOffset + tmpRecord.drawTimeWidth >= tmpRecord.getMaxTime_ms());
+		return DataExplorer.getInstance().isWindowVisible(GraphicsType.NORMAL) && this.isZoomMode && (tmpRecord.zoomTimeOffset + tmpRecord.drawTimeWidth >= tmpRecord.getMaxTime_ms());
 	}
 
 	/**
