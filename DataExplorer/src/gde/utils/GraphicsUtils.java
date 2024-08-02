@@ -28,6 +28,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 
+import gde.GDE;
 import gde.data.Record;
 import gde.data.RecordSet;
 import gde.log.Level;
@@ -174,6 +175,7 @@ public class GraphicsUtils {
 		Display display = Display.getCurrent();
 		if (display == null) SWT.error(SWT.ERROR_THREAD_INVALID_ACCESS);
 
+		gc.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 		Point pt = gc.textExtent(string); // string dimensions
 		Image stringImage = SWTResourceManager.getImage(pt.x, pt.y);
 		GC stringGc = new GC(stringImage); // SWTResourceManager.getGC(stringImage);

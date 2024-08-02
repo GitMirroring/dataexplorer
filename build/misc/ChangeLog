@@ -9,6 +9,7 @@ Generic changes/fixes
 	* SWT.jar for Windows Intel updated
 	* SWT.jar for macOS Intel updated
 	* SWT.jar for Linux ARM updated
+	* update of SWT.jars require graphics context font definition while drawing scales
 	
 Device specific changes/fixes
 	*
