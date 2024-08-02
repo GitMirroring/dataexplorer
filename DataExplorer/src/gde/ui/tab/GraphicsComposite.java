@@ -381,7 +381,7 @@ public class GraphicsComposite extends Composite {
 					if (log.isLoggable(Level.FINEST)) log.log(Level.FINEST, "graphicCanvas.keyPressed() , event=" + e); //$NON-NLS-1$
 					
 					isShiftPressed = (e.keyCode == 0x20000);
-					log.log(Level.OFF, "pressed keyCode shift "+isShiftPressed);
+					log.log(Level.INFO, "pressed keyCode shift "+isShiftPressed);
 
 					if (!GraphicsComposite.this.isShiftPressed && GraphicsComposite.this.isTransientZoom && !GraphicsComposite.this.isTransientGesture) {
 						GraphicsComposite.this.isResetZoomPosition = false;
@@ -505,7 +505,7 @@ public class GraphicsComposite extends Composite {
 					//System.out.println("x,y off");
 					GraphicsComposite.this.isZoomX = GraphicsComposite.this.isZoomY = false;
 					
-					log.log(Level.OFF, "released keyCode shift "+isShiftPressed);
+					log.log(Level.INFO, "released keyCode shift "+isShiftPressed);
 					if (isShiftPressed) {
 						RecordSet recordSet = (GraphicsComposite.this.graphicsType == GraphicsType.NORMAL) ? GraphicsComposite.this.application.getActiveRecordSet() : GraphicsComposite.this.application.getCompareSet();
 						if (recordSet!= null) recordSet.resetMeasurement();
@@ -791,7 +791,7 @@ public class GraphicsComposite extends Composite {
 			}
 		}
 		else {
-			log.log(Level.OFF, "no recordSet visible!");
+			log.log(Level.INFO, "no recordSet visible!");
 			cleanMeasurePopUp();
 		}
 	}
@@ -1255,7 +1255,7 @@ public class GraphicsComposite extends Composite {
 	 * clean (old) measurement pointer - check pointer in curve area
 	 */
 	public void cleanMeasurementPointer() {
-		//log.log(Level.OFF, "cleanMeasurementPointer");
+		//log.log(Level.INFO, "cleanMeasurementPointer");
 		this.cleanMeasurePopUp();
 		try {
 			if (this.recordSetCommentText != null) {
@@ -2016,7 +2016,7 @@ public class GraphicsComposite extends Composite {
 	
 	public void cleanMeasurePopUp() {
 		if (measurePopUp != null && !measurePopUp.isDisposed()) {
-			log.log(Level.OFF, "cleanMeasurePopUp");
+			log.log(Level.INFO, "cleanMeasurePopUp");
 			if (styledText != null && !styledText.isDisposed()) {
 				styledText.dispose();
 				styledText = null;
@@ -2030,7 +2030,7 @@ public class GraphicsComposite extends Composite {
 	private void callMeasurePopUp(RecordSet activeRecordSet) {
 		boolean isCreated = false;
 		if (measurePopUp == null || (measurePopUp != null && measurePopUp.isDisposed())) {
-			log.log(Level.OFF, "setup shell for measure pop-up");
+			log.log(Level.INFO, "setup shell for measure pop-up");
 			measurePopUp = new Shell(GDE.shell, SWT.NO_TRIM | SWT.MODELESS);
 			measurePopUp.setParent(this);
 			measurePopUp.setLayout(new FillLayout());
@@ -2046,7 +2046,7 @@ public class GraphicsComposite extends Composite {
 		}
 	
 		if (this.xPosMeasure != lastXPositionMeasure) {
-			log.log(Level.OFF, "refresh measurements");
+			log.log(Level.INFO, "refresh measurements");
 			int indexPosMeasure = activeRecordSet.get(0).getHorizontalPointIndexFromDisplayPoint(this.xPosMeasure);
 			Vector<Record> records = activeRecordSet.getVisibleAndDisplayableRecords();
 			String formattedTimeWithUnit = records.firstElement().getHorizontalDisplayPointAsFormattedTimeWithUnit(this.xPosMeasure);
@@ -2067,21 +2067,21 @@ public class GraphicsComposite extends Composite {
 
 			//System.out.println("set x " + GDE.shell.getLocation().x+" "+this.getParent().getChildren()[0].getBounds().width+" "+this.offSetX+" "+this.xPosMeasure + " = " + (GDE.shell.getLocation().x + this.getParent().getChildren()[0].getBounds().width + this.offSetX + this.xPosMeasure));
 			//System.out.println("set y " + GDE.shell.getLocation().y+" "+this.application.getTabFolder().getLocation().y+" "+this.offSetY+" "+this.graphicsHeader.getBounds().height+" "+this.yPosMeasure + " = " + (GDE.shell.getLocation().y + this.application.getTabFolder().getLocation().y + this.offSetY + this.graphicsHeader.getBounds().height + this.yPosMeasure));
-			log.log(Level.OFF, "set position measure pop-up");
+			log.log(Level.INFO, "set position measure pop-up");
 			measurePopUp.setLocation(GDE.shell.getLocation().x + this.getParent().getChildren()[0].getBounds().width + this.offSetX + this.xPosMeasure + 20,
 					GDE.shell.getLocation().y + this.application.getTabFolder().getLocation().y + this.offSetY + this.graphicsHeader.getBounds().height + this.yPosMeasure + 25);
 			//System.out.println("result in " + measurePopUp.getLocation());
 			lastXPositionMeasure = this.xPosMeasure;
 			
 			if (isCreated) {
-				log.log(Level.OFF, "open shell for measure pop-up");
+				log.log(Level.INFO, "open shell for measure pop-up");
 				measurePopUp.open();
 			}
 		}
 	}
 	
 	public String findNearestMeasurementCurve(RecordSet recordSet, int posX, int posY, int height) {
-		//log.log(Level.OFF, GDE.STRING_NEW_LINE + (this.offSetX+posX) + " - " + (posY-height+offSetY));
+		//log.log(Level.INFO, GDE.STRING_NEW_LINE + (this.offSetX+posX) + " - " + (posY-height+offSetY));
 		try {
 			int indexPosMeasure = recordSet.get(0).getHorizontalPointIndexFromDisplayPoint(posX);
 			Vector<Record> records = recordSet.getVisibleAndDisplayableRecords();
@@ -2090,14 +2090,14 @@ public class GraphicsComposite extends Composite {
 			for (int i = 0; i < records.size(); ++i) {
 				Record record = records.get(i);
 				int actualDistance = Math.abs(record.getDisplayPoint(indexPosMeasure, this.offSetX, this.offSetY).y - (posY - height + this.offSetY));
-				//log.log(Level.OFF, record.getName() + " " + actualDistance);		
+				//log.log(Level.INFO, record.getName() + " " + actualDistance);		
 				if (actualDistance < minDistance) {
 					recordIndex = i;
 					minDistance = actualDistance;
 				}
 			}
 			if (records.size() > 0 &&  records.size() > (recordIndex - 1)) {
-				log.log(Level.OFF, "Selected = " + records.get(recordIndex).getName());
+				log.log(Level.INFO, "Selected = " + records.get(recordIndex).getName());
 				return records.get(recordIndex).getName();
 			}
 		}

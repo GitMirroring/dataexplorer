@@ -1462,7 +1462,8 @@ public class SettingsDialog extends Dialog {
 								this.useMeasurementPopUpButton = new Button(this.graphicsView, SWT.CHECK);
 								this.useMeasurementPopUpButton.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 								this.useMeasurementPopUpButton.setText(Messages.getString(MessageIds.GDE_MSGT0983));
-								this.useMeasurementPopUpButton.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0984));
+								String popUpMessage = GDE.IS_LINUX ? Messages.getString(MessageIds.GDE_MSGT0984) + Messages.getString(MessageIds.GDE_MSGT0985) : Messages.getString(MessageIds.GDE_MSGT0984);
+								this.useMeasurementPopUpButton.setToolTipText(popUpMessage);
 								this.useMeasurementPopUpButton.setSelection(this.settings.isUseMeasurementPopUp());
 								RowData createLauncerButtonLData = new RowData();
 								createLauncerButtonLData.width = 460;
