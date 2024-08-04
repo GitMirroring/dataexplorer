@@ -689,7 +689,7 @@ public class GraphicsComposite extends Composite {
 						drawAreaPaintControl(evt);
 					}
 					catch (Exception e) {
-						log.log(Level.SEVERE, e.getMessage());
+						log.log(Level.SEVERE, e.getMessage(), e);
 					}
 				}
 			});
@@ -2060,7 +2060,7 @@ public class GraphicsComposite extends Composite {
 				styleRanges.add(new StyleRange(startIndex, sb.length() - startIndex, SWTResourceManager.getColor(record.getRGB()), null));
 				startIndex = sb.length();
 			}
-			
+
 			styledText.setText(sb.toString());
 			styledText.setStyleRanges(styleRanges.toArray(new StyleRange[0]));
 			measurePopUp.pack();
@@ -2069,13 +2069,17 @@ public class GraphicsComposite extends Composite {
 			//System.out.println("set y " + GDE.shell.getLocation().y+" "+this.application.getTabFolder().getLocation().y+" "+this.offSetY+" "+this.graphicsHeader.getBounds().height+" "+this.yPosMeasure + " = " + (GDE.shell.getLocation().y + this.application.getTabFolder().getLocation().y + this.offSetY + this.graphicsHeader.getBounds().height + this.yPosMeasure));
 			log.log(Level.INFO, "set position measure pop-up");
 			measurePopUp.setLocation(GDE.shell.getLocation().x + this.getParent().getChildren()[0].getBounds().width + this.offSetX + this.xPosMeasure + 20,
-					GDE.shell.getLocation().y + this.application.getTabFolder().getLocation().y + this.offSetY + this.graphicsHeader.getBounds().height + this.yPosMeasure + 25);
+					GDE.shell.getLocation().y + this.application.getTabFolder().getLocation().y + this.offSetY + this.graphicsHeader.getBounds().height + this.yPosMeasure + (GDE.IS_LINUX ? 65 :25));
 			//System.out.println("result in " + measurePopUp.getLocation());
 			lastXPositionMeasure = this.xPosMeasure;
-			
+
 			if (isCreated) {
-				log.log(Level.INFO, "open shell for measure pop-up");
-				measurePopUp.open();
+				measurePopUp.getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						log.log(Level.INFO, "open shell for measure pop-up");
+						measurePopUp.open();
+					}
+				});
 			}
 		}
 	}
