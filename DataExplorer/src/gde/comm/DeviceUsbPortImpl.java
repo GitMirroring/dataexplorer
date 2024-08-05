@@ -59,9 +59,9 @@ import gde.utils.WaitTimer;
 public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort {
 	private final static Logger					log							= Logger.getLogger(DeviceUsbPortImpl.class.getName());
 
-	final protected DeviceConfiguration	deviceConfig;
-	final protected DataExplorer				application;
-	final Settings											settings;
+	final protected DeviceConfiguration	usbDeviceConfig;
+	final protected DataExplorer				usbApplication;
+	final Settings											usbSettings;
 
 	boolean															isConnected			= false;
 	int																	asyncReceived		= 0;
@@ -78,121 +78,142 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
 	 * @param currentApplication
 	 */
 	public DeviceUsbPortImpl(DeviceConfiguration currentDeviceConfig, DataExplorer currentApplication) {
-		this.deviceConfig = currentDeviceConfig;
-		this.application = currentApplication;
-		this.settings = Settings.getInstance();
+		this.usbDeviceConfig = currentDeviceConfig;
+		this.usbApplication = currentApplication;
+		this.usbSettings = Settings.getInstance();
 	}
 
 	/**
 	 * constructor for test purpose only, do not use within DataExplorer
 	 */
 	public DeviceUsbPortImpl() {
-		this.deviceConfig = null;
-		this.application = null;
-		this.settings = null;
+		this.usbDeviceConfig = null;
+		this.usbApplication = null;
+		this.usbSettings = null;
 	}
 
 	//// unused serial port methods
 	
+	@Override
 	public SerialPort open() throws ApplicationConfigurationException, SerialPortException {
 		// Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public void close() {
 		// Auto-generated method stub
 
 	}
 
+	@Override
 	public byte[] read(byte[] readBuffer, int timeout_msec) throws IOException, TimeOutException {
 		// Auto-generated method stub
 		return null;
 	}
 
-	public byte[] read(byte[] readBuffer, int timeout_msec, boolean checkFailedQuery) throws IOException, FailedQueryException, TimeOutException {
+	@Override
+	public synchronized byte[] read(byte[] readBuffer, int timeout_msec, boolean checkFailedQuery) throws IOException, FailedQueryException, TimeOutException {
 		// Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public byte[] read(byte[] readBuffer, int timeout_msec, int stableIndex) throws IOException, TimeOutException {
 		// Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public byte[] read(byte[] readBuffer, int timeout_msec, int stableIndex, int minCountBytes) throws IOException, TimeOutException {
 		// Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public byte[] read(byte[] readBuffer, int timeout_msec, Vector<Long> waitTimes) throws IOException, TimeOutException {
 		// Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public void write(byte[] writeBuffer) throws IOException {
 		// Auto-generated method stub
 
 	}
 
+	@Override
 	public void write(byte[] writeBuffer, long gap_ms) throws IOException {
 		// Auto-generated method stub
 
 	}
 
+	@Override
 	public int cleanInputStream() throws IOException {
 		// Auto-generated method stub
 		return 0;
 	}
 
+	@Override
 	public long wait4Bytes(int timeout_msec) throws InterruptedException, TimeOutException, IOException {
 		// Auto-generated method stub
 		return 0;
 	}
 
+	@Override
 	public int wait4Bytes(int numBytes, int timeout_msec) throws IOException {
 		// Auto-generated method stub
 		return 0;
 	}
 
+	@Override
 	public int waitForStableReceiveBuffer(int expectedBytes, int timeout_msec, int stableIndex) throws InterruptedException, TimeOutException, IOException {
 		// Auto-generated method stub
 		return 0;
 	}
 
+	@Override
 	public int waitForStableReceiveBuffer(int expectedBytes, int timeout_msec, int stableIndex, int minCount) throws InterruptedException, TimeOutException, IOException {
 		// Auto-generated method stub
 		return 0;
 	}
 
+	@Override
 	public boolean isConnected() {
 		return this.isConnected;
 	}
 
+	@Override
 	public int getXferErrors() {
 		// Auto-generated method stub
 		return 0;
 	}
 
+	@Override
 	public void addXferError() {
 		// Auto-generated method stub
 
 	}
 
+	@Override
 	public int getTimeoutErrors() {
 		// Auto-generated method stub
 		return 0;
 	}
 
+	@Override
 	public void addTimeoutError() {
 		// Auto-generated method stub
 
 	}
 
+	@Override
 	public boolean isMatchAvailablePorts(String newSerialPortStr) {
 		// Auto-generated method stub
 		return false;
 	}
 
+	@Override
 	public int getAvailableBytes() throws IOException {
 		// Auto-generated method stub
 		return 0;
@@ -225,21 +246,21 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
 	public Set<UsbDevice> findDevices(UsbHub hub, short vendorId, short productId) {
 		for (Object tmpDevice : hub.getAttachedUsbDevices()) {
 			if (tmpDevice instanceof UsbDevice) {
-				UsbDevice device = (UsbDevice) tmpDevice;
+				UsbDevice usbDevice = (UsbDevice) tmpDevice;
 				if (log.isLoggable(Level.FINER)) {
-					log.log(Level.FINER, device.toString());
-					log.log(Level.FINER, device.getUsbDeviceDescriptor().toString());
+					log.log(Level.FINER, usbDevice.toString());
+					log.log(Level.FINER, usbDevice.getUsbDeviceDescriptor().toString());
 				}
-				UsbDeviceDescriptor desc = device.getUsbDeviceDescriptor();
+				UsbDeviceDescriptor desc = usbDevice.getUsbDeviceDescriptor();
 				if (desc.idVendor() == vendorId && desc.idProduct() == productId) {
 					if (log.isLoggable(Level.FINE)) {
-						log.log(Level.FINE, device.toString());
-						log.log(Level.FINE, device.getUsbDeviceDescriptor().toString());
+						log.log(Level.FINE, usbDevice.toString());
+						log.log(Level.FINE, usbDevice.getUsbDeviceDescriptor().toString());
 					}
-					usbDevices.add(device);
+					usbDevices.add(usbDevice);
 				}
-				else if (device.isUsbHub()) {
-					usbDevices.addAll(findDevices((UsbHub) device, vendorId, productId));
+				else if (usbDevice.isUsbHub()) {
+					usbDevices.addAll(findDevices((UsbHub) usbDevice, vendorId, productId));
 				}
 			}
 		}
@@ -260,17 +281,17 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
 
 		try {
 			// Iterate over all devices and scan for the right one
-			for (Device device : list) {
+			for (Device libUsbDevice : list) {
 				DeviceDescriptor descriptor = new DeviceDescriptor();
-				result = LibUsb.getDeviceDescriptor(device, descriptor);
+				result = LibUsb.getDeviceDescriptor(libUsbDevice, descriptor);
 				if (result != LibUsb.SUCCESS)
 					throw new LibUsbException("Unable to read device descriptor", result);
 				else if (descriptor.idVendor() == vendorId && descriptor.idProduct() == productId) {
 					if (productString == null || productString.length() == 0) {
-						libUsbDevices.add(device);
+						libUsbDevices.add(libUsbDevice);
 					} else { //find device with matching product string
 						DeviceHandle handle = new DeviceHandle();
-						result = LibUsb.open(device, handle);
+						result = LibUsb.open(libUsbDevice, handle);
 						if (result < 0) {
 							log.log(Level.WARNING, String.format("Unable to open device: %s. " + "Continuing without device handle.", LibUsb.strError(result)));
 							handle = null;
@@ -278,7 +299,7 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
 						String[] descriptorStringArray = descriptor.dump(handle).split("\\n");
 						for (String descriptorString : descriptorStringArray) {
 							if (descriptorString.contains("iProduct") && descriptorString.contains(productString)) 
-								libUsbDevices.add(device);
+								libUsbDevices.add(libUsbDevice);
 						}
 					}
 				}
@@ -335,17 +356,17 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
 		if (result < 0) throw new LibUsbException("Unable to get device list", result);
 
 		try {
-			for (Device device : list) {
+			for (Device libUsbDevice : list) {
 				DeviceDescriptor descriptor = new DeviceDescriptor();
-				result = LibUsb.getDeviceDescriptor(device, descriptor);
+				result = LibUsb.getDeviceDescriptor(libUsbDevice, descriptor);
 				if (result == LibUsb.SUCCESS) {
-					log.log(Level.INFO, device.toString());
+					log.log(Level.INFO, libUsbDevice.toString());
 					// Try to open the device. This may fail because user has no
 					// permission to communicate with the device. This is not
 					// important for the dumps, we are just not able to resolve string
 					// descriptor numbers to strings in the descriptor dumps.
 					DeviceHandle handle = new DeviceHandle();
-					result = LibUsb.open(device, handle);
+					result = LibUsb.open(libUsbDevice, handle);
 					if (result < 0) {
 						log.log(Level.WARNING, String.format("Unable to open device: %s. " + "Continuing without device handle.", LibUsb.strError(result)));
 						handle = null;
@@ -372,6 +393,7 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
 	 * @param productId
 	 * @throws UsbException
 	 */
+	@Override
 	public void dumpUsbDevices(final short vendorId, final short productId) throws UsbException {
 		Set<UsbDevice> myUsbDevices = findUsbDevices(vendorId, productId);
 		for (UsbDevice myUsbDevice : myUsbDevices) {
@@ -408,6 +430,7 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
 	 * @throws UsbClaimException
 	 * @throws UsbException
 	 */
+	@Override
 	public synchronized UsbInterface openUsbPort(final IDevice activeDevice) throws UsbClaimException, UsbException {
 		
 		if (log.isLoggable(Level.FINE)) {
@@ -422,7 +445,7 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
 		UsbInterface usbInterface = null;
 		Set<UsbDevice> myLsbDevices = findUsbDevices(activeDevice.getUsbVendorId(), activeDevice.getUsbProductId());
 		if (myLsbDevices.size() == 0) {
-			this.application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGE0050));
+			this.usbApplication.openMessageDialog(Messages.getString(MessageIds.GDE_MSGE0050));
 		} else if (myLsbDevices.size() == 1) {
 			for (UsbDevice usbDevice : myLsbDevices) {
 				if (usbDevice == null) 
@@ -443,7 +466,7 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
 		}
 		log.log(Level.FINE, "interface claimed");
 		this.isConnected = true;
-		if (this.application != null) this.application.setPortConnected(true);
+		if (this.usbApplication != null) this.usbApplication.setPortConnected(true);
 		return usbInterface;
 	}
 
@@ -455,6 +478,7 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
 	 * @throws UsbClaimException
 	 * @throws UsbException
 	 */
+	@Override
 	public synchronized DeviceHandle openLibUsbPort(final IDevice activeDevice) throws LibUsbException, UsbClaimException, UsbException {
 		DeviceHandle libUsbDeviceHandle = new DeviceHandle();
 		byte ifaceId = activeDevice.getUsbInterface();
@@ -479,7 +503,7 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
 			}
 		}
 		else {
-			Map<String, Device> usbDevices = new HashMap<String, Device>();
+			Map<String, Device> myUsbDevices = new HashMap<String, Device>();
 			for (Device libUsbDevice : myLibUsbDevices) {
 				DeviceDescriptor descriptor = new DeviceDescriptor();
 				result = LibUsb.getDeviceDescriptor(libUsbDevice, descriptor);
@@ -496,16 +520,16 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
 				if (descriptorString.contains("iProduct") && descriptorString.contains(activeDevice.getUsbProductString()) && descriptorString.contains("iSerial")) {
 					String usbDeviceString = descriptorString.substring(descriptorString.lastIndexOf("Junsi"), descriptorString.indexOf("USB HID") + 7) 
 							+ " SN/" + descriptorString.substring(descriptorString.indexOf("iSerial") + 27, descriptorString.indexOf("iSerial") + 37);
-					usbDevices.put(usbDeviceString, libUsbDevice);
+					myUsbDevices.put(usbDeviceString, libUsbDevice);
 				}				
 				LibUsb.close(handle);
 			}
-			if (usbDevices.size() > 0 && selectedUsbDevice == null) {
+			if (myUsbDevices.size() > 0 && selectedUsbDevice == null) {
 				//several identical USB HID  found, manual select usbDevice
-				selectedUsbDevice = (Device) new UsbDeviceSelectionDialog(usbDevices).open();
+				selectedUsbDevice = (Device) new UsbDeviceSelectionDialog(myUsbDevices).open();
 				claimLibUsbDevice(selectedUsbDevice, libUsbDeviceHandle, ifaceId);
 			}
-			else if (usbDevices.size() > 0 && selectedUsbDevice != null) {
+			else if (myUsbDevices.size() > 0 && selectedUsbDevice != null) {
 				//several identical USB HID  found, selected usbDevice available for this GDE instance
 				claimLibUsbDevice(selectedUsbDevice, libUsbDeviceHandle, ifaceId);
 			}
@@ -514,7 +538,7 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
 		}
 		log.log(Level.FINE, "interface claimed");
 		this.isConnected = true;
-		if (this.application != null) this.application.setPortConnected(true);
+		if (this.usbApplication != null) this.usbApplication.setPortConnected(true);
 		return libUsbDeviceHandle;
 	}
 
@@ -576,6 +600,7 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
 	 * @throws UsbClaimException
 	 * @throws UsbException
 	 */
+	@Override
 	public synchronized void closeUsbPort(UsbInterface usbInterface) throws UsbClaimException, UsbException {
 		this.isConnected = false;
 		WaitTimer.delay(200); // enable gatherer thread to stop execution
@@ -583,10 +608,10 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
 			usbInterface.release();
 			log.log(Level.FINE, "interface released");
 		}
-		if (this.application != null) {
-			this.application.setSerialTxOff();
-			this.application.setSerialRxOff();
-			this.application.setPortConnected(false);
+		if (this.usbApplication != null) {
+			this.usbApplication.setSerialTxOff();
+			this.usbApplication.setSerialRxOff();
+			this.usbApplication.setPortConnected(false);
 		}
 	}
 
@@ -596,6 +621,7 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
 	 * @throws UsbClaimException
 	 * @throws UsbException
 	 */
+	@Override
 	public synchronized void closeLibUsbPort(DeviceHandle usbDeviceHandle, boolean cacheSelectedUsbDevice) throws UsbClaimException, UsbException {
 		this.isConnected = false;
 		WaitTimer.delay(200); // enable gatherer thread to stop execution
@@ -604,10 +630,10 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
 			LibUsb.exit(null);
 			log.log(Level.FINE, "interface released");
 		}
-		if (this.application != null) {
-			this.application.setSerialTxOff();
-			this.application.setSerialRxOff();
-			this.application.setPortConnected(false);
+		if (this.usbApplication != null) {
+			this.usbApplication.setSerialTxOff();
+			this.usbApplication.setSerialRxOff();
+			this.usbApplication.setPortConnected(false);
 			
 			if (!cacheSelectedUsbDevice) selectedUsbDevice = null;
 		}
@@ -624,6 +650,7 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
 	 * @throws UsbDisconnectedException
 	 * @throws UsbException
 	 */
+	@Override
 	public synchronized int write(final UsbInterface iface, final byte endpointAddress, final byte[] data) throws UsbNotActiveException, UsbNotClaimedException, UsbDisconnectedException, UsbException {
 		UsbEndpoint endpoint = iface.getUsbEndpoint(endpointAddress);
 		int sent = 0;
@@ -650,6 +677,7 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
 	 * @throws UsbDisconnectedException
 	 * @throws UsbException
 	 */
+	@Override
 	public synchronized int read(final UsbInterface iface, final byte endpointAddress, byte[] data) throws UsbNotActiveException, UsbNotClaimedException, UsbDisconnectedException, UsbException {
 		UsbEndpoint endpoint = iface.getUsbEndpoint(endpointAddress);
 		int received = 0;
@@ -677,6 +705,7 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
 	 * @throws UsbDisconnectedException
 	 * @throws UsbException
 	 */
+	@Override
 	public synchronized int read(final UsbInterface iface, final byte endpointAddress, final byte[] data, final int timeout_msec)
 			throws UsbNotActiveException, UsbNotClaimedException, UsbDisconnectedException, UsbException {
 		UsbEndpoint endpoint = iface.getUsbEndpoint(endpointAddress);
@@ -687,10 +716,12 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
 		final UsbPipe pipe = endpoint.getUsbPipe();
 		UsbPipeListener usbPipeListener = new UsbPipeListener() {
 
+			@Override
 			public void errorEventOccurred(UsbPipeErrorEvent evt) {
 				log.log(Level.WARNING, evt.toString());
 			}
 
+			@Override
 			public void dataEventOccurred(UsbPipeDataEvent evt) {
 				byte[] tmpData = evt.getData();
 				isAsyncReceived = true;
@@ -726,7 +757,8 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
    * @throws IllegalStateException while handle not initialized
    * @throws TimeOutException while data transmission failed
    */
-  public void write(final DeviceHandle handle, final byte outEndpoint, final byte[] data, final long timeout_ms) throws IllegalStateException, TimeOutException {
+  @Override
+	public void write(final DeviceHandle handle, final byte outEndpoint, final byte[] data, final long timeout_ms) throws IllegalStateException, TimeOutException {
 
       ByteBuffer buffer = BufferUtils.allocateByteBuffer(data.length);
       buffer.put(data);      
@@ -760,7 +792,8 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
    * @throws IllegalStateException while handle not initialized
    * @throws TimeOutException while data transmission failed
    */
-  public int read(final DeviceHandle handle, final byte inEndpoint, final byte[] data, final long timeout_ms) throws IllegalStateException, TimeOutException {
+  @Override
+	public int read(final DeviceHandle handle, final byte inEndpoint, final byte[] data, final long timeout_ms) throws IllegalStateException, TimeOutException {
   	int readBytes = 0;
       ByteBuffer buffer = BufferUtils.allocateByteBuffer(data.length).order(ByteOrder.LITTLE_ENDIAN);
       IntBuffer transferred = BufferUtils.allocateIntBuffer();

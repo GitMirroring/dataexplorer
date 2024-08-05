@@ -665,7 +665,9 @@ public final class Settings extends Properties {
 		try (Stream<Path> files = Files.walk(Paths.get(templateDirectoryTargetPath), 2)) {
 			Stream<Path> potentialFiles = files.filter(t -> t.getFileName().toString().contains(GDE.STRING_DOT));
 			filesMap = potentialFiles.collect(Collectors.groupingBy(this::getTemplateFilePrefix));
-		} catch (IOException e) {}
+		} catch (IOException e) {
+			log.log(Level.WARNING, e.getMessage());
+		}
 		return filesMap;
 	}
 
@@ -2741,6 +2743,7 @@ public final class Settings extends Properties {
 			this.setProperty(Settings.RETROSPECT_MONTHS, String.valueOf(value));
 		}
 		catch (Exception e) {
+			log.log(Level.WARNING, e.getMessage());
 		}
 	}
 
@@ -2789,6 +2792,7 @@ public final class Settings extends Properties {
 			this.setProperty(Settings.MINMAX_QUANTILE_DISTANCE, String.valueOf(value));
 		}
 		catch (Exception e) {
+			log.log(Level.WARNING, e.getMessage());
 		}
 	}
 
@@ -2811,6 +2815,7 @@ public final class Settings extends Properties {
 			this.setProperty(Settings.ABSOLUTE_TRANSITION_LEVEL, String.valueOf(value));
 		}
 		catch (Exception e) {
+			log.log(Level.WARNING, e.getMessage());
 		}
 	}
 
@@ -2929,6 +2934,7 @@ public final class Settings extends Properties {
 			this.setProperty(Settings.SUBDIRECTORY_LEVEL_MAX, String.valueOf(value));
 		}
 		catch (Exception e) {
+			log.log(Level.WARNING, e.getMessage());
 		}
 	}
 

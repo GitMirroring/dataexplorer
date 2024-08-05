@@ -181,7 +181,9 @@ public abstract class DataAccess implements Cloneable {
 			try (Stream<Path> files = Files.walk(templatePath, 2)) {
 				Stream<Path> potentialFiles = files.filter(t -> t.getFileName().toString().contains(GDE.STRING_DOT));
 				filesMap = potentialFiles.collect(Collectors.groupingBy(this::getTemplateFilePrefix));
-			} catch (IOException e) {}
+			} catch (IOException e) {
+				//ignore
+			}
 			return filesMap;
 		}
 

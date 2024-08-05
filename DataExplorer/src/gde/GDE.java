@@ -774,11 +774,11 @@ public class GDE {
 														@Override
 														public int getProgressPercentage() { return 100; }
 														@Override
-														public void setProgress(int percentage) {}
+														public void setProgress(int percentage) {/* nothing to do */}
 														@Override
-														public void setStatusMessage(String message) {}
+														public void setStatusMessage(String message) { /* nothing to do */}
 														@Override
-														public void setStatusMessage(String message, int swtColor) {}
+														public void setStatusMessage(String message, int swtColor) {/* nothing to do */}
 														};
       //@formatter:on
 		}

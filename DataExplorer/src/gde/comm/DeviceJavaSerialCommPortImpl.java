@@ -71,21 +71,9 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 	final static String										$CLASS_NAME								= DeviceJavaSerialCommPortImpl.class.getName();
 	final static Logger										log												= Logger.getLogger(DeviceJavaSerialCommPortImpl.$CLASS_NAME);
 
-	public final static byte							FF												= 0x0C;
-	public final static byte							CR												= 0x0D;
-	public final static byte							ACK												= 0x06;
-	public final static byte							NAK												= 0x15;
-	public static final String						STRING_NAK								= "<NAK>";
-	public static final String						STRING_ACK								= "<ACK>";
-	public static final String						STRING_CR									= "<CR>";
-	public static final String						STRING_FF									= "<FF>";
-	public static final String						FORMAT_2_CHAR							= "%c%c";																																												//2 char to string formating
-	public static final String						FORMAT_4_CHAR							= "%c%c%c%c";																																										//4 char to string formating
-	public static final String						FORMAT_16_CHAR						= "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c";
-
-	final protected DeviceConfiguration		deviceConfig;
-	final protected DataExplorer					application;
-	final Settings												settings;
+	final protected DeviceConfiguration		jsDeviceConfig;
+	final protected DataExplorer					jsApplication;
+	final Settings												jsSettings;
 	protected SerialPort									serialPort								= null;
 	protected int													xferErrors								= 0;
 	protected int													queryErrors								= 0;
@@ -104,18 +92,18 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 	 * @param currentApplication
 	 */
 	public DeviceJavaSerialCommPortImpl(DeviceConfiguration currentDeviceConfig, DataExplorer currentApplication) {
-		this.deviceConfig = currentDeviceConfig;
-		this.application = currentApplication;
-		this.settings = Settings.getInstance();
+		this.jsDeviceConfig = currentDeviceConfig;
+		this.jsApplication = currentApplication;
+		this.jsSettings = Settings.getInstance();
 	}
 	
 	/**
 	 * constructor for test purpose only, do not use within DataExplorer
 	 */
 	public DeviceJavaSerialCommPortImpl() {
-		this.deviceConfig = null;
-		this.application = null;
-		this.settings = null;
+		this.jsDeviceConfig = null;
+		this.jsApplication = null;
+		this.jsSettings = null;
 	}
 
 	/**
@@ -247,11 +235,12 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 	 * @param newSerialPortStr
 	 * @return true if given port string matches one of the available once
 	 */
+	@Override
 	public boolean isMatchAvailablePorts(String newSerialPortStr) {
 		boolean match = false;
 		if (DeviceCommPort.availablePorts.size() == 0 || (this.serialPortStr != null && !DeviceCommPort.availablePorts.keySet().contains(this.serialPortStr))) {
-			listConfiguredSerialPorts(false, this.settings.isSerialPortBlackListEnabled() ? this.settings.getSerialPortBlackList() : GDE.STRING_EMPTY,
-					this.settings.isSerialPortWhiteListEnabled() ? this.settings.getSerialPortWhiteList() : new Vector<String>());
+			listConfiguredSerialPorts(false, this.jsSettings.isSerialPortBlackListEnabled() ? this.jsSettings.getSerialPortBlackList() : GDE.STRING_EMPTY,
+					this.jsSettings.isSerialPortWhiteListEnabled() ? this.jsSettings.getSerialPortWhiteList() : new Vector<String>());
 		}
 		for (String availablePort : DeviceCommPort.availablePorts.keySet()) {
 			if (availablePort.equals(newSerialPortStr)) {
@@ -268,21 +257,22 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 	 * @throws ApplicationConfigurationException
 	 * @throws SerialPortException
 	 */
+	@Override
 	public SerialPort open() throws ApplicationConfigurationException, SerialPortException {
 		final String $METHOD_NAME = "open"; //$NON-NLS-1$
 		this.xferErrors = this.timeoutErrors = 0;
 		// Initialize serial port
 		try {
-			this.serialPortStr = this.deviceConfig.getPort();
+			this.serialPortStr = this.jsDeviceConfig.getPort();
 			// check if the serial port which is selected can be used
 			if (this.serialPortStr == null || this.serialPortStr.length() < 4 || !isMatchAvailablePorts(this.serialPortStr)) {
 				if (DeviceCommPort.availablePorts.size() == 1 && (this.serialPortStr != null && !isMatchAvailablePorts(this.serialPortStr))) {
-					if (SWT.YES == this.application.openYesNoMessageDialogSync(Messages.getString(MessageIds.GDE_MSGE0010) + GDE.LINE_SEPARATOR
+					if (SWT.YES == this.jsApplication.openYesNoMessageDialogSync(Messages.getString(MessageIds.GDE_MSGE0010) + GDE.LINE_SEPARATOR
 							+ Messages.getString(MessageIds.GDE_MSGT0194, new String[] { this.serialPortStr = DeviceCommPort.availablePorts.firstKey() }))) {
 						this.serialPortStr = DeviceCommPort.availablePorts.firstKey();
-						this.deviceConfig.setPort(this.serialPortStr);
-						this.deviceConfig.storeDeviceProperties();
-						this.application.updateTitleBar();
+						this.jsDeviceConfig.setPort(this.serialPortStr);
+						this.jsDeviceConfig.storeDeviceProperties();
+						this.jsApplication.updateTitleBar();
 					}
 					else {
 						throw new ApplicationConfigurationException(Messages.getString(MessageIds.GDE_MSGE0010));
@@ -293,7 +283,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 				}
 			}
 			log.logp(Level.FINE, DeviceJavaSerialCommPortImpl.$CLASS_NAME, $METHOD_NAME,
-				String.format("serialPortString = %s; baudeRate = %d; dataBits = %s; stopBits = %s; parity = %s; flowControlMode = %s; RTS = %s; DTR = %s", this.serialPortStr, this.deviceConfig.getBaudeRate(), this.deviceConfig.getDataBits(), this.deviceConfig.getStopBits(), this.deviceConfig.getParity(), this.deviceConfig.getFlowCtrlMode(), this.deviceConfig.isRTS(), this.deviceConfig.isDTR())); //$NON-NLS-1$
+				String.format("serialPortString = %s; baudeRate = %d; dataBits = %s; stopBits = %s; parity = %s; flowControlMode = %s; RTS = %s; DTR = %s", this.serialPortStr, this.jsDeviceConfig.getBaudeRate(), this.jsDeviceConfig.getDataBits(), this.jsDeviceConfig.getStopBits(), this.jsDeviceConfig.getParity(), this.jsDeviceConfig.getFlowCtrlMode(), this.jsDeviceConfig.isRTS(), this.jsDeviceConfig.isDTR())); //$NON-NLS-1$
 
 			for (SerialPort commPort : SerialPort.getCommPorts()) {
 				if (commPort.getSystemPortName().equals(this.serialPortStr)) {
@@ -304,25 +294,25 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 			//this.serialPort = SerialPort.getCommPort(this.serialPortStr);
 			boolean isVirtual = GDE.IS_WINDOWS && this.serialPort.getDescriptivePortName().toLowerCase().contains("virtual");
 			if (isVirtual) {
-				this.serialPort.setFlowControl(this.deviceConfig.getFlowCtrlMode());
+				this.serialPort.setFlowControl(this.jsDeviceConfig.getFlowCtrlMode());
 				this.serialPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING | SerialPort.TIMEOUT_WRITE_BLOCKING, 1000, 1000);
-				this.serialPort.setComPortParameters(115200, this.deviceConfig.getDataBits().ordinal() + 5,  this.deviceConfig.getStopBits().ordinal() + 1, this.deviceConfig.getParity().ordinal());
+				this.serialPort.setComPortParameters(115200, this.jsDeviceConfig.getDataBits().ordinal() + 5,  this.jsDeviceConfig.getStopBits().ordinal() + 1, this.jsDeviceConfig.getParity().ordinal());
 				this.serialPort.disablePortConfiguration();
 			}
-			if (this.serialPort.openPort()) {
+			if (this.serialPort.openPort(100)) {
 				if (!isVirtual) { // set port parameters
-					this.serialPort.setComPortParameters(this.deviceConfig.getBaudeRate(), this.deviceConfig.getDataBits().ordinal() + 5,  this.deviceConfig.getStopBits().ordinal() + 1, this.deviceConfig.getParity().ordinal());
-					this.serialPort.setFlowControl(this.deviceConfig.getFlowCtrlMode());
-					if (this.deviceConfig.isRTS()) this.serialPort.setRTS();
+					this.serialPort.setComPortParameters(this.jsDeviceConfig.getBaudeRate(), this.jsDeviceConfig.getDataBits().ordinal() + 5,  this.jsDeviceConfig.getStopBits().ordinal() + 1, this.jsDeviceConfig.getParity().ordinal());
+					this.serialPort.setFlowControl(this.jsDeviceConfig.getFlowCtrlMode());
+					if (this.jsDeviceConfig.isRTS()) this.serialPort.setRTS();
 					else this.serialPort.clearRTS();
-					if (this.deviceConfig.isDTR()) this.serialPort.setDTR();
+					if (this.jsDeviceConfig.isDTR()) this.serialPort.setDTR();
 					else this.serialPort.clearDTR();
 				}
 				// init in and out stream for writing and reading
 				this.inputStream = this.serialPort.getInputStream();
 				this.outputStream = this.serialPort.getOutputStream();
 				this.isConnected = true;
-				if (this.application != null) this.application.setPortConnected(true);
+				if (this.jsApplication != null) this.jsApplication.setPortConnected(true);
 			} else {
 				throw new PortInUseException();
 			}
@@ -352,11 +342,12 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 	 * @param writeBuffer writes size of writeBuffer to output stream
 	 * @throws IOException
 	 */
+	@Override
 	public synchronized void write(byte[] writeBuffer) throws IOException {
 		final String $METHOD_NAME = "write"; //$NON-NLS-1$
 
 		try {
-			if (this.application != null) this.application.setSerialTxOn();
+			if (this.jsApplication != null) this.jsApplication.setSerialTxOn();
 			cleanInputStream();
 
 			this.outputStream.write(writeBuffer);
@@ -371,7 +362,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 			throw e;
 		}
 		finally {
-			if (this.application != null) this.application.setSerialTxOff();
+			if (this.jsApplication != null) this.jsApplication.setSerialTxOff();
 		}
 	}
 
@@ -381,11 +372,12 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 	 * @param writeBuffer writes size of writeBuffer to output stream
 	 * @throws IOException
 	 */
+	@Override
 	public synchronized void write(byte[] writeBuffer, long gap_ms) throws IOException {
 		final String $METHOD_NAME = "write"; //$NON-NLS-1$
 
 		try {
-			if (this.application != null) this.application.setSerialTxOn();
+			if (this.jsApplication != null) this.jsApplication.setSerialTxOn();
 			cleanInputStream();
 
 			for (int i = 0; i < writeBuffer.length; i++) {
@@ -403,7 +395,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 			throw e;
 		}
 		finally {
-			if (this.application != null) this.application.setSerialTxOff();
+			if (this.jsApplication != null) this.jsApplication.setSerialTxOff();
 		}
 	}
 
@@ -412,6 +404,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 	 * @return number of bytes in receive buffer which get removed
 	 * @throws IOException
 	 */
+	@Override
 	public int cleanInputStream() throws IOException {
 		final String $METHOD_NAME = "cleanInputStream"; //$NON-NLS-1$
 		int num = 0;
@@ -427,6 +420,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 	 * - activate the DATA_AVAILABLE notifier to read available data -> dataAvailable = true;
 	 * - activate the OUTPUT_BUFFER_EMPTY notifier -> dataAvailable = false;
 	 */
+	@Override
 	public void serialEvent(SerialPortEvent event) {
 		final String $METHOD_NAME = "serialEvent"; //$NON-NLS-1$
 
@@ -449,6 +443,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 	 * @throws IOException
 	 * @throws TimeOutException
 	 */
+	@Override
 	public synchronized byte[] read(byte[] readBuffer, int timeout_msec) throws IOException, TimeOutException {
 		final String $METHOD_NAME = "read"; //$NON-NLS-1$
 		int sleepTime = 2 ; // ms
@@ -457,7 +452,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 		int timeOutCounter = timeout_msec / (sleepTime + 18); //18 ms read blocking time
 
 		try {
-			if (this.application != null) this.application.setSerialRxOn();
+			if (this.jsApplication != null) this.jsApplication.setSerialRxOn();
 			wait4Bytes(bytes, timeout_msec - (timeout_msec / 5));
 
 
@@ -487,7 +482,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 			throw e;
 		}
 		finally {
-			if (this.application != null) this.application.setSerialRxOff();
+			if (this.jsApplication != null) this.jsApplication.setSerialRxOff();
 		}
 		return readBuffer;
 	}
@@ -501,6 +496,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 	 * @throws IOException
 	 * @throws TimeOutException
 	 */
+	@Override
 	public synchronized byte[] read(byte[] readBuffer, int timeout_msec, boolean checkFailedQuery) throws IOException, FailedQueryException, TimeOutException {
 		final String $METHOD_NAME = "read"; //$NON-NLS-1$
 		int sleepTime = 10; // ms
@@ -509,7 +505,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 		int timeOutCounter = timeout_msec / (sleepTime + 18); //18 ms read blocking time
 
 		try {
-			if (this.application != null) this.application.setSerialRxOn();
+			if (this.jsApplication != null) this.jsApplication.setSerialRxOn();
 			WaitTimer.delay(2);
 
 			//loop inputStream and read available bytes
@@ -544,7 +540,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 			throw e;
 		}
 		finally {
-			if (this.application != null) this.application.setSerialRxOff();
+			if (this.jsApplication != null) this.jsApplication.setSerialRxOff();
 		}
 		return readBuffer;
 	}
@@ -559,6 +555,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 	 * @throws IOException
 	 * @throws TimeOutException
 	 */
+	@Override
 	public synchronized byte[] read(byte[] readBuffer, int timeout_msec, Vector<Long> waitTimes) throws IOException, TimeOutException {
 		final String $METHOD_NAME = "read"; //$NON-NLS-1$
 		int sleepTime = 4; // ms
@@ -567,7 +564,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 		int timeOutCounter = timeout_msec / sleepTime;
 
 		try {
-			if (this.application != null) this.application.setSerialRxOn();
+			if (this.jsApplication != null) this.jsApplication.setSerialRxOn();
 			long startTime_ms = new Date().getTime();
 			wait4Bytes(timeout_msec);
 
@@ -599,7 +596,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 			log.logp(Level.WARNING, DeviceJavaSerialCommPortImpl.$CLASS_NAME, $METHOD_NAME, e.getMessage(), e);
 		}
 		finally {
-			if (this.application != null) this.application.setSerialRxOff();
+			if (this.jsApplication != null) this.jsApplication.setSerialRxOff();
 		}
 		return readBuffer;
 	}
@@ -611,6 +608,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 	 * @throws TimeOutException 
 	 * @throws IOException 
 	 */
+	@Override
 	public long wait4Bytes(int timeout_msec) throws InterruptedException, TimeOutException, IOException {
 		final String $METHOD_NAME = "wait4Bytes"; //$NON-NLS-1$
 		int sleepTime = 1;
@@ -637,6 +635,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 	 * @throws InterruptedException 
 	 * @throws IOException 
 	 */
+	@Override
 	public int wait4Bytes(int numBytes, int timeout_msec) throws IOException {
 		final String $METHOD_NAME = "wait4Bytes"; //$NON-NLS-1$
 		int sleepTime = 1; // msec
@@ -667,6 +666,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 	 * @throws IOException
 	 * @throws TimeOutException
 	 */
+	@Override
 	public synchronized byte[] read(byte[] readBuffer, int timeout_msec, int stableIndex) throws IOException, TimeOutException {
 		final String $METHOD_NAME = "read"; //$NON-NLS-1$
 		int sleepTime = 4; // ms
@@ -679,7 +679,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 		}
 
 		try {
-			if (this.application != null) this.application.setSerialRxOn();
+			if (this.jsApplication != null) this.jsApplication.setSerialRxOn();
 
 			numAvailableBytes = waitForStableReceiveBuffer(numAvailableBytes, timeout_msec, stableIndex);
 			//adapt readBuffer, available bytes more than expected
@@ -724,7 +724,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 			log.logp(Level.WARNING, DeviceJavaSerialCommPortImpl.$CLASS_NAME, $METHOD_NAME, e.getMessage(), e);
 		}
 		finally {
-			if (this.application != null) this.application.setSerialRxOff();
+			if (this.jsApplication != null) this.jsApplication.setSerialRxOff();
 		}
 		return readBuffer;
 	}
@@ -740,6 +740,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 	 * @throws IOException
 	 * @throws TimeOutException
 	 */
+	@Override
 	public synchronized byte[] read(byte[] readBuffer, int timeout_msec, int stableIndex, int minCountBytes) throws IOException, TimeOutException {
 		final String $METHOD_NAME = "read"; //$NON-NLS-1$
 		int sleepTime = 4; // ms
@@ -751,7 +752,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 		}
 
 		try {
-			if (this.application != null) this.application.setSerialRxOn();
+			if (this.jsApplication != null) this.jsApplication.setSerialRxOn();
 
 			expectedBytes = waitForStableReceiveBuffer(expectedBytes, timeout_msec, stableIndex, minCountBytes);
 
@@ -792,7 +793,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 			log.logp(Level.WARNING, DeviceJavaSerialCommPortImpl.$CLASS_NAME, $METHOD_NAME, e.getMessage(), e);
 		}
 		finally {
-			if (this.application != null) this.application.setSerialRxOff();
+			if (this.jsApplication != null) this.jsApplication.setSerialRxOff();
 		}
 		return readBuffer;
 	}
@@ -807,6 +808,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 	 * @throws TimeOutException 
 	 * @throws IOException 
 	 */
+	@Override
 	public int waitForStableReceiveBuffer(int expectedBytes, int timeout_msec, int stableIndex) throws InterruptedException, TimeOutException, IOException {
 		final String $METHOD_NAME = "waitForStableReceiveBuffer"; //$NON-NLS-1$
 		int sleepTime = 1; // ms
@@ -855,6 +857,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 	 * @throws TimeOutException 
 	 * @throws IOException 
 	 */
+	@Override
 	public int waitForStableReceiveBuffer(int expectedBytes, int timeout_msec, int stableIndex, int minCount) throws InterruptedException, TimeOutException, IOException {
 		final String $METHOD_NAME = "waitForStableReceiveBuffer"; //$NON-NLS-1$
 		int sleepTime = 1; // ms
@@ -908,6 +911,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 	 * function to close the serial port
 	 * this is done within a tread since the port can't close if it stays open for a long time period ??
 	 */
+	@Override
 	public synchronized void close() {
 		final String $METHOD_NAME = "close"; //$NON-NLS-1$
 		if (this.isConnected && DeviceJavaSerialCommPortImpl.this.serialPort != null) {
@@ -930,7 +934,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 					DeviceJavaSerialCommPortImpl.this.serialPort.closePort();
 					log.logp(Level.CONFIG, DeviceJavaSerialCommPortImpl.$CLASS_NAME, $METHOD_NAME, "after close"); //$NON-NLS-1$
 					DeviceJavaSerialCommPortImpl.this.isConnected = false;
-					if (DeviceJavaSerialCommPortImpl.this.application != null) DeviceJavaSerialCommPortImpl.this.application.setPortConnected(false);
+					if (DeviceJavaSerialCommPortImpl.this.jsApplication != null) DeviceJavaSerialCommPortImpl.this.jsApplication.setPortConnected(false);
 					log.logp(Level.CONFIG, DeviceJavaSerialCommPortImpl.$CLASS_NAME, $METHOD_NAME, "exit"); //$NON-NLS-1$
 				}
 			};
@@ -948,6 +952,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 	 * @return number of bytes available on input stream
 	 * @throws IOException
 	 */
+	@Override
 	public int getAvailableBytes() throws IOException {
 		return this.inputStream.available();
 	}
@@ -960,6 +965,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 		return this.outputStream;
 	}
 
+	@Override
 	public boolean isConnected() {
 		return this.isConnected;
 	}
@@ -968,12 +974,13 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 	 * @return the serialPortStr
 	 */
 	public String getSerialPortStr() {
-		return this.serialPortStr == null ? this.deviceConfig.getPort() : this.serialPortStr;
+		return this.serialPortStr == null ? this.jsDeviceConfig.getPort() : this.serialPortStr;
 	}
 
 	/**
 	 * @return number of transfer errors
 	 */
+	@Override
 	public int getXferErrors() {
 		return this.xferErrors;
 	}
@@ -981,6 +988,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 	/**
 	 * add up transfer errors
 	 */
+	@Override
 	public void addXferError() {
 		this.xferErrors++;
 	}
@@ -988,6 +996,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 	/**
 	 * add up timeout errors
 	 */
+	@Override
 	public void addTimeoutError() {
 		this.timeoutErrors++;
 	}
@@ -995,6 +1004,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 	/**
 	 * @return number of timeout errors 
 	 */
+	@Override
 	public int getTimeoutErrors() {
 		return this.timeoutErrors;
 	}
@@ -1080,6 +1090,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
    * @return
    * @throws UsbException
    */
+	@Override
 	public Set<UsbDevice> findUsbDevices(final short vendorId, final short productId) throws UsbException {
 		return null;
 	}
@@ -1091,6 +1102,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 	 * @param productId
 	 * @return
 	 */
+	@Override
 	public Set<UsbDevice> findDevices(UsbHub hub, short vendorId, short productId) {
 		return null;
 	}
@@ -1102,6 +1114,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 	 * @param productId
 	 * @throws UsbException
 	 */
+	@Override
 	public void dumpUsbDevices(final short vendorId, final short productId) throws UsbException {
 		//no explicit return result
 	}
@@ -1113,6 +1126,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 	 * @throws UsbClaimException
 	 * @throws UsbException
 	 */
+	@Override
 	public UsbInterface openUsbPort(final IDevice activeDevice) throws UsbClaimException, UsbException {
 		return null;
 	}
@@ -1124,6 +1138,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 	 * @throws UsbClaimException
 	 * @throws UsbException
 	 */
+	@Override
 	public DeviceHandle openLibUsbPort(final IDevice activeDevice) throws LibUsbException, UsbException {
 		return null;
 	}
@@ -1134,6 +1149,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 	 * @throws UsbClaimException
 	 * @throws UsbException
 	 */
+	@Override
 	public void closeUsbPort(final UsbInterface usbInterface) throws UsbClaimException, UsbException {
 		//no explicit return result
 	}
@@ -1145,6 +1161,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 	 * @throws UsbClaimException
 	 * @throws UsbException
 	 */
+	@Override
 	public void closeLibUsbPort(final DeviceHandle libUsbDeviceHanlde, boolean cacheSelectedUsbDevice) throws LibUsbException, UsbException {
 		//no explicit return result
 	}
@@ -1160,6 +1177,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 	 * @throws UsbDisconnectedException
 	 * @throws UsbException
 	 */
+	@Override
 	public int write(final UsbInterface iface, final byte endpointAddress, final byte[] data) throws UsbNotActiveException, UsbNotClaimedException, UsbDisconnectedException, UsbException {
 		return 0;
 	}
@@ -1175,6 +1193,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 	 * @throws UsbDisconnectedException
 	 * @throws UsbException
 	 */
+	@Override
 	public int read(final UsbInterface iface, final byte endpointAddress, final byte[] data) throws UsbNotActiveException, UsbNotClaimedException, UsbDisconnectedException, UsbException {
 		return 0;
 	}
@@ -1191,6 +1210,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 	 * @throws UsbDisconnectedException
 	 * @throws UsbException
 	 */
+	@Override
 	public int read(final UsbInterface iface, final byte endpointAddress, final byte[] data, final int timeout_msec) throws UsbNotActiveException, UsbNotClaimedException, UsbDisconnectedException, UsbException {
 		return 0;
 	}
@@ -1204,7 +1224,8 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
    * @throws IllegalStateException while handle not initialized
    * @throws TimeOutException while data transmission failed
    */
-  public void write(final DeviceHandle handle, final byte outEndpoint, final byte[] data, final long timeout_ms) throws IllegalStateException, TimeOutException {
+  @Override
+	public void write(final DeviceHandle handle, final byte outEndpoint, final byte[] data, final long timeout_ms) throws IllegalStateException, TimeOutException {
   	return;
   } 
 
@@ -1217,7 +1238,8 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
    * @throws IllegalStateException while handle not initialized
    * @throws TimeOutException while data transmission failed
    */
-  public int read(final DeviceHandle handle, final byte inEndpoint, final byte[] data, final long timeout_ms) throws IllegalStateException, TimeOutException {
+  @Override
+	public int read(final DeviceHandle handle, final byte inEndpoint, final byte[] data, final long timeout_ms) throws IllegalStateException, TimeOutException {
   	return 0;
   }
 

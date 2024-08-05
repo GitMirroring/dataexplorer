@@ -48,7 +48,6 @@ import gde.ui.DataExplorer;
  *
  */
 public class DeviceCommPort implements IDeviceCommPort {
-	final static String 				$CLASS_NAME 			= DeviceCommPort.class.getName();
 
 	final protected Settings							settings;
 	final protected IDevice								device;
@@ -160,10 +159,9 @@ public class DeviceCommPort implements IDeviceCommPort {
 	public static TreeMap<String, String> listConfiguredSerialPorts(final boolean doAvialabilityCheck, final String portBlackList, final Vector<String> portWhiteList) {
 		if (DeviceCommPort.staticPort != null && DeviceCommPort.staticPort instanceof DeviceJavaSerialCommPortImpl) //JSerialCommPort: 
 			return DeviceJavaSerialCommPortImpl.listConfiguredSerialPorts(doAvialabilityCheck, portBlackList, portWhiteList);
-		else {
-			DeviceCommPort.availablePorts.clear();
-			return DeviceCommPort.availablePorts;
-		}
+
+		DeviceCommPort.availablePorts.clear();
+		return DeviceCommPort.availablePorts;
 	}
 
 
@@ -173,8 +171,8 @@ public class DeviceCommPort implements IDeviceCommPort {
 	public static String[] prepareSerialPortList() {
 		if (DeviceCommPort.staticPort != null && DeviceCommPort.staticPort instanceof DeviceJavaSerialCommPortImpl) //JSerialCommPort: 
 			return DeviceJavaSerialCommPortImpl.prepareSerialPortList();
-		else
-			return new String[0];
+
+		return new String[0];
 	}
 	
 	/**

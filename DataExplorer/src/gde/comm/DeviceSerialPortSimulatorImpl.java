@@ -81,9 +81,9 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 	boolean							isConnected					= false;
 	String 							fileType 						= GDE.FILE_ENDING_STAR_LOV;
 
-	final IDevice				device;
-	final DataExplorer	application;
-	final Settings			settings;
+	final IDevice				simDevice;
+	final DataExplorer	simApplication;
+	final Settings			simSettings;
 	final int						sleepTime_ms;
 	final boolean				isTimeStepConstant;
 
@@ -94,9 +94,9 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 	 * @param timeStep_ms
 	 */
 	public DeviceSerialPortSimulatorImpl(IDevice currentDevice, DataExplorer currentApplication, boolean isTimeStepConstant, int timeStep_ms) {
-		this.device = currentDevice;
-		this.application = currentApplication;
-		this.settings = Settings.getInstance();
+		this.simDevice = currentDevice;
+		this.simApplication = currentApplication;
+		this.simSettings = Settings.getInstance();
 		this.sleepTime_ms = timeStep_ms;
 		this.isTimeStepConstant = isTimeStepConstant;
 	}
@@ -104,26 +104,28 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 	/* (non-Javadoc)
 	 * @see gde.serial.IDeviceSerialPort#open()
 	 */
+	@Override
 	public SerialPort open() throws ApplicationConfigurationException, SerialPortException {
 		try {
-			if (this.application != null) {
+			if (this.simApplication != null) {
 				GDE.display.syncExec(new Runnable() {
+					@Override
 					public void run() {
 						String path;
-						if (application.isObjectoriented()) {
-							path = application.getObjectFilePath();
+						if (simApplication.isObjectoriented()) {
+							path = simApplication.getObjectFilePath();
 						}
 						else {
-							String devicePath = application.getActiveDevice() != null ? GDE.STRING_FILE_SEPARATOR_UNIX + application.getActiveDevice().getName() : GDE.STRING_EMPTY;
-							path = application.getActiveDevice() != null ? settings.getDataFilePath() + devicePath + GDE.STRING_FILE_SEPARATOR_UNIX : settings.getDataFilePath();
+							String devicePath = simApplication.getActiveDevice() != null ? GDE.STRING_FILE_SEPARATOR_UNIX + simApplication.getActiveDevice().getName() : GDE.STRING_EMPTY;
+							path = simApplication.getActiveDevice() != null ? simSettings.getDataFilePath() + devicePath + GDE.STRING_FILE_SEPARATOR_UNIX : simSettings.getDataFilePath();
 							if (!FileUtils.checkDirectoryAndCreate(path)) {
 								if (!FileUtils.checkDirectoryExist(path)) 
-									application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGI0056, new Object[] { path }));
+									simApplication.openMessageDialog(Messages.getString(MessageIds.GDE_MSGI0056, new Object[] { path }));
 								else
-									application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGI0012, new Object[] { path }));
+									simApplication.openMessageDialog(Messages.getString(MessageIds.GDE_MSGI0012, new Object[] { path }));
 							}
 						}
-						FileDialog openFileDialog = application.openFileOpenDialog("Open File used as simulation input", new String[] { GDE.FILE_ENDING_STAR_LOV, GDE.FILE_ENDING_STAR_TXT,
+						FileDialog openFileDialog = simApplication.openFileOpenDialog("Open File used as simulation input", new String[] { GDE.FILE_ENDING_STAR_LOV, GDE.FILE_ENDING_STAR_TXT,
 								GDE.FILE_ENDING_STAR_LOG }, path, null, SWT.SINGLE);
 						if (openFileDialog.getFileName().length() > 4) {
 							String openFilePath = (openFileDialog.getFilterPath() + GDE.STRING_FILE_SEPARATOR_UNIX + openFileDialog.getFileName()).replace(GDE.CHAR_FILE_SEPARATOR_WINDOWS, GDE.CHAR_FILE_SEPARATOR_UNIX);
@@ -137,7 +139,7 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 									fileType = GDE.FILE_ENDING_STAR_LOV;
 									data_in = new DataInputStream(new FileInputStream(new File(openFilePath)));
 									LogViewReader.readHeader(data_in);
-									switch (application.getActiveDevice().getName()) {
+									switch (simApplication.getActiveDevice().getName()) {
 									case "Robbe PowerPeak IV":
 										data_in.skip(6); //data start offset
 										break;
@@ -155,14 +157,14 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 									txt_in = new BufferedReader(new InputStreamReader(new FileInputStream(openFilePath), "ISO-8859-1")); //$NON-NLS-1$
 								}
 								else
-									application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGI0008) + openFilePath);
+									simApplication.openMessageDialog(Messages.getString(MessageIds.GDE_MSGI0008) + openFilePath);
 							}
 							catch (Exception e) {
 								log.log(Level.SEVERE, e.getMessage(), e);
 							}
 						}
 						isConnected = data_in != null || txt_in != null;
-						application.setPortConnected(isConnected);
+						simApplication.setPortConnected(isConnected);
 					}
 				});
 			}
@@ -176,6 +178,7 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 	/* (non-Javadoc)
 	 * @see gde.serial.IDeviceSerialPort#close()
 	 */
+	@Override
 	public void close() {
 		try {
 			if (data_in != null) {
@@ -189,7 +192,7 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 			if (this.isConnected) {
 				this.isConnected = false;
 			}
-			if (this.application != null) this.application.setPortConnected(false);
+			if (this.simApplication != null) this.simApplication.setPortConnected(false);
 		}
 		catch (IOException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
@@ -199,6 +202,7 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 	/* (non-Javadoc)
 	 * @see gde.serial.IDeviceSerialPort#read(byte[], int)
 	 */
+	@Override
 	public byte[] read(byte[] readBuffer, int timeout_msec) throws IOException, TimeOutException {
 		final String $METHOD_NAME = "read"; //$NON-NLS-1$
 		try {
@@ -211,12 +215,12 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 			if (data_in != null && this.fileType.equals(GDE.FILE_ENDING_STAR_LOV)) {
 				if (data_in.read(readBuffer) > 0) {
 					//System.out.println(StringHelper.byte2Hex2CharString(readBuffer, readBuffer.length));
-					int size2Read = this.device.getLovDataByteSize() - Math.abs(this.device.getDataBlockSize(InputTypes.SERIAL_IO));
+					int size2Read = this.simDevice.getLovDataByteSize() - Math.abs(this.simDevice.getDataBlockSize(InputTypes.SERIAL_IO));
 					if (data_in.read(new byte[size2Read]) != size2Read) {
 						log.log(Level.WARNING, "expected byte size to  read does not macht really red size of bytes !");
 					}
-					if (this.device.getName().toLowerCase().contains("4010duo")) {
-						byte[] tmpBuffer = new byte[ Math.abs(this.device.getDataBlockSize(InputTypes.SERIAL_IO))];
+					if (this.simDevice.getName().toLowerCase().contains("4010duo")) {
+						byte[] tmpBuffer = new byte[ Math.abs(this.simDevice.getDataBlockSize(InputTypes.SERIAL_IO))];
 						System.arraycopy(readBuffer, 5, tmpBuffer, 0, tmpBuffer.length-5);
 						System.arraycopy(tmpBuffer, 0, readBuffer, 0, tmpBuffer.length);						
 					}
@@ -293,7 +297,8 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 	/* (non-Javadoc)
 	 * @see gde.serial.IDeviceSerialPort#read(byte[], int, boolean)
 	 */
-	public byte[] read(byte[] readBuffer, int timeout_msec, boolean checkFailedQuery) throws IOException, FailedQueryException, TimeOutException {
+	@Override
+	public synchronized byte[] read(byte[] readBuffer, int timeout_msec, boolean checkFailedQuery) throws IOException, FailedQueryException, TimeOutException {
 		byte[] resultBuffer = new byte[0];
 		try {
 			wait4Bytes(1000);
@@ -336,11 +341,12 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 	/* (non-Javadoc)
 	 * @see gde.serial.IDeviceSerialPort#read(byte[], int, int)
 	 */
+	@Override
 	public byte[] read(byte[] readBuffer, int timeout_msec, int stableIndex) throws IOException, TimeOutException {
 		byte[] resultBuffer = new byte[0];
-		byte leader = (byte) this.device.getDataBlockLeader().charAt(0);
-		byte[] lineEnding = this.device.getDataBlockEnding();
-		boolean isNextGen = this.device.getName().startsWith("next");
+		byte leader = (byte) this.simDevice.getDataBlockLeader().charAt(0);
+		byte[] lineEnding = this.simDevice.getDataBlockEnding();
+		boolean isNextGen = this.simDevice.getName().startsWith("next");
 		try {
 			waitForStableReceiveBuffer(readBuffer.length, timeout_msec, 100);
 		}
@@ -374,7 +380,7 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 						}
 					}
 					
-					int size2Read = this.device.getLovDataByteSize() - Math.abs(this.device.getDataBlockSize(InputTypes.SERIAL_IO));
+					int size2Read = this.simDevice.getLovDataByteSize() - Math.abs(this.simDevice.getDataBlockSize(InputTypes.SERIAL_IO));
 					byte[] tmpBuffer = new byte[size2Read > 0 ? size2Read : 0];
 					if (data_in.read(tmpBuffer) != size2Read) {
 						//end of file reached
@@ -389,7 +395,7 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 					this.close();
 				}
 
-				if (this.device.getDataBlockLeader().length() > 0) {
+				if (this.simDevice.getDataBlockLeader().length() > 0) {
 					if (isNextGen)
 						while (tmpVector.size() > 2 && (tmpVector.get(0) != '1' || tmpVector.get(0) != '2') && tmpVector.get(1) != ':')
 							tmpVector.remove(0);
@@ -413,7 +419,7 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 				if (this.fileType.equals(GDE.FILE_ENDING_STAR_TXT)) {
 					String line;
 					while ((line = txt_in.readLine()) != null) {
-						if (line.length() >= device.getDataBlockSize(FormatTypes.BYTE)) {
+						if (line.length() >= simDevice.getDataBlockSize(FormatTypes.BYTE)) {
 							readBuffer = (line+"\r\n").getBytes();
 							break;
 						}	
@@ -483,6 +489,7 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 	/* (non-Javadoc)
 	 * @see gde.serial.IDeviceSerialPort#read(byte[], int, java.util.Vector)
 	 */
+	@Override
 	public byte[] read(byte[] readBuffer, int timeout_msec, Vector<Long> waitTimes) throws IOException, TimeOutException {
 		try {
 			wait4Bytes(readBuffer.length, timeout_msec);
@@ -493,7 +500,7 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 		if (this.isConnected) {
 			if (data_in != null && this.fileType.equals(GDE.FILE_ENDING_STAR_LOV)) {
 				if (data_in.read(readBuffer) > 0) {
-					int size2Read = this.device.getLovDataByteSize() - Math.abs(this.device.getDataBlockSize(InputTypes.FILE_IO));
+					int size2Read = this.simDevice.getLovDataByteSize() - Math.abs(this.simDevice.getDataBlockSize(InputTypes.FILE_IO));
 					if (data_in.read(new byte[size2Read]) != size2Read) {
 						log.log(Level.WARNING, "expected byte size to  read does not macht really red size of bytes !");
 					}
@@ -565,6 +572,7 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 	 * @param writeBuffer writes size of writeBuffer to output stream
 	 * @throws IOException
 	 */
+	@Override
 	public void write(byte[] writeBuffer) throws IOException {
 		//log.log(Level.WARNING, "write() not supported in simulation");
 	}
@@ -575,6 +583,7 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 	 * @param writeBuffer writes size of writeBuffer to output stream
 	 * @throws IOException
 	 */
+	@Override
 	public synchronized void write(byte[] writeBuffer, long gap_ms) throws IOException {
 		log.log(Level.WARNING, "write() not supported in simulation");
 	}
@@ -584,6 +593,7 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 	 * @return number of bytes in receive buffer which get removed
 	 * @throws IOException
 	 */
+	@Override
 	public int cleanInputStream() throws IOException {
 		log.log(Level.WARNING, "cleanInputStream() not supported in simulation");
 		return 0;
@@ -592,6 +602,7 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 	/* (non-Javadoc)
 	 * @see gde.serial.IDeviceSerialPort#wait4Bytes(int)
 	 */
+	@Override
 	public long wait4Bytes(int timeout_msec) throws InterruptedException, TimeOutException, IOException {
 		WaitTimer.delay(getWaitTime());
 		return 0;
@@ -600,6 +611,7 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 	/* (non-Javadoc)
 	 * @see gde.serial.IDeviceSerialPort#wait4Bytes(int, int)
 	 */
+	@Override
 	public int wait4Bytes(int numBytes, int timeout_msec) throws IOException {
 		WaitTimer.delay(getWaitTime());
 		return numBytes;
@@ -608,6 +620,7 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 	/* (non-Javadoc)
 	 * @see gde.serial.IDeviceSerialPort#waitForStableReceiveBuffer(int, int, int)
 	 */
+	@Override
 	public int waitForStableReceiveBuffer(int expectedBytes, int timeout_msec, int stableIndex) throws InterruptedException, TimeOutException, IOException {
 		WaitTimer.delay(getWaitTime());
 		return expectedBytes;
@@ -616,6 +629,7 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 	/* (non-Javadoc)
 	 * @see gde.serial.IDeviceSerialPort#waitForStableReceiveBuffer(int, int, int)
 	 */
+	@Override
 	public int getAvailableBytes() throws IOException {
 		return this.isConnected ? 20 : 0;
 	}
@@ -624,6 +638,7 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 	 * query if the port is already open
 	 * @return
 	 */
+	@Override
 	public boolean isConnected() {
 		return this.isConnected;
 	}
@@ -631,6 +646,7 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 	/**
 	 * @return number of transfer errors occur
 	 */
+	@Override
 	public int getXferErrors() {
 		return this.xferErrors;
 	}
@@ -638,6 +654,7 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 	/**
 	 * add up transfer errors
 	 */
+	@Override
 	public void addXferError() {
 		this.xferErrors++;
 	}
@@ -645,6 +662,7 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 	/**
 	 * @return number of timeout errors occur
 	 */
+	@Override
 	public int getTimeoutErrors() {
 		return this.timeoutErrors;
 	}
@@ -652,6 +670,7 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 	/**
 	 * add up timeout errors
 	 */
+	@Override
 	public void addTimeoutError() {
 		this.timeoutErrors++;
 	}
@@ -661,6 +680,7 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 	 * @param newSerialPortStr
 	 * @return true if given port string matches one of the available once
 	 */
+	@Override
 	public boolean isMatchAvailablePorts(String newSerialPortStr) {
 		return true;
 	}
@@ -683,10 +703,12 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 		return sleepTime;
 	}
 
+	@Override
 	public byte[] read(byte[] readBuffer, int timeout_msec, int stableIndex, int minCountBytes) throws IOException, TimeOutException {
 		return null;
 	}
 
+	@Override
 	public int waitForStableReceiveBuffer(int expectedBytes, int timeout_msec, int stableIndex, int minCount) throws InterruptedException, TimeOutException, IOException {
 		return 0;
 	}
@@ -698,6 +720,7 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
    * @return
    * @throws UsbException
    */
+	@Override
 	public Set<UsbDevice> findUsbDevices(final short vendorId, final short productId) throws UsbException {
 		return null;
 	}
@@ -709,6 +732,7 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 	 * @param productId
 	 * @return
 	 */
+	@Override
 	public Set<UsbDevice> findDevices(UsbHub hub, short vendorId, short productId) {
 		return null;
 	}
@@ -720,6 +744,7 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 	 * @param productId
 	 * @throws UsbException
 	 */
+	@Override
 	public void dumpUsbDevices(final short vendorId, final short productId) throws UsbException {
 		//no explicit return result
 	}
@@ -731,6 +756,7 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 	 * @throws UsbClaimException
 	 * @throws UsbException
 	 */
+	@Override
 	public UsbInterface openUsbPort(final IDevice activeDevice) throws UsbClaimException, UsbException {
 		try {
 			return (UsbInterface) this.open();
@@ -748,26 +774,28 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 	 * @throws UsbClaimException
 	 * @throws UsbException
 	 */
+	@Override
 	public DeviceHandle openLibUsbPort(final IDevice activeDevice) throws LibUsbException, UsbException {
 		try {
-			if (this.application != null) {
+			if (this.simApplication != null) {
 				GDE.display.syncExec(new Runnable() {
+					@Override
 					public void run() {
 						String path;
-						if (application.isObjectoriented()) {
-							path = application.getObjectFilePath();
+						if (simApplication.isObjectoriented()) {
+							path = simApplication.getObjectFilePath();
 						}
 						else {
-							String devicePath = application.getActiveDevice() != null ? GDE.STRING_FILE_SEPARATOR_UNIX + application.getActiveDevice().getName() : GDE.STRING_EMPTY;
-							path = application.getActiveDevice() != null ? settings.getDataFilePath() + devicePath + GDE.STRING_FILE_SEPARATOR_UNIX : settings.getDataFilePath();
+							String devicePath = simApplication.getActiveDevice() != null ? GDE.STRING_FILE_SEPARATOR_UNIX + simApplication.getActiveDevice().getName() : GDE.STRING_EMPTY;
+							path = simApplication.getActiveDevice() != null ? simSettings.getDataFilePath() + devicePath + GDE.STRING_FILE_SEPARATOR_UNIX : simSettings.getDataFilePath();
 							if (!FileUtils.checkDirectoryAndCreate(path)) {
 								if (!FileUtils.checkDirectoryExist(path)) 
-									application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGI0056, new Object[] { path }));
+									simApplication.openMessageDialog(Messages.getString(MessageIds.GDE_MSGI0056, new Object[] { path }));
 								else
-									application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGI0012, new Object[] { path }));
+									simApplication.openMessageDialog(Messages.getString(MessageIds.GDE_MSGI0012, new Object[] { path }));
 							}
 						}
-						FileDialog openFileDialog = application.openFileOpenDialog("Open File used as simulation input", new String[] { GDE.FILE_ENDING_STAR_LOV, GDE.FILE_ENDING_STAR_TXT,
+						FileDialog openFileDialog = simApplication.openFileOpenDialog("Open File used as simulation input", new String[] { GDE.FILE_ENDING_STAR_LOV, GDE.FILE_ENDING_STAR_TXT,
 								GDE.FILE_ENDING_STAR_LOG }, path, null, SWT.SINGLE);
 						if (openFileDialog.getFileName().length() > 4) {
 							String openFilePath = (openFileDialog.getFilterPath() + GDE.STRING_FILE_SEPARATOR_UNIX + openFileDialog.getFileName()).replace(GDE.CHAR_FILE_SEPARATOR_WINDOWS, GDE.CHAR_FILE_SEPARATOR_UNIX);
@@ -792,14 +820,14 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 									txt_in = new BufferedReader(new InputStreamReader(new FileInputStream(openFilePath), "ISO-8859-1")); //$NON-NLS-1$
 								}
 								else
-									application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGI0008) + openFilePath);
+									simApplication.openMessageDialog(Messages.getString(MessageIds.GDE_MSGI0008) + openFilePath);
 							}
 							catch (Exception e) {
 								log.log(Level.SEVERE, e.getMessage(), e);
 							}
 						}
 						isConnected = data_in != null || txt_in != null;
-						application.setPortConnected(isConnected);
+						simApplication.setPortConnected(isConnected);
 					}
 				});
 			}
@@ -816,6 +844,7 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 	 * @throws UsbClaimException
 	 * @throws UsbException
 	 */
+	@Override
 	public void closeUsbPort(final UsbInterface usbInterface) throws UsbClaimException, UsbException {
 		this.close();
 	}
@@ -827,6 +856,7 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 	 * @throws UsbClaimException
 	 * @throws UsbException
 	 */
+	@Override
 	public void closeLibUsbPort(final DeviceHandle libUsbDeviceHanlde, boolean cacheSelectedUsbDevice) throws LibUsbException, UsbException {
 		this.close();
 	}
@@ -842,6 +872,7 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 	 * @throws UsbDisconnectedException
 	 * @throws UsbException
 	 */
+	@Override
 	public int write(final UsbInterface iface, final byte endpointAddress, final byte[] data) throws UsbNotActiveException, UsbNotClaimedException, UsbDisconnectedException, UsbException {
 		return 0;
 	}
@@ -857,6 +888,7 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 	 * @throws UsbDisconnectedException
 	 * @throws UsbException
 	 */
+	@Override
 	public int read(final UsbInterface iface, final byte endpointAddress, byte[] data) throws UsbNotActiveException, UsbNotClaimedException, UsbDisconnectedException, UsbException {
 		return 0;
 	}
@@ -873,6 +905,7 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 	 * @throws UsbDisconnectedException
 	 * @throws UsbException
 	 */
+	@Override
 	public int read(final UsbInterface iface, final byte endpointAddress, final byte[] data, final int timeout_msec) throws UsbNotActiveException, UsbNotClaimedException, UsbDisconnectedException, UsbException {
 		try {
 			return (read(data, timeout_msec)).length;
@@ -892,7 +925,8 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
    * @throws IllegalStateException while handle not initialized
    * @throws TimeOutException while data transmission failed
    */
-  public void write(final DeviceHandle handle, final byte outEndpoint, final byte[] data, final long timeout_ms) throws IllegalStateException, TimeOutException {
+  @Override
+	public void write(final DeviceHandle handle, final byte outEndpoint, final byte[] data, final long timeout_ms) throws IllegalStateException, TimeOutException {
   	return;
   } 
 
@@ -906,7 +940,8 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
    * @throws IllegalStateException while handle not initialized
    * @throws TimeOutException while data transmission failed
    */
-  public int read(final DeviceHandle handle, final byte inEndpoint, final byte[] data, final long timeout_ms) throws IllegalStateException, TimeOutException {
+  @Override
+	public int read(final DeviceHandle handle, final byte inEndpoint, final byte[] data, final long timeout_ms) throws IllegalStateException, TimeOutException {
 		try {
 			wait4Bytes((int) timeout_ms);
 		}
@@ -927,12 +962,12 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 			try {
 				if (data_in != null && this.fileType.equals(GDE.FILE_ENDING_STAR_LOV)) {
 					if (data_in.read(readBuffer) > 0) {
-						int size2Read = this.device.getLovDataByteSize() - Math.abs(this.device.getDataBlockSize(InputTypes.SERIAL_IO));
+						int size2Read = this.simDevice.getLovDataByteSize() - Math.abs(this.simDevice.getDataBlockSize(InputTypes.SERIAL_IO));
 						if (data_in.read(new byte[size2Read]) != size2Read) {
 							log.log(Level.WARNING, "expected byte size to  read does not macht really red size of bytes !");
 						}
-						if (this.device.getName().toLowerCase().contains("icharger")) {
-							byte[] tmpBuffer = new byte[ Math.abs(this.device.getDataBlockSize(InputTypes.SERIAL_IO))];
+						if (this.simDevice.getName().toLowerCase().contains("icharger")) {
+							byte[] tmpBuffer = new byte[ Math.abs(this.simDevice.getDataBlockSize(InputTypes.SERIAL_IO))];
 							System.arraycopy(readBuffer, 5, tmpBuffer, 0, tmpBuffer.length-5);
 							System.arraycopy(tmpBuffer, 0, readBuffer, 0, tmpBuffer.length);	
 							int timeStamp = DataParser.parse2Int(readBuffer, 3);
@@ -962,7 +997,7 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 					}
 				}
 			} catch (Exception e) {
-				
+				//ignore
 			}
 		}
 		System.arraycopy(readBuffer, 0, data, 0, data.length);

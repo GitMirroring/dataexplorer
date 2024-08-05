@@ -66,8 +66,8 @@ public final class Channels extends HashMap<Integer, Channel> {
 	public static Channels getInstance() {
 		if (Channels.channles == null) {
 			Channels.channles = new Channels(4);
-			// synchronize now to avoid a performance penalty in case of frequent getInstance calls
 			synchronized (Channels.class) {
+				// synchronize now to avoid a performance penalty in case of frequent getInstance calls
 			}
 		}
 		return Channels.channles;

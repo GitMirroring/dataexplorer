@@ -64,9 +64,9 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 	final static String										$CLASS_NAME								= DeviceTcpPortImpl.class.getName();
 	final static Logger										log												= Logger.getLogger(DeviceTcpPortImpl.$CLASS_NAME);
 
-	final protected DeviceConfiguration		deviceConfig;
-	final protected DataExplorer					application;
-	final Settings												settings;
+	final protected DeviceConfiguration		tcpDeviceConfig;
+	final protected DataExplorer					tcpApplication;
+	final Settings												tcpSettings;
 	protected Socket											socket										= null;
 	protected int													xferErrors								= 0;
 	protected int													queryErrors								= 0;
@@ -85,18 +85,18 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 	 * @param currentApplication
 	 */
 	public DeviceTcpPortImpl(DeviceConfiguration currentDeviceConfig, DataExplorer currentApplication) {
-		this.deviceConfig = currentDeviceConfig;
-		this.application = currentApplication;
-		this.settings = Settings.getInstance();
+		this.tcpDeviceConfig = currentDeviceConfig;
+		this.tcpApplication = currentApplication;
+		this.tcpSettings = Settings.getInstance();
 	}
 	
 	/**
 	 * constructor for test purpose only, do not use within DataExplorer
 	 */
 	public DeviceTcpPortImpl() {
-		this.deviceConfig = null;
-		this.application = null;
-		this.settings = null;
+		this.tcpDeviceConfig = null;
+		this.tcpApplication = null;
+		this.tcpSettings = null;
 	}
 
 	/**
@@ -105,19 +105,20 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 	 * @throws ApplicationConfigurationException
 	 * @throws SerialPortException
 	 */
+	@Override
 	public Socket open() throws ApplicationConfigurationException, SerialPortException {
 		final String $METHOD_NAME = "open"; //$NON-NLS-1$
 		this.xferErrors = this.timeoutErrors = 0;
 		// Initialize tcp port
 		try {
 
-			this.tcpPortType = this.deviceConfig.getTcpPortType();
+			this.tcpPortType = this.tcpDeviceConfig.getTcpPortType();
 
 			// check if the TCP port type contains required data
 			if (this.tcpPortType == null || this.tcpPortType.getAddress().contains(".") || this.tcpPortType.getPort().isEmpty()) {
 				String hostAddress = this.tcpPortType.getAddress();
-				int port = Integer.parseInt(this.tcpPortType.getPort());
-				this.socket = new Socket(hostAddress, port);
+				int tcpPort = Integer.parseInt(this.tcpPortType.getPort());
+				this.socket = new Socket(hostAddress, tcpPort);
 			}
 			else {
 				throw new ApplicationConfigurationException("checkout network configuration, host/address and port");
@@ -128,7 +129,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 			this.inputStream = this.socket.getInputStream();
 			this.outputStream = this.socket.getOutputStream();
 			this.isConnected = true;
-			if (this.application != null) this.application.setPortConnected(true);
+			if (this.tcpApplication != null) this.tcpApplication.setPortConnected(true);
 		}
 		catch (ApplicationConfigurationException e) {
 			log.logp(Level.SEVERE, DeviceJavaSerialCommPortImpl.$CLASS_NAME, $METHOD_NAME, e.getMessage(), e);
@@ -158,6 +159,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 	 * function to close the communication port
 	 * this is done within a tread since the port can't close if it stays open for a long time period ??
 	 */
+	@Override
 	public void close() {
 		if (this.socket != null) 
 			try {
@@ -180,7 +182,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 		};
 		
 		this.isConnected = false;
-		if (this.application != null) this.application.setPortConnected(false);
+		if (this.tcpApplication != null) this.tcpApplication.setPortConnected(false);
 
 	}
 
@@ -189,11 +191,12 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 	 * @param writeBuffer writes size of writeBuffer to output stream
 	 * @throws IOException
 	 */
+	@Override
 	public synchronized void write(byte[] writeBuffer) throws IOException {
 		final String $METHOD_NAME = "write"; //$NON-NLS-1$
 
 		try {
-			if (this.application != null) this.application.setSerialTxOn();
+			if (this.tcpApplication != null) this.tcpApplication.setSerialTxOn();
 			cleanInputStream();
 
 			this.outputStream.write(writeBuffer);
@@ -206,7 +209,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 			throw e;
 		}
 		finally {
-			if (this.application != null) this.application.setSerialTxOff();
+			if (this.tcpApplication != null) this.tcpApplication.setSerialTxOff();
 		}
 	}
 
@@ -216,11 +219,12 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 	 * @param writeBuffer writes size of writeBuffer to output stream
 	 * @throws IOException
 	 */
+	@Override
 	public synchronized void write(byte[] writeBuffer, long gap_ms) throws IOException {
 		final String $METHOD_NAME = "write"; //$NON-NLS-1$
 
 		try {
-			if (this.application != null) this.application.setSerialTxOn();
+			if (this.tcpApplication != null) this.tcpApplication.setSerialTxOn();
 			cleanInputStream();
 
 			for (int i = 0; i < writeBuffer.length; i++) {
@@ -238,7 +242,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 			throw e;
 		}
 		finally {
-			if (this.application != null) this.application.setSerialTxOff();
+			if (this.tcpApplication != null) this.tcpApplication.setSerialTxOff();
 		}
 	}
 
@@ -247,6 +251,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 	 * @return number of bytes in receive buffer which get removed
 	 * @throws IOException
 	 */
+	@Override
 	public int cleanInputStream() throws IOException {
 		final String $METHOD_NAME = "cleanInputStream"; //$NON-NLS-1$
 		int num = 0;
@@ -265,6 +270,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 	 * @throws IOException
 	 * @throws TimeOutException
 	 */
+	@Override
 	public synchronized byte[] read(byte[] readBuffer, int timeout_msec) throws IOException, TimeOutException {
 		final String $METHOD_NAME = "read"; //$NON-NLS-1$
 		int sleepTime = 2 ; // ms
@@ -273,7 +279,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 		int timeOutCounter = timeout_msec / (sleepTime + 18); //18 ms read blocking time
 
 		try {
-			if (this.application != null) this.application.setSerialRxOn();
+			if (this.tcpApplication != null) this.tcpApplication.setSerialRxOn();
 			wait4Bytes(bytes, timeout_msec - (timeout_msec / 5));
 
 
@@ -303,7 +309,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 			throw e;
 		}
 		finally {
-			if (this.application != null) this.application.setSerialRxOff();
+			if (this.tcpApplication != null) this.tcpApplication.setSerialRxOff();
 		}
 		return readBuffer;
 	}
@@ -317,6 +323,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 	 * @throws IOException
 	 * @throws TimeOutException
 	 */
+	@Override
 	public synchronized byte[] read(byte[] readBuffer, int timeout_msec, boolean checkFailedQuery) throws IOException, FailedQueryException, TimeOutException {
 		final String $METHOD_NAME = "read"; //$NON-NLS-1$
 		int sleepTime = 10; // ms
@@ -325,7 +332,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 		int timeOutCounter = timeout_msec / (sleepTime + 18); //18 ms read blocking time
 
 		try {
-			if (this.application != null) this.application.setSerialRxOn();
+			if (this.tcpApplication != null) this.tcpApplication.setSerialRxOn();
 			WaitTimer.delay(2);
 
 			//loop inputStream and read available bytes
@@ -360,7 +367,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 			throw e;
 		}
 		finally {
-			if (this.application != null) this.application.setSerialRxOff();
+			if (this.tcpApplication != null) this.tcpApplication.setSerialRxOff();
 		}
 		return readBuffer;
 	}
@@ -375,6 +382,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 	 * @throws IOException
 	 * @throws TimeOutException
 	 */
+	@Override
 	public synchronized byte[] read(byte[] readBuffer, int timeout_msec, Vector<Long> waitTimes) throws IOException, TimeOutException {
 		final String $METHOD_NAME = "read"; //$NON-NLS-1$
 		int sleepTime = 4; // ms
@@ -383,7 +391,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 		int timeOutCounter = timeout_msec / sleepTime;
 
 		try {
-			if (this.application != null) this.application.setSerialRxOn();
+			if (this.tcpApplication != null) this.tcpApplication.setSerialRxOn();
 			long startTime_ms = new Date().getTime();
 			wait4Bytes(timeout_msec);
 
@@ -415,7 +423,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 			log.logp(Level.WARNING, DeviceTcpPortImpl.$CLASS_NAME, $METHOD_NAME, e.getMessage(), e);
 		}
 		finally {
-			if (this.application != null) this.application.setSerialRxOff();
+			if (this.tcpApplication != null) this.tcpApplication.setSerialRxOff();
 		}
 		return readBuffer;
 	}
@@ -427,6 +435,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 	 * @throws TimeOutException 
 	 * @throws IOException 
 	 */
+	@Override
 	public long wait4Bytes(int timeout_msec) throws InterruptedException, TimeOutException, IOException {
 		final String $METHOD_NAME = "wait4Bytes"; //$NON-NLS-1$
 		int sleepTime = 1;
@@ -453,6 +462,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 	 * @throws InterruptedException 
 	 * @throws IOException 
 	 */
+	@Override
 	public int wait4Bytes(int numBytes, int timeout_msec) throws IOException {
 		final String $METHOD_NAME = "wait4Bytes"; //$NON-NLS-1$
 		int sleepTime = 1; // msec
@@ -483,6 +493,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 	 * @throws IOException
 	 * @throws TimeOutException
 	 */
+	@Override
 	public synchronized byte[] read(byte[] readBuffer, int timeout_msec, int stableIndex) throws IOException, TimeOutException {
 		final String $METHOD_NAME = "read"; //$NON-NLS-1$
 		int sleepTime = 4; // ms
@@ -495,7 +506,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 		}
 
 		try {
-			if (this.application != null) this.application.setSerialRxOn();
+			if (this.tcpApplication != null) this.tcpApplication.setSerialRxOn();
 
 			numAvailableBytes = waitForStableReceiveBuffer(numAvailableBytes, timeout_msec, stableIndex);
 			//adapt readBuffer, available bytes more than expected
@@ -540,7 +551,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 			log.logp(Level.WARNING, DeviceTcpPortImpl.$CLASS_NAME, $METHOD_NAME, e.getMessage(), e);
 		}
 		finally {
-			if (this.application != null) this.application.setSerialRxOff();
+			if (this.tcpApplication != null) this.tcpApplication.setSerialRxOff();
 		}
 		return readBuffer;
 	}
@@ -556,6 +567,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 	 * @throws IOException
 	 * @throws TimeOutException
 	 */
+	@Override
 	public synchronized byte[] read(byte[] readBuffer, int timeout_msec, int stableIndex, int minCountBytes) throws IOException, TimeOutException {
 		final String $METHOD_NAME = "read"; //$NON-NLS-1$
 		int sleepTime = 4; // ms
@@ -567,7 +579,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 		}
 
 		try {
-			if (this.application != null) this.application.setSerialRxOn();
+			if (this.tcpApplication != null) this.tcpApplication.setSerialRxOn();
 
 			expectedBytes = waitForStableReceiveBuffer(expectedBytes, timeout_msec, stableIndex, minCountBytes);
 
@@ -608,7 +620,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 			log.logp(Level.WARNING, DeviceTcpPortImpl.$CLASS_NAME, $METHOD_NAME, e.getMessage(), e);
 		}
 		finally {
-			if (this.application != null) this.application.setSerialRxOff();
+			if (this.tcpApplication != null) this.tcpApplication.setSerialRxOff();
 		}
 		return readBuffer;
 	}
@@ -623,6 +635,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 	 * @throws TimeOutException 
 	 * @throws IOException 
 	 */
+	@Override
 	public int waitForStableReceiveBuffer(int expectedBytes, int timeout_msec, int stableIndex) throws InterruptedException, TimeOutException, IOException {
 		final String $METHOD_NAME = "waitForStableReceiveBuffer"; //$NON-NLS-1$
 		int sleepTime = 1; // ms
@@ -671,6 +684,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 	 * @throws TimeOutException 
 	 * @throws IOException 
 	 */
+	@Override
 	public int waitForStableReceiveBuffer(int expectedBytes, int timeout_msec, int stableIndex, int minCount) throws InterruptedException, TimeOutException, IOException {
 		final String $METHOD_NAME = "waitForStableReceiveBuffer"; //$NON-NLS-1$
 		int sleepTime = 1; // ms
@@ -725,6 +739,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 	 * @return number of bytes available on input stream
 	 * @throws IOException
 	 */
+	@Override
 	public int getAvailableBytes() throws IOException {
 		return this.inputStream.available();
 	}
@@ -737,6 +752,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 		return this.outputStream;
 	}
 
+	@Override
 	public boolean isConnected() {
 		return this.isConnected;
 	}
@@ -751,6 +767,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 	/**
 	 * @return number of transfer errors
 	 */
+	@Override
 	public int getXferErrors() {
 		return this.xferErrors;
 	}
@@ -758,6 +775,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 	/**
 	 * add up transfer errors
 	 */
+	@Override
 	public void addXferError() {
 		this.xferErrors++;
 	}
@@ -765,6 +783,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 	/**
 	 * add up timeout errors
 	 */
+	@Override
 	public void addTimeoutError() {
 		this.timeoutErrors++;
 	}
@@ -772,6 +791,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 	/**
 	 * @return number of timeout errors 
 	 */
+	@Override
 	public int getTimeoutErrors() {
 		return this.timeoutErrors;
 	}
@@ -828,6 +848,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
    * @return
    * @throws UsbException
    */
+	@Override
 	public Set<UsbDevice> findUsbDevices(final short vendorId, final short productId) throws UsbException {
 		return null;
 	}
@@ -839,6 +860,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 	 * @param productId
 	 * @return
 	 */
+	@Override
 	public Set<UsbDevice> findDevices(UsbHub hub, short vendorId, short productId) {
 		return null;
 	}
@@ -850,6 +872,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 	 * @param productId
 	 * @throws UsbException
 	 */
+	@Override
 	public void dumpUsbDevices(final short vendorId, final short productId) throws UsbException {
 		//no explicit return result
 	}
@@ -861,6 +884,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 	 * @throws UsbClaimException
 	 * @throws UsbException
 	 */
+	@Override
 	public UsbInterface openUsbPort(final IDevice activeDevice) throws UsbClaimException, UsbException {
 		return null;
 	}
@@ -872,6 +896,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 	 * @throws UsbClaimException
 	 * @throws UsbException
 	 */
+	@Override
 	public DeviceHandle openLibUsbPort(final IDevice activeDevice) throws LibUsbException, UsbException {
 		return null;
 	}
@@ -882,6 +907,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 	 * @throws UsbClaimException
 	 * @throws UsbException
 	 */
+	@Override
 	public void closeUsbPort(final UsbInterface usbInterface) throws UsbClaimException, UsbException {
 		//no explicit return result
 	}
@@ -893,6 +919,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 	 * @throws UsbClaimException
 	 * @throws UsbException
 	 */
+	@Override
 	public void closeLibUsbPort(final DeviceHandle libUsbDeviceHanlde, boolean cacheSelectedUsbDevice) throws LibUsbException, UsbException {
 		//no explicit return result
 	}
@@ -908,6 +935,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 	 * @throws UsbDisconnectedException
 	 * @throws UsbException
 	 */
+	@Override
 	public int write(final UsbInterface iface, final byte endpointAddress, final byte[] data) throws UsbNotActiveException, UsbNotClaimedException, UsbDisconnectedException, UsbException {
 		return 0;
 	}
@@ -923,6 +951,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 	 * @throws UsbDisconnectedException
 	 * @throws UsbException
 	 */
+	@Override
 	public int read(final UsbInterface iface, final byte endpointAddress, final byte[] data) throws UsbNotActiveException, UsbNotClaimedException, UsbDisconnectedException, UsbException {
 		return 0;
 	}
@@ -939,6 +968,7 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
 	 * @throws UsbDisconnectedException
 	 * @throws UsbException
 	 */
+	@Override
 	public int read(final UsbInterface iface, final byte endpointAddress, final byte[] data, final int timeout_msec) throws UsbNotActiveException, UsbNotClaimedException, UsbDisconnectedException, UsbException {
 		return 0;
 	}
@@ -952,7 +982,8 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
    * @throws IllegalStateException while handle not initialized
    * @throws TimeOutException while data transmission failed
    */
-  public void write(final DeviceHandle handle, final byte outEndpoint, final byte[] data, final long timeout_ms) throws IllegalStateException, TimeOutException {
+  @Override
+	public void write(final DeviceHandle handle, final byte outEndpoint, final byte[] data, final long timeout_ms) throws IllegalStateException, TimeOutException {
   	return;
   } 
 
@@ -966,7 +997,8 @@ public class DeviceTcpPortImpl extends DeviceCommPort implements IDeviceCommPort
    * @throws IllegalStateException while handle not initialized
    * @throws TimeOutException while data transmission failed
    */
-  public int read(final DeviceHandle handle, final byte inEndpoint, final byte[] data, final long timeout_ms) throws IllegalStateException, TimeOutException {
+  @Override
+	public int read(final DeviceHandle handle, final byte inEndpoint, final byte[] data, final long timeout_ms) throws IllegalStateException, TimeOutException {
   	return 0;
   }
 
