@@ -225,8 +225,10 @@ public final class GraphicsComposite extends AbstractChartComposite {
 
 	private final AbstractChartData	chartData	= new AbstractChartData();
 	
+	final 	Rectangle 							monitorBounds 					= GDE.display.getPrimaryMonitor().getBounds();
 	private Shell 									measurePopUp;
 	private StyledText							styledText;
+	int															lastXPositionMeasure		= Integer.MAX_VALUE;
 
 
 	GraphicsComposite(SashForm useParent, CTabItem parentWindow) {
@@ -666,10 +668,13 @@ public final class GraphicsComposite extends AbstractChartComposite {
 	}
 	
 	public void callMeasurePopUp(long timestamp_ms) {
+		boolean isCreated = false;
 		if (measurePopUp == null || (measurePopUp != null && measurePopUp.isDisposed())) {
 			measurePopUp = new Shell(GDE.shell, SWT.NO_TRIM | SWT.MODELESS);
 			measurePopUp.setParent(this);
 			measurePopUp.setLayout(new FillLayout());
+			measurePopUp.setAlpha(200);
+			isCreated = true;
 		}
 		if (styledText == null || (styledText != null && styledText.isDisposed())) {
 			styledText = new StyledText(measurePopUp, SWT.NONE);
@@ -678,21 +683,29 @@ public final class GraphicsComposite extends AbstractChartComposite {
 			styledText.setFont(SWTResourceManager.getFont("Courier New", GDE.WIDGET_FONT_SIZE + 1, SWT.BOLD));
 		}
 
-		TrailRecordSetFormatter.setSelectedMeasurementsAsTable4PopUp(styledText, timestamp_ms);
-		
-		measurePopUp.setAlpha(200);
-		measurePopUp.pack();
-		measurePopUp.open();
-		
-		int locationX = GDE.shell.getLocation().x + (GDE.shell.getBounds().width - this.getBounds().width) + this.timeLine.getCurveAreaBounds().x + GraphicsMeasuring.xPosMeasure + 20;
-		int locationY = GDE.shell.getLocation().y + this.application.getTabFolder().getLocation().y + this.graphicsHeader.getBounds().height + GraphicsMeasuring.yPosMeasure + 18;
-		locationY = locationY < 0 ? GDE.shell.getLocation().y + this.application.getTabFolder().getLocation().y + this.graphicsHeader.getBounds().height + this.graphicCanvas.getBounds().height/2 : locationY;
+		if (GraphicsMeasuring.xPosMeasure != lastXPositionMeasure) {
+			TrailRecordSetFormatter.setSelectedMeasurementsAsTable4PopUp(styledText, timestamp_ms);
+			
+			measurePopUp.pack();
+			
+			int locationX = GDE.shell.getLocation().x + (GDE.shell.getBounds().width - this.getBounds().width) + this.timeLine.getCurveAreaBounds().x + GraphicsMeasuring.xPosMeasure + 20;
+			locationX = (locationX + measurePopUp.getBounds().width) > monitorBounds.width ? locationX - 30 - measurePopUp.getBounds().width : locationX;
+	
+			int locationY = GDE.shell.getLocation().y + this.application.getTabFolder().getLocation().y + this.graphicsHeader.getBounds().height + GraphicsMeasuring.yPosMeasure + 18;
+			locationY = locationY < 0 ? GDE.shell.getLocation().y + this.application.getTabFolder().getLocation().y + this.graphicsHeader.getBounds().height + this.graphicCanvas.getBounds().height/2 : locationY;
+	
+			measurePopUp.setLocation(locationX, locationY);
+			
+			if (isCreated) {
+				measurePopUp.getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						measurePopUp.open();
+					}
+				});
+			}
+			lastXPositionMeasure = GraphicsMeasuring.xPosMeasure;
+		}
 
-		//System.out.println("set x " + GDE.shell.getLocation().x+" "+(GDE.shell.getBounds().width - this.getBounds().width)+" "+ this.timeLine.getCurveAreaBounds().x+" "+ GraphicsMeasuring.xPosMeasure + " = " + locationX);
-		//System.out.println("set y " + GDE.shell.getLocation().y+" "+this.application.getTabFolder().getLocation().y+" "+this.graphicsHeader.getBounds().height+" "+ GraphicsMeasuring.yPosMeasure + " = " + locationY);
-
-		measurePopUp.setLocation(locationX, locationY);
-		//System.out.println("set x,y " + measurePopUp.getLocation());
 	}
 	
 	public void cleanMeasurePopUp() {

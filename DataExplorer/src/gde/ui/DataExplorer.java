@@ -694,6 +694,13 @@ COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROU
 						if (log.isLoggable(Level.FINE))
 							log.logp(Level.FINE, $CLASS_NAME, "displayTab.controlRezised", "displayTab.bounds = " + DataExplorer.this.displayTab.getBounds()); //$NON-NLS-1$
 				    DataExplorer.this.displayTab.setBounds(0, menuCoolBarSize.y, shellSize.x, shellSize.y - menuCoolBarSize.y - statusBarSize.y);
+				    
+				    //clear measurement mode if resized
+						RecordSet recordSet = Channels.getInstance().getActiveChannel().getActiveRecordSet();
+						if (recordSet != null) recordSet.clearMeasurementModes();
+
+						if (DataExplorer.this.compareSet != null)
+							DataExplorer.this.compareSet.clearMeasurementModes();
 					}
 				}
 			});

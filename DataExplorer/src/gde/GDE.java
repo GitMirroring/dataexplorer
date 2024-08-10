@@ -106,7 +106,7 @@ public class GDE {
 	private static boolean									isWithUi													= false;
 
 	// ****** begin global constants section *******
-	public static final String							VERSION														= "Version 3.9.1 beta 6"; // check device update list in settings getServiceUpdateList()																						//$NON-NLS-1$
+	public static final String							VERSION														= "Version 3.9.1 beta 7"; // check device update list in settings getServiceUpdateList()																						//$NON-NLS-1$
 	public static final int									VERSION_NUMBER										= GDE.VERSION.contains("beta") 
 															? Integer.parseInt(GDE.VERSION.substring(8, 8+5).replace(GDE.STRING_DOT, GDE.STRING_EMPTY)) - 1
 															: Integer.parseInt(GDE.VERSION.substring(8, 8+5).replace(GDE.STRING_DOT, GDE.STRING_EMPTY));
@@ -708,7 +708,7 @@ public class GDE {
 		GC gc = new GC(image);
 		gc.drawImage(image, 0, 0);
 		gc.dispose();
-		final Shell splashShell = new Shell(GDE.shell, SWT.ON_TOP | SWT.BORDER);
+		final Shell splashShell = new Shell(GDE.shell, SWT.ON_TOP | SWT.BORDER | SWT.MODELESS);
 		final ProgressBar bar = new ProgressBar(splashShell, SWT.NONE);
 		bar.setMaximum(100);
 		final Label label = new Label(splashShell, SWT.NONE);

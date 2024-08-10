@@ -10,6 +10,7 @@ Generic changes/fixes
 	* SWT.jar for macOS Intel updated
 	* SWT.jar for Linux ARM updated
 	* update of SWT.jars require graphics context font definition while drawing scales
+	* open serial port with safety delay
 	
 Device specific changes/fixes
 	*

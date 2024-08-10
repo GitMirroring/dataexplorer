@@ -102,6 +102,7 @@ public class GraphicsComposite extends Composite {
 	final TimeLine						timeLine								= new TimeLine();
 	final SashForm						graphicSashForm;
 	final GraphicsType				graphicsType;
+	final Rectangle 					monitorBounds 					= GDE.display.getPrimaryMonitor().getBounds();
 
 	Menu											popupmenu;
 	TabAreaContextMenu				contextMenu;
@@ -778,7 +779,7 @@ public class GraphicsComposite extends Composite {
 		if (recordSet != null && recordSet.realSize() > 0) {
 
 			if (recordSet.isMeasurementMode(recordSet.getRecordKeyMeasurement()) || recordSet.isDeltaMeasurementMode(recordSet.getRecordKeyMeasurement()) || recordSet.isAvgMedianMeasurementMode(recordSet.getRecordKeyMeasurement())) {
-				drawMeasurePointer(evt.gc, recordSet, GraphicsMode.MEASURE, this.xPosMeasure != 0);
+				drawMeasurePointer(evt.gc, recordSet, GraphicsMode.MEASURE, true);
 			}
 			else if (this.isLeftCutMode) {
 				drawCutPointer(evt.gc, GraphicsMode.CUT_LEFT, true, false);
@@ -1406,7 +1407,8 @@ public class GraphicsComposite extends Composite {
 			break;
 		}
 		this.actualModeState = mode;
-		this.xPosMeasure = this.xPosDelta = 0;
+		this.xPosMeasure = this.curveAreaBounds.width / 4; //initial measurement position
+		this.xPosDelta = this.curveAreaBounds.width / 3 * 2;			
 		this.graphicCanvas.redraw();
 	}
 
@@ -1423,7 +1425,7 @@ public class GraphicsComposite extends Composite {
 	 * @param Point containing corrected x,y position value
 	 */
 	private Point checkCurveBounds(int xPos, int yPos) {
-		if (log.isLoggable(Level.FINER)) {
+		if (log.isLoggable(Level.FINEST)) {
 			log.log(Level.FINER, "in  xPos = " + xPos + " yPos = " + yPos); //$NON-NLS-1$ //$NON-NLS-2$
 			log.log(Level.FINER, "in  offSetX = " + offSetX + " offSetY = " + offSetY);
 		}
@@ -1439,7 +1441,7 @@ public class GraphicsComposite extends Composite {
 		if (tmpyPos < minY || tmpyPos > maxY) {
 			tmpyPos = tmpyPos < minY ? minY : maxY;
 		}
-		if (log.isLoggable(Level.FINER)) log.log(Level.FINER, "out xPos = " + tmpxPos + " yPos = " + tmpyPos); //$NON-NLS-1$ //$NON-NLS-2$
+		if (log.isLoggable(Level.FINEST)) log.log(Level.FINER, "out xPos = " + tmpxPos + " yPos = " + tmpyPos); //$NON-NLS-1$ //$NON-NLS-2$
 		return new Point(tmpxPos, tmpyPos);
 	}
 
@@ -1456,8 +1458,8 @@ public class GraphicsComposite extends Composite {
 				evt.y = point.y;
 
 				String measureRecordKey = recordSet.getRecordKeyMeasurement();
-				if (log.isLoggable(Level.FINER))
-					log.log(Level.FINER, String.format("xDown = %d, evt.x = %d, xLast = %d  -  yDown = %d, evt.y = %d, yLast = %d", this.xDown, evt.x, this.xLast, this.yDown, evt.y, this.yLast)); //$NON-NLS-1$
+				if (log.isLoggable(Level.FINEST))
+					log.log(Level.FINEST, String.format("xDown = %d, evt.x = %d, xLast = %d  -  yDown = %d, evt.y = %d, yLast = %d", this.xDown, evt.x, this.xLast, this.yDown, evt.y, this.yLast)); //$NON-NLS-1$
 
 				if ((evt.stateMask & SWT.NO_FOCUS) == SWT.NO_FOCUS) {
 					try {
@@ -2065,12 +2067,11 @@ public class GraphicsComposite extends Composite {
 			styledText.setStyleRanges(styleRanges.toArray(new StyleRange[0]));
 			measurePopUp.pack();
 
-			//System.out.println("set x " + GDE.shell.getLocation().x+" "+this.getParent().getChildren()[0].getBounds().width+" "+this.offSetX+" "+this.xPosMeasure + " = " + (GDE.shell.getLocation().x + this.getParent().getChildren()[0].getBounds().width + this.offSetX + this.xPosMeasure));
-			//System.out.println("set y " + GDE.shell.getLocation().y+" "+this.application.getTabFolder().getLocation().y+" "+this.offSetY+" "+this.graphicsHeader.getBounds().height+" "+this.yPosMeasure + " = " + (GDE.shell.getLocation().y + this.application.getTabFolder().getLocation().y + this.offSetY + this.graphicsHeader.getBounds().height + this.yPosMeasure));
 			log.log(Level.INFO, "set position measure pop-up");
-			measurePopUp.setLocation(GDE.shell.getLocation().x + this.getParent().getChildren()[0].getBounds().width + this.offSetX + this.xPosMeasure + 20,
-					GDE.shell.getLocation().y + this.application.getTabFolder().getLocation().y + this.offSetY + this.graphicsHeader.getBounds().height + this.yPosMeasure + (GDE.IS_LINUX ? 65 :25));
-			//System.out.println("result in " + measurePopUp.getLocation());
+			int popUpX = GDE.shell.getLocation().x + this.getParent().getChildren()[0].getBounds().width + this.offSetX + this.xPosMeasure + 20;
+			popUpX = (popUpX + measurePopUp.getBounds().width) > monitorBounds.width ? popUpX - 30 - measurePopUp.getBounds().width : popUpX;
+			int popUpY = GDE.shell.getLocation().y + this.application.getTabFolder().getLocation().y + this.offSetY + this.graphicsHeader.getBounds().height + this.yPosMeasure + (GDE.IS_LINUX ? 65 :25);
+			measurePopUp.setLocation(popUpX, popUpY);
 			lastXPositionMeasure = this.xPosMeasure;
 
 			if (isCreated) {
