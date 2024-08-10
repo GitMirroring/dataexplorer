@@ -689,7 +689,8 @@ public final class GraphicsComposite extends AbstractChartComposite {
 			measurePopUp.pack();
 			
 			int locationX = GDE.shell.getLocation().x + (GDE.shell.getBounds().width - this.getBounds().width) + this.timeLine.getCurveAreaBounds().x + GraphicsMeasuring.xPosMeasure + 20;
-			locationX = (locationX + measurePopUp.getBounds().width) > monitorBounds.width ? locationX - 30 - measurePopUp.getBounds().width : locationX;
+			locationX = (locationX + measurePopUp.getBounds().width) > monitorBounds.width || GraphicsMeasuring.xPosMeasure > lastXPositionMeasure && locationX - 30 - measurePopUp.getBounds().width > 0
+					? locationX - 30 - measurePopUp.getBounds().width : locationX;
 	
 			int locationY = GDE.shell.getLocation().y + this.application.getTabFolder().getLocation().y + this.graphicsHeader.getBounds().height + GraphicsMeasuring.yPosMeasure + 18;
 			locationY = locationY < 0 ? GDE.shell.getLocation().y + this.application.getTabFolder().getLocation().y + this.graphicsHeader.getBounds().height + this.graphicCanvas.getBounds().height/2 : locationY;

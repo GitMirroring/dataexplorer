@@ -2069,7 +2069,8 @@ public class GraphicsComposite extends Composite {
 
 			log.log(Level.INFO, "set position measure pop-up");
 			int popUpX = GDE.shell.getLocation().x + this.getParent().getChildren()[0].getBounds().width + this.offSetX + this.xPosMeasure + 20;
-			popUpX = (popUpX + measurePopUp.getBounds().width) > monitorBounds.width ? popUpX - 30 - measurePopUp.getBounds().width : popUpX;
+			popUpX = (popUpX + measurePopUp.getBounds().width) > monitorBounds.width || this.xPosMeasure > lastXPositionMeasure && popUpX - 30 - measurePopUp.getBounds().width > 0
+					? popUpX - 30 - measurePopUp.getBounds().width : popUpX;
 			int popUpY = GDE.shell.getLocation().y + this.application.getTabFolder().getLocation().y + this.offSetY + this.graphicsHeader.getBounds().height + this.yPosMeasure + (GDE.IS_LINUX ? 65 :25);
 			measurePopUp.setLocation(popUpX, popUpY);
 			lastXPositionMeasure = this.xPosMeasure;
