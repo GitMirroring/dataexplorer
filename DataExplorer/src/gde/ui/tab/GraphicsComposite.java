@@ -177,8 +177,11 @@ public class GraphicsComposite extends Composite {
 	boolean										isScopeMode							= false;
 	
 	Shell 										measurePopUp;
+	Shell 										deltaPopUp;
 	StyledText 								styledText;
+	StyledText 								styledTextDelta;
 	int												lastXPositionMeasure		= Integer.MAX_VALUE;
+	int												lastXPositionDelta			= Integer.MAX_VALUE;
 
 	GraphicsComposite(final SashForm useParent, GraphicsType useGraphicsType) {
 		super(useParent, SWT.NONE);
@@ -682,9 +685,13 @@ public class GraphicsComposite extends Composite {
 				public void paintControl(PaintEvent evt) {
 					if (log.isLoggable(Level.FINER)) log.log(Level.FINER, "graphicCanvas.paintControl, event=" + evt); //$NON-NLS-1$
 					//System.out.println("width = " + GraphicsComposite.this.getSize().x);
-					if (application.isWindowVisible(GraphicsType.NORMAL) && application.getActiveRecordSet() != null 
-							&& !application.getActiveRecordSet().isMeasurementMode(application.getActiveRecordSet().getRecordKeyMeasurement())) 
-						cleanMeasurePopUp();
+					RecordSet activeRecordSet = application.getActiveRecordSet();
+					
+					if (application.isWindowVisible(GraphicsType.NORMAL) && activeRecordSet != null) {
+						String measureRecordKey = activeRecordSet.getRecordKeyMeasurement();
+						if (!(activeRecordSet.isMeasurementMode(measureRecordKey) || activeRecordSet.isDeltaMeasurementMode(measureRecordKey) || activeRecordSet.isAvgMedianMeasurementMode(measureRecordKey)))
+							cleanMeasurePopUp();
+					}
 
 					try {
 						drawAreaPaintControl(evt);
@@ -1095,7 +1102,7 @@ public class GraphicsComposite extends Composite {
 				drawHorizontalLine(canvasGC, this.yPosMeasure, 0, this.curveAreaBounds.width);
 
 				if (this.settings.isUseMeasurementPopUp())
-					this.callMeasurePopUp(recordSet);
+					this.callMeasurePopUp(recordSet, "", false);
 				else
 					this.recordSetComment.setText(this.getSelectedMeasurementsAsTable());
 				
@@ -1109,6 +1116,9 @@ public class GraphicsComposite extends Composite {
 				// measure position
 				drawVerticalLine(canvasGC, this.xPosMeasure, 0, this.curveAreaBounds.height);
 				drawHorizontalLine(canvasGC, this.yPosMeasure, 0, this.curveAreaBounds.width);
+				
+				if (this.settings.isUseMeasurementPopUp())
+					this.callMeasurePopUp(recordSet, measureRecordKey, true);
 
 				// delta position
 				this.xPosDelta = isRefresh ? this.xPosDelta : this.curveAreaBounds.width / 3 * 2;
@@ -1117,8 +1127,11 @@ public class GraphicsComposite extends Composite {
 				canvasGC.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLUE));
 				drawVerticalLine(canvasGC, this.xPosDelta, 0, this.curveAreaBounds.height);
 				drawHorizontalLine(canvasGC, this.yPosDelta, 0, this.curveAreaBounds.width);
+				if (this.settings.isUseMeasurementPopUp())
+					this.callMeasurePopUpDelta(recordSet, measureRecordKey);
 
 				drawConnectingLine(canvasGC, this.xPosMeasure, this.yPosMeasure, this.xPosDelta, this.yPosDelta, SWT.COLOR_BLACK);
+
 
 				canvasGC.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
 
@@ -1645,7 +1658,8 @@ public class GraphicsComposite extends Composite {
 				}
 				else {
 
-					if (measureRecordKey != null && !recordSet.isMeasurementMode(measureRecordKey)) cleanMeasurePopUp();
+					if (measureRecordKey != null && !(recordSet.isMeasurementMode(measureRecordKey)  || recordSet.isDeltaMeasurementMode(measureRecordKey) || recordSet.isAvgMedianMeasurementMode(measureRecordKey))) 
+						cleanMeasurePopUp();
 
 					if (measureRecordKey != null
 							&& (recordSet.isMeasurementMode(measureRecordKey) || recordSet.isDeltaMeasurementMode(measureRecordKey) || recordSet.isAvgMedianMeasurementMode(measureRecordKey))
@@ -2027,9 +2041,19 @@ public class GraphicsComposite extends Composite {
 			measurePopUp = null;
 			lastXPositionMeasure = Integer.MAX_VALUE;
 		}
+		if (deltaPopUp != null && !deltaPopUp.isDisposed()) {
+			log.log(Level.INFO, "cleanDeltaPopUp");
+			if (styledTextDelta != null && !styledTextDelta.isDisposed()) {
+				styledTextDelta.dispose();
+				styledTextDelta = null;
+			}
+			deltaPopUp.close();
+			deltaPopUp = null;
+			lastXPositionDelta = Integer.MAX_VALUE;
+		}
 	}
 
-	private void callMeasurePopUp(RecordSet activeRecordSet) {
+	private void callMeasurePopUp(RecordSet activeRecordSet, String recordMeasureKey, boolean isRight) {
 		boolean isCreated = false;
 		if (measurePopUp == null || (measurePopUp != null && measurePopUp.isDisposed())) {
 			log.log(Level.INFO, "setup shell for measure pop-up");
@@ -2048,30 +2072,27 @@ public class GraphicsComposite extends Composite {
 		}
 	
 		if (this.xPosMeasure != lastXPositionMeasure) {
-			log.log(Level.INFO, "refresh measurements");
-			int indexPosMeasure = activeRecordSet.get(0).getHorizontalPointIndexFromDisplayPoint(this.xPosMeasure);
-			Vector<Record> records = activeRecordSet.getVisibleAndDisplayableRecords();
-			String formattedTimeWithUnit = records.firstElement().getHorizontalDisplayPointAsFormattedTimeWithUnit(this.xPosMeasure);
-			StringBuilder sb = new StringBuilder().append(formattedTimeWithUnit);
-			List<StyleRange> styleRanges = new ArrayList<>();
-			styleRanges.add(new StyleRange(0, sb.length(), this.application.COLOR_BLACK, null));
-			int startIndex = sb.length();
-			for (Record record : records) {
-				sb.append(String.format("\n%-15.15s %s %s", record.getName(), record.getDecimalFormat().format(record.getDevice().translateValue(record, record.realGet(indexPosMeasure) / 1000.0)),
-						record.getUnit()));
-				styleRanges.add(new StyleRange(startIndex, sb.length() - startIndex, SWTResourceManager.getColor(record.getRGB()), null));
-				startIndex = sb.length();
+			if (recordMeasureKey.isEmpty())
+				refreshMeasurements(activeRecordSet);
+			else {
+				if (isRight)
+					refreshMeasurement(styledText, activeRecordSet, recordMeasureKey, this.xPosMeasure);
+				else
+					refreshMeasurement(styledText, activeRecordSet, recordMeasureKey, this.xPosDelta);
 			}
-
-			styledText.setText(sb.toString());
-			styledText.setStyleRanges(styleRanges.toArray(new StyleRange[0]));
 			measurePopUp.pack();
 
 			log.log(Level.INFO, "set position measure pop-up");
 			int popUpX = GDE.shell.getLocation().x + this.getParent().getChildren()[0].getBounds().width + this.offSetX + this.xPosMeasure + 20;
-			popUpX = (popUpX + measurePopUp.getBounds().width) > monitorBounds.width || this.xPosMeasure > lastXPositionMeasure && popUpX - 30 - measurePopUp.getBounds().width > 0
-					? popUpX - 30 - measurePopUp.getBounds().width : popUpX;
-			int popUpY = GDE.shell.getLocation().y + this.application.getTabFolder().getLocation().y + this.offSetY + this.graphicsHeader.getBounds().height + this.yPosMeasure + (GDE.IS_LINUX ? 65 :25);
+			if (!isRight) {
+				popUpX = (popUpX + measurePopUp.getBounds().width) > monitorBounds.width || this.xPosMeasure > lastXPositionMeasure && popUpX - 30 - measurePopUp.getBounds().width > 0
+						? popUpX - 30 - measurePopUp.getBounds().width
+						: popUpX;
+			}
+			else
+				popUpX = popUpX - 30 - measurePopUp.getBounds().width;
+
+			int popUpY = GDE.shell.getLocation().y + this.application.getTabFolder().getLocation().y + this.offSetY + this.graphicsHeader.getBounds().height + this.yPosMeasure + (GDE.IS_LINUX ? 65 : 25);
 			measurePopUp.setLocation(popUpX, popUpY);
 			lastXPositionMeasure = this.xPosMeasure;
 
@@ -2084,6 +2105,92 @@ public class GraphicsComposite extends Composite {
 				});
 			}
 		}
+	}
+
+	private void callMeasurePopUpDelta(RecordSet activeRecordSet, String recordMeasureKey) {
+		boolean isCreated = false;
+		if (deltaPopUp == null || (deltaPopUp != null && deltaPopUp.isDisposed())) {
+			log.log(Level.INFO, "setup shell for delta pop-up");
+			deltaPopUp = new Shell(GDE.shell, SWT.NO_TRIM | SWT.MODELESS);
+			deltaPopUp.setParent(this);
+			deltaPopUp.setLayout(new FillLayout());
+			deltaPopUp.setAlpha(200);
+			isCreated = true;
+		}
+
+		if (styledTextDelta == null || (styledTextDelta != null && styledTextDelta.isDisposed())) {
+			styledTextDelta = new StyledText(deltaPopUp, SWT.NONE);
+			styledTextDelta.setEditable(false);
+			styledTextDelta.setEnabled(false);
+			styledTextDelta.setFont(SWTResourceManager.getFont("Courier New", GDE.WIDGET_FONT_SIZE + 1, SWT.BOLD));
+		}
+	
+		if (this.xPosDelta != lastXPositionDelta) {
+			refreshMeasurement(styledTextDelta, activeRecordSet, recordMeasureKey, this.xPosDelta);
+			deltaPopUp.pack();
+
+			log.log(Level.INFO, "set position delta pop-up");
+			int popUpX = GDE.shell.getLocation().x + this.getParent().getChildren()[0].getBounds().width + this.offSetX + this.xPosDelta + 20;
+			int popUpY = GDE.shell.getLocation().y + this.application.getTabFolder().getLocation().y + this.offSetY + this.graphicsHeader.getBounds().height + this.yPosDelta + (GDE.IS_LINUX ? 65 : 25);
+			deltaPopUp.setLocation(popUpX, popUpY);
+			lastXPositionDelta = this.xPosDelta;
+
+			if (isCreated) {
+				deltaPopUp.getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						log.log(Level.INFO, "open shell for delta pop-up");
+						deltaPopUp.open();
+					}
+				});
+			}
+		}
+	}
+
+	/**
+	 * refresh displayed measurements using styled text
+	 * @param activeRecordSet
+	 */
+	private void refreshMeasurements(RecordSet activeRecordSet) {
+		log.log(Level.INFO, "refresh measurements");
+		int indexPosMeasure = activeRecordSet.get(0).getHorizontalPointIndexFromDisplayPoint(this.xPosMeasure);
+		Vector<Record> records = activeRecordSet.getVisibleAndDisplayableRecords();
+		String formattedTimeWithUnit = records.firstElement().getHorizontalDisplayPointAsFormattedTimeWithUnit(this.xPosMeasure);
+		StringBuilder sb = new StringBuilder().append(formattedTimeWithUnit);
+		List<StyleRange> styleRanges = new ArrayList<>();
+		styleRanges.add(new StyleRange(0, sb.length(), this.application.COLOR_BLACK, null));
+		int startIndex = sb.length();
+		for (Record record : records) {
+			sb.append(String.format("\n%-15.15s %s %s", record.getName(), record.getDecimalFormat().format(record.getDevice().translateValue(record, record.realGet(indexPosMeasure) / 1000.0)),
+					record.getUnit()));
+			styleRanges.add(new StyleRange(startIndex, sb.length() - startIndex, SWTResourceManager.getColor(record.getRGB()), null));
+			startIndex = sb.length();
+		}
+
+		styledText.setText(sb.toString());
+		styledText.setStyleRanges(styleRanges.toArray(new StyleRange[0]));
+	}
+
+	/**
+	 * refresh displayed measurements using styled text
+	 * @param activeRecordSet
+	 */
+	private void refreshMeasurement(StyledText styledText, RecordSet activeRecordSet, String recordMeasurementKey, int posMeasure) {
+		log.log(Level.INFO, "refresh measurement");
+		int indexPosMeasure = activeRecordSet.get(0).getHorizontalPointIndexFromDisplayPoint(posMeasure);
+		
+		Record record = activeRecordSet.get(recordMeasurementKey);
+		String formattedTimeWithUnit = record.getHorizontalDisplayPointAsFormattedTimeWithUnit(posMeasure);
+		StringBuilder sb = new StringBuilder().append(formattedTimeWithUnit);
+		List<StyleRange> styleRanges = new ArrayList<>();
+		styleRanges.add(new StyleRange(0, sb.length(), this.application.COLOR_BLACK, null));
+		int startIndex = sb.length();
+		sb.append(String.format("\n%-15.15s %s %s", record.getName(), record.getDecimalFormat().format(record.getDevice().translateValue(record, record.realGet(indexPosMeasure) / 1000.0)),
+				record.getUnit()));
+		styleRanges.add(new StyleRange(startIndex, sb.length() - startIndex, SWTResourceManager.getColor(record.getRGB()), null));
+		startIndex = sb.length();
+
+		styledText.setText(sb.toString());
+		styledText.setStyleRanges(styleRanges.toArray(new StyleRange[0]));
 	}
 	
 	public String findNearestMeasurementCurve(RecordSet recordSet, int posX, int posY, int height) {

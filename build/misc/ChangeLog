@@ -2,8 +2,8 @@ Development history / change log, please read from bottom up
 
 Version 3.9.1 - xx yyy 2024
 Generic changes/fixes 
-	* Improve experience for Measuring feature, show a values pop-up (sr #111082) for graphics
-	* Improve experience for Measuring feature, show a values pop-up (sr #111082) for histo-graphics
+	* improve experience for measuring feature, show a values pop-up (sr #111082) for graphics
+	* improve experience for measuring feature, show a values pop-up (sr #111082) for histo-graphics
 	* automatic item selection measuring while shift pressed graphics and compare tab
 	* SWT.jar for Linux Intel updated
 	* SWT.jar for Windows Intel updated
@@ -11,6 +11,7 @@ Generic changes/fixes
 	* SWT.jar for Linux ARM updated
 	* update of SWT.jars require graphics context font definition while drawing scales
 	* open serial port with safety delay
+	* improve experience for delta measuring feature, show a values pop-up
 	
 Device specific changes/fixes
 	*
