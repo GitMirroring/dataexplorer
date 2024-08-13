@@ -2164,7 +2164,7 @@ public class GraphicsComposite extends Composite {
 					record.getUnit()));
 			styleRanges.add(new StyleRange(startIndex, sb.length() - startIndex, SWTResourceManager.getColor(record.getRGB()), null));
 			if (activeRecordSet.getRecordKeyMeasurement().equals(record.getName()))
-				styleRanges.getLast().underline = true;
+				styleRanges.get(styleRanges.size()-1).underline = true;
 			startIndex = sb.length();
 		}
 
