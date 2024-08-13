@@ -2163,6 +2163,8 @@ public class GraphicsComposite extends Composite {
 			sb.append(String.format("\n%-15.15s %s %s", record.getName(), record.getDecimalFormat().format(record.getDevice().translateValue(record, record.realGet(indexPosMeasure) / 1000.0)),
 					record.getUnit()));
 			styleRanges.add(new StyleRange(startIndex, sb.length() - startIndex, SWTResourceManager.getColor(record.getRGB()), null));
+			if (activeRecordSet.getRecordKeyMeasurement().equals(record.getName()))
+				styleRanges.getLast().underline = true;
 			startIndex = sb.length();
 		}
 
