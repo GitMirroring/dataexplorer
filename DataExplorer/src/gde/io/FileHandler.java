@@ -19,6 +19,7 @@
 package gde.io;
 
 import java.io.File;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.logging.Logger;
@@ -420,8 +421,14 @@ public class FileHandler {
 				return;
 			}
 
-			String directoryName = ObjectKeyCompliance.getUpcomingObjectKey(Paths.get(osdFilePath));
-			if (!directoryName.isEmpty()) ObjectKeyCompliance.createObjectKey(directoryName);
+			try {
+				String directoryName = ObjectKeyCompliance.getUpcomingObjectKey(Paths.get(osdFilePath));
+				if (!directoryName.isEmpty()) ObjectKeyCompliance.createObjectKey(directoryName);
+			}
+			catch (InvalidPathException e) {
+				this.application.openMessageDialog(e.getMessage());
+				return;
+			}
 
 			try {
 				this.application.enableMenuActions(false);
