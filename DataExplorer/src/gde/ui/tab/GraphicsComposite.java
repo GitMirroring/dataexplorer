@@ -1722,7 +1722,7 @@ public class GraphicsComposite extends Composite {
 						}
 						else {
 							xStart = this.xDown < this.xUp ? this.xDown : this.xUp;
-							xEnd = this.xDown > this.xUp ? this.xDown + 1 : this.xUp;
+							xEnd = this.xDown > this.xUp ? this.xDown + 1 : this.xUp + 1;
 							yMin = this.curveAreaBounds.height - (this.yDown > this.yUp ? this.yDown : this.yUp);
 							yMax = this.curveAreaBounds.height - (this.yDown < this.yUp ? this.yDown : this.yUp);
 						}
