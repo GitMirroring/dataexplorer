@@ -4,6 +4,9 @@ Version 3.9.2 - xx yyy 2024
 Generic changes/fixes 
 	* fix Linux ARM download problem correcting naming, unless 3.9.2 is active workaround is manual downloading
 	* handle unmappable characters while saving OSD file
+	
+Device specific changes/fixes
+	* HoTTAdapter* - *.log add generic radio warning field
 
 Version 3.9.1 - 14 Aug 2024
 Generic changes/fixes 

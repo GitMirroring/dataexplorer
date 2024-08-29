@@ -200,8 +200,8 @@ public class HoTTlogReader extends HoTTbinReader {
 				
 				if (log.isLoggable(Level.INFO)) {
 					if ((HoTTlogReader2.buf[8] == 0 || HoTTlogReader2.buf[9] == 0))
-						log.log(Level.OFF, String.format("HoTTlogReader2.buf[8] == 0x%02X HoTTlogReader2.buf[9] == 0x%02X", HoTTlogReader2.buf[8], HoTTlogReader2.buf[9]));
-					log.log(Level.INFO, String.format("sensor data %02x   %s", HoTTlogReader2.buf[26], StringHelper.byte2Hex2CharString(HoTTlogReader2.buf, 30)));
+						log.log(Level.INFO, String.format("HoTTlogReader2.buf[8] == 0x%02X HoTTlogReader2.buf[9] == 0x%02X", HoTTlogReader2.buf[8], HoTTlogReader2.buf[9]));
+					log.log(Level.INFO, String.format("sensor data 0x%02X %s", HoTTlogReader2.buf[26], StringHelper.byte2Hex2CharString(HoTTlogReader2.buf, 30)));
 				}
 				
 				if (isASCII) {
@@ -1533,7 +1533,7 @@ public class HoTTlogReader extends HoTTbinReader {
 		@Override
 		protected boolean parse() {
 
-			//0=FreCh, 1=Tx, 2=Rx, 3=Ch01, 4=Ch02 .. 18=Ch16 19=Ch17 .. 34=Ch32
+			//0=FreCh, 1=Tx, 2=Rx, 3=Ch01, 4=Ch02 .. 18=Ch16, 19=Ch17 .. 34=Ch32 35=PowerOff, 36=BattLow, 37=Reset, 38=warning
 			this.points[0] = buf[7] * -1000;
 			this.points[1] = buf[8] * -1000;
 			this.points[2] = buf[9] * -1000;
@@ -1545,14 +1545,14 @@ public class HoTTlogReader extends HoTTbinReader {
 			//STATUS : Ph(D)[4], Evt1(H)[5], Evt2(D)[6], Fch(D)[7], TXdBm(-D)[8], RXdBm(-D)[9], RfRcvRatio(D)[10], TrnRcvRatio(D)[11]
 			//S.INFOR : DEV(D)[22], CH(D)[23], SID(H)[24], WARN(H)[25]
 			//remove evaluation of transmitter event and warning to avoid end user confusion
-			//this.points[19] = (buf[5] & 0x01) * 100000; 	//power off
-			//this.points[20] = (buf[1] & 0x01) * 50000;		//batt low
-			//this.points[21] = (buf[5] & 0x04) * 25000;		//reset
-			//if (buf[25] > 0) {
-			//	this.points[22] = (buf[25] & 0x7F) * 1000;		//warning
-			//}
-			//else
-			//	this.points[22] = 0;
+			//this.points[35] = (buf[5] & 0x01) * 100000; 	//power off
+			//this.points[36] = (buf[1] & 0x01) * 50000;		//batt low
+			//this.points[37] = (buf[5] & 0x04) * 25000;		//reset
+			if (buf[25] > 0) {
+				this.points[38] = (buf[25] & 0xFF) * 1000;		//warning
+			}
+			else
+				this.points[38] = 0;
 			
 			return true;
 		}

@@ -201,8 +201,8 @@ public class HoTTlogReader2 extends HoTTlogReader {
 
 				if (log.isLoggable(Level.INFO)) {
 					if ((HoTTlogReader2.buf[8] == 0 || HoTTlogReader2.buf[9] == 0))
-						log.log(Level.OFF, String.format("HoTTlogReader2.buf[8] == 0x%02X HoTTlogReader2.buf[9] == 0x%02X", HoTTlogReader2.buf[8], HoTTlogReader2.buf[9]));
-					log.log(Level.INFO, String.format("sensor data %02x   %s", HoTTlogReader2.buf[26], StringHelper.byte2Hex2CharString(HoTTlogReader2.buf, 30)));
+						log.log(Level.INFO, String.format("HoTTlogReader2.buf[8] == 0x%02X HoTTlogReader2.buf[9] == 0x%02X", HoTTlogReader2.buf[8], HoTTlogReader2.buf[9]));
+					log.log(Level.INFO, String.format("sensor data 0x%02X %s", HoTTlogReader2.buf[26], StringHelper.byte2Hex2CharString(HoTTlogReader2.buf, 30)));
 				}
 
 				if (isASCII) {
