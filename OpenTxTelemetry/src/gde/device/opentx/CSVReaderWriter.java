@@ -195,7 +195,7 @@ public class CSVReaderWriter {
 				sb_units.append("°").append(GDE.STRING_SEMICOLON);
 				++j;
 			}
-			else if ((inMeasurement.startsWith("GPS") && inMeasurement.toLowerCase().contains("zeit")) && !(sb_measurements.toString().toLowerCase().contains("gps datum") || sb_measurements.toString().toLowerCase().contains("gps time"))) {
+			else if ((inMeasurement.startsWith("GPS") && (inMeasurement.toLowerCase().contains("zeit") || inMeasurement.toString().toLowerCase().contains("clock"))) && !(sb_measurements.toString().toLowerCase().contains("gps datum") || sb_measurements.toString().toLowerCase().contains("gps time"))) {
 				mappedMeasurement = OpenTxAdapter.properties.getProperty("GPS.date");
 				if (mappedMeasurement != null) {
 					sb_measurements.append(mappedMeasurement.split("\\[|]")[0].trim()).append(GDE.STRING_SEMICOLON);
@@ -329,7 +329,7 @@ public class CSVReaderWriter {
 						if (record.getUnit().equals(GDE.STRING_DASH)) record.setUnit("°");
 					}
 					else if ((record.getName().toLowerCase().contains("gps") && (record.getName().toLowerCase().contains("date") || record.getName().toLowerCase().contains("time") || record.getName().toLowerCase().contains("datum") || record.getName().toLowerCase().contains("zeit")))
-							|| record.getName().toLowerCase().contains("date")) {
+							|| record.getName().toLowerCase().contains("date") || record.getName().toLowerCase().contains("clock")) {
 						record.setDataType(Record.DataType.GPS_TIME);
 					}
 
@@ -444,7 +444,7 @@ public class CSVReaderWriter {
 								if (record.getUnit().equals(GDE.STRING_DASH)) record.setUnit("°");
 							}
 							else if ((record.getName().toLowerCase().contains("gps") && (record.getName().toLowerCase().contains("date") || record.getName().toLowerCase().contains("time") || record.getName().toLowerCase().contains("datum") || record.getName().toLowerCase().contains("zeit")))
-									|| record.getName().toLowerCase().contains("date")) {
+									|| record.getName().toLowerCase().contains("date") || record.getName().toLowerCase().contains("clock")) {
 								record.setDataType(Record.DataType.GPS_TIME);
 							}
 

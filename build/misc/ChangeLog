@@ -9,6 +9,7 @@ Generic changes/fixes
 	
 Device specific changes/fixes
 	* HoTTAdapter* - *.log add generic radio warning field
+	* OpenTxTelemetry - fix "GPS clock" parsing
 
 Version 3.9.1 - 14 Aug 2024
 Generic changes/fixes 
