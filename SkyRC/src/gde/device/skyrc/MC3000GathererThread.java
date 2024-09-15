@@ -265,6 +265,9 @@ public class MC3000GathererThread extends Thread {
 										recordSet5.setAllDisplayable();
 										String description = recordSet5.getRecordSetDescription();
 										recordSet5.setRecordSetDescription(description + GDE.LINE_SEPARATOR + this.device.getHardwareString() + GDE.STRING_BLANK + this.device.getFirmwareString());
+										if (this.channels.getActiveChannelNumber() == 5)
+											this.channels.switchChannel(5, recordSetKey5);
+										slotChannel.switchRecordSet(recordSetKey5);
 									}
 								}
 								if (recordSet5 != null) recordSet5.addPoints(points5);
@@ -425,7 +428,8 @@ public class MC3000GathererThread extends Thread {
 				recordSet.get(7).setUnit(device.getTemperatureUnit());
 				//channel.applyTemplate(recordSetKey, false);
 				// switch the active record set if the current record set is child of active channel
-				this.channels.switchChannel(slotChannel.getNumber(), processRecordSetKey);
+				if (this.channels.getActiveChannelNumber() != 5)
+					this.channels.switchChannel(slotChannel.getNumber(), processRecordSetKey);
 				slotChannel.switchRecordSet(processRecordSetKey);
 				String description = String.format("%s%s%s %s; Memory # %02d", 
 						recordSet.getRecordSetDescription(), GDE.LINE_SEPARATOR, this.device.getHardwareString(), this.device.getFirmwareString(), this.device.getBatteryMemoryNumber(number, this.usbInterface)); //$NON-NLS-1$

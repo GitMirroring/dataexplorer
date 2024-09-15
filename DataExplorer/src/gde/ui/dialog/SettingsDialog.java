@@ -236,7 +236,7 @@ public class SettingsDialog extends Dialog {
 
 	public void open() {
 		int shellWidth =  500;
-		int shellHeight =  GDE.IS_LINUX ? 620 : 610;
+		int shellHeight =  GDE.IS_LINUX ? 620 : 620;
 		try {
 			Shell parent = getParent();
 			this.dialogShell = new Shell(parent, SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL);
@@ -262,7 +262,7 @@ public class SettingsDialog extends Dialog {
 				this.settingsTabFolder = new CTabFolder(this.dialogShell, SWT.FLAT | SWT.BORDER);
 				this.settingsTabFolder.setSimple(false);
 				FormData cTabFolder1LData = new FormData();
-				cTabFolder1LData.height = GDE.IS_WINDOWS ? 480 : 515;
+				cTabFolder1LData.height = GDE.IS_WINDOWS ? 480 : 530;
 				cTabFolder1LData.left = new FormAttachment(0, 1000, 0);
 				cTabFolder1LData.right = new FormAttachment(1000, 1000, 0);
 				cTabFolder1LData.top = new FormAttachment(0, 1000, 0);
@@ -1367,7 +1367,7 @@ public class SettingsDialog extends Dialog {
 							this.fontSizeGroup.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0953));
 							{
 								this.fontSizeCorrectionSlider = new ParameterConfigControl(this.fontSizeGroup, this.fontCorrection, 0, GDE.STRING_EMPTY, String.format("%s / 10", Messages.getString(MessageIds.GDE_MSGT0276)), 140, GDE.STRING_EMPTY, 0, true, 
-										30,	250, 10, GDE.IS_LINUX ? 22 : GDE.IS_MAC ? 20 : 18);
+										30,	250, 10, GDE.IS_LINUX ? 22 : 18);
 								this.fontSizeCorrectionSlider.setSliderSelection((int) (this.settings.getFontDisplayDensityAdaptionFactor() * 10));
 								this.fontSizeGroup.addListener(SWT.Selection, new Listener() {
 									@Override
@@ -1396,7 +1396,7 @@ public class SettingsDialog extends Dialog {
 								Label label = new Label(this.graphicsView, SWT.LEFT);
 								RowData labelLData = new RowData();
 								labelLData.width = 460;
-								labelLData.height = GDE.IS_LINUX ? 22 : GDE.IS_MAC ? 20 : 18;
+								labelLData.height = GDE.IS_LINUX ? 22 : 18;
 								label.setLayoutData(labelLData);
 								label.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE + 1, SWT.NORMAL));
 								label.setText(Messages.getString(MessageIds.GDE_MSGT0693));
@@ -1409,7 +1409,7 @@ public class SettingsDialog extends Dialog {
 								this.drawScaleInRecordColorButton.setSelection(this.settings.isDrawScaleInRecordColor());
 								RowData createLauncerButtonLData = new RowData();
 								createLauncerButtonLData.width = 460;
-								createLauncerButtonLData.height = GDE.IS_LINUX ? 22 : GDE.IS_MAC ? 20 : 18;
+								createLauncerButtonLData.height = GDE.IS_LINUX ? 22 : 18;
 								this.drawScaleInRecordColorButton.setLayoutData(createLauncerButtonLData);
 								this.drawScaleInRecordColorButton.addSelectionListener(new SelectionAdapter() {
 									@Override
@@ -1428,7 +1428,7 @@ public class SettingsDialog extends Dialog {
 								this.drawNameInRecordColorButton.setSelection(this.settings.isDrawNameInRecordColor());
 								RowData createLauncerButtonLData = new RowData();
 								createLauncerButtonLData.width = 460;
-								createLauncerButtonLData.height = GDE.IS_LINUX ? 22 : GDE.IS_MAC ? 20 : 18;
+								createLauncerButtonLData.height = GDE.IS_LINUX ? 22 : 18;
 								this.drawNameInRecordColorButton.setLayoutData(createLauncerButtonLData);
 								this.drawNameInRecordColorButton.addSelectionListener(new SelectionAdapter() {
 									@Override
@@ -1447,7 +1447,7 @@ public class SettingsDialog extends Dialog {
 								this.drawNumbersInRecordColorButton.setSelection(this.settings.isDrawNumbersInRecordColor());
 								RowData createLauncerButtonLData = new RowData();
 								createLauncerButtonLData.width = 460;
-								createLauncerButtonLData.height = GDE.IS_LINUX ? 22 : GDE.IS_MAC ? 20 : 18;
+								createLauncerButtonLData.height = GDE.IS_LINUX ? 22 : 18;
 								this.drawNumbersInRecordColorButton.setLayoutData(createLauncerButtonLData);
 								this.drawNumbersInRecordColorButton.addSelectionListener(new SelectionAdapter() {
 									@Override
@@ -1467,7 +1467,7 @@ public class SettingsDialog extends Dialog {
 								this.useMeasurementPopUpButton.setSelection(this.settings.isUseMeasurementPopUp());
 								RowData createLauncerButtonLData = new RowData();
 								createLauncerButtonLData.width = 460;
-								createLauncerButtonLData.height = GDE.IS_LINUX ? 22 : GDE.IS_MAC ? 20 : 18;
+								createLauncerButtonLData.height = GDE.IS_LINUX ? 22 : 18;
 								this.useMeasurementPopUpButton.setLayoutData(createLauncerButtonLData);
 								this.useMeasurementPopUpButton.addSelectionListener(new SelectionAdapter() {
 									@Override
@@ -1486,7 +1486,7 @@ public class SettingsDialog extends Dialog {
 								this.draw10TicksPerRecordButton.setSelection(this.settings.isDraw10TicksPerRecord());
 								RowData createLauncerButtonLData = new RowData();
 								createLauncerButtonLData.width = 460;
-								createLauncerButtonLData.height = GDE.IS_LINUX ? 22 : GDE.IS_MAC ? 20 : 18;
+								createLauncerButtonLData.height = GDE.IS_LINUX ? 22 : 18;
 								this.draw10TicksPerRecordButton.setLayoutData(createLauncerButtonLData);
 								this.draw10TicksPerRecordButton.addSelectionListener(new SelectionAdapter() {
 									@Override
@@ -1508,7 +1508,7 @@ public class SettingsDialog extends Dialog {
 								Label label = new Label(this.graphicsView, SWT.LEFT);
 								RowData labelLData = new RowData();
 								labelLData.width = 460;
-								labelLData.height = GDE.IS_LINUX ? 22 : GDE.IS_MAC ? 20 : 18;
+								labelLData.height = GDE.IS_LINUX ? 22 : 18;
 								label.setLayoutData(labelLData);
 								label.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE + 1, SWT.NORMAL));
 								label.setText(Messages.getString(MessageIds.GDE_MSGT0699));
@@ -1521,7 +1521,7 @@ public class SettingsDialog extends Dialog {
 								this.addChannelConfigNameCurveCompareButton.setSelection(this.settings.isCurveCompareChannelConfigName());
 								RowData createLauncerButtonLData = new RowData();
 								createLauncerButtonLData.width = 460;
-								createLauncerButtonLData.height = GDE.IS_LINUX ? 22 : GDE.IS_MAC ? 20 : 18;
+								createLauncerButtonLData.height = GDE.IS_LINUX ? 22 : 18;
 								this.addChannelConfigNameCurveCompareButton.setLayoutData(createLauncerButtonLData);
 								this.addChannelConfigNameCurveCompareButton.addSelectionListener(new SelectionAdapter() {
 									@Override
@@ -1555,7 +1555,7 @@ public class SettingsDialog extends Dialog {
 								this.partialDataTableButton.setSelection(this.settings.isPartialDataTable());
 								RowData createLauncerButtonLData = new RowData();
 								createLauncerButtonLData.width = 400;
-								createLauncerButtonLData.height = GDE.IS_LINUX ? 22 : GDE.IS_MAC ? 20 : 18;
+								createLauncerButtonLData.height = GDE.IS_LINUX ? 22 : 18;
 								this.partialDataTableButton.setLayoutData(createLauncerButtonLData);
 								this.partialDataTableButton.addSelectionListener(new SelectionAdapter() {
 									@Override
@@ -1619,7 +1619,7 @@ public class SettingsDialog extends Dialog {
 								this.blankChargeDischargeButton.setSelection(this.settings.isReduceChargeDischarge());
 								RowData createLauncerButtonLData = new RowData();
 								createLauncerButtonLData.width = 400;
-								createLauncerButtonLData.height = GDE.IS_LINUX ? 22 : GDE.IS_MAC ? 20 : 18;
+								createLauncerButtonLData.height = GDE.IS_LINUX ? 22 : 18;
 								this.blankChargeDischargeButton.setLayoutData(createLauncerButtonLData);
 								this.blankChargeDischargeButton.addSelectionListener(new SelectionAdapter() {
 									@Override
@@ -1643,7 +1643,7 @@ public class SettingsDialog extends Dialog {
 								this.continiousRecordSetButton.setSelection(this.settings.isContinuousRecordSet());
 								RowData createLauncerButtonLData = new RowData();
 								createLauncerButtonLData.width = 400;
-								createLauncerButtonLData.height = GDE.IS_LINUX ? 22 : GDE.IS_MAC ? 20 : 18;
+								createLauncerButtonLData.height = GDE.IS_LINUX ? 22 : 18;
 								this.continiousRecordSetButton.setLayoutData(createLauncerButtonLData);
 								this.continiousRecordSetButton.addSelectionListener(new SelectionAdapter() {
 									@Override
@@ -1667,7 +1667,7 @@ public class SettingsDialog extends Dialog {
 								this.startCommunicationAfterStartupButton.setSelection(this.settings.isStartDeviceCommunicationAfterStartup());
 								RowData createLauncerButtonLData = new RowData();
 								createLauncerButtonLData.width = 400;
-								createLauncerButtonLData.height = GDE.IS_LINUX ? 22 : GDE.IS_MAC ? 20 : 18;
+								createLauncerButtonLData.height = GDE.IS_LINUX ? 22 : 18;
 								this.startCommunicationAfterStartupButton.setLayoutData(createLauncerButtonLData);
 								this.startCommunicationAfterStartupButton.addSelectionListener(new SelectionAdapter() {
 									@Override
