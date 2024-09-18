@@ -31,6 +31,7 @@ import javax.usb.event.UsbPipeErrorEvent;
 import javax.usb.event.UsbPipeListener;
 
 import org.usb4java.BufferUtils;
+import org.usb4java.ConfigDescriptor;
 import org.usb4java.Context;
 import org.usb4java.Device;
 import org.usb4java.DeviceDescriptor;
@@ -372,7 +373,11 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
 						handle = null;
 					}
 
+					// Dump the device descriptor
 					log.log(Level.INFO, descriptor.dump(handle));
+
+					// Dump all configuration descriptors
+					dumpConfigurationDescriptors(libUsbDevice, descriptor.bNumConfigurations());
 
 					// Close the device if it was opened
 					if (handle != null) {
@@ -383,6 +388,42 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
 		}
 		finally {
 			LibUsb.freeDeviceList(list, true);
+		}
+	}
+	/**
+   * Dumps all configuration descriptors of the specified device. Because
+   * libusb descriptors are connected to each other (Configuration descriptor
+   * references interface descriptors which reference endpoint descriptors)
+   * dumping a configuration descriptor also dumps all interface and endpoint
+   * descriptors in this configuration.
+   * 
+   * @param device
+   *            The USB device.
+   * @param numConfigurations
+   *            The number of configurations to dump (Read from the device
+   *            descriptor)
+   */
+	public static void dumpConfigurationDescriptors(final Device device, final int numConfigurations) {
+		for (byte i = 0; i < numConfigurations; i += 1) {
+			final ConfigDescriptor descriptor = new ConfigDescriptor();
+			final int result = LibUsb.getConfigDescriptor(device, i, descriptor);
+			if (result < 0) {
+				log.log(Level.SEVERE, new LibUsbException("Unable to read config descriptor", result).getMessage());
+			}
+			else {
+				try {
+					log.log(Level.INFO, descriptor.dump().replaceAll("(?m)^", "  "));
+				}
+				finally {
+					// Ensure that the config descriptor is freed
+					try {
+						LibUsb.freeConfigDescriptor(descriptor);
+					}
+					catch (Exception e) {
+						// ignore
+					}
+				}
+			}
 		}
 	}
 
@@ -443,17 +484,17 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
 		
 		byte ifaceId = activeDevice.getUsbInterface();
 		UsbInterface usbInterface = null;
-		Set<UsbDevice> myLsbDevices = findUsbDevices(activeDevice.getUsbVendorId(), activeDevice.getUsbProductId());
-		if (myLsbDevices.size() == 0) {
+		Set<UsbDevice> myUsbDevices = findUsbDevices(activeDevice.getUsbVendorId(), activeDevice.getUsbProductId());
+		if (myUsbDevices.size() == 0) {
 			this.usbApplication.openMessageDialog(Messages.getString(MessageIds.GDE_MSGE0050));
-		} else if (myLsbDevices.size() == 1) {
-			for (UsbDevice usbDevice : myLsbDevices) {
+		} else if (myUsbDevices.size() == 1) {
+			for (UsbDevice usbDevice : myUsbDevices) {
 				if (usbDevice == null) 
 					throw new UsbException(Messages.getString(gde.messages.MessageIds.GDE_MSGE0050));
 				usbInterface = claimUsbInterface(usbDevice, ifaceId);
 			}
 		} else {
-			for (UsbDevice usbDevice : myLsbDevices) {
+			for (UsbDevice usbDevice : myUsbDevices) {
 				UsbInterface tmpUsbInterface = ((UsbConfiguration) usbDevice.getUsbConfigurations().get(0)).getUsbInterface(ifaceId);
 				if (tmpUsbInterface!= null && !(tmpUsbInterface.isActive() || tmpUsbInterface.isClaimed())) {
 					usbInterface = claimUsbInterface(usbDevice, ifaceId);
@@ -579,7 +620,7 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
 	 */
 	private UsbInterface claimUsbInterface(UsbDevice usbDevice, byte ifaceId) throws UsbClaimException, UsbException {
 		UsbInterface usbInterface = ((UsbConfiguration) usbDevice.getUsbConfigurations().get(0)).getUsbInterface(ifaceId);
-		log.log(Level.FINE, usbInterface.toString());
+		log.log(Level.INFO, usbInterface.toString());
 		if (GDE.IS_LINUX) {
 			usbInterface.claim(new UsbInterfacePolicy() {
 				@Override

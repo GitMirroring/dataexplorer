@@ -20,7 +20,7 @@ import org.usb4java.LibUsbException;
  * 
  * @author Klaus Reimer <k@ailis.de>
  */
-public class DumpDevices {
+public class DumpDevicesLibUsb {
 	/**
      * Dumps all configuration descriptors of the specified device. Because
      * libusb descriptors are connected to each other (Configuration descriptor
@@ -37,24 +37,27 @@ public class DumpDevices {
     public static void dumpConfigurationDescriptors(final Device device,  final int numConfigurations)
     {
         for (byte i = 0; i < numConfigurations; i += 1)
-        {
-            final ConfigDescriptor descriptor = new ConfigDescriptor();
-            final int result = LibUsb.getConfigDescriptor(device, i, descriptor);
-            if (result < 0)
-            {
-                throw new LibUsbException("Unable to read config descriptor",
-                    result);
-            }
-            try
-            {
-                System.out.println(descriptor.dump().replaceAll("(?m)^",  "  "));
-            }
-            finally
-            {
-                // Ensure that the config descriptor is freed
-                LibUsb.freeConfigDescriptor(descriptor);
-            }
-        }
+				{
+					final ConfigDescriptor descriptor = new ConfigDescriptor();
+					final int result = LibUsb.getConfigDescriptor(device, i, descriptor);
+					if (result < 0) {
+						System.out.println(new LibUsbException("Unable to read config descriptor", result).getMessage());
+					}
+					else {
+						try {
+							System.out.println(descriptor.dump().replaceAll("(?m)^", "  "));
+						}
+						finally {
+							// Ensure that the config descriptor is freed
+							try {
+								LibUsb.freeConfigDescriptor(descriptor);
+							}
+							catch (Exception e) {
+								// ignore
+							}
+						}
+					}
+				}
     }
 
 	/**
