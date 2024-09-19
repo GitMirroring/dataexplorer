@@ -30,21 +30,23 @@ import gde.data.Channels;
 import gde.device.DeviceConfiguration;
 import gde.exception.ApplicationConfigurationException;
 import gde.io.DataParser;
+import gde.log.Level;
 import gde.messages.Messages;
+import gde.utils.StringHelper;
 import gde.utils.WaitTimer;
 
-public class X200neo extends Q200 {
+public class D200neo extends Q200 {
 	X200neoGathererThread	dataGatherThread;
 
 	/**
 	 * Class to implement SKYRC D200neo, Q200neo device
 	 * @author Winfried Bruegmann
 	 */
-	public X200neo(String xmlFileName) throws FileNotFoundException, JAXBException {
+	public D200neo(String xmlFileName) throws FileNotFoundException, JAXBException {
 		super(xmlFileName);
 	}
 
-	public X200neo(DeviceConfiguration deviceConfig) {
+	public D200neo(DeviceConfiguration deviceConfig) {
 		super(deviceConfig);
 	}
 
@@ -59,6 +61,7 @@ public class X200neo extends Q200 {
 	public int[] convertDataBytes(int[] points, byte[] dataBuffer) {
 		int maxVoltage = Integer.MIN_VALUE;
 		int minVoltage = Integer.MAX_VALUE;
+		log.log(Level.OFF, StringHelper.byte2Hex2CharString(dataBuffer, dataBuffer.length));
 		//0=Voltage 1=Current 2=Capacity 3=Power 4=Energy 5=Temperature Int 6=Resistance
 		points[0] = DataParser.parse2Short(dataBuffer[10], dataBuffer[9]);
 		points[1] = DataParser.parse2Short(dataBuffer[12], dataBuffer[11]);

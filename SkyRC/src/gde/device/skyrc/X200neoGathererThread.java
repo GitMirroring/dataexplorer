@@ -80,7 +80,7 @@ public class X200neoGathererThread extends Thread {
 	 * @throws UsbException 
 	 * @throws Exception 
 	 */
-	public X200neoGathererThread(DataExplorer currentApplication, X200neo useDevice, Q200UsbPort useSerialPort, int channelConfigNumber, DeviceDialog useDialog) throws ApplicationConfigurationException,
+	public X200neoGathererThread(DataExplorer currentApplication, D200neo useDevice, Q200UsbPort useSerialPort, int channelConfigNumber, DeviceDialog useDialog) throws ApplicationConfigurationException,
 			UsbDisconnectedException, UsbException {
 		super("dataGatherer");
 		this.application = currentApplication;
@@ -113,7 +113,7 @@ public class X200neoGathererThread extends Thread {
 			int[] points2 = new int[this.device.getNumberOfMeasurements(2)];
 			int[] points3 = new int[this.device.getNumberOfMeasurements(3)];
 			int[] points4 = new int[this.device.getNumberOfMeasurements(4)];
-			int lastEnergie1, lastEnergie2, lastEnergie3, lastEnergie4;
+			int lastEnergie1 = 0, lastEnergie2 = 0, lastEnergie3 = 0, lastEnergie4 = 0;
 
 			this.isProgrammExecuting1 = false;
 			this.isProgrammExecuting2 = false;
@@ -199,16 +199,21 @@ public class X200neoGathererThread extends Thread {
 						lastEnergie1 = points1[4];
 						points1 = new int[this.device.getNumberOfMeasurements(1)];
 						
-						lastEnergie2 = points2[4];
-						points2 = new int[this.device.getNumberOfMeasurements(2)];
+						if (this.numChannels >= 2) {
+							lastEnergie2 = points2[4];
+							points2 = new int[this.device.getNumberOfMeasurements(2)];
+						}
 						
-						lastEnergie3 = points3[4];
-						points3 = new int[this.device.getNumberOfMeasurements(3)];
+						if (this.numChannels >= 3) {
+							lastEnergie3 = points3[4];
+							points3 = new int[this.device.getNumberOfMeasurements(3)];
+						}
 						
-						lastEnergie4 = points4[4];
-						points4 = new int[this.device.getNumberOfMeasurements(4)];
-
-
+						if (this.numChannels >= 4) {
+							lastEnergie4 = points4[4];
+							points4 = new int[this.device.getNumberOfMeasurements(4)];
+						}
+						
 						if (this.isProgrammExecuting1 && channelBuffer1 != null && dataBuffer1 != null) { // checks for processes active includes check state change waiting to discharge to charge
 							points1[4] = lastEnergie1;
 							ch1 = processDataChannel(1, recordSet1, recordSetKey1, channelBuffer1, dataBuffer1, points1);
