@@ -74,6 +74,12 @@ public class ClaimTestLibUsb
               			System.out.println(String.format("Unable to open device: %s. " + "Continuing without device handle.", LibUsb.strError(result)));
               			handle = null;
               		}
+              		
+              		result = LibUsb.detachKernelDriver(handle, interfaceId);
+                  if (result != LibUsb.SUCCESS && 
+                  		result != LibUsb.ERROR_NOT_SUPPORTED && 
+                  				result != LibUsb.ERROR_NOT_FOUND) 
+                  	System.out.println(new LibUsbException("Unable to detach kernel driver", result));
 
                   result = LibUsb.claimInterface(handle, interfaceId);
                   if (result < 0)
@@ -82,6 +88,7 @@ public class ClaimTestLibUsb
                           String.format("Unable to claim interface 0x%02X", interfaceId), result).getMessage());
                   }
                   else {
+                  	System.out.println(">>> interface claimed successful!");
                   	result = LibUsb.releaseInterface(handle, interfaceId);
                     if (result < 0)
                     {
