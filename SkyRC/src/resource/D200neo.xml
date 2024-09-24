@@ -255,7 +255,7 @@
         <property name="table_tab" value="true"/>
         <property name="digital_tab" value="true"/>
         <property name="analog_tab" value="false"/>
-        <property name="voltage_per_cell_tab" value="true" target_reference_ordinal="9"/>
+        <property name="voltage_per_cell_tab" value="true" target_reference_ordinal="8"/>
         <property name="utility_garphics_tab" value="false" description="UTILITY_GRAPHICS_TAB"/>
         <property name="utility_device_tab" value="false" description="UTILITY_DEVICE_TAB"/>
     </Desktop>
