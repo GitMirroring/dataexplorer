@@ -54,7 +54,7 @@ public class X200neoGathererThread extends Thread {
 	final DataExplorer	application;
 	final Settings			settings;
 	final Q200UsbPort		usbPort;
-	final Q200					device;
+	final D200neo					device;
 	final DeviceDialog		dialog;
 	final Channels			channels;
 	final Channel				channel;

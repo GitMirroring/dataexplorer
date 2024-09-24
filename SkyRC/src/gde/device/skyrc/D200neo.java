@@ -30,7 +30,6 @@ import gde.data.Channel;
 import gde.data.Channels;
 import gde.device.DeviceConfiguration;
 import gde.device.DeviceDialog;
-import gde.device.skyrc.Q200.SystemInfo;
 import gde.exception.ApplicationConfigurationException;
 import gde.io.DataParser;
 import gde.log.Level;
@@ -39,9 +38,9 @@ import gde.utils.StringHelper;
 import gde.utils.WaitTimer;
 
 public class D200neo extends Q200 {
-	final static Logger	log					= Logger.getLogger(D200neo.class.getName());
-	X200neoGathererThread	dataGatherThread;
-	SystemInfo[]	systemInfo = new SystemInfo[4];
+	final static Logger	log1					= Logger.getLogger(D200neo.class.getName());
+	X200neoGathererThread	xdataGatherThread;
+	SystemInfo[]	neoSystemInfo = new SystemInfo[4];
 
 	/**
 	 * Class to implement SKYRC D200neo, Q200neo device
@@ -88,10 +87,27 @@ public class D200neo extends Q200 {
 			return this.machineId[13];
 		}
 	}
-	
+
+	/**
+	 * @return string containing firmware : major.minor
+	 */
+	@Override
+	public String getHarwareString(final int channelId) {
+		return this.neoSystemInfo[channelId-1].getHardwareVersion();
+	}
+
+	/**
+	 * @return string containing firmware : major.minor
+	 */
+	@Override
+	public String getFirmwareString(final int channelId) {
+		return this.neoSystemInfo[channelId-1].getFirmwareVersion();
+	}
+
 	/**
 	 * @return the dialog
 	 */
+	@Override
 	public DeviceDialog getDialog() {
 		return null;
 	}
@@ -106,7 +122,7 @@ public class D200neo extends Q200 {
 	public int[] convertDataBytes(int[] points, byte[] dataBuffer) {
 		int maxVoltage = Integer.MIN_VALUE;
 		int minVoltage = Integer.MAX_VALUE;
-		log.log(Level.OFF, StringHelper.byte2Hex2CharString(dataBuffer, dataBuffer.length));
+		log1.log(Level.FINE, StringHelper.byte2Hex2CharString(dataBuffer, dataBuffer.length));
 		//0=Voltage 1=Current 2=Capacity 3=Power 4=Energy 5=Temperature Int 6=Resistance
 		points[0] = DataParser.parse2Short(dataBuffer[10], dataBuffer[9]);
 		points[1] = DataParser.parse2Short(dataBuffer[12], dataBuffer[11]);
@@ -137,7 +153,7 @@ public class D200neo extends Q200 {
 			default:
 				break;
 			}
-			if (log.isLoggable(java.util.logging.Level.FINE)) log.log(java.util.logging.Level.FINE, "add up Energy");
+			if (log1.isLoggable(java.util.logging.Level.FINE)) log1.log(java.util.logging.Level.FINE, "add up Energy");
 			break;
 		case 1: // reset energy
 			switch (dataBuffer[3]) { //channel ID
@@ -161,12 +177,12 @@ public class D200neo extends Q200 {
 				break;
 			}
 			points[4] = 0;
-			if (log.isLoggable(java.util.logging.Level.FINE)) log.log(java.util.logging.Level.FINE, "reset Energy");
+			if (log1.isLoggable(java.util.logging.Level.FINE)) log1.log(java.util.logging.Level.FINE, "reset Energy");
 			break;
 		default: // keep energy untouched
 		case -1: // keep energy untouched
 			points[4] = points[4];
-			if (log.isLoggable(java.util.logging.Level.FINE)) log.log(java.util.logging.Level.FINE, "untouche Energy");
+			if (log1.isLoggable(java.util.logging.Level.FINE)) log1.log(java.util.logging.Level.FINE, "untouche Energy");
 			break;
 		}
 		//5==Temperature Int 6=Resistance
@@ -204,73 +220,73 @@ public class D200neo extends Q200 {
 				try {
 					Channel activChannel = Channels.getInstance().getActiveChannel();
 					if (activChannel != null) {
-						this.dataGatherThread = new X200neoGathererThread(this.application, this, this.usbPort, activChannel.getNumber(), this.getDialog());
+						this.xdataGatherThread = new X200neoGathererThread(this.application, this, this.usbPort, activChannel.getNumber(), this.getDialog());
 						try {
-							if (this.dataGatherThread != null && this.usbPort.isConnected()) {
+							if (this.xdataGatherThread != null && this.usbPort.isConnected()) {
 							//this.systemInfo = new Q200.SystemInfo(this.usbPort.getSystemInfo(this.dataGatherThread.getUsbInterface(), Q200UsbPort.QuerySystemInfo.SLOT_0.value()));
-								for (int i = 0; i < systemInfo.length; i++) {
+								for (int i = 0; i < neoSystemInfo.length; i++) {
 									switch (i) {
 									case 0:
 									default:
-										this.systemInfo[i] = new D200neo.SystemInfo(this.usbPort.getSystemInfo(this.dataGatherThread.getUsbInterface(), Q200UsbPort.QuerySystemInfo.CHANNEL_A.value()));
-										this.systemSetting[i] = new Q200.SystemSetting(this.usbPort.getSystemSetting(this.dataGatherThread.getUsbInterface(), Q200UsbPort.QuerySystemSetting.CHANNEL_A.value()));
+										this.neoSystemInfo[i] = new D200neo.SystemInfo(this.usbPort.getSystemInfo(this.xdataGatherThread.getUsbInterface(), Q200UsbPort.QuerySystemInfo.CHANNEL_A.value()));
+										this.systemSetting[i] = new Q200.SystemSetting(this.usbPort.getSystemSetting(this.xdataGatherThread.getUsbInterface(), Q200UsbPort.QuerySystemSetting.CHANNEL_A.value()));
 										break;
 									case 1:
-										this.systemInfo[i] = new D200neo.SystemInfo(this.usbPort.getSystemInfo(this.dataGatherThread.getUsbInterface(), Q200UsbPort.QuerySystemInfo.CHANNEL_B.value()));
-										this.systemSetting[i] = new Q200.SystemSetting(this.usbPort.getSystemSetting(this.dataGatherThread.getUsbInterface(), Q200UsbPort.QuerySystemSetting.CHANNEL_B.value()));
+										this.neoSystemInfo[i] = new D200neo.SystemInfo(this.usbPort.getSystemInfo(this.xdataGatherThread.getUsbInterface(), Q200UsbPort.QuerySystemInfo.CHANNEL_B.value()));
+										this.systemSetting[i] = new Q200.SystemSetting(this.usbPort.getSystemSetting(this.xdataGatherThread.getUsbInterface(), Q200UsbPort.QuerySystemSetting.CHANNEL_B.value()));
 										break;
 									case 2:
-										this.systemInfo[i] = new D200neo.SystemInfo(this.usbPort.getSystemInfo(this.dataGatherThread.getUsbInterface(), Q200UsbPort.QuerySystemInfo.CHANNEL_C.value()));
-										this.systemSetting[i] = new Q200.SystemSetting(this.usbPort.getSystemSetting(this.dataGatherThread.getUsbInterface(), Q200UsbPort.QuerySystemSetting.CHANNEL_C.value()));
+										this.neoSystemInfo[i] = new D200neo.SystemInfo(this.usbPort.getSystemInfo(this.xdataGatherThread.getUsbInterface(), Q200UsbPort.QuerySystemInfo.CHANNEL_C.value()));
+										this.systemSetting[i] = new Q200.SystemSetting(this.usbPort.getSystemSetting(this.xdataGatherThread.getUsbInterface(), Q200UsbPort.QuerySystemSetting.CHANNEL_C.value()));
 										break;
 									case 3:
-										this.systemInfo[i] = new D200neo.SystemInfo(this.usbPort.getSystemInfo(this.dataGatherThread.getUsbInterface(), Q200UsbPort.QuerySystemInfo.CHANNEL_D.value()));
-										this.systemSetting[i] = new Q200.SystemSetting(this.usbPort.getSystemSetting(this.dataGatherThread.getUsbInterface(), Q200UsbPort.QuerySystemSetting.CHANNEL_D.value()));
+										this.neoSystemInfo[i] = new D200neo.SystemInfo(this.usbPort.getSystemInfo(this.xdataGatherThread.getUsbInterface(), Q200UsbPort.QuerySystemInfo.CHANNEL_D.value()));
+										this.systemSetting[i] = new Q200.SystemSetting(this.usbPort.getSystemSetting(this.xdataGatherThread.getUsbInterface(), Q200UsbPort.QuerySystemSetting.CHANNEL_D.value()));
 										break;
 									}
 								}
 								WaitTimer.delay(100);
-								this.dataGatherThread.start();
+								this.xdataGatherThread.start();
 							}
 						}
 						catch (Throwable e) {
-							log.log(java.util.logging.Level.SEVERE, e.getMessage(), e);
+							log1.log(java.util.logging.Level.SEVERE, e.getMessage(), e);
 						}
 					}
 				}
 				catch (UsbClaimException e) {
-					log.log(java.util.logging.Level.SEVERE, e.getMessage(), e);
+					log1.log(java.util.logging.Level.SEVERE, e.getMessage(), e);
 					this.application.openMessageDialog(this.dialog.getDialogShell(),
 							Messages.getString(gde.messages.MessageIds.GDE_MSGE0051, new Object[] { e.getClass().getSimpleName() + GDE.STRING_BLANK_COLON_BLANK + e.getMessage() }));
 					try {
 						if (this.usbPort != null && this.usbPort.isConnected()) this.usbPort.closeUsbPort(null);
 					}
 					catch (UsbException ex) {
-						log.log(java.util.logging.Level.SEVERE, ex.getMessage(), ex);
+						log1.log(java.util.logging.Level.SEVERE, ex.getMessage(), ex);
 					}
 				}
 				catch (UsbException e) {
-					log.log(java.util.logging.Level.SEVERE, e.getMessage(), e);
+					log1.log(java.util.logging.Level.SEVERE, e.getMessage(), e);
 					this.application.openMessageDialog(this.dialog.getDialogShell(), Messages.getString(gde.messages.MessageIds.GDE_MSGE0050));
 					try {
 						if (this.usbPort != null && this.usbPort.isConnected()) this.usbPort.closeUsbPort(null);
 					}
 					catch (UsbException ex) {
-						log.log(java.util.logging.Level.SEVERE, ex.getMessage(), ex);
+						log1.log(java.util.logging.Level.SEVERE, ex.getMessage(), ex);
 					}
 				}
 				catch (ApplicationConfigurationException e) {
-					log.log(java.util.logging.Level.SEVERE, e.getMessage(), e);
+					log1.log(java.util.logging.Level.SEVERE, e.getMessage(), e);
 					this.application.openMessageDialog(this.dialog.getDialogShell(), Messages.getString(gde.messages.MessageIds.GDE_MSGE0010));
 					this.application.getDeviceSelectionDialog().open();
 				}
 				catch (Throwable e) {
-					log.log(java.util.logging.Level.SEVERE, e.getMessage(), e);
+					log1.log(java.util.logging.Level.SEVERE, e.getMessage(), e);
 				}
 			}
 			else {
-				if (this.dataGatherThread != null) {
-					this.dataGatherThread.stopDataGatheringThread(false, null);
+				if (this.xdataGatherThread != null) {
+					this.xdataGatherThread.stopDataGatheringThread(false, null);
 				}
 				//if (this.boundsComposite != null && !this.isDisposed()) this.boundsComposite.redraw();
 				try {
@@ -278,7 +294,7 @@ public class D200neo extends Q200 {
 					if (this.usbPort != null && this.usbPort.isConnected()) this.usbPort.closeUsbPort(null);
 				}
 				catch (UsbException e) {
-					log.log(java.util.logging.Level.SEVERE, e.getMessage(), e);
+					log1.log(java.util.logging.Level.SEVERE, e.getMessage(), e);
 				}
 			}
 		}
