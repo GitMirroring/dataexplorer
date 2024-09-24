@@ -19,6 +19,7 @@
 package gde.device.skyrc;
 
 import java.io.FileNotFoundException;
+import java.util.logging.Logger;
 
 import javax.usb.UsbClaimException;
 import javax.usb.UsbException;
@@ -28,6 +29,8 @@ import gde.GDE;
 import gde.data.Channel;
 import gde.data.Channels;
 import gde.device.DeviceConfiguration;
+import gde.device.DeviceDialog;
+import gde.device.skyrc.Q200.SystemInfo;
 import gde.exception.ApplicationConfigurationException;
 import gde.io.DataParser;
 import gde.log.Level;
@@ -36,7 +39,9 @@ import gde.utils.StringHelper;
 import gde.utils.WaitTimer;
 
 public class D200neo extends Q200 {
+	final static Logger	log					= Logger.getLogger(D200neo.class.getName());
 	X200neoGathererThread	dataGatherThread;
+	SystemInfo[]	systemInfo = new SystemInfo[4];
 
 	/**
 	 * Class to implement SKYRC D200neo, Q200neo device
@@ -50,6 +55,46 @@ public class D200neo extends Q200 {
 		super(deviceConfig);
 	}
 
+	protected class SystemInfo {
+		byte		channelId;
+		byte[]	machineId	= new byte[16];
+
+		public SystemInfo(final byte[] buffer) {
+			this.channelId = buffer[4];
+			for (int i = 0; i < 15; i++) {
+				this.machineId[i] = buffer[i + 5];
+			}
+			//System.out.println(this.getHardwareVersion());
+			//System.out.println(this.getFirmwareVersion());
+		}
+
+		public byte getChannelId() {
+			return this.channelId;
+		}
+
+		public String getFirmwareVersion() {
+			return String.format("Firmware: %d.%02d", this.machineId[11], this.machineId[12]);
+		}
+
+		public int getFirmwareVersionAsInt() {
+			return Integer.valueOf(String.format("%d%02d", this.machineId[11], this.machineId[12])).intValue();
+		}
+
+		public String getHardwareVersion() {
+			return String.format("Hardware: %d.0", this.machineId[13]);
+		}
+
+		public int getHardwareVersionAsInt() {
+			return this.machineId[13];
+		}
+	}
+	
+	/**
+	 * @return the dialog
+	 */
+	public DeviceDialog getDialog() {
+		return null;
+	}
 
 	/**
 	 * convert the device bytes into raw values, no calculation will take place here, see translateValue reverseTranslateValue
@@ -167,19 +212,19 @@ public class D200neo extends Q200 {
 									switch (i) {
 									case 0:
 									default:
-										this.systemInfo[i] = new Q200.SystemInfo(this.usbPort.getSystemInfo(this.dataGatherThread.getUsbInterface(), Q200UsbPort.QuerySystemInfo.CHANNEL_A.value()));
+										this.systemInfo[i] = new D200neo.SystemInfo(this.usbPort.getSystemInfo(this.dataGatherThread.getUsbInterface(), Q200UsbPort.QuerySystemInfo.CHANNEL_A.value()));
 										this.systemSetting[i] = new Q200.SystemSetting(this.usbPort.getSystemSetting(this.dataGatherThread.getUsbInterface(), Q200UsbPort.QuerySystemSetting.CHANNEL_A.value()));
 										break;
 									case 1:
-										this.systemInfo[i] = new Q200.SystemInfo(this.usbPort.getSystemInfo(this.dataGatherThread.getUsbInterface(), Q200UsbPort.QuerySystemInfo.CHANNEL_B.value()));
+										this.systemInfo[i] = new D200neo.SystemInfo(this.usbPort.getSystemInfo(this.dataGatherThread.getUsbInterface(), Q200UsbPort.QuerySystemInfo.CHANNEL_B.value()));
 										this.systemSetting[i] = new Q200.SystemSetting(this.usbPort.getSystemSetting(this.dataGatherThread.getUsbInterface(), Q200UsbPort.QuerySystemSetting.CHANNEL_B.value()));
 										break;
 									case 2:
-										this.systemInfo[i] = new Q200.SystemInfo(this.usbPort.getSystemInfo(this.dataGatherThread.getUsbInterface(), Q200UsbPort.QuerySystemInfo.CHANNEL_C.value()));
+										this.systemInfo[i] = new D200neo.SystemInfo(this.usbPort.getSystemInfo(this.dataGatherThread.getUsbInterface(), Q200UsbPort.QuerySystemInfo.CHANNEL_C.value()));
 										this.systemSetting[i] = new Q200.SystemSetting(this.usbPort.getSystemSetting(this.dataGatherThread.getUsbInterface(), Q200UsbPort.QuerySystemSetting.CHANNEL_C.value()));
 										break;
 									case 3:
-										this.systemInfo[i] = new Q200.SystemInfo(this.usbPort.getSystemInfo(this.dataGatherThread.getUsbInterface(), Q200UsbPort.QuerySystemInfo.CHANNEL_D.value()));
+										this.systemInfo[i] = new D200neo.SystemInfo(this.usbPort.getSystemInfo(this.dataGatherThread.getUsbInterface(), Q200UsbPort.QuerySystemInfo.CHANNEL_D.value()));
 										this.systemSetting[i] = new Q200.SystemSetting(this.usbPort.getSystemSetting(this.dataGatherThread.getUsbInterface(), Q200UsbPort.QuerySystemSetting.CHANNEL_D.value()));
 										break;
 									}

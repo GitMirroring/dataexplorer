@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <DeviceProperties xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="DeviceProperties_V49.xsd">
     <Device>
-        <name implementation="gde.device.skyrc.X200neo">D200neo</name>
+        <name implementation="gde.device.skyrc.D200neo">D200neo</name>
         <manufacturer>SKYRC</manufacturer>
         <manufacturerURL>https://www.skyrc.com</manufacturerURL>
         <group>charger</group>
-        <image>Q200.png</image>
+        <image>D200neo.png</image>
         <usage>true</usage>
     </Device>
     <UsbPort>
