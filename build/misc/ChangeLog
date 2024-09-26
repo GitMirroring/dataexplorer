@@ -13,6 +13,7 @@ Device specific changes/fixes
 	* OpenTxTelemetry - fix "GPS clock" parsing
 	* MC3000* - suppress switching channel, while channel 5 is selected
 	* D200neo - initial implementation, to be used with Linux only
+	* Core-Telemetry - update documentation
 
 Version 3.9.1 - 14 Aug 2024
 Generic changes/fixes 
