@@ -391,6 +391,7 @@ public class Q200UsbPort extends DeviceCommPort implements IDeviceCommPort {
 		}
 		catch (Exception e) {
 				log.logp(Level.WARNING, $CLASS_NAME, $METHOD_NAME, e.getMessage(), e);
+				throw e;
 		}
 		this.retrys = 1;
 		return data;

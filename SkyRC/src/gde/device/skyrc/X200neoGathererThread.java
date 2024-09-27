@@ -370,7 +370,7 @@ public class X200neoGathererThread extends Thread {
 					final int batterieType = this.device.getBatteryType(channelBuffer);
 					final int processingType = this.device.getProcessingType(channelBuffer);
 					if ((batterieType == 4 || batterieType == 5) && processingType == 4) { //NiMH, NiCd -> Cycle
-						int cycleNumber = this.device.getCycleNumber(dataBuffer);
+						int cycleNumber = this.device.getCycleNumber(dataBuffer)+1;
 
 						if (cycleNumber >= 0) {
 							extend.append(GDE.STRING_LEFT_BRACKET).append(processSubTypeName).append(GDE.STRING_COLON).append(cycleNumber).append(GDE.STRING_RIGHT_BRACKET);
