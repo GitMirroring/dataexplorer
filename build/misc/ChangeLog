@@ -7,6 +7,7 @@ Generic changes/fixes
 	* fix zoom bounds end of data
 	* update documentation
 	* adapt settings dialog size for macOS
+	* add button to select USB HID device if multiple connected
 	
 Device specific changes/fixes
 	* HoTTAdapter* - *.log add generic radio warning field

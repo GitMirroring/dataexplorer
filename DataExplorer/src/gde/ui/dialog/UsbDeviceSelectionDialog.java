@@ -27,6 +27,7 @@ import gde.messages.MessageIds;
 import gde.messages.Messages;
 import gde.ui.DataExplorer;
 
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 
 import java.util.Map;
@@ -84,18 +85,22 @@ public class UsbDeviceSelectionDialog extends Dialog {
 	 * Create contents of the dialog.
 	 */
 	private void createContents() {
-		shell = new Shell(getParent(), getStyle());
-		shell.setSize(350, 100);
+		shell = new Shell(getParent(), SWT.DIALOG_TRIM);
+		shell.setSize(350, 130);
 		shell.setText(getText());
 		
 		Combo combo = new Combo(shell, SWT.NONE);
 		combo.setBounds(10, 20, 325, 28);
 		combo.setItems(usbDevices.keySet().toArray(new String[usbDevices.size()]));
 		combo.select(0);
-		combo.addSelectionListener(new SelectionAdapter() {
+		
+		Button closeButton = new Button(shell, SWT.BORDER);
+		closeButton.setText("OK");
+		closeButton.setBounds(359/2-40, 70, 80, 40);
+		closeButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				result = usbDevices.get(combo.getText());
+				result = usbDevices.get(combo.getItems()[combo.getSelectionIndex()]);
 				shell.dispose();
 			}
 		});
