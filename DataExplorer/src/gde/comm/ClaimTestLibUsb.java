@@ -19,9 +19,9 @@ import org.usb4java.LibUsbException;
  */
 public class ClaimTestLibUsb
 {
-	final static short idVendor = 0x0000;
-	final static short idProduct = 0x0001;
-	final static byte interfaceId = 0x01;
+	final static short idVendor = 0x0483; //0x0000;
+	final static short idProduct = 0x5751; //0x0000;
+	final static byte interfaceId = 0x00;
 
     /**
      * Main method.
