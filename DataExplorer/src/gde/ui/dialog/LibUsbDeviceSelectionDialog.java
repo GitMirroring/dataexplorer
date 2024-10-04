@@ -21,6 +21,7 @@ package gde.ui.dialog;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.usb4java.Device;
 
 import gde.GDE;
 import gde.messages.MessageIds;
@@ -32,24 +33,22 @@ import org.eclipse.swt.widgets.Combo;
 
 import java.util.Map;
 
-import javax.usb.UsbDevice;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
-public class UsbDeviceSelectionDialog extends Dialog {
+public class LibUsbDeviceSelectionDialog extends Dialog {
 
-	Map<String, UsbDevice> 	usbDevices;
-	protected UsbDevice			result;
-	protected Shell					shell;
+	Map<String, Device> usbDevices;
+	protected Device	result;
+	protected Shell		shell;
 
 	/**
 	 * Create the dialog.
 	 * @param parent
 	 * @param style
 	 */
-	public UsbDeviceSelectionDialog(Shell parent, int style) {
+	public LibUsbDeviceSelectionDialog(Shell parent, int style) {
 		super(parent, style);
 		setText("Select USB port of device to be used");
 	}
@@ -59,10 +58,10 @@ public class UsbDeviceSelectionDialog extends Dialog {
 	 * @param parent
 	 * @param style
 	 */
-	public UsbDeviceSelectionDialog(Map<String, UsbDevice> fondUsbDevices) {
+	public LibUsbDeviceSelectionDialog(Map<String, Device> usbDevices) {
 		super(DataExplorer.getInstance().getShell(), SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL);
 		setText(Messages.getString(MessageIds.GDE_MSGW0049));
-		this.usbDevices = fondUsbDevices;
+		this.usbDevices = usbDevices;
 	}
 
 	/**
