@@ -72,6 +72,7 @@ public class MC3000GathererThread extends Thread {
 	boolean[]						isAlerted4Finish						= { false, false, false, false };
 	int									retryCounterRest_sec				= MC3000GathererThread.WAIT_TIME_RETRYS_MAX_SEC;	//maximal evaluated resting time plus 1 Min
 	int									retryCounterEnd_sec					= MC3000GathererThread.WAIT_TIME_RETRYS_END_SEC;	//60/4 = 15 Min
+	int									lastNumberDisplayableRecords= 0;
 
 	/**
 	 * data gatherer thread definition 
@@ -276,8 +277,11 @@ public class MC3000GathererThread extends Thread {
 									this.device.updateVisibilityStatus(recordSet5, true);
 								}
 							}
-							
-							MC3000GathererThread.this.application.updateAllTabs(false);
+							RecordSet activeRecordSet = this.channels.getActiveChannel().getActiveRecordSet();
+							if (activeRecordSet != null && activeRecordSet.size() > 0) {
+								MC3000GathererThread.this.application.updateAllTabs(false, this.lastNumberDisplayableRecords != activeRecordSet.getConfiguredDisplayable());
+								this.lastNumberDisplayableRecords = activeRecordSet.getConfiguredDisplayable();
+							}					
 							this.application.setStatusMessage(GDE.STRING_EMPTY);
 							
 							//check for all processing finished and stop gathering after 15 min

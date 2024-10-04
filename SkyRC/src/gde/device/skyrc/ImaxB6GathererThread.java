@@ -68,6 +68,7 @@ public class ImaxB6GathererThread extends Thread {
 	boolean							isProgrammExecuting1				= false;
 	boolean[]						isAlerted4Finish						= { false, false, false, false };
 	int									retryCounter								= ImaxB6GathererThread.WAIT_TIME_RETRYS;	//60 Min
+	int									lastNumberDisplayableRecords= 0;
 
 	/**
 	 * data gatherer thread definition 
@@ -310,10 +311,14 @@ public class ImaxB6GathererThread extends Thread {
 			dataBuffer[0] = (byte) this.device.getBatteryType(channelBuffer); //flag buffer contains Ni or PB battery data
 			recordSet.addPoints(this.device.convertDataBytes(points, dataBuffer));
 
-			ImaxB6GathererThread.this.application.updateAllTabs(false);
-
 			if (recordSet.get(0).realSize() < 3 || recordSet.get(0).realSize() % 10 == 0) {
 				this.device.updateVisibilityStatus(recordSet, true);
+			}
+
+			RecordSet activeRecordSet = this.channels.getActiveChannel().getActiveRecordSet();
+			if (activeRecordSet != null && recordSet.size() > 0 && recordSet.isChildOfActiveChannel() && recordSet.equals(activeRecordSet)) {
+				this.application.updateAllTabs(false, this.lastNumberDisplayableRecords != activeRecordSet.getConfiguredDisplayable());
+				this.lastNumberDisplayableRecords = activeRecordSet.getConfiguredDisplayable();
 			}
 		}
 		result[0] = recordSet;
