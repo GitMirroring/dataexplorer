@@ -26,48 +26,46 @@ import javax.usb.UsbServices;
  * @author Klaus Reimer <k@ailis.de>
  */
 public class DumpDevicesJavaxUsb {
+	
 	/**
 	 * Dumps the specified USB device to stdout.
 	 * 
 	 * @param device
 	 *            The USB device to dump.
 	 */
+	@SuppressWarnings({ "unchecked" })
 	private static void dumpDevice(final UsbDevice device) {
 		// Dump information about the device itself
 		System.out.println(device);
-	
+
 		final UsbPort port = device.getParentUsbPort();
 		if (port != null) {
 			System.out.println("Connected to port: " + port.getPortNumber());
 			System.out.println("Parent: " + port.getUsbHub());
 		}
 
-		// Dump device descriptor
-		System.out.println(device.getUsbDeviceDescriptor());
-    if (!device.isUsbHub()) {
+		if (!device.isUsbHub()) {
 			// Read the string descriptor indices from the device descriptor.
 			// If they are missing then ignore the device.
-			final UsbDeviceDescriptor desc = device.getUsbDeviceDescriptor();
-			final byte iManufacturer = desc.iManufacturer();
-			final byte iProduct = desc.iProduct();
-			if (iManufacturer == 0 || iProduct == 0) 
-				return;
 			try {
-				// Dump the device name
-				System.out.println(device.getString(iManufacturer) + " " + device.getString(iProduct));
+				// Dump device descriptor
+				final UsbDeviceDescriptor desc = device.getUsbDeviceDescriptor();
+				final byte iManufacturer = desc.iManufacturer();
+				final byte iProduct = desc.iProduct();
+				final byte iSerial = desc.iSerialNumber();
+				if (iManufacturer == 0 || iProduct == 0 || iSerial == 0) return;
+				final String manufactorerString = device.getString(iManufacturer);
+				final String productString = device.getString(iProduct);
+				final String serialString = device.getString(iSerial);
+
+				System.out.println(UsbDescriptorUtils.dump(device.getUsbDeviceDescriptor(), manufactorerString, productString, serialString));
 			}
-			catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
+			catch (UnsupportedEncodingException | UsbDisconnectedException | UsbException e) {
 				e.printStackTrace();
 			}
-			catch (UsbDisconnectedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			catch (UsbException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} 
+		}
+		else {
+			System.out.println(device.getUsbDeviceDescriptor());
 		}
 		// Process all configurations
 		for (UsbConfiguration configuration : (List<UsbConfiguration>) device.getUsbConfigurations()) {

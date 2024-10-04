@@ -239,6 +239,16 @@ public interface IDeviceCommPort {
    */
 	public Set<UsbDevice> findUsbDevices(final short vendorId, final short productId) throws UsbException;
 
+  /**
+   * find USB devices identified by vendor ID and product ID
+   * @param vendorId
+   * @param productId
+   * @param productString
+   * @return
+   * @throws UsbException
+   */
+	public Set<UsbDevice> findUsbDevices(final short vendorId, final short productId, final String productString) throws UsbException;
+
 	/**
 	 * find USB devices starting from hub (root hub)
 	 * @param hub
@@ -247,6 +257,17 @@ public interface IDeviceCommPort {
 	 * @return
 	 */
 	public Set<UsbDevice> findDevices(UsbHub hub, short vendorId, short productId);
+
+
+	/**
+	 * find USB devices starting from hub (root hub)
+	 * @param hub
+	 * @param vendorId
+	 * @param productId
+	 * @param productString
+	 * @return
+	 */
+	public Set<UsbDevice> findDevices(UsbHub hub, short vendorId, short productId, final String productString);
 
 	/**
 	 * dump required information for a USB device with known product ID and

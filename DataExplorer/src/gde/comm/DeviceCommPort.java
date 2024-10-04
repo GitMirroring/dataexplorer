@@ -363,6 +363,18 @@ public class DeviceCommPort implements IDeviceCommPort {
 		return this.port.findUsbDevices(vendorId, productId);
 	}
 
+  /**
+   * find USB devices identified by vendor ID and product ID
+   * @param vendorId
+   * @param productId
+   * @param productString
+   * @return
+   * @throws UsbException
+   */
+	public Set<UsbDevice> findUsbDevices(final short vendorId, final short productId, final String productString) throws UsbException {
+		return this.port.findUsbDevices(vendorId, productId, productString);
+	}
+
 	/**
 	 * find USB devices starting from hub (root hub)
 	 * @param hub
@@ -372,6 +384,17 @@ public class DeviceCommPort implements IDeviceCommPort {
 	 */
 	public Set<UsbDevice> findDevices(UsbHub hub, short vendorId, short productId) {
 		return this.port.findDevices(hub, vendorId, productId);
+	}
+
+	/**
+	 * find USB devices starting from hub (root hub)
+	 * @param hub
+	 * @param vendorId
+	 * @param productId
+	 * @return
+	 */
+	public Set<UsbDevice> findDevices(UsbHub hub, short vendorId, short productId, final String productString) {
+		return this.port.findDevices(hub, vendorId, productId, productString);
 	}
 
 	/**

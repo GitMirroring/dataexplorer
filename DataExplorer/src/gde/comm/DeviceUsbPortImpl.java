@@ -1,6 +1,7 @@
 package gde.comm;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
@@ -54,6 +55,7 @@ import gde.log.Level;
 import gde.messages.MessageIds;
 import gde.messages.Messages;
 import gde.ui.DataExplorer;
+import gde.ui.dialog.LibUsbDeviceSelectionDialog;
 import gde.ui.dialog.UsbDeviceSelectionDialog;
 import gde.utils.WaitTimer;
 
@@ -237,6 +239,21 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
 	}
 
 	/**
+	 * find USB device to be identified by vendor ID and product ID
+	 * @param vendorId
+	 * @param productId
+	 * @param productString
+	 * @return
+	 * @throws UsbException
+	 */
+	@Override
+	public Set<UsbDevice> findUsbDevices(final short vendorId, final short productId, final String productString) throws UsbException {
+		usbDevices.clear();
+		UsbServices services = UsbHostManager.getUsbServices();
+		return findDevices(services.getRootUsbHub(), vendorId, productId, productString);
+	}
+
+	/**
 	 * find USB device starting from hub (root hub)
 	 * @param hub
 	 * @param vendorId
@@ -254,6 +271,46 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
 				}
 				UsbDeviceDescriptor desc = usbDevice.getUsbDeviceDescriptor();
 				if (desc.idVendor() == vendorId && desc.idProduct() == productId) {
+					if (log.isLoggable(Level.FINE)) {
+						log.log(Level.FINE, usbDevice.toString());
+						log.log(Level.FINE, usbDevice.getUsbDeviceDescriptor().toString());
+					}
+					usbDevices.add(usbDevice);
+				}
+				else if (usbDevice.isUsbHub()) {
+					usbDevices.addAll(findDevices((UsbHub) usbDevice, vendorId, productId));
+				}
+			}
+		}
+		return usbDevices;
+	}
+
+	/**
+	 * find USB device starting from hub (root hub)
+	 * @param hub
+	 * @param vendorId
+	 * @param productId
+	 * @param productString
+	 * @return
+	 */
+	@Override
+	public Set<UsbDevice> findDevices(final UsbHub hub, final short vendorId, final short productId, final String productString) {
+		for (Object tmpDevice : hub.getAttachedUsbDevices()) {
+			if (tmpDevice instanceof UsbDevice) {
+				UsbDevice usbDevice = (UsbDevice) tmpDevice;
+				if (log.isLoggable(Level.FINER)) {
+					log.log(Level.FINER, usbDevice.toString());
+					log.log(Level.FINER, usbDevice.getUsbDeviceDescriptor().toString());
+				}
+				UsbDeviceDescriptor desc = usbDevice.getUsbDeviceDescriptor();
+				String deviceProductString = GDE.STRING_EMPTY;
+				try {
+					deviceProductString = usbDevice.getString(desc.iProduct());
+				}
+				catch (UnsupportedEncodingException | UsbDisconnectedException | UsbException e) {
+					log.log(Level.WARNING, e.getMessage(), e);	
+				}
+				if (desc.idVendor() == vendorId && desc.idProduct() == productId && productString.equals(deviceProductString)) {
 					if (log.isLoggable(Level.FINE)) {
 						log.log(Level.FINE, usbDevice.toString());
 						log.log(Level.FINE, usbDevice.getUsbDeviceDescriptor().toString());
@@ -484,7 +541,12 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
 		
 		byte ifaceId = activeDevice.getUsbInterface();
 		UsbInterface usbInterface = null;
-		Set<UsbDevice> myUsbDevices = findUsbDevices(activeDevice.getUsbVendorId(), activeDevice.getUsbProductId());
+		Set<UsbDevice> myUsbDevices;
+		if (activeDevice.getUsbProductString() == null || activeDevice.getUsbProductString().equalsIgnoreCase(GDE.STRING_EMPTY)) {
+			myUsbDevices = findUsbDevices(activeDevice.getUsbVendorId(), activeDevice.getUsbProductId());
+		} else {
+			myUsbDevices = findUsbDevices(activeDevice.getUsbVendorId(), activeDevice.getUsbProductId(), activeDevice.getUsbProductString());
+		}
 		if (myUsbDevices.size() == 0) {
 			this.usbApplication.openMessageDialog(Messages.getString(MessageIds.GDE_MSGE0050));
 		} else if (myUsbDevices.size() == 1) {
@@ -493,14 +555,31 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
 					throw new UsbException(Messages.getString(gde.messages.MessageIds.GDE_MSGE0050));
 				usbInterface = claimUsbInterface(usbDevice, ifaceId);
 			}
-		} else {
+		} else { //myUsbDevices.size() > 1
+			Map<String, UsbDevice> fondUsbDevices = new HashMap<String, UsbDevice>();
 			for (UsbDevice usbDevice : myUsbDevices) {
-				UsbInterface tmpUsbInterface = ((UsbConfiguration) usbDevice.getUsbConfigurations().get(0)).getUsbInterface(ifaceId);
-				if (tmpUsbInterface!= null && !(tmpUsbInterface.isActive() || tmpUsbInterface.isClaimed())) {
-					usbInterface = claimUsbInterface(usbDevice, ifaceId);
-					break;
+				try {
+					String usbDeviceString = usbDevice.getProductString() + " S/N " + usbDevice.getSerialNumberString();
+					fondUsbDevices.put(usbDeviceString, usbDevice);
+				}
+				catch (UnsupportedEncodingException | UsbDisconnectedException | UsbException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
+			UsbDevice selUsbDevice = null;
+			if (fondUsbDevices.size() > 1 && selUsbDevice == null) {
+				//several identical USB HID  found, manual select usbDevice
+				selUsbDevice = (UsbDevice) new UsbDeviceSelectionDialog(fondUsbDevices).open();
+				usbInterface = claimUsbInterface(selUsbDevice, ifaceId);
+			}
+			else if (fondUsbDevices.size() > 1 && selUsbDevice != null) {
+				//several identical USB HID  found, selected usbDevice available for this GDE instance
+				usbInterface = claimUsbInterface(selUsbDevice, ifaceId);
+			}
+			else
+				throw new UsbException(String.format("%s\n===>>>  %s", Messages.getString(MessageIds.GDE_MSGE0050), activeDevice.getUsbProductString()));
+
 		}
 		if (usbInterface == null) {
 			throw new UsbException(Messages.getString(gde.messages.MessageIds.GDE_MSGE0050));
@@ -559,6 +638,7 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
 				}
 				String descriptorString = descriptor.dump(handle);
 				if (descriptorString.contains("iProduct") && descriptorString.contains(activeDevice.getUsbProductString()) && descriptorString.contains("iSerial")) {
+					//TOD somehow Junsi specific!!
 					String usbDeviceString = descriptorString.substring(descriptorString.lastIndexOf("Junsi"), descriptorString.indexOf("USB HID") + 7) 
 							+ " SN/" + descriptorString.substring(descriptorString.indexOf("iSerial") + 27, descriptorString.indexOf("iSerial") + 37);
 					myUsbDevices.put(usbDeviceString, libUsbDevice);
@@ -567,7 +647,7 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
 			}
 			if (myUsbDevices.size() > 0 && selectedUsbDevice == null) {
 				//several identical USB HID  found, manual select usbDevice
-				selectedUsbDevice = (Device) new UsbDeviceSelectionDialog(myUsbDevices).open();
+				selectedUsbDevice = (Device) new LibUsbDeviceSelectionDialog(myUsbDevices).open();
 				claimLibUsbDevice(selectedUsbDevice, libUsbDeviceHandle, ifaceId);
 			}
 			else if (myUsbDevices.size() > 0 && selectedUsbDevice != null) {

@@ -8,6 +8,7 @@ Generic changes/fixes
 	* update documentation
 	* adapt settings dialog size for macOS
 	* add button to select USB HID device if multiple connected
+	* enable usage of multiple USB devices in parallel while using product string and serial number to distinguish
 	
 Device specific changes/fixes
 	* HoTTAdapter* - *.log add generic radio warning field
@@ -15,6 +16,7 @@ Device specific changes/fixes
 	* MC3000* - suppress switching channel, while channel 5 is selected
 	* D200neo - initial implementation, due to USB chip to be used with Linux only
 	* Core-Telemetry - update documentation
+	* SkyRC - update device XML with product string
 
 Version 3.9.1 - 14 Aug 2024
 Generic changes/fixes 
