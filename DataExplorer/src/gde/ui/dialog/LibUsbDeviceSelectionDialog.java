@@ -27,6 +27,7 @@ import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -90,12 +91,18 @@ public class LibUsbDeviceSelectionDialog extends Dialog {
 		shell.setText(getText());
 		RowLayout rowLayout = new RowLayout(SWT.VERTICAL);
 		rowLayout.center = true;
+		rowLayout.marginLeft = 10;
+    rowLayout.marginTop = 10;
+    rowLayout.marginRight = 10;
+    rowLayout.marginBottom = 10;
 		shell.setLayout(rowLayout);
 		
 		Combo combo = new Combo(shell, SWT.NONE);
 		combo.setItems(usbDevices.keySet().toArray(new String[usbDevices.size()]));
 		combo.select(0);
 		combo.setLayoutData(new RowData(340, 30));
+		
+		new Composite(shell, SWT.NONE).setLayoutData(new RowData(340, 10));
 		
 		Button closeButton = new Button(shell, SWT.BORDER);
 		closeButton.setText("OK");
