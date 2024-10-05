@@ -18,18 +18,6 @@
 ****************************************************************************************/
 package gde.ui.dialog;
 
-import org.eclipse.swt.widgets.Dialog;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-
-import gde.GDE;
-import gde.messages.MessageIds;
-import gde.messages.Messages;
-import gde.ui.DataExplorer;
-
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-
 import java.util.Map;
 
 import javax.usb.UsbDevice;
@@ -37,6 +25,17 @@ import javax.usb.UsbDevice;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.RowData;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Dialog;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+
+import gde.messages.MessageIds;
+import gde.messages.Messages;
+import gde.ui.DataExplorer;
 
 public class UsbDeviceSelectionDialog extends Dialog {
 
@@ -90,15 +89,18 @@ public class UsbDeviceSelectionDialog extends Dialog {
 		shell = new Shell(getParent(), SWT.DIALOG_TRIM);
 		shell.setSize(350, 130);
 		shell.setText(getText());
+		RowLayout rowLayout = new RowLayout(SWT.VERTICAL);
+		rowLayout.center = true;
+		shell.setLayout(rowLayout);
 		
 		Combo combo = new Combo(shell, SWT.NONE);
-		combo.setBounds(10, 20, 325, 28);
 		combo.setItems(usbDevices.keySet().toArray(new String[usbDevices.size()]));
 		combo.select(0);
+		combo.setLayoutData(new RowData(340, 30));
 		
 		Button closeButton = new Button(shell, SWT.BORDER);
 		closeButton.setText("OK");
-		closeButton.setBounds(359/2-40, GDE.IS_MAC ? 60 : 70, 80, 40);
+		closeButton.setLayoutData(new RowData(80, 35));
 		closeButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -109,5 +111,6 @@ public class UsbDeviceSelectionDialog extends Dialog {
 				shell.dispose();
 			}
 		});
+		shell.pack();
 	}
 }

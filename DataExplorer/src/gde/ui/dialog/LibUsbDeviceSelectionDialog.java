@@ -18,29 +18,28 @@
 ****************************************************************************************/
 package gde.ui.dialog;
 
-import org.eclipse.swt.widgets.Dialog;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.usb4java.Device;
-
-import gde.GDE;
-import gde.messages.MessageIds;
-import gde.messages.Messages;
-import gde.ui.DataExplorer;
-
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.RowData;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Dialog;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.usb4java.Device;
+
+import gde.messages.MessageIds;
+import gde.messages.Messages;
+import gde.ui.DataExplorer;
 
 public class LibUsbDeviceSelectionDialog extends Dialog {
 
-	Map<String, Device> usbDevices;
-	protected Device	result;
+	Map<String, Device> 	usbDevices;
+	protected Device		result;
 	protected Shell		shell;
 
 	/**
@@ -58,10 +57,10 @@ public class LibUsbDeviceSelectionDialog extends Dialog {
 	 * @param parent
 	 * @param style
 	 */
-	public LibUsbDeviceSelectionDialog(Map<String, Device> usbDevices) {
+	public LibUsbDeviceSelectionDialog(Map<String, Device> fondUsbDevices) {
 		super(DataExplorer.getInstance().getShell(), SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL);
 		setText(Messages.getString(MessageIds.GDE_MSGW0049));
-		this.usbDevices = usbDevices;
+		this.usbDevices = fondUsbDevices;
 	}
 
 	/**
@@ -89,15 +88,18 @@ public class LibUsbDeviceSelectionDialog extends Dialog {
 		shell = new Shell(getParent(), SWT.DIALOG_TRIM);
 		shell.setSize(350, 130);
 		shell.setText(getText());
+		RowLayout rowLayout = new RowLayout(SWT.VERTICAL);
+		rowLayout.center = true;
+		shell.setLayout(rowLayout);
 		
 		Combo combo = new Combo(shell, SWT.NONE);
-		combo.setBounds(10, 20, 325, 28);
 		combo.setItems(usbDevices.keySet().toArray(new String[usbDevices.size()]));
 		combo.select(0);
+		combo.setLayoutData(new RowData(340, 30));
 		
 		Button closeButton = new Button(shell, SWT.BORDER);
 		closeButton.setText("OK");
-		closeButton.setBounds(359/2-40, GDE.IS_MAC ? 60 : 70, 80, 40);
+		closeButton.setLayoutData(new RowData(80, 35));
 		closeButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -108,5 +110,6 @@ public class LibUsbDeviceSelectionDialog extends Dialog {
 				shell.dispose();
 			}
 		});
+		shell.pack();
 	}
 }
