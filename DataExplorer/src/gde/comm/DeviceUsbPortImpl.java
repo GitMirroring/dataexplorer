@@ -638,9 +638,7 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
 				}
 				String descriptorString = descriptor.dump(handle);
 				if (descriptorString.contains("iProduct") && descriptorString.contains(activeDevice.getUsbProductString()) && descriptorString.contains("iSerial")) {
-					//TOD somehow Junsi specific!!
-					String usbDeviceString = descriptorString.substring(descriptorString.lastIndexOf("Junsi"), descriptorString.indexOf("USB HID") + 7) 
-							+ " SN/" + descriptorString.substring(descriptorString.indexOf("iSerial") + 27, descriptorString.indexOf("iSerial") + 37);
+					String usbDeviceString = LibUsb.getStringDescriptor(handle, descriptor.iProduct()) + " S/N " + LibUsb.getStringDescriptor(handle, descriptor.iSerialNumber());
 					myUsbDevices.put(usbDeviceString, libUsbDevice);
 				}				
 				LibUsb.close(handle);

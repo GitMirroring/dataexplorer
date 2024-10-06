@@ -7,7 +7,7 @@ Generic changes/fixes
 	* fix zoom bounds end of data
 	* update documentation
 	* adapt settings dialog size for macOS
-	* add button to select USB HID device if multiple connected
+	* update USB device selection dialog to select USB device if multiple connected
 	* enable usage of multiple USB devices in parallel while using product string and serial number to distinguish
 	
 Device specific changes/fixes
