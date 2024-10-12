@@ -1,6 +1,6 @@
 Development history / change log, please read from bottom up
 
-Version 3.9.2 - xx yyy 2024
+Version 3.9.2 - 14 Oct 2024
 Generic changes/fixes 
 	* fix Linux ARM download problem correcting naming, unless 3.9.2 is active workaround is manual downloading
 	* handle unmappable characters while saving OSD file
@@ -16,7 +16,6 @@ Device specific changes/fixes
 	* MC3000* - suppress switching channel, while channel 5 is selected
 	* D200neo - initial implementation, due to USB chip to be used with Linux only
 	* Core-Telemetry - update documentation
-	* SkyRC - update device XML with product string
 	* SkyRC devices - update curve selector only while required 
 
 
