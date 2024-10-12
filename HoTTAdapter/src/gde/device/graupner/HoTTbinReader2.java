@@ -350,7 +350,7 @@ public class HoTTbinReader2 extends HoTTbinReader {
 						
 						if (i % progressIndicator == 0) GDE.getUiNotification().setProgress((int) (i * 100 / numberDatablocks));
 					} else { // skip empty block, but add time step
-						if (HoTTbinReader2.log.isLoggable(Level.FINE)) HoTTbinReader2.log.log(Level.FINE, "-->> Found tx=rx=0 dBm");
+						if (HoTTbinReader2.log.isLoggable(Level.INFO)) HoTTbinReader2.log.log(Level.INFO, "-->> Found tx=rx=0 dBm");
 						
 						((RcvBinParser) HoTTbinReader2.rcvBinParser).trackPackageLoss(false);
 
@@ -669,7 +669,7 @@ public class HoTTbinReader2 extends HoTTbinReader {
 
 						if (i % progressIndicator == 0) GDE.getUiNotification().setProgress((int) (i * 100 / numberDatablocks));
 					} else { // skip empty block, but add time step
-						if (HoTTbinReader2.log.isLoggable(Level.FINE)) HoTTbinReader2.log.log(Level.FINE, "-->> Found tx=rx=0 dBm");
+						if (HoTTbinReader2.log.isLoggable(Level.INFO)) HoTTbinReader2.log.log(Level.INFO, "-->> Found tx=rx=0 dBm");
 						
 						((RcvBinParser) HoTTbinReader2.rcvBinParser).trackPackageLoss(false);
 						

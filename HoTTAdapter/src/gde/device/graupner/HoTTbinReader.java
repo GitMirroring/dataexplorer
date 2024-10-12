@@ -1002,7 +1002,7 @@ public class HoTTbinReader {
 						if (i % progressIndicator == 0) GDE.getUiNotification().setProgress((int) (i * 100 / numberDatablocks));
 					}
 					else { // skip empty block, but add time step
-						if (HoTTbinReader.log.isLoggable(Level.FINE)) HoTTbinReader.log.log(Level.FINE, "-->> Found tx=rx=0 dBm");
+						if (HoTTbinReader.log.isLoggable(Level.INFO)) HoTTbinReader.log.log(Level.INFO, "-->> Found tx=rx=0 dBm");
 						
 						((RcvBinParser) HoTTbinReader.rcvBinParser).trackPackageLoss(false);
 						if (HoTTbinReader.pickerParameters.isChannelsChannelEnabled) {
@@ -1415,7 +1415,7 @@ public class HoTTbinReader {
 							GDE.getUiNotification().setProgress((int) (i * 100 / numberDatablocks));
 					}
 					else { // tx,rx == 0
-						if (HoTTbinReader.log.isLoggable(Level.FINE)) HoTTbinReader.log.log(Level.FINE, "-->> Found tx=rx=0 dBm");
+						if (HoTTbinReader.log.isLoggable(Level.INFO)) HoTTbinReader.log.log(Level.INFO, "-->> Found tx=rx=0 dBm");
 						
 						((RcvBinParser) HoTTbinReader.rcvBinParser).trackPackageLoss(false);
 						if (HoTTbinReader.pickerParameters.isChannelsChannelEnabled) {
