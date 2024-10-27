@@ -1,5 +1,14 @@
 Development history / change log, please read from bottom up
 
+Version 3.9.3 - xx yyy 2024
+Generic changes/fixes 
+	* 
+	
+Device specific changes/fixes
+	* MC3000* - update/synchronize graphics templates
+	* MC3000* - extended data recording for the time of the loading pause after the end of processing, if continuous recording is activated
+	
+		
 Version 3.9.2 - 14 Oct 2024
 Generic changes/fixes 
 	* fix Linux ARM download problem correcting naming, unless 3.9.2 is active workaround is manual downloading

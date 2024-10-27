@@ -24,6 +24,8 @@ import gde.data.Channel;
 import gde.data.Channels;
 import gde.data.RecordSet;
 import gde.device.ChannelTypes;
+import gde.device.skyrc.MC3000.SlotSettings;
+import gde.device.skyrc.MC3000UsbPort.QuerySlotData;
 import gde.exception.ApplicationConfigurationException;
 import gde.exception.DataInconsitsentException;
 import gde.exception.SerialPortException;
@@ -48,7 +50,7 @@ public class MC3000GathererThread extends Thread {
 	protected static final int	USB_QUERY_DELAY	= GDE.IS_WINDOWS ? 70 : 160;
 	final static String	$CLASS_NAME									= MC3000GathererThread.class.getName();
 	final static Logger	log													= Logger.getLogger(MC3000GathererThread.class.getName());
-	final static int		WAIT_TIME_RETRYS_END_SEC		= 3600;		// 3600 * 1 sec = 60 Minutes
+	final static int		WAIT_TIME_RETRYS_END_SEC		= 60 * 5;		// 5 Minutes
 	final static int		WAIT_TIME_RETRYS_MAX_SEC		= (240 + 1) * 60; // maximal evaluated resting time plus 1 Min
 
 	final DataExplorer	application;
@@ -71,7 +73,11 @@ public class MC3000GathererThread extends Thread {
 	boolean							isProgrammExecuting4				= false;
 	boolean[]						isAlerted4Finish						= { false, false, false, false };
 	int									retryCounterRest_sec				= MC3000GathererThread.WAIT_TIME_RETRYS_MAX_SEC;	//maximal evaluated resting time plus 1 Min
-	int									retryCounterEnd_sec					= MC3000GathererThread.WAIT_TIME_RETRYS_END_SEC;	//60/4 = 15 Min
+	int									retryCounterEnd_sec					= MC3000GathererThread.WAIT_TIME_RETRYS_END_SEC;	//5*60 = 5 Min
+	int									retryCounterEnd_1_sec				= MC3000GathererThread.WAIT_TIME_RETRYS_END_SEC;	//5*60 = 5 Min
+	int									retryCounterEnd_2_sec				= MC3000GathererThread.WAIT_TIME_RETRYS_END_SEC;	//5*60 = 5 Min
+	int									retryCounterEnd_3_sec				= MC3000GathererThread.WAIT_TIME_RETRYS_END_SEC;	//5*60 = 5 Min
+	int									retryCounterEnd_4_sec				= MC3000GathererThread.WAIT_TIME_RETRYS_END_SEC;	//5*60 = 5 Min
 	int									lastNumberDisplayableRecords= 0;
 
 	/**
@@ -132,6 +138,19 @@ public class MC3000GathererThread extends Thread {
 			String recordSetKey3 = Messages.getString(gde.messages.MessageIds.GDE_MSGT0272); //default initialization
 			String recordSetKey4 = Messages.getString(gde.messages.MessageIds.GDE_MSGT0272); //default initialization
 			String recordSetKey5 = Messages.getString(gde.messages.MessageIds.GDE_MSGT0272); //default initialization
+			
+			this.retryCounterEnd_1_sec = this.device.new SlotSettings(this.usbPort.getSlotData(this.usbInterface,
+					QuerySlotData.SLOT_0.value()), this.device.getFirmwareVersionAsInt()).getChargeRestingTime()*60; 
+			log.log(Level.INFO, "Resting time slot 1 [min] " + retryCounterEnd_1_sec/60);
+			this.retryCounterEnd_2_sec = this.device.new SlotSettings(this.usbPort.getSlotData(this.usbInterface,
+					QuerySlotData.SLOT_1.value()), this.device.getFirmwareVersionAsInt()).getChargeRestingTime()*60;
+			log.log(Level.INFO, "Resting time slot 2 [min] " + retryCounterEnd_2_sec/60);
+			this.retryCounterEnd_3_sec = this.device.new SlotSettings(this.usbPort.getSlotData(this.usbInterface,
+					QuerySlotData.SLOT_2.value()), this.device.getFirmwareVersionAsInt()).getChargeRestingTime()*60;
+			log.log(Level.INFO, "Resting time slot 3 [min] " + retryCounterEnd_3_sec/60);
+			this.retryCounterEnd_4_sec = this.device.new SlotSettings(this.usbPort.getSlotData(this.usbInterface,
+					QuerySlotData.SLOT_3.value()), this.device.getFirmwareVersionAsInt()).getChargeRestingTime()*60;
+			log.log(Level.INFO, "Resting time slot 4 [min] " + retryCounterEnd_4_sec/60);
 
 			this.isCollectDataStopped = false;
 			if (MC3000GathererThread.log.isLoggable(Level.FINE))
@@ -161,13 +180,17 @@ public class MC3000GathererThread extends Thread {
 						if (this.usbPort.isConnected()) dataBuffer4 = this.usbPort.getData(this.usbInterface, MC3000UsbPort.TakeMtuData.SLOT_3.value());
 						if (this.application != null) this.application.setSerialRxOff();
 
-						this.isProgrammExecuting1 = this.device.isProcessing(1, dataBuffer1);
-						this.isProgrammExecuting2 = this.device.isProcessing(2, dataBuffer2);
-						this.isProgrammExecuting3 = this.device.isProcessing(3, dataBuffer3);
-						this.isProgrammExecuting4 = this.device.isProcessing(4, dataBuffer4);
+						if (dataBuffer1 != null && dataBuffer1.length >= 6 && dataBuffer1[5] == 4) --retryCounterEnd_1_sec;
+						this.isProgrammExecuting1 = this.device.isProcessing(1, dataBuffer1) && retryCounterEnd_1_sec >= 0;
+						if (dataBuffer2 != null && dataBuffer2.length >= 6 && dataBuffer2[5] == 4) --retryCounterEnd_2_sec;
+						this.isProgrammExecuting2 = this.device.isProcessing(2, dataBuffer2) && retryCounterEnd_2_sec >= 0;
+						if (dataBuffer3 != null && dataBuffer3.length >= 6 && dataBuffer3[5] == 4) --retryCounterEnd_3_sec;
+						this.isProgrammExecuting3 = this.device.isProcessing(3, dataBuffer3) && retryCounterEnd_3_sec >= 0;
+						if (dataBuffer4 != null && dataBuffer4.length >= 6 && dataBuffer4[5] == 4) --retryCounterEnd_4_sec;
+						this.isProgrammExecuting4 = this.device.isProcessing(4, dataBuffer4) && retryCounterEnd_4_sec >= 0;
 
 						// check if device is ready for data capturing, discharge or charge allowed only
-						// else wait for 180 seconds max. for actions
+						// else wait for 360 seconds max. for actions
 						if (this.isProgrammExecuting1 || this.isProgrammExecuting2 || this.isProgrammExecuting3 || this.isProgrammExecuting4) {
 							lastEnergie1 = points1[4];
 							points1 = new int[this.device.getNumberOfMeasurements(1)];
@@ -180,7 +203,6 @@ public class MC3000GathererThread extends Thread {
 							
 							lastEnergie4 = points4[4];
 							points4 = new int[this.device.getNumberOfMeasurements(4)];
-
 
 							if (this.isProgrammExecuting1) { // checks for processes active includes check state change waiting to discharge to charge
 								points1[4] = lastEnergie1;
@@ -284,11 +306,14 @@ public class MC3000GathererThread extends Thread {
 							}					
 							this.application.setStatusMessage(GDE.STRING_EMPTY);
 							
-							//check for all processing finished and stop gathering after 15 min
-							if (this.device.isProcessingStatusStandByOrFinished(dataBuffer1) && this.device.isProcessingStatusStandByOrFinished(dataBuffer2) && this.device.isProcessingStatusStandByOrFinished(dataBuffer3) && this.device.isProcessingStatusStandByOrFinished(dataBuffer4)) {
-								if (0 >= (retryCounterEnd_sec -= 4)) {
-									log.log(Level.INFO, "finish device activation timeout"); //$NON-NLS-1$
-									this.application.openMessageDialogAsync(Messages.getString(MessageIds.GDE_MSGI3601));
+							//check for all processing finished and stop gathering after 5 min
+							if (this.device.isProcessingStatusStandByOrFinished(dataBuffer1) 
+									&& this.device.isProcessingStatusStandByOrFinished(dataBuffer2) 
+									&& this.device.isProcessingStatusStandByOrFinished(dataBuffer3) 
+									&& this.device.isProcessingStatusStandByOrFinished(dataBuffer4)) {
+								if (0 >= (retryCounterEnd_sec -= 1)) {
+									log.log(Level.INFO, "all device operations finished"); //$NON-NLS-1$
+									this.application.openMessageDialogAsync(Messages.getString(MessageIds.GDE_MSGI3602));
 									stopDataGatheringThread(false, null);
 								}
 							}
@@ -346,6 +371,9 @@ public class MC3000GathererThread extends Thread {
 			if (!this.isCollectDataStopped) {
 				this.stopDataGatheringThread(false, null);
 			}
+		}
+		catch (Exception e1) {
+			MC3000GathererThread.log.log(Level.SEVERE, e1.getMessage(), e1);
 		}
 		finally {
 			try {

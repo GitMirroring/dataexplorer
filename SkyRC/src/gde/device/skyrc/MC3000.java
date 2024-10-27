@@ -1598,7 +1598,7 @@ public class MC3000 extends DeviceConfiguration implements IDevice {
 
 		if (this.settings.isReduceChargeDischarge() && !this.isContinuousRecordSet()) 
 			return dataBuffer[5] > 0 && dataBuffer[5] < 3;
-		return dataBuffer[5] > 0 && dataBuffer[5] < 4;
+		return dataBuffer[5] > 0 && dataBuffer[5] <= 4;
 	}
 
 	/**
@@ -1745,6 +1745,13 @@ public class MC3000 extends DeviceConfiguration implements IDevice {
 	 */
 	public String getFirmwareString() {
 		return this.systemSettings.getFirmwareVersion();
+	}
+
+	/**
+	 * @return firmware as int
+	 */
+	public int getFirmwareVersionAsInt() {
+		return this.systemSettings.getFirmwareVersionAsInt();
 	}
 
 	/**
