@@ -56,7 +56,7 @@ public class Channel extends HashMap<String, RecordSet> {
 	final String									channelConfigName;	// Ausgang
 	String												name;								// 1 : Ausgang
 	final ChannelTypes						type;								// ChannelTypes.TYPE_OUTLET or ChannelTypes.TYPE_CONFIG
-	private final GraphicsTemplate	template;						// graphics template holds view configuration
+	private GraphicsTemplate			template;						// graphics template holds view configuration
 	private RecordSet							activeRecordSet;
 	private RecordSet							lastActiveRecordSet;
 	String												objectKey	= GDE.STRING_EMPTY;
@@ -188,6 +188,10 @@ public class Channel extends HashMap<String, RecordSet> {
 	 */
 	public GraphicsTemplate getTemplate() {
 		return this.template;
+	}
+	
+	public void setTemplate(String templateFileName) {
+		this.template = new GraphicsTemplate(templateFileName);
 	}
 
 	/**
