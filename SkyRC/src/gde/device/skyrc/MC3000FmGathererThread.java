@@ -296,7 +296,7 @@ public class MC3000FmGathererThread extends Thread {
 										recordSet5 = slotChannel.get(recordSetKey5);
 										recordSet5.setAllDisplayable();
 										String description = recordSet5.getRecordSetDescription();
-										recordSet5.setRecordSetDescription(description + GDE.LINE_SEPARATOR + this.device.getHardwareString() + GDE.STRING_BLANK + this.device.getFirmwareString() + GDE.STRING_BLANK + templateFileName);
+										recordSet5.setRecordSetDescription(description + GDE.LINE_SEPARATOR + this.device.getHardwareString() + GDE.STRING_BLANK + this.device.getFirmwareString() + " Template : " + templateFileName);
 										slotChannel.switchRecordSet(recordSetKey5);
 									}
 								}
