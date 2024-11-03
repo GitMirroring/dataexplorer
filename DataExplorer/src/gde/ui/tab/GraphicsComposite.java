@@ -1663,12 +1663,12 @@ public class GraphicsComposite extends Composite {
 
 					if (measureRecordKey != null
 							&& (recordSet.isMeasurementMode(measureRecordKey) || recordSet.isDeltaMeasurementMode(measureRecordKey) || recordSet.isAvgMedianMeasurementMode(measureRecordKey))
-							&& this.xPosMeasure + 2 >= this.xDown && this.xPosMeasure - 2 <= this.xDown) { // snap mouse pointer
+							&& this.xPosMeasure + 4 >= this.xDown && this.xPosMeasure - 4 <= this.xDown) { // snap mouse pointer
 						this.isLeftMouseMeasure = true;
 						this.isRightMouseMeasure = false;
 					}
-					else if (measureRecordKey != null && (recordSet.isDeltaMeasurementMode(measureRecordKey) || recordSet.isAvgMedianMeasurementMode(measureRecordKey)) && this.xPosDelta + 1 >= this.xDown
-							&& this.xPosDelta - 1 <= this.xDown) { // snap mouse pointer
+					else if (measureRecordKey != null && (recordSet.isDeltaMeasurementMode(measureRecordKey) || recordSet.isAvgMedianMeasurementMode(measureRecordKey)) 
+							&& this.xPosDelta + 4 >= this.xDown	&& this.xPosDelta - 4 <= this.xDown) { // snap mouse pointer
 						this.isRightMouseMeasure = true;
 						this.isLeftMouseMeasure = false;
 					}
