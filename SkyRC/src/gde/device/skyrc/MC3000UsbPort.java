@@ -31,6 +31,7 @@ import gde.utils.StringHelper;
 import java.io.IOException;
 import java.util.logging.Logger;
 
+import javax.usb.UsbDisconnectedException;
 import javax.usb.UsbException;
 import javax.usb.UsbInterface;
 
@@ -338,8 +339,12 @@ public class MC3000UsbPort extends DeviceCommPort implements IDeviceCommPort {
 				return this.getData(iface, request);
 			}
 		}
+		catch (UsbDisconnectedException dce) {
+			log.logp(Level.WARNING, $CLASS_NAME, $METHOD_NAME, dce.getMessage(), dce);
+			throw dce;
+		}
 		catch (Exception e) {
-				log.logp(Level.WARNING, $CLASS_NAME, $METHOD_NAME, e.getMessage(), e);
+			log.logp(Level.WARNING, $CLASS_NAME, $METHOD_NAME, e.getMessage(), e);
 		}
 		this.retrys = 1;
 		return data;

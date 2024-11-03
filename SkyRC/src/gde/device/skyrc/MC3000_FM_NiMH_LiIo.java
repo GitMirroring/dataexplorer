@@ -98,6 +98,25 @@ public class MC3000_FM_NiMH_LiIo extends MC3000 {
 		}
 	}
 
+	/**
+	 * @return true if setting is configured to continuous record set data gathering
+	 */
+	@Override
+	protected boolean isContinuousRecordSet() {
+		return true;
+	}
+
+	/**
+	 * set the measurement ordinal of the values displayed in cell voltage window underneath the cell voltage bars
+	 * set value of -1 to suppress this measurement
+	 */
+	@Override
+	public int[] getCellVoltageOrdinals() {
+		// Combi
+		//0=Voltage 1=Voltage 2=Voltage 3=Voltage 4=Current 5=Current 6=Current 7=Current 8=Capacity 9=Capacity 10=Capacity 11=Capacity
+		//12=Temperature 13=Temperature 14=Temperature 15=Temperature 16=Resistance 17=Resistance 18=Resistance 19=Resistance
+		return new int[] { -1, -1 };
+	}
 
 	/**
 	 * method toggle open close serial port or start/stop gathering data from device

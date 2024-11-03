@@ -1627,7 +1627,6 @@ public class MC3000 extends DeviceConfiguration implements IDevice {
 	public String getProcessingStatusName(final byte[] dataBuffer) {
 		return this.isContinuousRecordSet() ? Messages.getString(MessageIds.GDE_MSGT3606) : this.STATUS_MODE[dataBuffer[5]];
 	}
-
 	
 	/**
 	 * @return true if setting is configured to continuous record set data gathering
