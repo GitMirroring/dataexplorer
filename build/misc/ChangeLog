@@ -8,7 +8,7 @@ Generic changes/fixes
 Device specific changes/fixes
 	* MC3000* - update/synchronize graphics templates
 	* MC3000* - extended data recording for the time of the loading pause after the end of processing, if continuous recording is activated
-	* MC3000_FM_NiMH_LiIo - add device using predefined graphics templates for NiMH andd LiIo
+	* MC3000_FM_NiMH_LiIo - add device using predefined graphics templates for NiMH and LiIo
 	
 		
 Version 3.9.2 - 14 Oct 2024

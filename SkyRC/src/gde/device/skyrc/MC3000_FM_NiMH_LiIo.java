@@ -30,11 +30,14 @@ import javax.usb.UsbException;
 import javax.xml.bind.JAXBException;
 
 import gde.GDE;
+import gde.config.GraphicsTemplate;
 import gde.config.Settings;
 import gde.data.Channel;
 import gde.data.Channels;
+import gde.data.RecordSet;
 import gde.device.DeviceConfiguration;
 import gde.exception.ApplicationConfigurationException;
+import gde.exception.DataInconsitsentException;
 import gde.log.Level;
 import gde.messages.Messages;
 import gde.utils.FileUtils;
@@ -116,6 +119,55 @@ public class MC3000_FM_NiMH_LiIo extends MC3000 {
 		//0=Voltage 1=Voltage 2=Voltage 3=Voltage 4=Current 5=Current 6=Current 7=Current 8=Capacity 9=Capacity 10=Capacity 11=Capacity
 		//12=Temperature 13=Temperature 14=Temperature 15=Temperature 16=Resistance 17=Resistance 18=Resistance 19=Resistance
 		return new int[] { -1, -1 };
+	}
+
+	/**
+	 * add record data size points from file stream to each measurement
+	 * it is possible to add only none calculation records if makeInActiveDisplayable calculates the rest
+	 * do not forget to call makeInActiveDisplayable afterwards to calculate the missing data
+	 * since this is a long term operation the progress bar should be updated to signal business to user 
+	 * @param recordSet
+	 * @param dataBuffer
+	 * @param recordDataSize
+	 * @param doUpdateProgressBar
+	 * @throws DataInconsitsentException 
+	 */
+	@Override
+	public void addDataBufferAsRawDataPoints(RecordSet recordSet, byte[] dataBuffer, int recordDataSize, boolean doUpdateProgressBar) throws DataInconsitsentException {
+		int dataBufferSize = GDE.SIZE_BYTES_INTEGER * recordSet.getNoneCalculationRecordNames().length;
+		byte[] convertBuffer = new byte[dataBufferSize];
+		int[] points = new int[recordSet.size()];
+		String sThreadId = String.format("%06d", Thread.currentThread().getId()); //$NON-NLS-1$
+		int progressCycle = 0;
+		if (doUpdateProgressBar) this.application.setProgress(progressCycle, sThreadId);
+
+		for (int i = 0; i < recordDataSize; i++) {
+			MC3000.log.log(java.util.logging.Level.FINER, i + " i*dataBufferSize+timeStampBufferSize = " + i * dataBufferSize); //$NON-NLS-1$
+			System.arraycopy(dataBuffer, i * dataBufferSize, convertBuffer, 0, dataBufferSize);
+
+			for (int j = 0, k = 0; j < points.length; j++, k += 4) {
+				//0=Voltage 1=Current 2=Capacity 3=Power 4=Energy 5=Teperature 6=Resistance 7=SysTemperature
+				points[j] = (((convertBuffer[k] & 0xff) << 24) + ((convertBuffer[k + 1] & 0xff) << 16) + ((convertBuffer[k + 2] & 0xff) << 8) + ((convertBuffer[k + 3] & 0xff) << 0));
+			}
+			recordSet.addPoints(points);
+
+			if (doUpdateProgressBar && i % 50 == 0) this.application.setProgress(((++progressCycle * 2500) / recordDataSize), sThreadId);
+		}
+		recordSet.syncScaleOfSyncableRecords();
+		String templateFileName = this.getName().substring(0, this.getName().indexOf(GDE.STRING_UNDER_BAR, 9) + 1);
+
+		if (recordSet.getDescription().endsWith("LiIo")) {
+			templateFileName += "LiIo";
+		}
+		else {
+			templateFileName += "NiMH";
+		}
+		GraphicsTemplate graphicsTemplate = new GraphicsTemplate(templateFileName);
+		graphicsTemplate.load();
+		if (graphicsTemplate.isAvailable()) 
+			application.getActiveChannel().setTemplate(templateFileName);
+		
+		if (doUpdateProgressBar) this.application.setProgress(100, sThreadId);
 	}
 
 	/**
