@@ -2100,8 +2100,10 @@ public class GraphicsComposite extends Composite {
 			if (isCreated) {
 				measurePopUp.getDisplay().asyncExec(new Runnable() {
 					public void run() {
-						log.log(Level.INFO, "open shell for measure pop-up");
-						measurePopUp.open();
+						if (measurePopUp != null) {
+							log.log(Level.INFO, "open shell for measure pop-up");
+							measurePopUp.open();
+						}
 					}
 				});
 			}
@@ -2139,8 +2141,10 @@ public class GraphicsComposite extends Composite {
 			if (isCreated) {
 				deltaPopUp.getDisplay().asyncExec(new Runnable() {
 					public void run() {
-						log.log(Level.INFO, "open shell for delta pop-up");
-						deltaPopUp.open();
+						if (deltaPopUp != null) {
+							log.log(Level.INFO, "open shell for delta pop-up");
+							deltaPopUp.open();
+						}
 					}
 				});
 			}
