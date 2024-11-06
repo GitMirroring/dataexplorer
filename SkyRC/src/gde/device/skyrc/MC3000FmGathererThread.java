@@ -71,6 +71,10 @@ public class MC3000FmGathererThread extends Thread {
 	boolean							isProgrammExecuting2				= false;
 	boolean							isProgrammExecuting3				= false;
 	boolean							isProgrammExecuting4				= false;
+	boolean							wasProgrammExecuting1				= false;
+	boolean							wasProgrammExecuting2				= false;
+	boolean							wasProgrammExecuting3				= false;
+	boolean							wasProgrammExecuting4				= false;
 	boolean[]						isAlerted4Finish						= { false, false, false, false };
 	int									retryCounterRest_sec				= MC3000FmGathererThread.WAIT_TIME_RETRYS_MAX_SEC;	//maximal evaluated resting time plus 1 Min
 	int									retryCounterEnd_sec					= MC3000FmGathererThread.WAIT_TIME_RETRYS_END_SEC;	//5*60 = 5 Min
@@ -122,6 +126,10 @@ public class MC3000FmGathererThread extends Thread {
 			this.isProgrammExecuting2 = false;
 			this.isProgrammExecuting3 = false;
 			this.isProgrammExecuting4 = false;
+			this.wasProgrammExecuting1 = false;
+			this.wasProgrammExecuting2 = false;
+			this.wasProgrammExecuting3 = false;
+			this.wasProgrammExecuting4 = false;
 
 			long lastCycleTime = 0;
 			byte[] dataBuffer1 = null;
@@ -131,19 +139,6 @@ public class MC3000FmGathererThread extends Thread {
 			String recordSetKey5 = Messages.getString(gde.messages.MessageIds.GDE_MSGT0272); //default initialization
 			String processBatteryType = null; 
 			
-			this.retryCounterEnd_1_sec = this.device.new SlotSettings(this.usbPort.getSlotData(this.usbInterface,
-					QuerySlotData.SLOT_0.value()), this.device.getFirmwareVersionAsInt()).getChargeRestingTime()*60; 
-			log.log(Level.INFO, "Resting time slot 1 [min] " + retryCounterEnd_1_sec/60);
-			this.retryCounterEnd_2_sec = this.device.new SlotSettings(this.usbPort.getSlotData(this.usbInterface,
-					QuerySlotData.SLOT_1.value()), this.device.getFirmwareVersionAsInt()).getChargeRestingTime()*60;
-			log.log(Level.INFO, "Resting time slot 2 [min] " + retryCounterEnd_2_sec/60);
-			this.retryCounterEnd_3_sec = this.device.new SlotSettings(this.usbPort.getSlotData(this.usbInterface,
-					QuerySlotData.SLOT_2.value()), this.device.getFirmwareVersionAsInt()).getChargeRestingTime()*60;
-			log.log(Level.INFO, "Resting time slot 3 [min] " + retryCounterEnd_3_sec/60);
-			this.retryCounterEnd_4_sec = this.device.new SlotSettings(this.usbPort.getSlotData(this.usbInterface,
-					QuerySlotData.SLOT_3.value()), this.device.getFirmwareVersionAsInt()).getChargeRestingTime()*60;
-			log.log(Level.INFO, "Resting time slot 4 [min] " + retryCounterEnd_4_sec/60);
-
 			this.isCollectDataStopped = false;
 			if (MC3000FmGathererThread.log.isLoggable(Level.FINE))
 				MC3000FmGathererThread.log.logp(Level.FINE, MC3000FmGathererThread.$CLASS_NAME, $METHOD_NAME, "====> entry initial time step ms = " + this.device.getTimeStep_ms()); //$NON-NLS-1$
@@ -174,12 +169,44 @@ public class MC3000FmGathererThread extends Thread {
 
 						if (dataBuffer1 != null && dataBuffer1.length >= 6 && dataBuffer1[5] == 4) --retryCounterEnd_1_sec;
 						this.isProgrammExecuting1 = this.device.isProcessing(1, dataBuffer1) && retryCounterEnd_1_sec >= 0;
+						if (this.isProgrammExecuting1 && !this.wasProgrammExecuting1) {
+							this.wasProgrammExecuting1 = this.isProgrammExecuting1;
+							this.retryCounterEnd_1_sec = this.device.new SlotSettings(this.usbPort.getSlotData(this.usbInterface,
+									QuerySlotData.SLOT_0.value()), this.device.getFirmwareVersionAsInt()).getChargeRestingTime()*60; 
+							log.log(Level.OFF, "Resting time slot 1 [min] " + retryCounterEnd_1_sec/60);
+						} else if (!this.isProgrammExecuting1) {
+							this.wasProgrammExecuting1 = this.isProgrammExecuting1;
+						}
 						if (dataBuffer2 != null && dataBuffer2.length >= 6 && dataBuffer2[5] == 4) --retryCounterEnd_2_sec;
 						this.isProgrammExecuting2 = this.device.isProcessing(2, dataBuffer2) && retryCounterEnd_2_sec >= 0;
-						if (dataBuffer3 != null && dataBuffer3.length >= 6 && dataBuffer3[5] == 4) --retryCounterEnd_3_sec;
+						if (this.isProgrammExecuting2 && !this.wasProgrammExecuting2) {
+							this.wasProgrammExecuting2 = this.isProgrammExecuting2;
+							this.retryCounterEnd_2_sec = this.device.new SlotSettings(this.usbPort.getSlotData(this.usbInterface,
+									QuerySlotData.SLOT_1.value()), this.device.getFirmwareVersionAsInt()).getChargeRestingTime()*60; 
+							log.log(Level.OFF, "Resting time slot 2 [min] " + retryCounterEnd_2_sec/60);
+						} else if (!this.isProgrammExecuting2) {
+							this.wasProgrammExecuting2 = this.isProgrammExecuting2;
+						}
+					if (dataBuffer3 != null && dataBuffer3.length >= 6 && dataBuffer3[5] == 4) --retryCounterEnd_3_sec;
 						this.isProgrammExecuting3 = this.device.isProcessing(3, dataBuffer3) && retryCounterEnd_3_sec >= 0;
+						if (this.isProgrammExecuting3 && !this.wasProgrammExecuting3) {
+							this.wasProgrammExecuting3 = this.isProgrammExecuting3;
+							this.retryCounterEnd_3_sec = this.device.new SlotSettings(this.usbPort.getSlotData(this.usbInterface,
+									QuerySlotData.SLOT_2.value()), this.device.getFirmwareVersionAsInt()).getChargeRestingTime()*60; 
+							log.log(Level.OFF, "Resting time slot 3 [min] " + retryCounterEnd_3_sec/60);
+						} else if (!this.isProgrammExecuting3) {
+							this.wasProgrammExecuting3 = this.isProgrammExecuting3;
+						}
 						if (dataBuffer4 != null && dataBuffer4.length >= 6 && dataBuffer4[5] == 4) --retryCounterEnd_4_sec;
 						this.isProgrammExecuting4 = this.device.isProcessing(4, dataBuffer4) && retryCounterEnd_4_sec >= 0;
+						if (this.isProgrammExecuting4 && !this.wasProgrammExecuting4) {
+							this.wasProgrammExecuting4 = this.isProgrammExecuting4;
+							this.retryCounterEnd_4_sec = this.device.new SlotSettings(this.usbPort.getSlotData(this.usbInterface,
+									QuerySlotData.SLOT_3.value()), this.device.getFirmwareVersionAsInt()).getChargeRestingTime()*60; 
+							log.log(Level.OFF, "Resting time slot 4 [min] " + retryCounterEnd_4_sec/60);
+						} else if (!this.isProgrammExecuting4) {
+							this.wasProgrammExecuting4 = this.isProgrammExecuting4;
+						}
 
 						// check if device is ready for data capturing, discharge or charge allowed only
 						// else wait for 360 seconds max. for actions
