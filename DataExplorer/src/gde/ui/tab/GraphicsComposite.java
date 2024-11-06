@@ -91,6 +91,7 @@ public class GraphicsComposite extends Composite {
 	protected final static int		DEFAULT_TOP_GAP			= 10; // free gap on top of the curves
 	protected final static int		DEFAULT_HEADER_GAP	= 5;
 	protected final static int		DEFAULT_COMMENT_GAP	= 5;
+	protected final static int		SNAP_MOUSE_TOLERANCE= 6; //snap mouse measure pointer
 
 	public enum GraphicsMode {
 		RESET, ZOOM, MEASURE, MEASURE_DELTA, PAN, CUT_LEFT, CUT_RIGHT, SCOPE
@@ -1534,7 +1535,7 @@ public class GraphicsComposite extends Composite {
 					}
 				}
 				else if (measureRecordKey != null && (recordSet.isMeasurementMode(measureRecordKey) || recordSet.isDeltaMeasurementMode(measureRecordKey) || recordSet.isAvgMedianMeasurementMode(measureRecordKey))) {
-					if (this.xPosMeasure + 1 >= evt.x && this.xPosMeasure - 1 <= evt.x || this.xPosDelta + 1 >= evt.x && this.xPosDelta - 1 <= evt.x) { // snap mouse pointer
+					if (this.xPosMeasure + 3 >= evt.x && this.xPosMeasure - 3 <= evt.x || this.xPosDelta + 3 >= evt.x && this.xPosDelta - 3 <= evt.x) { // snap mouse pointer
 						this.graphicCanvas.setCursor(SWTResourceManager.getCursor(SWT.CURSOR_SIZEWE)); //$NON-NLS-1$
 					}
 					else {
@@ -1663,12 +1664,12 @@ public class GraphicsComposite extends Composite {
 
 					if (measureRecordKey != null
 							&& (recordSet.isMeasurementMode(measureRecordKey) || recordSet.isDeltaMeasurementMode(measureRecordKey) || recordSet.isAvgMedianMeasurementMode(measureRecordKey))
-							&& this.xPosMeasure + 4 >= this.xDown && this.xPosMeasure - 4 <= this.xDown) { // snap mouse pointer
+							&& this.xPosMeasure + SNAP_MOUSE_TOLERANCE >= this.xDown && this.xPosMeasure - SNAP_MOUSE_TOLERANCE <= this.xDown) { // snap mouse pointer
 						this.isLeftMouseMeasure = true;
 						this.isRightMouseMeasure = false;
 					}
 					else if (measureRecordKey != null && (recordSet.isDeltaMeasurementMode(measureRecordKey) || recordSet.isAvgMedianMeasurementMode(measureRecordKey)) 
-							&& this.xPosDelta + 4 >= this.xDown	&& this.xPosDelta - 4 <= this.xDown) { // snap mouse pointer
+							&& this.xPosDelta + SNAP_MOUSE_TOLERANCE >= this.xDown	&& this.xPosDelta - SNAP_MOUSE_TOLERANCE <= this.xDown) { // snap mouse pointer
 						this.isRightMouseMeasure = true;
 						this.isLeftMouseMeasure = false;
 					}

@@ -1602,17 +1602,20 @@ public class FileUtils {
 		BufferedReader in = null;
 		String[] versionCheck = new String[] { "false", GDE.VERSION.substring(8) }; //$NON-NLS-1$
 		try {
-			URL gdeDownload = new URL("https://www.nongnu.org/dataexplorer/download.html"); //$NON-NLS-1$
+			URL gdeDownload = new URL("https://savannah.nongnu.org/news/?group=dataexplorer"); //$NON-NLS-1$
 			in = new BufferedReader(new InputStreamReader(gdeDownload.openStream()));
 
 			String inputLine;
-			while ((inputLine = in.readLine()) != null)
-				if (inputLine.contains("The latest stable version of DataExplorer is")) { //$NON-NLS-1$
-					String versionString = inputLine.substring(inputLine.lastIndexOf("<B>") + 3, inputLine.lastIndexOf("</B>")); //$NON-NLS-1$ //$NON-NLS-2$
+			while ((inputLine = in.readLine()) != null) {
+				if (inputLine.toLowerCase().contains("version") && inputLine.toLowerCase().contains("released")) { //$NON-NLS-1$
+					String versionString = inputLine.toLowerCase().substring(inputLine.lastIndexOf("<b>") + 3, inputLine.lastIndexOf("</b>")); //$NON-NLS-1$ //$NON-NLS-2$
+					versionString = versionString.substring(versionString.indexOf(" ")+1, versionString.lastIndexOf(" ")); //$NON-NLS-1$ //$NON-NLS-2$
 					int availableVersion = Integer.parseInt(versionString.replace(GDE.STRING_DOT, GDE.STRING_EMPTY));
 					FileUtils.log.log(Level.OFF, "actualVersion = " + GDE.VERSION_NUMBER + " - availableVersion = " + availableVersion); //$NON-NLS-1$ //$NON-NLS-2$
 					versionCheck = new String[] { Boolean.valueOf(GDE.VERSION_NUMBER < availableVersion).toString(), versionString };
+					break;
 				}
+			}
 
 			in.close();
 			in = null;
