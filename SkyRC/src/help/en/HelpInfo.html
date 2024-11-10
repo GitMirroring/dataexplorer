@@ -30,15 +30,23 @@
 	<H2><A NAME="Introduction"></A><FONT FACE="Arial"><FONT SIZE=4><I>SkyRC MC3000</I></FONT></FONT></H2>
 </DIV>
 <P>
-The MC3000 is providing two device descriptions. 
+There are three device descriptions for the SkyRC MC3000. 
+</BR>
 A <B>MC3000-Set</B> is storing all collected data sets in a single file. 
-It makes sense to choose continuous record set in settings. 
+The result is a continuous recording.
 This will help to keep track of the slot to data set relation. 
-In such a case four simultaneously processed batteries will result in one record set per battery and all four record sets will be stored in a single file. 
+In the case of four simultaneously charged batteries, a data record is obtained for each cell and all data records are saved in one file.
+The combined data set with the most important values is also saved and makes it easier to compare the cells in the set.
+</BR>
+The <B>MC3000_FM_NiMH_LiIo</B> only records the combined data set continuously and provides two special graphic templates, as can be seen from its name.
 </BR>
 A <B>MC3000</B> treat each slot independent of the other. 
 Each slot has a separate sequence of record sets. 
 This will result in one file for each slot and battery since each battery does not have a relation to the others.
+A separate data set can also be saved for the combined data set if required.
+</P>
+<P><B>Note: </B> To ensure continuous recording, make sure that the computer does not go into standby or sleep mode. 
+This will stop the recording and there will be steps in the display of the curves.
 </P>
 <DIV TYPE=HEADER>
 	<H3><A NAME="Introduction"></A><FONT FACE="Arial"><FONT SIZE=4><I>Device Dialog</I></FONT></FONT></H2>
