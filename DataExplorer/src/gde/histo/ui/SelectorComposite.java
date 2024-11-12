@@ -124,7 +124,7 @@ public final class SelectorComposite extends Composite {
 			this.curveSelectorHeader = new Button(this, SWT.CHECK | SWT.LEFT);
 			this.curveSelectorHeader.setText(Messages.getString(MessageIds.GDE_MSGT0254));
 			this.curveSelectorHeader.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0671));
-			this.curveSelectorHeader.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.BOLD));
+			this.curveSelectorHeader.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE + 3, SWT.BOLD));
 			this.curveSelectorHeader.pack();
 			this.initialSelectorHeaderWidth = this.curveSelectorHeader.getSize().x + 8; // ET +8 don't know why
 			FormData curveSelectorHeaderLData = new FormData();
