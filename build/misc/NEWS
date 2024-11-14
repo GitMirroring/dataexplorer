@@ -1,38 +1,24 @@
-GNU DataExplorer - News - comes with Version 3.9.2 - 12 Oct 2024
+GNU DataExplorer - News - comes with Version 3.9.3 - 15 Oct 2024
 
 Generic changes/fixes 
-	* fix Linux ARM download problem correcting naming, unless 3.9.2 is active workaround is manual downloading
-	* handle unmappable characters while saving OSD file
-	* fix zoom bounds end of data
-	* update documentation
-	* adapt settings dialog size for macOS
-	* update USB device selection dialog to select USB device if multiple connected
-	* enable usage of multiple USB devices in parallel while using product string and serial number to distinguish
+	* update German translation of curve selector as well as add additional hints to tool tip
+	* update snap tolerance finding measure pointer
+	* change version query since download page replies with 429
 	
 Device specific changes/fixes
-	* HoTTAdapter* - *.log add generic radio warning field
-	* OpenTxTelemetry - fix "GPS clock" parsing
-	* MC3000* - suppress switching channel, while channel 5 is selected
-	* D200neo - initial implementation, due to USB chip to be used with Linux only
-	* Core-Telemetry - update documentation
-	* SkyRC devices - update curve selector only while required 
-		
+	* MC3000* - update/synchronize graphics templates
+	* MC3000* - extended data recording for the time of the loading pause after the end of processing, if continuous recording is activated
+	* MC3000_FM_NiMH_LiIo - add device using predefined graphics templates for NiMH and LiIo
+	
 Allgemeine Änderungen/Korrekturen
-	* Behebung des Linux ARM Download-Problems, das die Namensgebung korrigiert, wenn 3.9.2 nicht aktiv ist, ist der Workaround das manuelle Herunterladen
-	* Behandlung von nicht zuzuordnenden Zeichen beim Speichern der OSD-Datei
-	* Behebung der Zoom-Grenzen am Ende der Daten
-	* Dokumentation aktualisiert
-	* Größe des Einstellungsdialogs für macOS angepasst
-	* USB-Geräteauswahldialog aktualisiert, um USB-Geräte auszuwählen, wenn mehrere angeschlossen sind
-	* Ermöglichung die parallele Nutzung mehrerer USB-Geräte unter Verwendung von Produktstring und Seriennummer zur Unterscheidung
+	* deutscher Name für Kurvenselektor in Kurvenauswahl geändert und den anzeigbaren Tool-Tip angepasst
+	* Toleranz zum Auffinden des Messpunktes vergrößert, um das Arbeiten mit dem TouchPad zu erleichtern
+	* Abfrage URL zur Versionsabfrage geändert, alte URL antwortete oft mit HTTP Fehler Code 429
 
 Gerätespezifische Änderungen/Korrekturen
-	* HoTTAdapter* - *.log fügt generische (Sender) Warnungen hinzu
-	* OpenTxTelemetry - korrigiert "GPS clock" Analyse
-	* MC3000* - Unterdrückung der Kanalumschaltung, wenn Kanal 5 gewählt ist
-	* D200neo - initiale Implementierung, wegen USB-Chip nur unter Linux zu verwenden
-	* Core-Telemetry - Dokumentation aktualisiert
-	* SkyRC-Geräte - Kurvenauswahl wird nur bei Änderung der anzuzeigenden Messwerte aktualisiert 
+	* MC3000* - Anpassung/Synchronisation der Grafik-Vorlagen
+	* MC3000* - Datenaufnahmezeit um Pausenzeit des gewählten Prozesses bei fortlaufender Aufnahme verlängert
+	* MC3000_FM_NiMH_LiIo - Gerätebeschreibung mit vordefinierten Grafik-Vorlagen für NiMH und LiIo hinzu gefügt
 
 
 

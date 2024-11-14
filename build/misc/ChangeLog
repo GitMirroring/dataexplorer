@@ -1,6 +1,6 @@
 Development history / change log, please read from bottom up
 
-Version 3.9.3 - xx yyy 2024
+Version 3.9.3 - 15 Nov 2024
 Generic changes/fixes 
 	* update German translation of curve selector as well as add additional hints to tooltip
 	* update snap tolerance finding measure pointer
