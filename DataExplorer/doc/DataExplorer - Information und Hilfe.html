@@ -409,7 +409,7 @@ Aussehen des Grafikfensters beeinflussen. Falls vorhanden, wird
 entsprechend der Konfiguration oder des Ger&auml;teausgangs die
 Grafikkonfiguration geladen. Grafikvorlagen enthalten die
 Skaleneinteilung, Kurvenfarben, usw.. Die meisten Einstellungen, die
-&uuml;ber das Kurvenselektor-Kontextmen&uuml; eingestellt werden, werden
+&uuml;ber das Kurvenauswahl-Kontextmen&uuml; eingestellt werden, werden
 in Grafikvorlagen gesichert. Der Pfad zu diesen Dateien ist
 &quot;GraphicTemplates&quot; unter dem Anwendungskonfigurationspfad.
 Gibt es zu einer Datei zur Aktualisierungszeit eine passende
@@ -437,7 +437,7 @@ Ger&auml;te mit Messkurven Sichtbarkeitskonfiguration sind CSV2SerialAdapter, WS
 Mit dem Dialog der Sichtbarkeitskonfiguration, kann man deren Erscheinen aber erzwingen.
 </P>
 <H2><A NAME="menue_view"></A>&quot;Ansicht&quot; Men&uuml;</H2>
-<P>Dieses Men&uuml; blendet den Kurvenselektor des Grafikfensters
+<P>Dieses Men&uuml; blendet die Kurvenauswahl des Grafikfensters
 ein oder aus. Des weiteren kann man hier eine &Uuml;berschrift sowie den
 Kommentarbereich des einzelnen Datensatzes ein oder ausblenden.
 Diese Funktion ist auch über das Kontextmen&uuml; der grafischen Anzeige erreichbar</P>
@@ -501,19 +501,19 @@ Hier gibt aktuell leider keine M&ouml;glichkeit dieses Datenformat automatisch z
 <H1><A NAME="graphics_Window"></A>Grafisches Anzeigefenster</H1>
 <P>Das graphische Anzeigefenster ist das eigentlich Hauptfenster der
 Anwendung. Hier werden die eingelesenen Daten in Kurvenform dargestellt.
-Durch Selektion der einzelnen Kurvennamen im Kurvenselektor kann die
+Durch Selektion der einzelnen Kurvennamen der Kurvenauswahl kann die
 Sichtbarkeit der einzelnen Kurve direkt ein- oder aus-geschaltet werden.
 Gleichzeitiges Anzeigen von zu vielen Kurven schr&auml;nkt die
 &Uuml;bersichtlichkeit stark ein (siehe hierzu <A HREF="HelpInfo_33.html">Grafikvorlagen</A>). Deshalb ist dieser Auswahlschalter
 einer der wichtigsten der Anwendung und direkt erreichbar.</P>
 <P ALIGN=CENTER><IMG SRC="../src/help/de/images/Graphics_Window.png" NAME="graphics1" ALIGN=BOTTOM ></P>
-<P>&Uuml;ber den Kurvenselektor sieht man anhand der Farb&uuml;bereinstimmung den Zusammenhang zu den gezeichneten Kurven.
-Der Kurvenselektor repräsentiert die Kurvenlegende und erm&ouml;glicht durch Selektion ein aktiv-, bzw. inaktiv-schalten
+<P>&Uuml;ber die Kurvenauswahl sieht man anhand der Farb&uuml;bereinstimmung den Zusammenhang zu den gezeichneten Kurven.
+Die Kurvenauswahl repräsentiert die Kurvenlegende und erm&ouml;glicht durch Selektion ein aktiv-, bzw. inaktiv-schalten
 der Kurven.
 </P>
 <P><IMG SRC="../src/help/de/images/Menuebar_View_Context.png" NAME="Menuebar_View_Context"></P>
 <P>Mittels des Kontextmen&uuml;s (eines jeden Tabulators) l&auml;sst sich deren Aussehen anpassen</P>
-<H2><A NAME="curve_selector"></A>Der Kurvenselektor</H2>
+<H2><A NAME="curve_selector"></A>Die Kurvenauswahl</H2>
 <P><IMG SRC="../src/help/de/images/CurveSelector_ContextMenue.png" NAME="graphics1" ALIGN=RIGHT>
 Ganz oben im Kontextmen&uuml; befindet sich der Name der Kurve, die man gerade im
 Fokus hat. Alle &Auml;nderungen der Einstellung beziehen sich also auf
@@ -703,11 +703,11 @@ Hauptdarstellung entspricht der eingestellten Kurvenfarbe.</P>
 <P ALIGN=CENTER><IMG SRC="../src/help/de/images/Digital_Window.png" NAME="graphics1" ALIGN=BOTTOM></P>
 <P>Wie schon erw&auml;hnt werden hierf&uuml;r keine Berechnungen
 vorgenommen, sondern nur die Werte, mit der &uuml;ber das
-Kurvenselektor-Kontextmen&uuml; eingestellten Genauigkeit
+Kurvenauswahl-Kontextmen&uuml; eingestellten Genauigkeit
 (Achsen-Zahlenformat) entsprechend, angezeigt.</P>
 <P>Da diese Anzeige nur w&auml;hrend der Livedatenaufnahme ver&auml;ndernde Werte anzeigt kann man die Anzeige
 f&uuml;r jedes Ger&auml;t im Ger&auml;teauswahldialog stilllegen wenn dieser Tabulator st&ouml;rt (<A HREF="HelpInfo_2.html#device_selection_desktop">Desktopkonfiguration</A>).</P>
-<P><B>Hinweis : </B>Es werden alle aktiven und sichtbaren Messwerte, ausgew&auml;hlt &uuml;ber den Kurvenselektor, mit konfigurierter Nachkommastelle dargestellt.</P>
+<P><B>Hinweis : </B>Es werden alle aktiven und sichtbaren Messwerte, ausgew&auml;hlt &uuml;ber die Kurvenauswahl, mit konfigurierter Nachkommastelle dargestellt.</P>
 <H1><A NAME="analog_window"></A>Analoges Anzeigefenster</H1>
 <P>Das Analogfenster zeigt, so, wie f&uuml;r das Digitalfenster, gew&auml;hlten Messwerte, an. 
 Die Farbe der Skalengrundlinie entspricht der
@@ -718,7 +718,7 @@ Einstellung f&uuml;r Runden der Skalen im Grafikfenster.</P>
 <P ALIGN=CENTER><IMG SRC="../src/help/de/images/Analog_Window.png" NAME="graphics1" ALIGN=BOTTOM></P>
 <P>Da diese Anzeige nur w&auml;hrend der Livedatenaufnahme ver&auml;ndernde Werte anzeigt kann man die Anzeige
 f&uuml;r jedes Ger&auml;t im Ger&auml;teauswahldialog stilllegen wenn dieser Tabulator st&ouml;rt (<A HREF="HelpInfo_2.html#device_selection_desktop">Desktopkonfiguration</A>).</P>
-<P><B>Hinweis : </B>Es werden alle aktiven und sichtbaren Messwerte, ausgew&auml;hlt &uuml;ber den Kurvenselektor, mit konfigurierter Nachkommastelle dargestellt.
+<P><B>Hinweis : </B>Es werden alle aktiven und sichtbaren Messwerte, ausgew&auml;hlt &uuml;ber die Kurvenauswahl, mit konfigurierter Nachkommastelle dargestellt.
 Bei Skalensynchronisation sind für alle synchronisierten Messwerte die Endwerte gleich.</P>
 <H1><A NAME="voltage_per_cell_window"></A>Zellenspannung
 Anzeigefenster</H1>
@@ -1133,7 +1133,7 @@ in der Toolsleiste der Dateidialog geöffnet und eine Datei eingelesen wird.
 Wird ein UniLog als Messaufnehmer angeschlossen werden die drei Analogeingänge mit frei konfigurierbarem Namen und Messsymbol angezeigt.
 Die Einheit, wird aus den NMEA Daten &uuml;bernommen.
 Als initiale Vorgaben sind 'Geschwindigkeit', 'Kapazität' und 'Temperatur' eingesetzt, die bei abweichender Einstellung anzupassen sind.
-In der grafischen Anzeige, bzw. dem Kurvenselektor erscheinen die Namen der Messgr&ouml;&szet&en für UniLog Messwerte immer mit angeh&auml;ngtem '_UL'.
+In der grafischen Anzeige, bzw. der Kurvenauswahl erscheinen die Namen der Messgr&ouml;&szet&en für UniLog Messwerte immer mit angeh&auml;ngtem '_UL'.
 Sind eigene Messaufnehmer angeschlossen k&ouml;nnen &uuml;ber den Ger&auml;tekonfigurationseditor Offset, sowie Faktor angepasst werden.
 </P>
 <P ALIGN=CENTER><IMG SRC="../../GPS-Logger/src/help/de/HelpInfo_Bild_2.png" NAME="HelpInfo_Bild_2" ALT="HelpInfo_Bild_2"></P>
@@ -1141,7 +1141,7 @@ Sind eigene Messaufnehmer angeschlossen k&ouml;nnen &uuml;ber den Ger&auml;tekon
 Werden Multiplex Sensoren angeschlossen, werden die Einheiten aus den NMEA Daten &uuml;bernommen.
 Die Namen und Symbole der Messwerte m&uuml;ssen entsprechend angepasst werden.
 Die initialen Vorgaben sind her nur beispielhaft eingesetzt.
-In der grafischen Anzeige, bzw. dem Kurvenselektor erscheinen die Namen der Messgr&ouml;&szlig;en für M-Link Messwerte immer mit angeh&auml;ngtem '_ML'.
+In der grafischen Anzeige, bzw. der Kurvenauswahl erscheinen die Namen der Messgr&ouml;&szlig;en für M-Link Messwerte immer mit angeh&auml;ngtem '_ML'.
 </P>
 <P ALIGN=CENTER><IMG SRC="../../GPS-Logger/src/help/de/HelpInfo_Bild_3.png" NAME="HelpInfo_Bild_3" ALT="HelpInfo_Bild_3"></P>
 <P>Auf der rechten Rand der Anzeigenkonfiguration befindet sich ein zus&auml;tzlicher Schalter, der eine halbautomatische Synchronisation der Skalen erm&ouml;glicht. 
@@ -1311,7 +1311,7 @@ mit der nicht linearen Regresssionsvariante, hier der Einfachheit
 halber &quot;Kurve&quot; genannt. <BR>M&ouml;chte man an einer
 bestimmten Stelle die Steigung der H&ouml;henlinie wissen besteht
 auch die M&ouml;glichkeit diesen Wert &uuml;ber die Differenzmessung
-zu ermitteln (Kurvenselektor -&gt; H&ouml;he -&gt; Kontextmen&uuml;
+zu ermitteln (Kurvenauswahl -&gt; H&ouml;he -&gt; Kontextmen&uuml;
 -&gt; Punktdifferenz messen). <BR>Da vermutlich zwei Hauptvarianten
 von Konfigurationen zum Tragen kommen gibt es auch zwei
 Konfigurationstabulatoren, die eine jeweils unabh&auml;ngige
@@ -1534,7 +1534,7 @@ durch eine &Auml;nderung der UniLog.xml die Anzahl reduzieren
 Tabulatoren f&uuml;r noch mehr Konfigurationen ist m&ouml;glich aber
 nicht implementiert. 
 Selbstverst&auml;ndlich ist es auch m&ouml;glich alle Messgr&ouml;&szlig;en
-zu aktivieren und nur &uuml;ber die Schalter im Kurvenselektor zu
+zu aktivieren und nur &uuml;ber die Schalter der Kurvenauswahl zu
 filtern.
 </P>
 
