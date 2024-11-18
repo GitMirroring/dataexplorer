@@ -1,14 +1,22 @@
 Development history / change log, please read from bottom up
 
+Version 3.9.4 - xx yyy 2024
+Generic changes/fixes 
+	* update layout of update dialog
+	
+Device specific changes/fixes
+	* MC3000_FM_NiMH_LiIo - update graphics template using rounding for capacity
+	
+	
 Version 3.9.3 - 15 Nov 2024
 Generic changes/fixes 
-	* update German translation of curve selector as well as add additional hints to tooltip
+	* update German translation of curve selector as well as add additional hints to tool tip
 	* update snap tolerance finding measure pointer
 	* change version query since download page replies with 429
 	
 Device specific changes/fixes
 	* MC3000* - update/synchronize graphics templates
-	* MC3000* - extended data recording for the time of the loading pause after the end of processing, if continuous recording is activated
+	* MC3000* - extended data recording for the time of the charge pause after the end of processing, if continuous recording is activated
 	* MC3000_FM_NiMH_LiIo - add device using predefined graphics templates for NiMH and LiIo
 	
 		
