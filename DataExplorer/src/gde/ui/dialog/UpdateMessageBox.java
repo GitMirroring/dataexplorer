@@ -126,10 +126,10 @@ public class UpdateMessageBox extends Dialog {
 		txtBetaVersionHint.setEditable(false);
 		
 		Composite composite = new Composite(shell, SWT.NONE);
-		composite.setLayoutData(new RowData(370, 50));
+		composite.setLayoutData(new RowData(380, 50));
 		FillLayout filllayout = new FillLayout(SWT.HORIZONTAL);
 		filllayout.marginWidth = 25;
-		filllayout.spacing = 50;
+		filllayout.spacing = 40;
 		composite.setLayout(filllayout);
 
 		Link linkNews = new Link(composite, SWT.NONE);
