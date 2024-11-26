@@ -6,7 +6,7 @@
         <manufacturerURL>-</manufacturerURL>
         <group>logger</group>
         <image>IGCAdapter.png</image>
-        <usage>true</usage>
+        <usage>false</usage>
     </Device>
     <TimeBase>
         <name>time</name>

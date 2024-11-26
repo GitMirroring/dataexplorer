@@ -3,6 +3,7 @@ Development history / change log, please read from bottom up
 Version 3.9.4 - xx yyy 2024
 Generic changes/fixes 
 	* update layout of update dialog
+	* fix some device XML using <usage>true</usage>
 	
 Device specific changes/fixes
 	* MC3000_FM_NiMH_LiIo - update graphics template using rounding for capacity

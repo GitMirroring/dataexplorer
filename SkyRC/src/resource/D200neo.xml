@@ -6,7 +6,7 @@
         <manufacturerURL>https://www.skyrc.com</manufacturerURL>
         <group>charger</group>
         <image>D200neo.jpg</image>
-        <usage>true</usage>
+        <usage>false</usage>
     </Device>
     <UsbPort>
         <vendorId>0x0000</vendorId>
