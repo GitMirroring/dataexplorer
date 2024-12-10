@@ -624,8 +624,8 @@ public class Channel extends HashMap<String, RecordSet> {
 	 */
 	private void updateForSwitchRecordSet(DataExplorer application, String recordSetKey) {
 		//reset old record set before switching
-		RecordSet oldRecordSet = this.getActiveRecordSet();
-		if (oldRecordSet != null) oldRecordSet.resetZoomAndMeasurement();
+		//RecordSet oldRecordSet = this.getActiveRecordSet();
+		//if (oldRecordSet != null) oldRecordSet.resetZoomAndMeasurement();
 
 		RecordSet recordSet = this.get(recordSetKey);
 		if (recordSet == null) { //activeChannel do not have this record set, try to switch
@@ -641,7 +641,7 @@ public class Channel extends HashMap<String, RecordSet> {
 			this.setActiveRecordSet(recordSetKey);
 			if (!recordSet.hasDisplayableData)
 				recordSet.loadFileData(this.getFullQualifiedFileName(), true);
-			recordSet.resetZoomAndMeasurement();
+			//recordSet.resetZoomAndMeasurement();
 			application.resetGraphicsWindowZoomAndMeasurement();
 			if (recordSet.isRecalculation)
 				recordSet.checkAllDisplayable(); // updates graphics window

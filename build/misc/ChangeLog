@@ -4,6 +4,7 @@ Version 3.9.4 - xx yyy 2024
 Generic changes/fixes 
 	* update layout of update dialog
 	* fix some device XML using <usage>true</usage>
+	* keep zoom and measurement configuration while switching data set
 	
 Device specific changes/fixes
 	* MC3000_FM_NiMH_LiIo - update graphics template using rounding for capacity
