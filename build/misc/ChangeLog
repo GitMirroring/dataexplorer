@@ -7,7 +7,7 @@ Generic changes/fixes
 	* keep zoom and measurement configuration while switching data set
 	
 Device specific changes/fixes
-	* MC3000_FM_NiMH_LiIo - update graphics template using rounding for capacity
+	* MC3000_FM_NiMH_LiIo - update graphics template using rounding for capacity and current
 	
 	
 Version 3.9.3 - 15 Nov 2024
