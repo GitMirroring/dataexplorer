@@ -8,6 +8,7 @@ Generic changes/fixes
 	
 Device specific changes/fixes
 	* MC3000_FM_NiMH_LiIo - update graphics template using rounding for capacity and current
+	* HoTTAdapter* - update package loss statistics even if receiver only
 	
 	
 Version 3.9.3 - 15 Nov 2024

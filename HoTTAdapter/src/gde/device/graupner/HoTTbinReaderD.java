@@ -678,7 +678,7 @@ public class HoTTbinReaderD extends HoTTbinReader2 {
 							break;
 						}
 
-						if (isSensorData) {
+						if (isSensorData || HoTTbinReader.isReceiverOnly) {
 							((RcvBinParser) HoTTbinReaderD.rcvBinParser).updateLossStatistics();
 						}
 
@@ -992,7 +992,7 @@ public class HoTTbinReaderD extends HoTTbinReader2 {
 							break;
 						}
 
-						if (isJustMigrated) {
+						if (isJustMigrated || HoTTbinReader.isReceiverOnly) {
 							((RcvBinParser) HoTTbinReaderD.rcvBinParser).updateLossStatistics();
 						}
 

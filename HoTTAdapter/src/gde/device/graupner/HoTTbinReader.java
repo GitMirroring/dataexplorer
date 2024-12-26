@@ -993,7 +993,7 @@ public class HoTTbinReader {
 							HoTTbinReader.isJustParsed = true;
 						}
 						
-						if (HoTTbinReader.isJustParsed) {
+						if (HoTTbinReader.isJustParsed || HoTTbinReader.isReceiverOnly) {
 							HoTTbinReader.isJustParsed = !((RcvBinParser) HoTTbinReader.rcvBinParser).updateLossStatistics();
 						}
 						
@@ -1405,7 +1405,7 @@ public class HoTTbinReader {
 
 						bufCopier.copyToBuffer();
 
-						if (HoTTbinReader.isJustParsed) {
+						if (HoTTbinReader.isJustParsed || HoTTbinReader.isReceiverOnly) {
 							HoTTbinReader.isJustParsed = !((RcvBinParser) HoTTbinReader.rcvBinParser).updateLossStatistics();
 						}
 
