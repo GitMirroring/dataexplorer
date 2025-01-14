@@ -343,7 +343,7 @@ public class ZeroReaderWriter {
 							for (int i = 0; i < tmpRecordNames.size(); i++) {
 								MeasurementType measurement = device.getMeasurement(channelConfigNumber, i);
 								if (log.isLoggable(Level.FINE)) log.log(Level.FINE, tmpRecordNames.get(i));
-								measurement.setName(tmpRecordNames.get(i));
+								measurement.setName(tmpRecordNames.get(i).trim());
 								measurement.setUnit(tmpRecordUnits.get(i));
 								measurement.setSymbol(tmpRecordSymbols.get(i));
 								measurement.setActive(true);
@@ -375,9 +375,9 @@ public class ZeroReaderWriter {
 									record.setDataType(Record.DataType.GPS_SPEED);
 								else if (record.getUnit().equals("m") && (record.getName().toLowerCase().contains("alti") || record.getName().toLowerCase().contains("höhe")))
 									record.setDataType(Record.DataType.GPS_ALTITUDE);
-								else if (record.getUnit().contains("°") && record.getUnit().contains("'") && (record.getName().toLowerCase().contains("long") || record.getName().toLowerCase().contains("länge")))
+								else if (record.getUnit().contains("°") && (record.getName().toLowerCase().contains("long") || record.getName().toLowerCase().contains("länge")))
 									record.setDataType(Record.DataType.GPS_LONGITUDE);
-								else if (record.getUnit().contains("°") && record.getUnit().contains("'") && (record.getName().toLowerCase().contains("lat") || record.getName().toLowerCase().contains("breit")))
+								else if (record.getUnit().contains("°") && (record.getName().toLowerCase().contains("lat") || record.getName().toLowerCase().contains("breit")))
 									record.setDataType(Record.DataType.GPS_LATITUDE);
 							}
 							activeChannel.put(recordSetKey, recordSet);
@@ -465,8 +465,13 @@ public class ZeroReaderWriter {
 						case GPS_LONGITUDE:
 						case GPS_LATITUDE:
 							try {
-								points[j] = Double.valueOf(data.replace("E", GDE.STRING_EMPTY).replace('W', GDE.CHAR_DASH).replace("N", GDE.STRING_EMPTY).replace('S', GDE.CHAR_DASH)
-										.replace(GDE.STRING_COLON, GDE.STRING_EMPTY).replace(GDE.STRING_DOT, GDE.STRING_EMPTY)).intValue();
+								data = data.replace("E", GDE.STRING_EMPTY).replace('W', GDE.CHAR_DASH).replace("N", GDE.STRING_EMPTY).replace('S', GDE.CHAR_DASH).replace(GDE.STRING_COLON, GDE.STRING_DOT);
+								if (data.contains(GDE.STRING_DOT)) {
+									points[j] = Integer.parseInt(String.format("%s%6s", data.substring(0, data.indexOf(GDE.CHAR_DOT)), (data.substring(data.indexOf(GDE.CHAR_DOT) + 1) + "000000").substring(0, 6)));
+								}
+								else {
+									points[j] = Integer.parseInt(data);
+								}
 							}
 							catch (NumberFormatException e1) {
 								points[j] = 0; //GPS coordinate does not exist "---"
