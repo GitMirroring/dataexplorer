@@ -10,6 +10,7 @@ Device specific changes/fixes
 	* MC3000_FM_NiMH_LiIo - update graphics template using rounding for capacity and current
 	* HoTTAdapter* - update package loss statistics even if receiver only
 	* ZeroAdapter - enable GPS coordinates in [°] as well as in [° '], normalize coordinates to 6 decimal digits
+	* Eagle PR - add support of special device with special FW for pylon racing
 	
 	
 Version 3.9.3 - 15 Nov 2024
