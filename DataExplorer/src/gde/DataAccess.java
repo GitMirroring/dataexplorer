@@ -685,7 +685,7 @@ public abstract class DataAccess implements Cloneable {
 			if (!targetFilePath.toFile().exists()) {
 				if (!path.exists() && !path.isDirectory()) path.mkdir();
 				// extract initial property files
-				FileUtils.extract(sourceClass, fileName, Locale.getDefault().equals(Locale.ENGLISH) ? "resource/en" //$NON-NLS-1$
+				FileUtils.extract(sourceClass, fileName, Settings.getInstance().getLocale().equals(Locale.ENGLISH) ? "resource/en" //$NON-NLS-1$
 						: "resource/de", path.getAbsolutePath(), Settings.PERMISSION_555); //$NON-NLS-1$
 			}
 		}

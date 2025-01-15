@@ -552,9 +552,9 @@ public class KMZWriter {
 			String initialPlacemarkName = Messages.getString(MessageIds.GDE_MSGT0604, new Object[] { measurementName, measurementLowerLimit, measurementUnit });
 			zipWriter.write(String.format(Locale.ENGLISH, KMZWriter.speedLeader, initialPlacemarkName, lowerLimitColor, 2, lowerLimitColor.substring(2), randomColor, isExtrude ? 1 : 0, altitudeMode).getBytes());
 			long lastTimeStamp = -1, timeStamp;
-			long recordSetStartTimeStamp = recordSet.getTime(recordSet.isZoomMode() ? 0 : startIndex) / 10;
+			long recordSetStartTimeStamp = (long) (recordSet.getTime_ms(recordSet.isZoomMode() ? 0 : startIndex));
 			for (i = recordSet.isZoomMode() ? 0 : startIndex; isPositionWritten && i < dataSize; i++) {
-				timeStamp = recordSet.getTime(i) / 10 + recordSetStartTimeStamp;
+				timeStamp = (long) (recordSet.getTime_ms(i) + recordSetStartTimeStamp);
 				if ((timeStamp - lastTimeStamp) >= timeStep_ms || lastTimeStamp == -1) {// write a point all ~500 ms
 					int velocity = recordMeasurement == null ? 0 : (int) device.translateValue(recordMeasurement, recordMeasurement.get(i) / 1000.0);
 					if (recordMeasurement != null && !((velocity < measurementLowerLimit && velocityRange == 0) || (velocity >= measurementLowerLimit && velocity <= velocityUpperLimit && velocityRange == 1) || (velocity > velocityUpperLimit && velocityRange == 2))) {
@@ -636,7 +636,7 @@ public class KMZWriter {
 			zipWriter.write(KMZWriter.pointsLeader.getBytes());
 			lastTimeStamp = -1;
 			for (i = recordSet.isZoomMode() ? 0 : startIndex; isPositionWritten && i < dataSize; i++) {
-				timeStamp = recordSet.getTime(i) / 10 + recordSetStartTimeStamp;
+				timeStamp = (long) (recordSet.getTime_ms(i) + recordSetStartTimeStamp);
 				if ((timeStamp - lastTimeStamp) >= timeStep_ms || lastTimeStamp == -1) {// write a point all ~500 ms
 					double speed = recordMeasurement == null ? 0 : device.translateValue(recordMeasurement, recordMeasurement.get(i) / 1000.0);
 					double slope = recordSlope == null ? 0 : device.translateValue(recordSlope, recordSlope.get(i) / 1000.0);
@@ -644,7 +644,7 @@ public class KMZWriter {
 					boolean isSlope0 = speed > 2 && ((slope <= 0 && slopeLast > 0) || (slope > 0 && slopeLast <= 0) || slope == 0);
 					relAltitude = recordAltitude == null ? 0 : (device.translateValue(recordAltitude, recordAltitude.get(i) / 1000.0) - height0);
 					zipWriter.write(String.format(Locale.ENGLISH, dataPoint,
-							recordSet.getTime(i) / 1000 / 10,
+							(long) (recordSet.getTime_ms(i) / 1000),
 							speed,
 							measurementUnit,
 							relAltitude,

@@ -51,4 +51,10 @@ fehlende Mappings einfach ergaenzen, bitte informieren Sie den Entwickler
   <entry key="HOPPING">HOPPING [-]</entry>
   <entry key="Altitude">Höhe [m]</entry>
   <entry key="Distance">Distanz [m]</entry>
+  <entry key="Latitude">Breitengrad [°]</entry>
+  <entry key="Longitude">Längengrad [°]</entry>
+  <entry key="Speed">Geschwindigkeit [km/h]</entry>
+  <entry key="AccX">Beschleunigung X [g]</entry>
+  <entry key="AccY">Beschleunigung Y [g]</entry>
+  <entry key="AccZ">Beschleunigung Z [g]</entry>
 </properties>

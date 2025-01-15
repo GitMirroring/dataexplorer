@@ -270,7 +270,7 @@ public class ImportAdapter extends DeviceConfiguration implements IDevice {
 		Vector<Integer> timeStamps = new Vector<Integer>(1, 1);
 		if (doUpdateProgressBar) this.application.setProgress(progressCycle, sThreadId);
 
-		int timeStampBufferSize = GDE.SIZE_BYTES_INTEGER * recordDataSize;
+		int timeStampBufferSize = recordSet.isTimeStepConstant() ? 0 : GDE.SIZE_BYTES_INTEGER * recordDataSize;
 		byte[] timeStampBuffer = new byte[timeStampBufferSize];
 		if (!recordSet.isTimeStepConstant()) {
 			System.arraycopy(dataBuffer, 0, timeStampBuffer, 0, timeStampBufferSize);
@@ -368,9 +368,13 @@ public class ImportAdapter extends DeviceConfiguration implements IDevice {
 		switch (record.getDataType()) {
 		case GPS_LATITUDE:
 		case GPS_LONGITUDE:
-			int grad = ((int) (value / 1000));
-			double minuten = (value - (grad * 1000.0)) / 10.0;
-			newValue = grad + minuten / 60.0;
+			if (record.getUnit().equals("°"))
+				newValue = value / 1000.0;
+			else { //[° ']
+				int grad = ((int) (value / 1000));
+				double minuten = (value - (grad * 1000.0)) / 10.0;
+				newValue = grad + minuten / 60.0;
+			}			
 			break;
 
 		default:
@@ -412,9 +416,13 @@ public class ImportAdapter extends DeviceConfiguration implements IDevice {
 		switch (record.getDataType()) {
 		case GPS_LATITUDE:
 		case GPS_LONGITUDE:
-			int grad = (int) value;
-			double minuten = (value - grad * 1.0) * 60.0;
-			newValue = (grad + minuten / 100.0) * 1000.0;
+			if (record.getUnit().equals("°"))
+				newValue = value * 1000.0;
+			else { //[° ']
+				int grad = (int) value;
+				double minuten = (value - grad * 1.0) * 60.0;
+				newValue = (grad + minuten / 100.0) * 1000.0;
+			}			
 			break;
 
 		default:

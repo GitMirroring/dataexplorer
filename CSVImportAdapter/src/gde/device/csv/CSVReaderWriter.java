@@ -90,8 +90,8 @@ public class CSVReaderWriter {
 
 		try {
 			reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "ISO-8859-1")); //$NON-NLS-1$
-			while (((line = reader.readLine()) != null) && line.matches(CSVReaderWriter.pattern)) {
-				// read until line does not starts with numbers
+			while (((line = reader.readLine()) != null) && !Character.isDigit(line.charAt(0)) && !line.contains(GDE.STRING_EMPTY + separator)) {
+				// read until line does not starts with numbers and contains defined separator
 			}
 			String[] headerData = line.split(GDE.STRING_EMPTY + separator);
 			if (headerData.length > 2 || headerData.length < 1) { //not according to exported file with device and channelCinfig, assume actual selected device and first channel configuration
@@ -233,8 +233,8 @@ public class CSVReaderWriter {
 				CSVReaderWriter.log.log(Level.FINE, "device name check ok, channel/configuration ok"); //$NON-NLS-1$
 
 				reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "ISO-8859-1")); //$NON-NLS-1$
-				while (((line = reader.readLine()) != null) && line.matches(CSVReaderWriter.pattern)) {
-					// read until line does not starts with numbers
+				while (((line = reader.readLine()) != null) && !Character.isDigit(line.charAt(0)) && !line.contains(GDE.STRING_EMPTY + separator)) {
+					// read until line does not starts with numbers and contains defined separator
 				}
 
 				if (GDE.isWithUi()) {
@@ -260,12 +260,13 @@ public class CSVReaderWriter {
 						record.setDataType(Record.DataType.GPS_SPEED);
 					else if (record.getUnit().equals("m") && (record.getName().toLowerCase().contains("alti") || record.getName().toLowerCase().contains("höhe")))
 						record.setDataType(Record.DataType.GPS_ALTITUDE);
-					else if (record.getUnit().contains("°") && record.getUnit().contains("'") && (record.getName().toLowerCase().contains("long") || record.getName().toLowerCase().contains("länge")))
+					else if (record.getUnit().contains("°") && record.getUnit().contains("'") || (record.getName().toLowerCase().contains("long") || record.getName().toLowerCase().contains("länge")))
 						record.setDataType(Record.DataType.GPS_LONGITUDE);
-					else if (record.getUnit().contains("°") && record.getUnit().contains("'") && (record.getName().toLowerCase().contains("lat") || record.getName().toLowerCase().contains("breit")))
+					else if (record.getUnit().contains("°") && record.getUnit().contains("'") || (record.getName().toLowerCase().contains("lat") || record.getName().toLowerCase().contains("breit")))
 						record.setDataType(Record.DataType.GPS_LATITUDE);
 				}
 
+				long timeStamp = 0;
 				//correct data and start time
 				long startTimeStamp = (long) (new File(filePath).lastModified() - recordSet.getMaxTime_ms());
 				recordSet.setRecordSetDescription(device.getName() + GDE.STRING_MESSAGE_CONCAT + Messages.getString(MessageIds.GDE_MSGT0129)
@@ -302,39 +303,48 @@ public class CSVReaderWriter {
 						continue;
 					}
 					String[] dataStr = line.split(GDE.STRING_EMPTY + separator);
-					String data = dataStr[0].trim().replace(GDE.CHAR_COMMA, GDE.CHAR_DOT);
-					if (data.contains(GDE.STRING_COLON)) {
-						int hour = 0;
-						int minute = 0;
-						int second = 0;
+					String data;
+					if (device.getTimeStep_ms() < 0) { //time step coming from values, variable time stamp
+						data = dataStr[0].trim().replace(GDE.CHAR_COMMA, GDE.CHAR_DOT);
+						if (data.contains(GDE.STRING_COLON)) {
+							int hour = 0;
+							int minute = 0;
+							int second = 0;
 
-						if (data.indexOf(GDE.STRING_COLON) != data.lastIndexOf(GDE.STRING_COLON)) { //00:01:45
-							hour = Integer.parseInt(data.substring(0, 2));
-							minute = Integer.parseInt(data.substring(3, 5));
-							second = Integer.parseInt(data.substring(6, 8));
-						}
-						else if (data.indexOf(GDE.STRING_COLON) == data.lastIndexOf(GDE.STRING_COLON)) { // 00:01
-							minute = Integer.parseInt(data.substring(0, 2));
-							second = Integer.parseInt(data.substring(3, 5));
-						}
-						GregorianCalendar calendar = new GregorianCalendar(year, month - 1, day, hour, minute, second);
-						long timeStamp = calendar.getTimeInMillis() + (data.contains(GDE.STRING_DOT) ? Integer.parseInt(data.substring(data.lastIndexOf(GDE.CHAR_DOT) + 1)) : 0);
+							if (data.indexOf(GDE.STRING_COLON) != data.lastIndexOf(GDE.STRING_COLON)) { //00:01:45
+								hour = Integer.parseInt(data.substring(0, 2));
+								minute = Integer.parseInt(data.substring(3, 5));
+								second = Integer.parseInt(data.substring(6, 8));
+							}
+							else if (data.indexOf(GDE.STRING_COLON) == data.lastIndexOf(GDE.STRING_COLON)) { // 00:01
+								minute = Integer.parseInt(data.substring(0, 2));
+								second = Integer.parseInt(data.substring(3, 5));
+							}
+							GregorianCalendar calendar = new GregorianCalendar(year, month - 1, day, hour, minute, second);
+							timeStamp = calendar.getTimeInMillis() + (data.contains(GDE.STRING_DOT) ? Integer.parseInt(data.substring(data.lastIndexOf(GDE.CHAR_DOT) + 1)) : 0);
 
-						if (lastTimeStamp < timeStamp) {
-							time_ms = (int) (lastTimeStamp == 0 ? 0 : time_ms + (timeStamp - lastTimeStamp));
-							lastTimeStamp = timeStamp;
-							if (startTimeStamp == 0) startTimeStamp = timeStamp;
+							if (lastTimeStamp < timeStamp) {
+								time_ms = (int) (lastTimeStamp == 0 ? 0 : time_ms + (timeStamp - lastTimeStamp));
+								lastTimeStamp = timeStamp;
+								if (startTimeStamp == 0) startTimeStamp = timeStamp;
+							}
+							else
+								continue;
 						}
 						else
-							continue;
+							// decimal time value
+							time_ms = Integer.valueOf(data).intValue() * (fileHeader.get(TRANSMITTER_TYPE) != null && fileHeader.get(TRANSMITTER_TYPE).equals(TRANSMITTER_TYPE_SPEKTRUM) ? 10 : 1);
 					}
-					else
-						// decimal time value
-						time_ms = Integer.valueOf(data).intValue() * (fileHeader.get(TRANSMITTER_TYPE) != null && fileHeader.get(TRANSMITTER_TYPE).equals(TRANSMITTER_TYPE_SPEKTRUM) ? 10 : 1);
-
+					else if (lastTimeStamp == 0) {
+						lastTimeStamp = timeStamp = startTimeStamp;
+					}
+					else if (lastTimeStamp < (timeStamp += device.getTimeStep_ms())) {
+						lastTimeStamp = timeStamp;
+					}
+					
 					for (int i = 0; i < updateRecordNames.length && i < dataStr.length - 1; i++) { // only iterate over record names found in file
 						try {
-							data = dataStr[i + 1].trim().replace(GDE.CHAR_COMMA, GDE.CHAR_DOT).replace(GDE.STRING_BLANK, GDE.STRING_EMPTY).replace("%", GDE.STRING_EMPTY).replace("dBm", GDE.STRING_EMPTY);
+							data = dataStr[i + 1].trim().replace(GDE.CHAR_COMMA, GDE.CHAR_DOT).replace(GDE.STRING_COLON, GDE.STRING_EMPTY).replace(GDE.STRING_BLANK, GDE.STRING_EMPTY).replace("%", GDE.STRING_EMPTY).replace("dBm", GDE.STRING_EMPTY);
 						}
 						catch (Exception e) {
 							data = "0";
@@ -343,9 +353,13 @@ public class CSVReaderWriter {
 						switch (recordSet.get(i).getDataType()) {
 						case GPS_LONGITUDE:
 						case GPS_LATITUDE:
-							points[i] = Double.valueOf(
-									data.replace("E", GDE.STRING_EMPTY).replace('W', GDE.CHAR_DASH).replace("N", GDE.STRING_EMPTY).replace('S', GDE.CHAR_DASH).replace(GDE.STRING_COLON, GDE.STRING_EMPTY)
-											.replace(GDE.STRING_DOT, GDE.STRING_EMPTY)).intValue();
+							data = data.replace("E", GDE.STRING_EMPTY).replace('W', GDE.CHAR_DASH).replace("N", GDE.STRING_EMPTY).replace('S', GDE.CHAR_DASH).replace(GDE.STRING_COLON, GDE.STRING_DOT);
+							if (data.contains(GDE.STRING_DOT)) {
+								points[i] = Integer.parseInt(String.format("%s%6s", data.substring(0, data.indexOf(GDE.CHAR_DOT)), (data.substring(data.indexOf(GDE.CHAR_DOT) + 1) + "000000").substring(0, 6)));
+							}
+							else {
+								points[i] = Integer.parseInt(data);
+							}
 							break;
 
 						default:

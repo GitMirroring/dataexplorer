@@ -49,6 +49,12 @@ fehlende Mappings einfach ergaenzen, bitte informieren Sie den Entwickler
   <entry key="Jeti">Jeti [-]</entry>
   <entry key="RSSI">RSSI [dBm]</entry>
   <entry key="HOPPING">HOPPING [-]</entry>
-  <entry key="Altitude">Höhe [m]</entry>
-  <entry key="Distance">Distanz [m]</entry>
+  <entry key="Altitude">Altitude [m]</entry>
+  <entry key="Distance">Distance [m]</entry>
+  <entry key="Latitude">Latitude [°]</entry>
+  <entry key="Longitude">Longitude [°]</entry>
+  <entry key="Speed">Speed [km/h]</entry>
+  <entry key="AccX">Acceleration X [g]</entry>
+  <entry key="AccY">Acceleration Y [g]</entry>
+  <entry key="AccZ">Acceleration Z [g]</entry>
 </properties>
