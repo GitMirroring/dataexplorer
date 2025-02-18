@@ -12,6 +12,7 @@ Device specific changes/fixes
 	* ZeroAdapter - enable GPS coordinates in [°] as well as in [° '], normalize coordinates to 6 decimal digits
 	* Eagle PR - add support of special device with special FW for pylon racing
 	* CSVImportAdapter - enable constant time step, enhance mapping files
+	* HoTTAdapter* - enable MDL backup, MC-26, MC-28
 	
 	
 Version 3.9.3 - 15 Nov 2024

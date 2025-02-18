@@ -66,7 +66,7 @@ import gde.utils.FileUtils;
 import gde.utils.StringHelper;
 
 public class FileTransferTabItem extends CTabItem {
-	private static final int		INNER_COMPOSITE_HEIGHT	= 250 + 280 + (GDE.IS_MAC ? 80 : 70); //height of pcFolderGroup, sdCardActionGroup
+	private static final int		INNER_COMPOSITE_HEIGHT	= 250 + 280 + 70 + (GDE.IS_MAC ? 80 : 70); //height of pcFolderGroup, sdCardActionGroup, mdlBackupGroup
 	final static String					$CLASS_NAME							= FileTransferTabItem.class.getName();
 	final static Logger					log											= Logger.getLogger(FileTransferTabItem.$CLASS_NAME);
 
@@ -80,9 +80,9 @@ public class FileTransferTabItem extends CTabItem {
 	private Table								pcFoldersTable;
 
 	private Group								sdCardActionGroup;
-	private Composite						sdCardSizeComposite;
-	private CLabel							sdCardSpaceinfoLabel;
-	private ProgressBar					sdCardSpaceProgressBar;
+	private Composite						sdCardSizeComposite, mdlBackupComposite;
+	private CLabel							sdCardSpaceinfoLabel, mdlBackupInfoLabel;
+	private ProgressBar					sdCardSpaceProgressBar, mdlBackupProgressBar;
 	private Composite						sdCardActionComposite;
 	private Button							connectButton, upDownLoadButton, stopButton, modelLoadButton, disconnectButton, deleteFileButton;
 	private Tree								sdFolderTree;
@@ -92,6 +92,8 @@ public class FileTransferTabItem extends CTabItem {
 	private CLabel							transferProgressLabel;
 	private ProgressBar					transferProgressBar;
 	private TableColumn					indexColumn, fileNameColum, fileDateColum, fileTimeColum, fileSizeColum;
+	private Group								mdlBackupGroup;
+
 
 	final Menu									popupmenu;
 	final ConvertContextMenu		contextMenu;
@@ -368,6 +370,68 @@ public class FileTransferTabItem extends CTabItem {
 						this.pcFoldersTable.setMenu(this.popupmenu);
 					}
 				}
+				{
+					this.mdlBackupGroup = new Group(this.innerComposite, SWT.NONE);
+					if (!GDE.IS_MAC) this.mdlBackupGroup.setBackground(SWTResourceManager.getColor(this.settings.getUtilitySurroundingBackground()));
+					this.mdlBackupGroup.setLayout( new RowLayout(org.eclipse.swt.SWT.HORIZONTAL));
+					this.mdlBackupGroup.setLayoutData(new RowData(1090, 50));
+					this.mdlBackupGroup.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE + 2, SWT.NORMAL));
+					this.mdlBackupGroup.setText("MDL Backup");
+					{
+						this.filler = new Composite(this.mdlBackupGroup, SWT.NONE);
+						if (!GDE.IS_MAC) this.filler.setBackground(SWTResourceManager.getColor(this.settings.getUtilitySurroundingBackground()));
+						this.filler.setLayoutData( new RowData(5, 30));
+					}
+					{
+						this.modelLoadButton = new Button(this.mdlBackupGroup, SWT.PUSH | SWT.CENTER);
+						this.modelLoadButton.setLayoutData(new RowData(155, 33));
+						this.modelLoadButton.setEnabled(true);
+						this.modelLoadButton.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+						this.modelLoadButton.setText(Messages.getString(MessageIds.GDE_MSGT2437));
+						this.modelLoadButton.addSelectionListener(new SelectionAdapter() {
+							@Override
+							public void widgetSelected(SelectionEvent evt) {
+								FileTransferTabItem.log.log(Level.FINEST, "downLoadButton.widgetSelected, event=" + evt); //$NON-NLS-1$
+								new Thread("BackupModels") {
+									@Override
+									public void run() {
+										try {
+											if (FileTransferTabItem.this.selectedPcFolder.length() < 3) {
+												FileTransferTabItem.this.application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGE2400));
+												return;
+											}
+											FileTransferTabItem.this.serialPort.loadModelData(FileTransferTabItem.this.selectedPcFolder.toString(), FileTransferTabItem.this);
+											FileTransferTabItem.this.updatePcFolder();
+										}
+										catch (Exception e) {
+											FileTransferTabItem.log.log(Level.SEVERE, e.getMessage(), e);
+											FileTransferTabItem.this.application.openMessageDialog(e.getMessage());
+										}
+									}
+								}.start();
+							}
+						});
+					}
+					{
+						this.mdlBackupComposite = new Composite(this.mdlBackupGroup, SWT.NONE);
+						if (!GDE.IS_MAC) this.mdlBackupComposite.setBackground(SWTResourceManager.getColor(this.settings.getUtilitySurroundingBackground()));
+						this.mdlBackupComposite.setLayoutData(new RowData(900, 36));
+						this.mdlBackupComposite.setLayout(new RowLayout(org.eclipse.swt.SWT.HORIZONTAL));
+						{
+							this.mdlBackupInfoLabel = new CLabel(this.mdlBackupComposite, SWT.NONE);
+							if (!GDE.IS_MAC) this.mdlBackupInfoLabel.setBackground(SWTResourceManager.getColor(this.settings.getUtilitySurroundingBackground()));
+							this.mdlBackupInfoLabel.setLayoutData(new RowData(800, 15));
+							this.mdlBackupInfoLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+							this.mdlBackupInfoLabel.setText(Messages.getString(MessageIds.GDE_MSGT2443, new Object[] { 0, 0 }));
+						}
+						{
+							this.mdlBackupProgressBar = new ProgressBar(this.mdlBackupComposite, SWT.NONE);
+							this.mdlBackupProgressBar.setLayoutData(new RowData(900, 10));
+							this.mdlBackupProgressBar.setMinimum(0);
+							this.mdlBackupProgressBar.setMaximum(100);
+						}
+					}
+				}
 				updateSelectedPcFolder(null); //Initialize
 				{
 					this.sdCardActionGroup = new Group(this.innerComposite, SWT.NONE);
@@ -506,39 +570,6 @@ public class FileTransferTabItem extends CTabItem {
 							});
 						}
 						{
-							this.modelLoadButton = new Button(this.sdCardActionComposite, SWT.PUSH | SWT.CENTER);
-							GridData downLoadButtonLData = new GridData();
-							downLoadButtonLData.widthHint = 155;
-							downLoadButtonLData.heightHint = 33;
-							this.modelLoadButton.setLayoutData(downLoadButtonLData);
-							this.modelLoadButton.setEnabled(false);
-							this.modelLoadButton.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
-							this.modelLoadButton.setText(Messages.getString(MessageIds.GDE_MSGT2437));
-							this.modelLoadButton.addSelectionListener(new SelectionAdapter() {
-								@Override
-								public void widgetSelected(SelectionEvent evt) {
-									FileTransferTabItem.log.log(Level.FINEST, "downLoadButton.widgetSelected, event=" + evt); //$NON-NLS-1$
-									new Thread("BackupModels") {
-										@Override
-										public void run() {
-											try {
-												if (FileTransferTabItem.this.selectedPcFolder.length() < 3) {
-													FileTransferTabItem.this.application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGE2400));
-													return;
-												}
-												FileTransferTabItem.this.serialPort.loadModelData(FileTransferTabItem.this.selectedPcFolder.toString(), FileTransferTabItem.this);
-												FileTransferTabItem.this.updatePcFolder();
-											}
-											catch (Exception e) {
-												FileTransferTabItem.log.log(Level.SEVERE, e.getMessage(), e);
-												FileTransferTabItem.this.application.openMessageDialog(e.getMessage());
-											}
-										}
-									}.start();
-								}
-							});
-						}
-						{
 							this.disconnectButton = new Button(this.sdCardActionComposite, SWT.PUSH | SWT.CENTER);
 							GridData disconnectButtonLData = new GridData();
 							disconnectButtonLData.widthHint = 155;
@@ -565,7 +596,7 @@ public class FileTransferTabItem extends CTabItem {
 									FileTransferTabItem.this.sdRootDirectoryTreeItem.setImage(SWTResourceManager.getImage("/gde/resource/Folder.gif")); //$NON-NLS-1$
 									enableActionButtons(false);
 									enableSerialButtons(false);
-;									String toolTipText = HoTTAdapter.getImportToolTip();
+									String toolTipText = HoTTAdapter.getImportToolTip();
 									FileTransferTabItem.this.device.configureSerialPortMenu(DeviceCommPort.ICON_SET_IMPORT_CLOSE, toolTipText, toolTipText);
 								}
 							});
@@ -956,6 +987,26 @@ public class FileTransferTabItem extends CTabItem {
 	 * @param totalSize
 	 * @param remainingSize
 	 */
+	public void updateMdleTransferProgress(final long totalSize, final long remainingSize) {
+		GDE.display.asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				if (totalSize == 0) {
+					FileTransferTabItem.this.mdlBackupProgressBar.setSelection(0);
+					FileTransferTabItem.this.mdlBackupInfoLabel.setText(Messages.getString(MessageIds.GDE_MSGT2443, new Object[] { 0, 0 }));
+				} else {
+					FileTransferTabItem.this.mdlBackupProgressBar.setSelection((int) ((totalSize - remainingSize) * 100 / totalSize));
+					FileTransferTabItem.this.mdlBackupInfoLabel.setText(Messages.getString(MessageIds.GDE_MSGT2443, new Object[] { (totalSize - remainingSize), totalSize }));
+				}
+			}
+		});
+	}
+
+	/**
+	 * update text and progressbar information regarding the actual executing file transfer
+	 * @param totalSize
+	 * @param remainingSize
+	 */
 	public void updateFileTransferProgress(final long totalSize, final long remainingSize) {
 		GDE.display.asyncExec(new Runnable() {
 			@Override
@@ -1003,7 +1054,7 @@ public class FileTransferTabItem extends CTabItem {
 			public void run() {
 				FileTransferTabItem.this.connectButton.setEnabled(!enableConnectStop);
 				FileTransferTabItem.this.stopButton.setEnabled(enableConnectStop);
-				FileTransferTabItem.this.modelLoadButton.setEnabled(!enableConnectStop);
+				//FileTransferTabItem.this.modelLoadButton.setEnabled(!enableConnectStop);
 				FileTransferTabItem.this.upDownLoadButton.setEnabled(!enableConnectStop);
 				FileTransferTabItem.this.deleteFileButton.setEnabled(!enableConnectStop);
 				FileTransferTabItem.this.sdFolderTree.setEnabled(!enableConnectStop);
@@ -1020,7 +1071,7 @@ public class FileTransferTabItem extends CTabItem {
 			@Override
 			public void run() {
 				FileTransferTabItem.this.upDownLoadButton.setEnabled(enable);
-				FileTransferTabItem.this.modelLoadButton.setEnabled(enable);
+				//FileTransferTabItem.this.modelLoadButton.setEnabled(enable);
 				FileTransferTabItem.this.disconnectButton.setEnabled(enable);
 			}
 		});

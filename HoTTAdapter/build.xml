@@ -40,6 +40,7 @@
 		<pathelement location="../build/lib/jaxb-api.jar" />
 		<pathelement location="../build/lib/usb-api.jar" />
 		<pathelement location="../build/lib/usb4java.jar" />
+		<pathelement location="../build/lib/commons-lang3.jar" />
 		<pathelement location="../build/lib/${build.os.shortname}/${sun.arch.data.model}/swt.jar" />
 	</path>
 
