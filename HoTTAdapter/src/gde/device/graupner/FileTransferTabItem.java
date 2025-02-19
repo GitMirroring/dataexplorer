@@ -66,7 +66,7 @@ import gde.utils.FileUtils;
 import gde.utils.StringHelper;
 
 public class FileTransferTabItem extends CTabItem {
-	private static final int		INNER_COMPOSITE_HEIGHT	= 250 + 280 + 70 + (GDE.IS_MAC ? 80 : 70); //height of pcFolderGroup, sdCardActionGroup, mdlBackupGroup
+	private static final int		INNER_COMPOSITE_HEIGHT	= 250 + 280 + 90 + (GDE.IS_MAC ? 80 : 70); //height of pcFolderGroup, sdCardActionGroup, mdlBackupGroup
 	final static String					$CLASS_NAME							= FileTransferTabItem.class.getName();
 	final static Logger					log											= Logger.getLogger(FileTransferTabItem.$CLASS_NAME);
 

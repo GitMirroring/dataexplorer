@@ -55,7 +55,7 @@ Generic changes/fixes
 	* SWT.jar for Windows Intel updated
 	* SWT.jar for macOS Intel updated
 	* SWT.jar for Linux ARM updated
-	* open serial port with safety delay to eleminate connection error
+	* open serial port with safety delay to eliminate connection error
 	* improve experience for delta measuring feature, show a values pop-up
 	
 Device specific changes/fixes
