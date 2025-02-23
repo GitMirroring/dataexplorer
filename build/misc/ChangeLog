@@ -13,6 +13,7 @@ Device specific changes/fixes
 	* Eagle PR - add support of special device with special FW for pylon racing
 	* CSVImportAdapter - enable constant time step, enhance mapping files
 	* HoTTAdapter* - enable MDL backup, MC-26, MC-28
+	* HoTTAdapter* - add capability to backup MDL MZ-12Pro using file transfer tab
 	
 	
 Version 3.9.3 - 15 Nov 2024

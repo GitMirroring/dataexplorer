@@ -1327,6 +1327,8 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 			}
 
 			int numMdls = this.ANSWER_DATA[7]; //number of mdl configurations
+			if (txType.equals(Transmitter.MZ_12pro))
+				numMdls = 250;
 			sb.append(numMdls).append(GDE.STRING_SEMICOLON);
 			
 			boolean isMC_26_28 = false;
@@ -1341,6 +1343,13 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 //					HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.fourDigitsRunningNumber(this.ANSWER_DATA.length));
 //					HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2FourDigitsIntegerString(this.ANSWER_DATA));
 //					HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2Hex4CharString(this.ANSWER_DATA, this.ANSWER_DATA.length));
+				}
+				break;
+			case MZ_12pro:
+				sendCmd("PREPARE_LIST_MDL_2", HoTTAdapterSerialPort.PREPARE_LIST_MDL_2);
+				this.ANSWER_DATA_EXT = this.read(new byte[100], HoTTAdapterSerialPort.READ_TIMEOUT_MS, 5);
+				if (HoTTAdapterSerialPort.log.isLoggable(Level.FINE)) {
+					HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2CharString(this.ANSWER_DATA_EXT, this.ANSWER_DATA_EXT.length));
 				}
 				break;
 			default:
@@ -1440,6 +1449,10 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 				modelNameLength = 10;
 				startIndex = 126;
 				break;
+			case MZ_12pro:
+				modelNameLength = 9;
+				startIndex = 289;
+				break;
 			case MX_20:
 				modelNameLength = 10;
 				startIndex = 177;
@@ -1468,8 +1481,8 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 				if (StringUtils.isNumeric(eval) &&  Integer.parseInt(eval) > 0) {
 					String mdlName = sModels[i + 2 + numMdls].trim();
 					if (mdlName.length() == 0) 
-						mdlName = (i + 1) + "_NAME";
-					validModels.add(mdlName);
+						mdlName = "NONAME";
+					validModels.add(String.format("%s%03d", mdlName, Integer.parseInt(eval)));
 					++numValidMdls;
 				}
 				else
@@ -1495,6 +1508,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 				break;
 			case MX_16:
 			case MX_12:
+			case MZ_12pro:
 				remainingSize = numValidMdls * 8192;
 				totalSize = numValidMdls * 8192;
 				break;
@@ -1531,8 +1545,10 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 						break;
 					case MX_16:
 					case MX_12:
+					case MZ_12pro:
 						for (int i = 0; i < 2; i++) {
 							queryModelConfigurationData(queryModels, 0);
+							out.write(this.ANSWER_DATA, 7, 2048);
 							iQueryModels += 8;
 							queryModels[5] = (byte) ((iQueryModels & 0x00FF) & 0xFF);
 							queryModels[6] = (byte) (((iQueryModels & 0xFF00) >> 8) & 0xFF);
@@ -1561,6 +1577,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 						break;
 					case MX_16:
 					case MX_12:
+					case MZ_12pro:
 						for (int i = 0; i < 2; i++) {
 							iQueryModels += 8;
 							queryModels[5] = (byte) ((iQueryModels & 0x00FF) & 0xFF);
@@ -1614,13 +1631,14 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 		}
 
 		if (sb.length() == 0) {
-			for (int i = 23; i < 28; i++) {
+			for (int i = 23; i < 35; i++) {
 				sb.append(String.format("%c", this.ANSWER_DATA[i]));
 			}
+			sb.delete(sb.indexOf(GDE.STRING_BLANK), sb.length());
 			sb.append(GDE.STRING_SEMICOLON);
 			if (HoTTAdapterSerialPort.log.isLoggable(Level.FINE)) HoTTAdapterSerialPort.log.log(Level.FINE, sb.toString());
 		}
-		return Transmitter.fromValue(sb.substring(0, 5).toLowerCase());
+		return Transmitter.fromValue(sb.substring(0, sb.indexOf(GDE.STRING_SEMICOLON)).toLowerCase());
 	}
 
 	/**

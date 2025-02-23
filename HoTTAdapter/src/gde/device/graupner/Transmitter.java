@@ -41,7 +41,7 @@ import gde.utils.StringHelper;
 
 
 public enum Transmitter {
-	MC_32("mc-32"), MC_28("mc-28"), MC_26("mc-26"), MC_20("mc-20"), MX_20("mx-20"), MC_16("mc-16"), MX_16("mx-16"), MX_12("mx-12"), UNSPECIFIED("unspecified");
+	MC_32("mc-32"), MC_28("mc-28"), MC_26("mc-26"), MC_20("mc-20"), MX_20("mx-20"), MC_16("mc-16"), MX_16("mx-16"), MX_12("mx-12"), MZ_12pro("mz12pro"), UNSPECIFIED("unspecified");
 
 	final static Logger						log	= Logger.getLogger(Transmitter.class.getName());
 
@@ -97,7 +97,7 @@ public enum Transmitter {
             return c;
         }
     }
-    throw new IllegalArgumentException(v);
+    throw new IllegalArgumentException("Unknown transmitter radio " + v);
 }
 
 	/**
