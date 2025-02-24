@@ -107,6 +107,6 @@ public class GpsLap extends HashMap<String, String>{
 			break;
 		}
 
-		return String.format("%2d  %3.1f %7s   %7s  %4d  %4d  %5.1f    %5.1f     %5.1f    %5.2f\n", lap, getIndex(),  getFormatedTime(duration.intValue() + getIntTime()), getFormatedTime(getIntTime()), getAlt(), getAltGainLos(), idealLapSpeed_kmh, lapFlightSpeed_kmh, ratio_m, sink_m_s);		
+		return String.format("%02d  %3.1f%7s   %7s  %4d  %4d  %5.1f    %5.1f     %5.1f    %5.2f\n", lap, getIndex(),  getFormatedTime(duration.intValue() + getIntTime()), getFormatedTime(getIntTime()), getAlt(), getAltGainLos(), idealLapSpeed_kmh, lapFlightSpeed_kmh, ratio_m, sink_m_s);		
 	}
 }

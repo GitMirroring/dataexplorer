@@ -166,7 +166,7 @@ public class GpsTaskResult extends HashMap<String, String> {
 		sb.append(String.format("Laps: %2d  AvgSpeed: %5.2f km/h  AvgLapTime: %s\n", getLaps(), getAllTrianglesAvgSpeed()*3.6, getFormatedTime(getAverageTriangleTime())));
 		
 		
-		sb.append("\nLAP INDEX DURATION LAP-TIME  ALT  ∆ALT  Speed   IndexSpeed  Ratio   Sink");
+		sb.append("\nLAP INDEX DURATION LAP-TIME  ALT  ∆ALT LapSpeed IndexSpeed  Ratio   Sink");
 		sb.append("\n[#]  [%]  [mm:ss]   [mm:ss]  [m]   [m]  [km/h]   [km/h]     [m/1]   [m/s]\n");
 		int lapNo = 1;
 		Double duration = 0.;

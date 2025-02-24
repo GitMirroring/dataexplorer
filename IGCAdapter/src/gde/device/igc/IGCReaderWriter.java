@@ -504,6 +504,8 @@ public class IGCReaderWriter {
 			
 			if (error.length() > 10)
 				recordSet.setRecordSetDescription(recordSet.getRecordSetDescription() + GDE.LINE_SEPARATOR + error);
+			//if (triangles.length() > 10)
+			//	recordSet.setRecordSetDescription(recordSet.getRecordSetDescription() + GDE.LINE_SEPARATOR + triangles);
 			
 		}
 		catch (FileNotFoundException e) {
