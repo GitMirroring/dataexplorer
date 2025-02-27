@@ -41,6 +41,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Logger;
 
@@ -1314,7 +1316,14 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 			
 			//update header data
 			System.arraycopy(this.ANSWER_DATA, 7, header, 0x0000, 8);
+			if (HoTTAdapterSerialPort.log.isLoggable(Level.FINE)) {
+				HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2Hex2CharString(header, 0x0000, 8));
+			}
+
 			System.arraycopy(this.ANSWER_DATA, 56, header, 0x0008, 4);
+			if (HoTTAdapterSerialPort.log.isLoggable(Level.FINE)) {
+				HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2Hex2CharString(header, 0x0008, 4));
+			}
 			//System.arraycopy(this.ANSWER_DATA, 56, header, 0x0108, 4);
 
 			sendCmd("PREPARE_LIST_MDL", HoTTAdapterSerialPort.PREPARE_LIST_MDL);
@@ -1473,6 +1482,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 			sb.append(GDE.STRING_SEMICOLON);
 			HoTTAdapterSerialPort.log.log(Level.FINE, sb.toString());
 
+			Set<String> uniquUsers = new HashSet<String>();
 			Vector<String> validModels = new Vector<String>();
 			int numValidMdls = 0;
 			String[] sModels = sb.toString().split(GDE.STRING_SEMICOLON);
@@ -1480,9 +1490,14 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 				String eval = sModels[i + 2].trim();
 				if (StringUtils.isNumeric(eval) &&  Integer.parseInt(eval) > 0) {
 					String mdlName = sModels[i + 2 + numMdls].trim();
-					if (mdlName.length() == 0) 
-						mdlName = "NONAME";
-					validModels.add(String.format("%s%03d", mdlName, Integer.parseInt(eval)));
+					if (!uniquUsers.add(mdlName) || mdlName.length() == 0) { //check for duplicate or no name
+						if (mdlName.length() == 0) 
+							mdlName = "NONAME";
+						validModels.add(String.format("%-" +  modelNameLength + "s%03d", mdlName, Integer.parseInt(eval)));
+					}
+					else
+						validModels.add(mdlName);
+							
 					++numValidMdls;
 				}
 				else
@@ -1495,7 +1510,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 				throw new RuntimeException("Failed create directory " + dirName);
 			}
 
-			long remainingSize = 0, totalSize = 0;
+			long remainingSize = 0, totalSize = 0, mdlSize = 0;
 			switch (txType) {
 			default:
 			case MC_32:
@@ -1503,12 +1518,14 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 			case MX_20:
 			case MC_26:
 			case MC_28:
+				mdlSize = 12288;
 				remainingSize = numValidMdls * 12288;
 				totalSize = numValidMdls * 12288;
 				break;
 			case MX_16:
 			case MX_12:
 			case MZ_12pro:
+				mdlSize = 8192;
 				remainingSize = numValidMdls * 8192;
 				totalSize = numValidMdls * 8192;
 				break;
@@ -1559,7 +1576,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 					out.close();
 					out = null;
 
-					parent.updateMdleTransferProgress(totalSize, remainingSize -= 12288);
+					parent.updateMdleTransferProgress(totalSize, remainingSize -= mdlSize);
 				}
 				else {
 					switch (txType) {
