@@ -400,7 +400,7 @@ public class FileTransferTabItem extends CTabItem {
 												FileTransferTabItem.this.application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGE2400));
 												return;
 											}
-											FileTransferTabItem.this.serialPort.loadModelData(FileTransferTabItem.this.selectedPcFolder.toString(), FileTransferTabItem.this);
+											FileTransferTabItem.this.serialPort.loadModelData(FileTransferTabItem.this.selectedPcFolder.toString(), FileTransferTabItem.this.mdlBackupInfoLabel, FileTransferTabItem.this.mdlBackupProgressBar);
 											FileTransferTabItem.this.updatePcFolder();
 										}
 										catch (Exception e) {
@@ -984,19 +984,21 @@ public class FileTransferTabItem extends CTabItem {
 
 	/**
 	 * update text and progressbar information regarding the actual executing file transfer
+	 * @param infoLabel displaying the remaining and total size
+	 * @param progressBar displaying visual progress
 	 * @param totalSize
 	 * @param remainingSize
 	 */
-	public void updateMdleTransferProgress(final long totalSize, final long remainingSize) {
+	public void updateMdleTransferProgress(final CLabel infoLabel, final ProgressBar progressBar, final long totalSize, final long remainingSize) {
 		GDE.display.asyncExec(new Runnable() {
 			@Override
 			public void run() {
 				if (totalSize == 0) {
-					FileTransferTabItem.this.mdlBackupProgressBar.setSelection(0);
-					FileTransferTabItem.this.mdlBackupInfoLabel.setText(Messages.getString(MessageIds.GDE_MSGT2443, new Object[] { 0, 0 }));
+					progressBar.setSelection(0);
+					infoLabel.setText(Messages.getString(MessageIds.GDE_MSGT2443, new Object[] { 0, 0 }));
 				} else {
-					FileTransferTabItem.this.mdlBackupProgressBar.setSelection((int) ((totalSize - remainingSize) * 100 / totalSize));
-					FileTransferTabItem.this.mdlBackupInfoLabel.setText(Messages.getString(MessageIds.GDE_MSGT2443, new Object[] { (totalSize - remainingSize), totalSize }));
+					progressBar.setSelection((int) ((totalSize - remainingSize) * 100 / totalSize));
+					infoLabel.setText(Messages.getString(MessageIds.GDE_MSGT2443, new Object[] { (totalSize - remainingSize), totalSize }));
 				}
 			}
 		});

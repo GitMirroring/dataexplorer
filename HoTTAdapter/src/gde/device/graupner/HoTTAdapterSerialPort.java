@@ -47,6 +47,8 @@ import java.util.Vector;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.widgets.ProgressBar;
 
 /**
  * HoTTAdapter serial port implementation
@@ -1291,7 +1293,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 	 * @throws IOException
 	 * @throws TimeOutException
 	 */
-	public void loadModelData(String selectedPcFolder, final FileTransferTabItem parent) throws IOException, TimeOutException {
+	public void loadModelData(String selectedPcFolder,final CLabel infoLabel, final ProgressBar progressBar) throws IOException, TimeOutException {
 		boolean isPortOpenedByFunction = false;
 		try {
 			if (!this.port.isConnected()) {
@@ -1530,7 +1532,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 				totalSize = numValidMdls * 8192;
 				break;
 			}
-			parent.updateMdleTransferProgress(totalSize, remainingSize);
+			updateMdleTransferProgress(infoLabel, progressBar, totalSize, remainingSize);
 
 			
 			int iQueryModels = isMC_26_28 ? 0x40 : 0x30; //start address
@@ -1576,7 +1578,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 					out.close();
 					out = null;
 
-					parent.updateMdleTransferProgress(totalSize, remainingSize -= mdlSize);
+					updateMdleTransferProgress(infoLabel, progressBar, totalSize, remainingSize -= mdlSize);
 				}
 				else {
 					switch (txType) {
@@ -1619,7 +1621,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 				WaitTimer.delay(500);
 				this.port.close();
 			}
-			parent.updateMdleTransferProgress(0,0);
+			updateMdleTransferProgress(infoLabel, progressBar, 0, 0);
 		}
 
 	}
@@ -1715,4 +1717,28 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 		this.sendCmd("CLOSE_SCREEN", HoTTAdapterSerialPort.CLOSE_SCREEN);
 		answer = this.read(answer, HoTTAdapterSerialPort.READ_TIMEOUT_MS);
 	}
+	
+
+	/**
+	 * update text and progressbar information regarding the actual executing file transfer
+	 * @param infoLabel displaying the remaining and total size
+	 * @param progressBar displaying visual progress
+	 * @param totalSize
+	 * @param remainingSize
+	 */
+	public void updateMdleTransferProgress(final CLabel infoLabel, final ProgressBar progressBar, final long totalSize, final long remainingSize) {
+		GDE.display.asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				if (totalSize == 0) {
+					progressBar.setSelection(0);
+					infoLabel.setText(Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGT2443, new Object[] { 0, 0 }));
+				} else {
+					progressBar.setSelection((int) ((totalSize - remainingSize) * 100 / totalSize));
+					infoLabel.setText(Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGT2443, new Object[] { (totalSize - remainingSize), totalSize }));
+				}
+			}
+		});
+	}
+
 }
