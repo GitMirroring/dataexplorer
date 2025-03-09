@@ -40,6 +40,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -1288,13 +1289,14 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 
 	/**
 	 * load transmitter latest model data and save to selected folder backup directory
-	 * @param selectedPcFolder
+	 * @param selectedFolder
 	 * @param parent
 	 * @throws IOException
 	 * @throws TimeOutException
 	 */
-	public void loadModelData(String selectedPcFolder,final CLabel infoLabel, final ProgressBar progressBar) throws IOException, TimeOutException {
+	public void loadModelData(ArrayList<String> mdlArrayList, String selectedFolder,final CLabel infoLabel, final ProgressBar progressBar) throws IOException, TimeOutException {
 		boolean isPortOpenedByFunction = false;
+		boolean isReadMdl = System.getProperty("java.io.tmpdir").equals(selectedFolder);
 		try {
 			if (!this.port.isConnected()) {
 				this.port.open();
@@ -1341,6 +1343,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 			if (txType.equals(Transmitter.MZ_12pro))
 				numMdls = 250;
 			sb.append(numMdls).append(GDE.STRING_SEMICOLON);
+			mdlArrayList = new ArrayList<String>(numMdls);
 			
 			boolean isMC_26_28 = false;
 			switch (txType) {
@@ -1506,7 +1509,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 					validModels.add(GDE.STRING_DASH);
 			}
 			HoTTAdapterSerialPort.log.log(Level.FINE, validModels.size() + " - " + validModels.toString());
-			String dirName = selectedPcFolder + GDE.STRING_FILE_SEPARATOR_UNIX + "backup_" + sModels[0].toLowerCase();
+			String dirName = selectedFolder + GDE.STRING_FILE_SEPARATOR_UNIX + "backup_" + sModels[0].toLowerCase();
 			FileUtils.checkDirectoryAndCreate(dirName);
 			if (!FileUtils.checkDirectoryAndCreate(dirName)) {
 				throw new RuntimeException("Failed create directory " + dirName);
@@ -1540,6 +1543,8 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 			int typeIndex = 0;
 			for (String modelName : validModels) {
 				if (!modelName.equals(GDE.STRING_DASH)) {
+					mdlArrayList.add(modelName);
+					mdlArrayList.removeLast();
 					String outputFile = dirName + GDE.STRING_FILE_SEPARATOR_UNIX + modelTyps.get(typeIndex++) + modelName + ".mdl";
 					DataOutputStream out = new DataOutputStream(new FileOutputStream(outputFile));
 					HoTTAdapterSerialPort.log.log(Level.FINE, "writing " + outputFile);
