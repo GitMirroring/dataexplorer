@@ -40,6 +40,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -496,6 +497,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 	byte								cntDown								= (byte) 0xFF;
 
 	final static byte[]	QUERY_TX_INFO					= { 0x00, 0x11 };
+	final static byte[]	RESTART_TX 						= { 0x00, 0x20 }; 
 	final static byte[]	WRITE_SCREEN					= { 0x00, 0x21 }; // 1. byte: row, 21 byte text 
 	final static byte[]	RESET_SCREEN					= { 0x00, 0x22 };
 	final static byte[]	CLEAR_SCREEN					= { 0x00, 0x23 };
@@ -505,7 +507,8 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 
 	final static byte[]	PREPARE_LIST_MDL			= { 0x05, 0x32 };
 	final static byte[]	PREPARE_LIST_MDL_2		= { 0x05, 0x31 };
-	final static byte[]	QUERY_MDL_NAMES				= { 0x05, 0x33 };
+	final static byte[]	QUERY_MDL_DATA				= { 0x05, 0x33 };
+	final static byte[]	WRITE_MDL_DATA				= { 0x05, 0x34 };
 
 	final static byte[]	SELECT_SD_CARD				= { 0x06, 0x30 };
 	final static byte[]	QUERY_SD_SIZES				= { 0x06, 0x33 };
@@ -698,11 +701,11 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 	}
 
 	/**
-	 * send command to query model data
+	 * send command to read model data
 	 * @param data
 	 * @throws IOException
 	 */
-	private void sendMdlCmd(byte[] data) throws IOException {
+	private void sendMdlReadCmd(byte[] data) throws IOException {
 		byte[] cmdAll = new byte[data.length + 2 + 7];
 
 		//cmd1 part
@@ -715,8 +718,8 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 		cmdAll[2] = this.cntDown -= 0x01;
 		cmdAll[3] = (byte) (data.length & 0x00FF);
 		cmdAll[4] = (byte) ((data.length & 0xFF00) >> 8);
-		cmdAll[5] = HoTTAdapterSerialPort.QUERY_MDL_NAMES[0];
-		cmdAll[6] = HoTTAdapterSerialPort.QUERY_MDL_NAMES[1];
+		cmdAll[5] = HoTTAdapterSerialPort.QUERY_MDL_DATA[0];
+		cmdAll[6] = HoTTAdapterSerialPort.QUERY_MDL_DATA[1];
 
 		System.arraycopy(data, 0, cmdAll, 7, data.length);
 		short crc16 = Checksum.CRC16CCITT(cmdAll, 3, data.length + 4);
@@ -735,6 +738,52 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 		System.arraycopy(cmdAll, 7, cmd2, 0, cmdAll.length - 7);
 		if (HoTTAdapterSerialPort.log.isLoggable(Level.FINE)) HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2Hex2CharString(cmd2, cmd2.length));
 		this.write(cmd2);
+	}
+
+	/**
+	 * send command to write model data
+	 * @param position 0x2000, 0x2800,...
+	 * @param data mdl data byte[2048]
+	 * @throws IOException
+	 */
+	private void sendMdlWriteCmd(int position, byte[] data) throws IOException {
+		byte[] cmdAll = new byte[11 + data.length + 2];
+		//00 0C F3 04 08 05 34 00 C8 0F 00 FF FF FF FF FF
+
+		//cmd1 part
+		cmdAll[0] = 0x00;
+		if (this.cntUp == 0xFF || this.cntDown == 0x00) {
+			this.cntUp = 0x00;
+			this.cntDown = (byte) 0xFF;
+		}
+		cmdAll[1] = this.cntUp += 0x01;
+		cmdAll[2] = this.cntDown -= 0x01;
+		cmdAll[3] = (byte) ((4 + data.length) & 0x00FF);
+		cmdAll[4] = (byte) (((4 + data.length) & 0xFF00) >> 8);
+		cmdAll[5] = HoTTAdapterSerialPort.WRITE_MDL_DATA[0];
+		cmdAll[6] = HoTTAdapterSerialPort.WRITE_MDL_DATA[1];
+		cmdAll[7] = 0x00;
+		cmdAll[8] = (byte) (position & 0x00FF);
+		cmdAll[9] = (byte) ((position & 0xFF00) >> 8);
+		cmdAll[10] = 0x00;
+		
+		System.arraycopy(data, 0, cmdAll, 11, data.length);
+		short crc16 = Checksum.CRC16CCITT(cmdAll, 3, data.length + 4);
+		cmdAll[cmdAll.length - 2] = (byte) (crc16 & 0x00FF);
+		cmdAll[cmdAll.length - 1] = (byte) ((crc16 & 0xFF00) >> 8);
+		if (HoTTAdapterSerialPort.log.isLoggable(Level.FINE)) HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2Hex2CharString(cmdAll, cmdAll.length));
+
+		System.arraycopy(cmdAll, 0, HoTTAdapterSerialPort.cmd1, 0, 11);
+		if (HoTTAdapterSerialPort.log.isLoggable(Level.FINE))
+			HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2Hex2CharString(HoTTAdapterSerialPort.cmd1, HoTTAdapterSerialPort.cmd1.length));
+		//this.write(HoTTAdapterSerialPort.cmd1);
+
+		WaitTimer.delay(HoTTAdapterSerialPort.CMD_GAP_MS);
+
+		byte[] cmd2 = new byte[data.length + 2];
+		System.arraycopy(cmdAll, 11, cmd2, 0, cmdAll.length - 11);
+		if (HoTTAdapterSerialPort.log.isLoggable(Level.FINE)) HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2Hex2CharString(cmd2, cmd2.length));
+		//this.write(cmd2);
 	}
 
 	/**
@@ -1394,12 +1443,12 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 			case MC_26:
 			case MC_28:
 				try {
-					sendCmd("QUERY_MDL_NAMES_2", HoTTAdapterSerialPort.QUERY_MDL_NAMES, new String(new byte[] { 0x00, 0x08, 0x00, 0x00, 0x00, 0x38, 0x00 }));
+					sendCmd("QUERY_MDL_NAMES_2", HoTTAdapterSerialPort.QUERY_MDL_DATA, new String(new byte[] { 0x00, 0x08, 0x00, 0x00, 0x00, 0x38, 0x00 }));
 					this.ANSWER_DATA = this.read(new byte[2057], HoTTAdapterSerialPort.READ_TIMEOUT_MS);
 				}
 				catch (Exception e) {
 					//retry command
-					sendCmd("QUERY_MDL_NAMES_2", HoTTAdapterSerialPort.QUERY_MDL_NAMES, new String(new byte[] { 0x00, 0x08, 0x00, 0x00, 0x00, 0x38, 0x00 }));
+					sendCmd("QUERY_MDL_NAMES_2", HoTTAdapterSerialPort.QUERY_MDL_DATA, new String(new byte[] { 0x00, 0x08, 0x00, 0x00, 0x00, 0x38, 0x00 }));
 					this.ANSWER_DATA = this.read(new byte[2057], HoTTAdapterSerialPort.READ_TIMEOUT_MS);
 				}
 				if (HoTTAdapterSerialPort.log.isLoggable(Level.FINE)) {
@@ -1409,12 +1458,12 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 //					HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2Hex4CharString(this.ANSWER_DATA, this.ANSWER_DATA.length));
 				}
 				try {
-					sendCmd("QUERY_MDL_NAMES", HoTTAdapterSerialPort.QUERY_MDL_NAMES, new String(new byte[] { 0x00, 0x08, 0x00, 0x00, 0x00, 0x30, 0x00 }));
+					sendCmd("QUERY_MDL_NAMES", HoTTAdapterSerialPort.QUERY_MDL_DATA, new String(new byte[] { 0x00, 0x08, 0x00, 0x00, 0x00, 0x30, 0x00 }));
 					this.ANSWER_DATA = this.read(new byte[2057], HoTTAdapterSerialPort.READ_TIMEOUT_MS);
 				}
 				catch (Exception e) {
 					//retry command
-					sendCmd("QUERY_MDL_NAMES", HoTTAdapterSerialPort.QUERY_MDL_NAMES, new String(new byte[] { 0x00, 0x08, 0x00, 0x00, 0x00, 0x30, 0x00 }));
+					sendCmd("QUERY_MDL_NAMES", HoTTAdapterSerialPort.QUERY_MDL_DATA, new String(new byte[] { 0x00, 0x08, 0x00, 0x00, 0x00, 0x30, 0x00 }));
 					this.ANSWER_DATA = this.read(new byte[2057], HoTTAdapterSerialPort.READ_TIMEOUT_MS);
 				}
 				if (HoTTAdapterSerialPort.log.isLoggable(Level.FINE)) {
@@ -1426,12 +1475,12 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 				break;
 			default:
 				try {
-					sendCmd("QUERY_MDL_NAMES", HoTTAdapterSerialPort.QUERY_MDL_NAMES, new String(new byte[] { 0x00, 0x08, 0x00, 0x00, 0x0D, 0x20, 0x00 }));
+					sendCmd("QUERY_MDL_NAMES", HoTTAdapterSerialPort.QUERY_MDL_DATA, new String(new byte[] { 0x00, 0x08, 0x00, 0x00, 0x0D, 0x20, 0x00 }));
 					this.ANSWER_DATA = this.read(new byte[2057], HoTTAdapterSerialPort.READ_TIMEOUT_MS);
 				}
 				catch (Exception e) {
 					//retry command
-					sendCmd("QUERY_MDL_NAMES", HoTTAdapterSerialPort.QUERY_MDL_NAMES, new String(new byte[] { 0x00, 0x08, 0x00, 0x00, 0x0D, 0x20, 0x00 }));
+					sendCmd("QUERY_MDL_NAMES", HoTTAdapterSerialPort.QUERY_MDL_DATA, new String(new byte[] { 0x00, 0x08, 0x00, 0x00, 0x0D, 0x20, 0x00 }));
 					this.ANSWER_DATA = this.read(new byte[2057], HoTTAdapterSerialPort.READ_TIMEOUT_MS);
 				}
 				if (HoTTAdapterSerialPort.log.isLoggable(Level.FINE)) {
@@ -1532,7 +1581,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 				totalSize = numValidMdls * 8192;
 				break;
 			}
-			updateMdleTransferProgress(infoLabel, progressBar, totalSize, remainingSize);
+			updateMdlTransferProgress(infoLabel, progressBar, totalSize, remainingSize);
 
 			
 			int iQueryModels = isMC_26_28 ? 0x40 : 0x30; //start address
@@ -1578,7 +1627,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 					out.close();
 					out = null;
 
-					updateMdleTransferProgress(infoLabel, progressBar, totalSize, remainingSize -= mdlSize);
+					updateMdlTransferProgress(infoLabel, progressBar, totalSize, remainingSize -= mdlSize);
 				}
 				else {
 					switch (txType) {
@@ -1621,7 +1670,64 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 				WaitTimer.delay(500);
 				this.port.close();
 			}
-			updateMdleTransferProgress(infoLabel, progressBar, 0, 0);
+			updateMdlTransferProgress(infoLabel, progressBar, 0, 0);
+		}
+
+	}
+
+	/**
+	 * load transmitter latest model data and save to selected folder backup directory
+	 * @param selectedMdlFiles
+	 * @param parent
+	 * @throws IOException
+	 * @throws TimeOutException
+	 */
+	public void writeModelData(ArrayList<String> selectedMdlFiles,final CLabel infoLabel, final ProgressBar progressBar) throws IOException, TimeOutException {
+		boolean isPortOpenedByFunction = false;
+		try {
+			if (!this.port.isConnected()) {
+				this.port.open();
+				if (this.port.isConnected()) {
+					isPortOpenedByFunction = true;
+				}
+			}
+			StringBuilder sb = new StringBuilder();
+
+			Transmitter txType = queryTxInfo(sb); //throw IllegalArgumentException for unknown transmitter radio
+			int numMdls = txType.equals(Transmitter.MZ_12pro) ? 250 == selectedMdlFiles.size() ? 250 : 0 : 0;
+
+			this.preModelWrite();
+
+			int position = 0x2000;
+			for (String selectedMdlFile : selectedMdlFiles) {
+				HoTTAdapterSerialPort.log.log(Level.FINE, "reading for write " + selectedMdlFile);
+				DataInputStream in = new DataInputStream(new FileInputStream(selectedMdlFile));
+				for (int i=0; i<4; ++i) {
+					byte[] outData = new byte[0x0800];
+					in.read(outData);
+					sendMdlWriteCmd(position, outData);
+					position += 8;
+				}
+				in.close();
+			}
+			
+
+		}
+		catch (SerialPortException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (ApplicationConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally {
+			this.postModelRead();
+			if (this.port.isConnected() && isPortOpenedByFunction) {
+				WaitTimer.delay(500);
+				this.port.close();
+			}
+			updateMdlTransferProgress(infoLabel, progressBar, 0, 0);
 		}
 
 	}
@@ -1670,7 +1776,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 	public void queryModelConfigurationData(byte[] queryModels, int retryCount) throws IOException, TimeOutException {
 		final String $METHOD_NAME = "queryModelConfigurationData()";
 		try {
-			sendMdlCmd(queryModels);
+			sendMdlReadCmd(queryModels);
 			this.ANSWER_DATA = this.read(new byte[2057], HoTTAdapterSerialPort.READ_TIMEOUT_MS);
 		}
 		catch (TimeOutException e) {
@@ -1708,6 +1814,30 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 	}
 
 	/**
+	 * prepare the transmitter to transfer model data, write on screen
+	 * @throws IOException
+	 * @throws TimeOutException
+	 */
+	private void preModelWrite() throws IOException, TimeOutException {
+		byte[] answer = new byte[9];
+		this.sendCmd("CLEAR_SCREEN", HoTTAdapterSerialPort.CLEAR_SCREEN);
+		answer = this.read(answer, HoTTAdapterSerialPort.READ_TIMEOUT_MS);
+		this.sendCmd("RESET_SCREEN", HoTTAdapterSerialPort.RESET_SCREEN);
+		answer = this.read(answer, HoTTAdapterSerialPort.READ_TIMEOUT_MS);
+
+		this.sendLine(HoTTAdapterSerialPort.WRITE_SCREEN, "---------------------", 0);
+		answer = this.read(answer, HoTTAdapterSerialPort.READ_TIMEOUT_MS);
+		this.sendLine(HoTTAdapterSerialPort.WRITE_SCREEN, "*   Model Data      *", 1);
+		answer = this.read(answer, HoTTAdapterSerialPort.READ_TIMEOUT_MS);
+		this.sendLine(HoTTAdapterSerialPort.WRITE_SCREEN, "*   Write Start     *", 2);
+		answer = this.read(answer, HoTTAdapterSerialPort.READ_TIMEOUT_MS);
+		this.sendLine(HoTTAdapterSerialPort.WRITE_SCREEN, "*   Please Wait.... *", 3);
+		answer = this.read(answer, HoTTAdapterSerialPort.READ_TIMEOUT_MS);
+		this.sendLine(HoTTAdapterSerialPort.WRITE_SCREEN, "---------------------", 4);
+		answer = this.read(answer, HoTTAdapterSerialPort.READ_TIMEOUT_MS);
+	}
+
+	/**
 	 * reset the transmitter after reading model data
 	 * @throws IOException
 	 * @throws TimeOutException
@@ -1726,7 +1856,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 	 * @param totalSize
 	 * @param remainingSize
 	 */
-	public void updateMdleTransferProgress(final CLabel infoLabel, final ProgressBar progressBar, final long totalSize, final long remainingSize) {
+	public void updateMdlTransferProgress(final CLabel infoLabel, final ProgressBar progressBar, final long totalSize, final long remainingSize) {
 		GDE.display.asyncExec(new Runnable() {
 			@Override
 			public void run() {
