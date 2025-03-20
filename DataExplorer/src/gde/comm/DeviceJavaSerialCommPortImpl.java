@@ -909,7 +909,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 
 	/**
 	 * function to close the serial port
-	 * this is done within a tread since the port can't close if it stays open for a long time period ??
+	 * this is done within a thread since the port can't close if it stays open for a long time period ??
 	 */
 	@Override
 	public synchronized void close() {

@@ -80,6 +80,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 	final static byte[]		QUERY_CONTROL_POSITIONS2				= { 0x04, 0x43 };
 	final static byte[]		answerRx												= new byte[21];																					//byte array to cache receiver answer data
 
+	byte[] 								modelNamesData 									= new byte[4096];
 	byte[]								ANSWER_DATA											= new byte[50];
 	byte[]								ANSWER_DATA_EXT									= new byte[50];
 	byte[]								answerDBM												= new byte[234];
@@ -504,6 +505,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 	final static byte[]	CLOSE_SCREEN					= { 0x00, 0x24 };
 
 	final static byte[]	PREPARE_FILE_TRANSFER	= { 0x03, 0x30 };
+	final static byte[]	TX_INIT								= { 0x04, 0x31 };
 
 	final static byte[]	PREPARE_LIST_MDL			= { 0x05, 0x32 };
 	final static byte[]	PREPARE_LIST_MDL_2		= { 0x05, 0x31 };
@@ -540,7 +542,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 	private byte[] prepareCmdBytes(byte[] cmd, String body) {
 		byte[] b = new byte[body.length() == 0 ? body.length() + 9 : body.length() + 10];
 		b[0] = 0x00;
-		if (this.cntUp == 0xFE || this.cntDown == 0x01) {
+		if (this.cntUp == 0xFA || this.cntDown == 0x05) {
 			this.cntUp = 0x00;
 			this.cntDown = (byte) 0xFF;
 		}
@@ -559,7 +561,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 		b[i++] = (byte) (crc16 & 0x00FF);
 		b[i++] = (byte) ((crc16 & 0xFF00) >> 8);
 
-		if (HoTTAdapterSerialPort.log.isLoggable(Level.FINE)) HoTTAdapterSerialPort.log.log(Level.FINER, StringHelper.byte2Hex2CharString(b, b.length));
+		//if (HoTTAdapterSerialPort.log.isLoggable(Level.INFO)) HoTTAdapterSerialPort.log.log(Level.INFO, StringHelper.byte2Hex2CharString(b, b.length));
 		return b;
 	}
 
@@ -572,7 +574,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 	private byte[] prepareLineBytes(byte[] cmd, String line, int number) {
 		byte[] b = new byte[line.length() + 10];
 		b[0] = 0x00;
-		if (this.cntUp == 0xFF || this.cntDown == 0x00) {
+		if (this.cntUp == 0xFA || this.cntDown == 0x05) {
 			this.cntUp = 0x00;
 			this.cntDown = (byte) 0xFF;
 		}
@@ -603,6 +605,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 	private void sendCmd(final String cmdAlias, byte[] cmd) throws IOException {
 		if (log.isLoggable(Level.FINE)) log.log(Level.FINE, "sendCmd "+ cmdAlias);
 		byte[] cmdAll = prepareCmdBytes(cmd);
+		log.log(Level.INFO, StringHelper.byte2Hex2CharString(cmdAll, cmdAll.length));
 		System.arraycopy(cmdAll, 0, HoTTAdapterSerialPort.cmd1, 0, 7);
 		this.write(HoTTAdapterSerialPort.cmd1);
 
@@ -624,6 +627,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 	private void sendCmd(final String cmdAlias, byte[] cmd, String body) throws IOException {
 		if (log.isLoggable(Level.FINE)) log.log(Level.FINE, "sendCmd "+ cmdAlias);
 		byte[] cmdAll = prepareCmdBytes(cmd, body);
+		log.log(Level.INFO, StringHelper.byte2Hex2CharString(cmdAll, cmdAll.length));
 		System.arraycopy(cmdAll, 0, HoTTAdapterSerialPort.cmd1, 0, 7);
 		this.write(HoTTAdapterSerialPort.cmd1);
 
@@ -667,7 +671,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 
 		//cmd1 part
 		cmdAll[0] = 0x00;
-		if (this.cntUp == 0xFE || this.cntDown == 0x01) {
+		if (this.cntUp == 0xFA || this.cntDown == 0x05) {
 			this.cntUp = 0x00;
 			this.cntDown = (byte) 0xFF;
 		}
@@ -710,7 +714,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 
 		//cmd1 part
 		cmdAll[0] = 0x00;
-		if (this.cntUp == 0xFF || this.cntDown == 0x00) {
+		if (this.cntUp == 0xFA || this.cntDown == 0x05) {
 			this.cntUp = 0x00;
 			this.cntDown = (byte) 0xFF;
 		}
@@ -752,7 +756,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 
 		//cmd1 part
 		cmdAll[0] = 0x00;
-		if (this.cntUp == 0xFF || this.cntDown == 0x00) {
+		if (this.cntUp == 0xFA || this.cntDown == 0x05) {
 			this.cntUp = 0x00;
 			this.cntDown = (byte) 0xFF;
 		}
@@ -768,22 +772,25 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 		cmdAll[10] = 0x00;
 		
 		System.arraycopy(data, 0, cmdAll, 11, data.length);
-		short crc16 = Checksum.CRC16CCITT(cmdAll, 3, data.length + 4);
+		short crc16 = Checksum.CRC16CCITT(cmdAll, 3, data.length + 8);
 		cmdAll[cmdAll.length - 2] = (byte) (crc16 & 0x00FF);
 		cmdAll[cmdAll.length - 1] = (byte) ((crc16 & 0xFF00) >> 8);
-		if (HoTTAdapterSerialPort.log.isLoggable(Level.FINE)) HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2Hex2CharString(cmdAll, cmdAll.length));
+		if (HoTTAdapterSerialPort.log.isLoggable(Level.FINE)) 
+			HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2Hex2CharString(cmdAll, cmdAll.length));
 
-		System.arraycopy(cmdAll, 0, HoTTAdapterSerialPort.cmd1, 0, 11);
+		byte[] cmd1 = new byte[11];
+		System.arraycopy(cmdAll, 0, cmd1, 0, 11);
 		if (HoTTAdapterSerialPort.log.isLoggable(Level.FINE))
-			HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2Hex2CharString(HoTTAdapterSerialPort.cmd1, HoTTAdapterSerialPort.cmd1.length));
-		//this.write(HoTTAdapterSerialPort.cmd1);
+			HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2Hex2CharString(cmd1, cmd1.length));
+		this.write(cmd1);
 
 		WaitTimer.delay(HoTTAdapterSerialPort.CMD_GAP_MS);
 
 		byte[] cmd2 = new byte[data.length + 2];
 		System.arraycopy(cmdAll, 11, cmd2, 0, cmdAll.length - 11);
-		if (HoTTAdapterSerialPort.log.isLoggable(Level.FINE)) HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2Hex2CharString(cmd2, cmd2.length));
-		//this.write(cmd2);
+		if (HoTTAdapterSerialPort.log.isLoggable(Level.FINE)) 
+			HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2Hex2CharString(cmd2, cmd2.length));
+		this.write(cmd2);
 	}
 
 	/**
@@ -1337,14 +1344,17 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 
 	/**
 	 * load transmitter latest model data and save to selected folder backup directory
-	 * @param selectedFolder
-	 * @param parent
+	 * @param txMdlList list of mdl names as exist on Tx
+	 * @param pcMdlList list of mdl names as read and stored on PC
+	 * @param selectedFolder to store sub folder of mdl files
+	 * @param infoLabel to describe transfered byte and maximum bytes to be transferred
+	 * @param progressBar to describe visual progress
 	 * @throws IOException
 	 * @throws TimeOutException
 	 */
-	public void loadModelData(ArrayList<String> mdlArrayList, String selectedFolder,final CLabel infoLabel, final ProgressBar progressBar) throws IOException, TimeOutException {
+	public Transmitter loadModelData(ArrayList<String> txMdlList, ArrayList<String> pcMdlList, String selectedFolder,final CLabel infoLabel, final ProgressBar progressBar) throws IOException, TimeOutException {
 		boolean isPortOpenedByFunction = false;
-		boolean isReadMdl = System.getProperty("java.io.tmpdir").equals(selectedFolder);
+		Transmitter txType = Transmitter.UNSPECIFIED;
 		try {
 			if (!this.port.isConnected()) {
 				this.port.open();
@@ -1353,8 +1363,24 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 				}
 			}
 			StringBuilder sb = new StringBuilder();
+			//set defined cntUp and cntDown
+			this.cntUp = 0x00;
+			this.cntDown = (byte) 0xFF;
+			
+			try {
+				sendCmd("TX_INIT", HoTTAdapterSerialPort.TX_INIT);
+				this.ANSWER_DATA = this.read(new byte[100], HoTTAdapterSerialPort.READ_TIMEOUT_MS, 5);
+			}
+			catch (Exception e) {
+				//retry command
+				sendCmd("TX_INIT", HoTTAdapterSerialPort.TX_INIT);
+				this.ANSWER_DATA = this.read(new byte[100], HoTTAdapterSerialPort.READ_TIMEOUT_MS, 5);
+			}
+			if (HoTTAdapterSerialPort.log.isLoggable(Level.FINE)) {
+				HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2CharString(this.ANSWER_DATA, this.ANSWER_DATA.length));
+			}
 
-			Transmitter txType = queryTxInfo(sb); //throw IllegalArgumentException for unknown transmitter radio
+			txType = queryTxInfo(sb); //throw IllegalArgumentException for unknown transmitter radio
 
 			this.preModelRead();
 
@@ -1366,32 +1392,28 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 			
 			txType = queryTxInfo(sb); //throw IllegalArgumentException for unknown transmitter radio
 			
-			//update header data
+			//update header data, copy product code
 			System.arraycopy(this.ANSWER_DATA, 7, header, 0x0000, 8);
-			if (HoTTAdapterSerialPort.log.isLoggable(Level.FINE)) {
-				HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2Hex2CharString(header, 0x0000, 8));
+			if (HoTTAdapterSerialPort.log.isLoggable(Level.INFO)) {
+				HoTTAdapterSerialPort.log.log(Level.INFO, "Product Code " + StringHelper.byte2Hex2CharString(header, 0x0000, 8));
 			}
-
+			//update app version
 			System.arraycopy(this.ANSWER_DATA, 56, header, 0x0008, 4);
-			if (HoTTAdapterSerialPort.log.isLoggable(Level.FINE)) {
-				HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2Hex2CharString(header, 0x0008, 4));
+			if (HoTTAdapterSerialPort.log.isLoggable(Level.INFO)) {
+				HoTTAdapterSerialPort.log.log(Level.INFO, "App Version " + StringHelper.byte2Hex2CharString(header, 8, 4));
 			}
 			//System.arraycopy(this.ANSWER_DATA, 56, header, 0x0108, 4);
 
 			sendCmd("PREPARE_LIST_MDL", HoTTAdapterSerialPort.PREPARE_LIST_MDL);
 			this.ANSWER_DATA = this.read(new byte[1000], HoTTAdapterSerialPort.READ_TIMEOUT_MS, 5);
-			if (HoTTAdapterSerialPort.log.isLoggable(Level.FINE)) {
-				HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2CharString(this.ANSWER_DATA, this.ANSWER_DATA.length));
-//				HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.fourDigitsRunningNumber(this.ANSWER_DATA.length));
-//				HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2FourDigitsIntegerString(this.ANSWER_DATA));
-//				HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2Hex4CharString(this.ANSWER_DATA, this.ANSWER_DATA.length));
+			if (HoTTAdapterSerialPort.log.isLoggable(Level.INFO)) {
+				HoTTAdapterSerialPort.log.log(Level.INFO, StringHelper.byte2Hex2CharString(this.ANSWER_DATA, this.ANSWER_DATA.length));
 			}
 
 			int numMdls = this.ANSWER_DATA[7]; //number of mdl configurations
 			if (txType.equals(Transmitter.MZ_12pro))
 				numMdls = 250;
 			sb.append(numMdls).append(GDE.STRING_SEMICOLON);
-			mdlArrayList = new ArrayList<String>(numMdls);
 			
 			boolean isMC_26_28 = false;
 			switch (txType) {
@@ -1400,18 +1422,15 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 				sendCmd("PREPARE_LIST_MDL_2", HoTTAdapterSerialPort.PREPARE_LIST_MDL_2);
 				this.ANSWER_DATA_EXT = this.read(new byte[100], HoTTAdapterSerialPort.READ_TIMEOUT_MS, 5);
 				 isMC_26_28 = true;
-				if (HoTTAdapterSerialPort.log.isLoggable(Level.FINE)) {
-					HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2CharString(this.ANSWER_DATA_EXT, this.ANSWER_DATA_EXT.length));
-//					HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.fourDigitsRunningNumber(this.ANSWER_DATA.length));
-//					HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2FourDigitsIntegerString(this.ANSWER_DATA));
-//					HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2Hex4CharString(this.ANSWER_DATA, this.ANSWER_DATA.length));
+				if (HoTTAdapterSerialPort.log.isLoggable(Level.INFO)) {
+					HoTTAdapterSerialPort.log.log(Level.INFO, StringHelper.byte2CharString(this.ANSWER_DATA_EXT, this.ANSWER_DATA_EXT.length));
 				}
 				break;
 			case MZ_12pro:
 				sendCmd("PREPARE_LIST_MDL_2", HoTTAdapterSerialPort.PREPARE_LIST_MDL_2);
 				this.ANSWER_DATA_EXT = this.read(new byte[100], HoTTAdapterSerialPort.READ_TIMEOUT_MS, 5);
-				if (HoTTAdapterSerialPort.log.isLoggable(Level.FINE)) {
-					HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2CharString(this.ANSWER_DATA_EXT, this.ANSWER_DATA_EXT.length));
+				if (HoTTAdapterSerialPort.log.isLoggable(Level.INFO)) {
+					HoTTAdapterSerialPort.log.log(Level.INFO, StringHelper.byte2CharString(this.ANSWER_DATA_EXT, this.ANSWER_DATA_EXT.length));
 				}
 				break;
 			default:
@@ -1441,6 +1460,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 				sb.append(GDE.STRING_SEMICOLON);
 			}
 			
+			modelNamesData = new byte[4096];
 			switch (txType) {
 			case MC_26:
 			case MC_28:
@@ -1453,11 +1473,8 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 					sendCmd("QUERY_MDL_NAMES_2", HoTTAdapterSerialPort.QUERY_MDL_DATA, new String(new byte[] { 0x00, 0x08, 0x00, 0x00, 0x00, 0x38, 0x00 }));
 					this.ANSWER_DATA = this.read(new byte[2057], HoTTAdapterSerialPort.READ_TIMEOUT_MS);
 				}
-				if (HoTTAdapterSerialPort.log.isLoggable(Level.FINE)) {
-					HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2CharString(this.ANSWER_DATA, this.ANSWER_DATA.length));
-//					HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.fourDigitsRunningNumber(this.ANSWER_DATA.length));
-//					HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2FourDigitsIntegerString(this.ANSWER_DATA));
-//					HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2Hex4CharString(this.ANSWER_DATA, this.ANSWER_DATA.length));
+				if (HoTTAdapterSerialPort.log.isLoggable(Level.INFO)) {
+					HoTTAdapterSerialPort.log.log(Level.INFO, StringHelper.byte2CharString(this.ANSWER_DATA, this.ANSWER_DATA.length));
 				}
 				try {
 					sendCmd("QUERY_MDL_NAMES", HoTTAdapterSerialPort.QUERY_MDL_DATA, new String(new byte[] { 0x00, 0x08, 0x00, 0x00, 0x00, 0x30, 0x00 }));
@@ -1468,11 +1485,42 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 					sendCmd("QUERY_MDL_NAMES", HoTTAdapterSerialPort.QUERY_MDL_DATA, new String(new byte[] { 0x00, 0x08, 0x00, 0x00, 0x00, 0x30, 0x00 }));
 					this.ANSWER_DATA = this.read(new byte[2057], HoTTAdapterSerialPort.READ_TIMEOUT_MS);
 				}
-				if (HoTTAdapterSerialPort.log.isLoggable(Level.FINE)) {
-					HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2CharString(this.ANSWER_DATA, this.ANSWER_DATA.length));
-//					HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.fourDigitsRunningNumber(this.ANSWER_DATA.length));
-//					HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2FourDigitsIntegerString(this.ANSWER_DATA));
-//					HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2Hex4CharString(this.ANSWER_DATA, this.ANSWER_DATA.length));
+				if (HoTTAdapterSerialPort.log.isLoggable(Level.INFO)) {
+					HoTTAdapterSerialPort.log.log(Level.INFO, StringHelper.byte2CharString(this.ANSWER_DATA, this.ANSWER_DATA.length));
+				}
+				break;
+			case MZ_12pro:
+				try {
+					sendCmd("QUERY_MDL_NAMES", HoTTAdapterSerialPort.QUERY_MDL_DATA, new String(new byte[] { 0x00, 0x08, 0x00, 0x00, 0x00, 0x20, 0x00 }));
+					this.ANSWER_DATA = this.read(new byte[2057], HoTTAdapterSerialPort.READ_TIMEOUT_MS);
+				}
+				catch (Exception e) {
+					//retry command
+					sendCmd("QUERY_MDL_NAMES", HoTTAdapterSerialPort.QUERY_MDL_DATA, new String(new byte[] { 0x00, 0x08, 0x00, 0x00, 0x00, 0x20, 0x00 }));
+					this.ANSWER_DATA = this.read(new byte[2057], HoTTAdapterSerialPort.READ_TIMEOUT_MS);
+				}
+				System.arraycopy(this.ANSWER_DATA, 7, modelNamesData, 0, 2048);
+				if (HoTTAdapterSerialPort.log.isLoggable(Level.INFO)) {
+					HoTTAdapterSerialPort.log.log(Level.INFO, StringHelper.byte2CharString(this.ANSWER_DATA, this.ANSWER_DATA.length));
+					HoTTAdapterSerialPort.log.log(Level.INFO, StringHelper.byte2Hex2CharString(this.ANSWER_DATA, this.ANSWER_DATA.length));
+					HoTTAdapterSerialPort.log.log(Level.INFO, StringHelper.byte2CharString(modelNamesData, modelNamesData.length));
+					HoTTAdapterSerialPort.log.log(Level.INFO, StringHelper.byte2Hex2CharString(modelNamesData, modelNamesData.length));
+				}
+				try {
+					sendCmd("QUERY_MDL_NAMES", HoTTAdapterSerialPort.QUERY_MDL_DATA, new String(new byte[] { 0x00, 0x08, 0x00, 0x00, 0x00, 0x28, 0x00 }));
+					this.ANSWER_DATA_EXT = this.read(new byte[2057], HoTTAdapterSerialPort.READ_TIMEOUT_MS);
+				}
+				catch (Exception e) {
+					//retry command
+					sendCmd("QUERY_MDL_NAMES", HoTTAdapterSerialPort.QUERY_MDL_DATA, new String(new byte[] { 0x00, 0x08, 0x00, 0x00, 0x00, 0x28, 0x00 }));
+					this.ANSWER_DATA_EXT = this.read(new byte[2057], HoTTAdapterSerialPort.READ_TIMEOUT_MS);
+				}
+				System.arraycopy(this.ANSWER_DATA_EXT, 7, modelNamesData, 2048, 2048); //last 0xFF 2035 ??
+				if (HoTTAdapterSerialPort.log.isLoggable(Level.INFO)) {
+					HoTTAdapterSerialPort.log.log(Level.INFO, StringHelper.byte2CharString(this.ANSWER_DATA_EXT, this.ANSWER_DATA_EXT.length));
+					HoTTAdapterSerialPort.log.log(Level.INFO, StringHelper.byte2Hex2CharString(this.ANSWER_DATA_EXT, this.ANSWER_DATA_EXT.length));
+					HoTTAdapterSerialPort.log.log(Level.INFO, StringHelper.byte2CharString(modelNamesData, modelNamesData.length));
+					HoTTAdapterSerialPort.log.log(Level.INFO, StringHelper.byte2Hex2CharString(modelNamesData, modelNamesData.length));
 				}
 				break;
 			default:
@@ -1485,45 +1533,70 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 					sendCmd("QUERY_MDL_NAMES", HoTTAdapterSerialPort.QUERY_MDL_DATA, new String(new byte[] { 0x00, 0x08, 0x00, 0x00, 0x0D, 0x20, 0x00 }));
 					this.ANSWER_DATA = this.read(new byte[2057], HoTTAdapterSerialPort.READ_TIMEOUT_MS);
 				}
-				if (HoTTAdapterSerialPort.log.isLoggable(Level.FINE)) {
-					HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2CharString(this.ANSWER_DATA, this.ANSWER_DATA.length));
-//					HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.fourDigitsRunningNumber(this.ANSWER_DATA.length));
-//					HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2FourDigitsIntegerString(this.ANSWER_DATA));
-//					HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2Hex4CharString(this.ANSWER_DATA, this.ANSWER_DATA.length));
+				if (HoTTAdapterSerialPort.log.isLoggable(Level.INFO)) {
+					HoTTAdapterSerialPort.log.log(Level.INFO, StringHelper.byte2CharString(this.ANSWER_DATA, this.ANSWER_DATA.length));
+					HoTTAdapterSerialPort.log.log(Level.INFO, StringHelper.byte2Hex2CharString(this.ANSWER_DATA, this.ANSWER_DATA.length));
+				}
+				try {
+					sendCmd("QUERY_MDL_NAMES", HoTTAdapterSerialPort.QUERY_MDL_DATA, new String(new byte[] { 0x00, 0x08, 0x00, 0x00, 0x0D, 0x28, 0x00 }));
+					this.ANSWER_DATA_EXT = this.read(new byte[2057], HoTTAdapterSerialPort.READ_TIMEOUT_MS);
+				}
+				catch (Exception e) {
+					//retry command
+					sendCmd("QUERY_MDL_NAMES", HoTTAdapterSerialPort.QUERY_MDL_DATA, new String(new byte[] { 0x00, 0x08, 0x00, 0x00, 0x0D, 0x28, 0x00 }));
+					this.ANSWER_DATA_EXT = this.read(new byte[2057], HoTTAdapterSerialPort.READ_TIMEOUT_MS);
+				}
+				if (HoTTAdapterSerialPort.log.isLoggable(Level.INFO)) {
+					HoTTAdapterSerialPort.log.log(Level.INFO, StringHelper.byte2CharString(this.ANSWER_DATA_EXT, this.ANSWER_DATA_EXT.length));
+					HoTTAdapterSerialPort.log.log(Level.INFO, StringHelper.byte2Hex2CharString(this.ANSWER_DATA_EXT, this.ANSWER_DATA_EXT.length));
 				}
 				break;
 			}
 
 
 			int modelNameLength = 10;//mx-20 i=178 j%10
+			String noname = "          ";
 			switch (txType) {
 			case MC_32:
 				modelNameLength = 13;//mc-32 i=86 j%13
+				noname = "             ";
 				startIndex = 86;
 				break;
 			default:
 			case MC_20:
 				modelNameLength = 10;
+				noname = "          ";
 				startIndex = 195;
 				break;
 			case MC_26:
 			case MC_28:
 				modelNameLength = 10;
+				noname = "          ";
 				startIndex = 126;
 				break;
 			case MZ_12pro:
 				modelNameLength = 9;
-				startIndex = 289;
+				noname = "         ";
+				startIndex = 302;
 				break;
 			case MX_20:
 				modelNameLength = 10;
+				noname = "          ";
 				startIndex = 177;
 				break;
 			case MX_16:
 			case MX_12:
 				modelNameLength = 9;
+				noname = "         ";
 				startIndex = 53;
 				break;
+			}
+			//prepare mdl list
+			txMdlList.clear();
+			pcMdlList.clear();
+			for (int i = 0; i < numMdls; i++) {
+				txMdlList.add(noname);
+				pcMdlList.add("");
 			}
 
 			for (int j = 0; startIndex < this.ANSWER_DATA.length - 2; startIndex++, j++) {
@@ -1557,7 +1630,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 					validModels.add(GDE.STRING_DASH);
 			}
 			HoTTAdapterSerialPort.log.log(Level.FINE, validModels.size() + " - " + validModels.toString());
-			String dirName = selectedFolder + GDE.STRING_FILE_SEPARATOR_UNIX + "backup_" + sModels[0].toLowerCase();
+			String dirName = selectedFolder + "backup_" + sModels[0].toLowerCase() + System.getProperty("file.separator");
 			FileUtils.checkDirectoryAndCreate(dirName);
 			if (!FileUtils.checkDirectoryAndCreate(dirName)) {
 				throw new RuntimeException("Failed create directory " + dirName);
@@ -1588,15 +1661,16 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 			
 			int iQueryModels = isMC_26_28 ? 0x40 : 0x30; //start address
 			byte[] queryModels =  isMC_26_28 ? new byte[] { 0x00, 0x08, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00 } :  new byte[] { 0x00, 0x08, 0x00, 0x00, 0x00, 0x30, 0x00, 0x00 };;
-			int typeIndex = 0;
+			int typeIndex = 0, index = 0;
 			for (String modelName : validModels) {
 				if (!modelName.equals(GDE.STRING_DASH)) {
-					mdlArrayList.add(modelName);
-					mdlArrayList.removeLast();
-					String outputFile = dirName + GDE.STRING_FILE_SEPARATOR_UNIX + modelTyps.get(typeIndex++) + modelName + ".mdl";
+					log.log(Level.INFO, "'" + modelName + "'");
+					txMdlList.set(index, modelTyps.get(typeIndex) + (modelName.startsWith("NONAME   ") ? noname : modelName.length() > modelNameLength ? modelName.substring(0, modelNameLength) : modelName));
+					String outputFile = dirName + modelTyps.get(typeIndex) + modelName + ".mdl";
 					DataOutputStream out = new DataOutputStream(new FileOutputStream(outputFile));
-					HoTTAdapterSerialPort.log.log(Level.FINE, "writing " + outputFile);
-
+					HoTTAdapterSerialPort.log.log(Level.INFO, "writing " + outputFile);
+					pcMdlList.set(index, modelTyps.get(typeIndex) + modelName + ";" + dirName);
+					++typeIndex;
 					//header build above with transmitter dependencies, if binding information needed it needs to be passed here
 					out.write(header);
 
@@ -1634,6 +1708,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 					updateMdlTransferProgress(infoLabel, progressBar, totalSize, remainingSize -= mdlSize);
 				}
 				else {
+					pcMdlList.set(index, "");
 					switch (txType) {
 					default:
 					case MC_32:
@@ -1658,6 +1733,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 						break;
 					}
 				}
+				++index;
 			}
 		}
 		catch (SerialPortException e) {
@@ -1676,17 +1752,17 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 			}
 			updateMdlTransferProgress(infoLabel, progressBar, 0, 0);
 		}
-
+		return txType;
 	}
 
 	/**
 	 * load transmitter latest model data and save to selected folder backup directory
-	 * @param selectedMdlFiles
+	 * @param selectedMdlFiles mdl;path2mdl
 	 * @param parent
-	 * @throws IOException
-	 * @throws TimeOutException
+	 * @throws Throwable 
 	 */
-	public void writeModelData(ArrayList<String> selectedMdlFiles,final CLabel infoLabel, final ProgressBar progressBar) throws IOException, TimeOutException {
+	@SuppressWarnings("resource")
+	public void writeModelData(ArrayList<String> selectedMdlFiles,final CLabel infoLabel, final ProgressBar progressBar) throws Throwable {
 		boolean isPortOpenedByFunction = false;
 		try {
 			if (!this.port.isConnected()) {
@@ -1696,37 +1772,185 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 				}
 			}
 			StringBuilder sb = new StringBuilder();
+			//set defined cntUp and cntDown
+			this.cntUp = 0x00;
+			this.cntDown = (byte) 0xFF;
+
+			try {
+				sendCmd("TX_INIT", HoTTAdapterSerialPort.TX_INIT);
+				this.ANSWER_DATA = this.read(new byte[9], HoTTAdapterSerialPort.READ_TIMEOUT_MS, 5);
+			}
+			catch (Exception e) {
+				//retry command
+				sendCmd("TX_INIT", HoTTAdapterSerialPort.TX_INIT);
+				this.ANSWER_DATA = this.read(new byte[9], HoTTAdapterSerialPort.READ_TIMEOUT_MS, 5);
+			}
+			if (HoTTAdapterSerialPort.log.isLoggable(Level.FINE)) {
+				HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2CharString(this.ANSWER_DATA, this.ANSWER_DATA.length));
+			}
 
 			Transmitter txType = queryTxInfo(sb); //throw IllegalArgumentException for unknown transmitter radio
-			int numMdls = txType.equals(Transmitter.MZ_12pro) ? 250 == selectedMdlFiles.size() ? 250 : 0 : 0;
+			if (!txType.equals(Transmitter.MZ_12pro)) throw new IllegalArgumentException("only MZ-12Pro can write MDL back to Tx");
+			//int numMdls = txType.equals(Transmitter.MZ_12pro) ? 250 == selectedMdlFiles.size() ? 250 : 0 : 0;
 
 			this.preModelWrite();
 
-			int position = 0x2000;
-			for (String selectedMdlFile : selectedMdlFiles) {
-				HoTTAdapterSerialPort.log.log(Level.FINE, "reading for write " + selectedMdlFile);
-				DataInputStream in = new DataInputStream(new FileInputStream(selectedMdlFile));
-				for (int i=0; i<4; ++i) {
-					byte[] outData = new byte[0x0800];
-					in.read(outData);
-					sendMdlWriteCmd(position, outData);
-					position += 8;
-				}
-				in.close();
+			//00 0A F5 08 00 05 33 01 00 00 00 2B 20 00 00 DA E8
+			try {
+				sendCmd("DELETE_MDL_NAMES", HoTTAdapterSerialPort.QUERY_MDL_DATA, new String(new byte[] { 0x01, 0x00, 0x00, 0x00, 0x2B, 0x20, 0x00 }));
+				this.ANSWER_DATA = this.read(new byte[10], HoTTAdapterSerialPort.READ_TIMEOUT_MS);
 			}
-			
+			catch (Exception e) {
+				//retry command
+				sendCmd("DELETE_MDL_NAMES", HoTTAdapterSerialPort.QUERY_MDL_DATA, new String(new byte[] { 0x01, 0x00, 0x00, 0x00, 0x2B, 0x20, 0x00 }));
+				this.ANSWER_DATA = this.read(new byte[10], HoTTAdapterSerialPort.READ_TIMEOUT_MS);
+			}
+			if (HoTTAdapterSerialPort.log.isLoggable(Level.INFO)) {
+				//HoTTAdapterSerialPort.log.log(Level.INFO, StringHelper.byte2CharString(this.ANSWER_DATA, this.ANSWER_DATA.length));
+				HoTTAdapterSerialPort.log.log(Level.INFO, StringHelper.byte2Hex2CharString(this.ANSWER_DATA, this.ANSWER_DATA.length));
+			}
 
+			int position = 0x20;
+			byte[] ffBuffer  = new byte[0x0800];
+			for (int j=0; j<ffBuffer.length; ++j)
+				ffBuffer[j] = (byte) 0xFF;
+
+			//delete model types and model names
+			for (int i = 0; i < 2; ++i) {
+				sendMdlWriteCmd(position, ffBuffer);
+				this.ANSWER_DATA = this.read(new byte[11], HoTTAdapterSerialPort.READ_TIMEOUT_MS, 5);
+				position += 8;
+				if (HoTTAdapterSerialPort.log.isLoggable(Level.INFO)) {
+					HoTTAdapterSerialPort.log.log(Level.INFO, StringHelper.byte2Hex2CharString(this.ANSWER_DATA, this.ANSWER_DATA.length));
+				}
+			}		
+			
+			sb = new StringBuilder();
+			long size = selectedMdlFiles.size() * 8192;
+			long remaining = size;
+			updateMdlTransferProgress(infoLabel, progressBar, size, remaining);
+
+			Vector<Byte> modelTyps = new Vector<>();
+			int number = 0;
+			for (String selectedMdlFile : selectedMdlFiles) {
+				try {
+					if (selectedMdlFile.contains(";")) {
+						String mdlName = selectedMdlFile.split(";")[0];
+						switch (ModelType.fromValue(mdlName.substring(0,1))) {
+						case HELI:
+							modelTyps.add((byte) 0x00);
+							break;
+						case ACRO:
+							modelTyps.add((byte) 0x01);
+							break;
+						case CAR:
+							modelTyps.add((byte) 0x02);
+							break;
+						case QUAD:
+							modelTyps.add((byte) 0x03);
+							break;
+						case BOAT:
+							modelTyps.add((byte) 0x04);
+							break;
+						case TANK:
+							modelTyps.add((byte) 0x05);
+							break;
+						case CRAWLWER:
+							modelTyps.add((byte) 0x06);
+							break;
+						case UNKNOWN:
+						default:
+							modelTyps.add((byte) 0xFF);
+							break;
+						}
+						String realMdlName = String.format("%-9s", mdlName.length() >= 10 ?  mdlName.substring(1, 10) : mdlName.substring(1));
+						realMdlName = realMdlName.startsWith("NONAME") ? "         " : realMdlName;
+						realMdlName = String.format("%-9s", realMdlName.substring(0, 9));
+						sb.append(realMdlName);
+						log.log(Level.INFO, "'" + mdlName + "' -> '" + realMdlName + "'");
+						String mdlPath = selectedMdlFile.split(";")[1] + System.getProperty("file.separator") + mdlName + ".mdl";
+						
+						if (!Transmitter.detectTransmitter(mdlName + ".mdl", selectedMdlFile.split(";")[1] + System.getProperty("file.separator")).equals(Transmitter.MZ_12pro)) {
+							//write dummy instead
+						}
+
+						HoTTAdapterSerialPort.log.log(Level.INFO, "reading for write " + mdlPath);
+						DataInputStream in = new DataInputStream(new FileInputStream(mdlPath));
+						for (int i = 0; i < 2; ++i) {
+							byte[] outData = new byte[0x0800];
+							if (outData.length != in.read(outData)) 
+								throw new IOException("failled reading bytes from " + mdlPath);
+						}
+						for (int i = 0; i < 2; ++i) {
+							byte[] outData = new byte[0x0800];
+							if (outData.length != in.read(outData)) 
+								throw new IOException("failled reading bytes from " + mdlPath);
+							sendMdlWriteCmd(position, outData);
+							this.ANSWER_DATA = this.read(new byte[11], HoTTAdapterSerialPort.READ_TIMEOUT_MS, 5);
+							position += 8;
+						}
+						in.close();
+					}
+					else {
+						modelTyps.add((byte) 0xFF);
+						sb.append("         ");
+						for (int i = 0; i < 2; ++i) {
+							sendMdlWriteCmd(position, ffBuffer);
+							this.ANSWER_DATA = this.read(new byte[11], HoTTAdapterSerialPort.READ_TIMEOUT_MS, 5);
+							position += 8;
+						}
+
+					}
+					log.log(Level.INFO, "mdl entry written -> " + number++);
+					updateMdlTransferProgress(infoLabel, progressBar, size, remaining -= 8192);
+					WaitTimer.delay(100);
+				}
+				catch (Exception e) {
+					log.log(Level.INFO, "not all of selected MDL could be written succesfull \n" + sb.toString());
+					e.printStackTrace();
+				}
+			}
+			log.log(Level.INFO, sb.toString());
+			byte[] mdlNamesBytes = sb.toString().getBytes();
+			log.log(Level.INFO, StringHelper.byte2CharString(mdlNamesBytes, mdlNamesBytes.length));
+
+			short crc16 = Checksum.CRC16CCITT(mdlNamesBytes, 0, mdlNamesBytes.length);
+			log.log(Level.INFO, String.format("mdlNamesBytes CRC16CCITT 0x%02X 0x%02X", (byte) (crc16 & 0x00FF), (byte) ((crc16 & 0xFF00) >> 8)));
+			
+			if (modelNamesData != null) { //impl some check for
+				System.arraycopy(mdlNamesBytes, 0, modelNamesData, 296, mdlNamesBytes.length);
+			}
+			log.log(Level.INFO, StringHelper.byte2Hex2CharString(modelNamesData, modelNamesData.length));
+			
+			byte[] mdlTypes = new byte[modelTyps.size()];
+			for (int i=0; i<modelTyps.size(); ++i)
+				mdlTypes[i] = modelTyps.get(i);
+			System.arraycopy(mdlTypes, 0, modelNamesData, 46, mdlTypes.length);	
+			
+			crc16 = Checksum.CRC16CCITT(modelNamesData, 46, 296+(250*9));
+			log.log(Level.INFO, String.format("mdlTypes+Names CRC16CCITT 0x%02X 0x%02X", (byte) (crc16 & 0x00FF), (byte) ((crc16 & 0xFF00) >> 8)));
+
+			position = 0x20;
+			byte[] mdlNamesBuffer  = new byte[0x0800];
+			
+			System.arraycopy(modelNamesData, 0, mdlNamesBuffer, 0, 0x0800);	//0x804 - 3	
+			sendMdlWriteCmd(position, mdlNamesBuffer);
+			this.ANSWER_DATA = this.read(new byte[11], HoTTAdapterSerialPort.READ_TIMEOUT_MS, 5);
+			position += 8;
+			WaitTimer.delay(100);
+			mdlNamesBuffer  = new byte[0x0800];
+			System.arraycopy(modelNamesData, 0x0800, mdlNamesBuffer, 0, 0x0800);		
+			sendMdlWriteCmd(position, mdlNamesBuffer);
+			this.ANSWER_DATA = this.read(new byte[11], HoTTAdapterSerialPort.READ_TIMEOUT_MS, 5);
+
+			updateMdlTransferProgress(infoLabel, progressBar, 0, 0);
 		}
-		catch (SerialPortException e) {
-			// TODO Auto-generated catch block
+		catch (Throwable e) {
 			e.printStackTrace();
-		}
-		catch (ApplicationConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw e;
 		}
 		finally {
-			this.postModelRead();
+			this.postModelWrite();
 			if (this.port.isConnected() && isPortOpenedByFunction) {
 				WaitTimer.delay(500);
 				this.port.close();
@@ -1831,11 +2055,11 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 
 		this.sendLine(HoTTAdapterSerialPort.WRITE_SCREEN, "---------------------", 0);
 		answer = this.read(answer, HoTTAdapterSerialPort.READ_TIMEOUT_MS);
-		this.sendLine(HoTTAdapterSerialPort.WRITE_SCREEN, "*   Model Data      *", 1);
+		this.sendLine(HoTTAdapterSerialPort.WRITE_SCREEN, "* Model Data        *", 1);
 		answer = this.read(answer, HoTTAdapterSerialPort.READ_TIMEOUT_MS);
-		this.sendLine(HoTTAdapterSerialPort.WRITE_SCREEN, "*   Write Start     *", 2);
+		this.sendLine(HoTTAdapterSerialPort.WRITE_SCREEN, "* Write Start       *", 2);
 		answer = this.read(answer, HoTTAdapterSerialPort.READ_TIMEOUT_MS);
-		this.sendLine(HoTTAdapterSerialPort.WRITE_SCREEN, "*   Please Wait.... *", 3);
+		this.sendLine(HoTTAdapterSerialPort.WRITE_SCREEN, "* Please Wait....   *", 3);
 		answer = this.read(answer, HoTTAdapterSerialPort.READ_TIMEOUT_MS);
 		this.sendLine(HoTTAdapterSerialPort.WRITE_SCREEN, "---------------------", 4);
 		answer = this.read(answer, HoTTAdapterSerialPort.READ_TIMEOUT_MS);
@@ -1849,6 +2073,19 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 	private void postModelRead() throws IOException, TimeOutException {
 		byte[] answer = new byte[9];
 		this.sendCmd("CLOSE_SCREEN", HoTTAdapterSerialPort.CLOSE_SCREEN);
+		answer = this.read(answer, HoTTAdapterSerialPort.READ_TIMEOUT_MS);
+	}
+
+	/**
+	 * reset the transmitter after reading model data
+	 * @throws IOException
+	 * @throws TimeOutException
+	 */
+	private void postModelWrite() throws IOException, TimeOutException {
+		byte[] answer = new byte[9];
+		this.sendCmd("CLOSE_SCREEN", HoTTAdapterSerialPort.CLOSE_SCREEN);
+		answer = this.read(answer, HoTTAdapterSerialPort.READ_TIMEOUT_MS);
+		this.sendCmd("RESTART_TX", HoTTAdapterSerialPort.RESTART_TX);
 		answer = this.read(answer, HoTTAdapterSerialPort.READ_TIMEOUT_MS);
 	}
 	
@@ -1874,5 +2111,31 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 			}
 		});
 	}
+	
+	final static int INCODE_SEED = 30731;
 
+	public static int calcSeed(int inSeed) {
+		return (1103515245 * inSeed + 12345) & 0xffff;
+	}
+	
+	public static int calcRandomSeed(int nSize) {
+		int nRand_Seed = INCODE_SEED;
+		for (int nLoop_Rand=0; nLoop_Rand < nSize; nLoop_Rand++)
+		{
+			nRand_Seed = calcSeed(nRand_Seed);
+		}
+		return nRand_Seed;
+	}
+	
+	public static void main(String[] args) {
+		for (int i = 1; i < 5; ++i) {
+			int seed = calcSeed(i);
+			System.out.format("calcSeed %d %d 0x%04X\n", i, seed, seed);
+		}
+		for (int i = 1; i < 5; ++i) {
+			int randSeed = calcRandomSeed(i);
+			System.out.format("calcRandomSeed %d %d 0x%04X\n", i, randSeed, randSeed);
+		}
+
+	}
 }

@@ -122,12 +122,14 @@ public class ConvertContextMenu {
 					ConvertContextMenu.this.convert2mx16.setEnabled(true);
 					ConvertContextMenu.this.convert2mx12.setEnabled(false);
 					break;
+				case MZ_12pro:
 				default:
 					ConvertContextMenu.this.convert2mc32.setEnabled(false);
 					ConvertContextMenu.this.convert2mc28.setEnabled(false);
 					ConvertContextMenu.this.convert2mc26.setEnabled(false);
 					ConvertContextMenu.this.convert2mc20.setEnabled(false);
 					ConvertContextMenu.this.convert2mx20.setEnabled(false);
+					ConvertContextMenu.this.convert2mc16.setEnabled(false);
 					ConvertContextMenu.this.convert2mx16.setEnabled(false);
 					ConvertContextMenu.this.convert2mx12.setEnabled(false);
 					break;

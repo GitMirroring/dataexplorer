@@ -53,6 +53,8 @@ public enum Transmitter {
 	public final static byte[] mc_16_PROD_CODE 		=  new byte[] {(byte) 0xF8, 0x35, (byte) 0xF4, 0x00, (byte) 0x09, 0x03, 0x00, 0x00};
 	public final static byte[] mx_16_PROD_CODE		=  new byte[] {(byte) 0xe4, 0x30, (byte) 0xf4, 0x00, (byte) 0xb3, 0x06, 0x00, 0x00};
 	public final static byte[] mx_12_PROD_CODE 		=  new byte[] {(byte) 0x10, 0x32, (byte) 0xf4, 0x00, (byte) 0x73, 0x06, 0x00, 0x00};
+	//Die mz-12PRO hat die ProductID 16007800. 78 42 F4 00 0F 04 00 00
+	public final static byte[] mz_12pro_PROD_CODE =  new byte[] {(byte) 0x78, 0x42, (byte) 0xf4, 0x00, (byte) 0x0F, 0x04, 0x00, 0x00};
 	
 	public final static byte[] mc_32_APP_VERSION 	=  new byte[] {(byte) 0xe8, 0x03, 0x00, 0x00};
 	public final static byte[] mc_28_APP_VERSION 	=  new byte[] {(byte) 0xea, 0x03, 0x00, 0x00};
@@ -62,6 +64,7 @@ public enum Transmitter {
 	public final static byte[] mc_16_APP_VERSION 	=  new byte[] {(byte) 0xea, 0x03, 0x00, 0x00};
 	public final static byte[] mx_16_APP_VERSION 	=  new byte[] {(byte) 0xe9, 0x03, 0x00, 0x00};
 	public final static byte[] mx_12_APP_VERSION 	=  new byte[] {(byte) 0xe9, 0x03, 0x00, 0x00};
+	public final static byte[] mx_12pro_APP_VERSION= new byte[] {(byte) 0xEA, 0x03, 0x00, 0x00};
 
 	public final static byte[] MEMORY_VERSION 		=  new byte[] {(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff,(byte) 0xff};
 
@@ -141,7 +144,7 @@ public enum Transmitter {
 			result = isMC32 ? Transmitter.MC_32 : Transmitter.UNSPECIFIED;
 		}
 		else if ((inBytes[0x08]&0xFF) == 0xEA) {
-			boolean isMC28 = true, isMC26 = true, isMC20 = true, isMX20 = true, isMC16 = true;
+			boolean isMC28 = true, isMC26 = true, isMC20 = true, isMX20 = true, isMC16 = true, isMZ12Pro = true;
 			for (int i = 0; i < 2; i++) {
 				if (inBytes[i] != Transmitter.mc_28_PROD_CODE[i]) {
 					isMC28 = false;
@@ -172,7 +175,13 @@ public enum Transmitter {
 					break;
 				}
 			}
-			result = isMC28 ? Transmitter.MC_28 : isMC26 ? Transmitter.MC_26 : isMC20 ? Transmitter.MC_20 : isMX20 ? Transmitter.MX_20 : isMC16 ? Transmitter.MC_16 : Transmitter.UNSPECIFIED;
+			for (int i = 0; i < 2; i++) {
+				if ((inBytes[0x00 + i]&0xFF) != (Transmitter.mz_12pro_PROD_CODE[i]&0xFF)){
+					isMZ12Pro = false;
+					break;
+				}
+			}
+			result = isMC28 ? Transmitter.MC_28 : isMC26 ? Transmitter.MC_26 : isMC20 ? Transmitter.MC_20 : isMX20 ? Transmitter.MX_20 : isMC16 ? Transmitter.MC_16 : isMZ12Pro ? Transmitter.MZ_12pro : Transmitter.UNSPECIFIED;
 		}
 		else if ((inBytes[0x08]&0xFF) == 0xE9) {
 			boolean isMX16 = true, isMX12 = true;
@@ -190,6 +199,7 @@ public enum Transmitter {
 			}
 			result = isMX16 ? Transmitter.MX_16 : isMX12 ? Transmitter.MX_12 : Transmitter.UNSPECIFIED;
 		}
+		log.log(Level.INFO, "detected Tx " + result.name());
 		return result;
 	}
 

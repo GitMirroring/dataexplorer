@@ -1,15 +1,41 @@
 package gde.device.graupner;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Vector;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.RowData;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
 import gde.Analyzer;
@@ -20,47 +46,24 @@ import gde.device.DeviceConfiguration;
 import gde.device.IDevice;
 import gde.device.graupner.hott.MessageIds;
 import gde.exception.TimeOutException;
+import gde.log.LogFormatter;
 import gde.messages.Messages;
-import gde.ui.DataExplorer;
 import gde.ui.SWTResourceManager;
-import gde.utils.FileUtils;
 import gde.utils.StringHelper;
 import gde.utils.WaitTimer;
-
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CCombo;
-import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowData;
-import org.eclipse.swt.layout.RowLayout;
 
 public class MdlBackupRestoreApp {
 	final static Logger					log											= Logger.getLogger("MdlBackupRestoreApp");
 	
 	private String selectedPort;
 	HoTTAdapterSerialPort	serialPort = null;
-	final DataExplorer					application							= null; //DataExplorer.getInstance();
 	final Settings							settings								= Settings.getInstance();
 	IDevice device;
+	final HashMap<String, String>	extensionFilterMap								= new HashMap<String, String>();
 
 
 	protected Shell shlMdlBackuprestore;
+	protected Display display = Display.getDefault();
 	
 	private CCombo							portSelectCombo;
 	private CLabel							portDescription;
@@ -69,18 +72,22 @@ public class MdlBackupRestoreApp {
 
 	private Vector<String>												availablePorts							= new Vector<String>();
 
-	ArrayList<String> mdlArrayList;
+	private final ArrayList<String> txMdlList = new ArrayList<>();
+	private final ArrayList<String> pcMdlList = new ArrayList<>();
+	private final ArrayList<String> selectedMdlList = new ArrayList<>();
+	private Transmitter	txType = Transmitter.UNSPECIFIED;
 	
 	private Button							readMdlButton;
 	private Table								pcMdlsTable, txMdlsTable;
-	private TableColumn					indexColumn, fileNameColum, fileDateColum, fileTimeColum, fileSizeColum;
+	private TableColumn					indexColumn, fileNameColum, fileDateColum;
 
 	private CLabel							mdlStatusInfoLabel;
 	private ProgressBar					mdlStatusProgressBar;
 	private Button							saveMdlsButton;
 	
 	StringBuilder								selectedPcBaseFolder		= new StringBuilder().append(this.settings.getDataFilePath());
-	StringBuilder								selectedPcFolder				= selectedPcBaseFolder;
+	String											selectedPcFolder				= selectedPcBaseFolder.toString();
+	HashMap<Integer,String>			selectedMdlFile = new HashMap<>();
 	TreeItem										lastSelectedPcTreeItem;
 	private Group pcMdlsGroup;
 	private Group txMdlsGroup;
@@ -98,6 +105,19 @@ public class MdlBackupRestoreApp {
 	 */
 	public static void main(String[] args) {
 		try {
+			LogFormatter lf = new LogFormatter();
+			Logger rootLogger = Logger.getLogger(GDE.STRING_EMPTY);
+			Handler[] handlers = rootLogger.getHandlers();
+			for (Handler handler : handlers) {
+				rootLogger.removeHandler(handler);
+			}
+			rootLogger.setLevel(Level.ALL);
+			ConsoleHandler logHandler = new ConsoleHandler();
+			logHandler.setFormatter(lf);
+			logHandler.setLevel(Level.INFO);
+			rootLogger.addHandler(logHandler);
+			log.setLevel(Level.INFO);
+
 			MdlBackupRestoreApp window = new MdlBackupRestoreApp();
 			window.open();
 		}
@@ -133,9 +153,8 @@ public class MdlBackupRestoreApp {
 		device = this.getInstanceOfDevice(deviceConfig);
 		Messages.setDeviceResourceBundle("gde.device.graupner.hott.messages", Settings.getInstance().getLocale(), this.getClass().getClassLoader()); //$NON-NLS-1$
 		
-		this.serialPort = this.application != null ? new HoTTAdapterSerialPort((HoTTAdapter) device, this.application) : new HoTTAdapterSerialPort((HoTTAdapter) device, null);
+		this.serialPort = new HoTTAdapterSerialPort((HoTTAdapter) device, null);
 
-		Display display = Display.getDefault();
 		createContents();
 		updateAvailablePorts();
 		shlMdlBackuprestore.open();
@@ -156,6 +175,32 @@ public class MdlBackupRestoreApp {
 		shlMdlBackuprestore.setSize(450, 300);
 		shlMdlBackuprestore.setText("MDL Backup/Restore");
 		shlMdlBackuprestore.setLayout(new FillLayout(SWT.HORIZONTAL));
+		shlMdlBackuprestore.addListener(SWT.Close, new Listener() {
+			@Override
+			public void handleEvent(Event evt) {
+				if (log.isLoggable(Level.FINE)) log.log(Level.FINE, shlMdlBackuprestore.getLocation().toString() + "event = " + evt); //$NON-NLS-1$
+
+				java.nio.file.Path tmpDir = Paths.get(System.getProperty("java.io.tmpdir") + GDE.STRING_FILE_SEPARATOR_UNIX + "backup_" + txType.value().toLowerCase());
+				try {
+					Files.walk(tmpDir).forEach(source -> {
+						try {
+							if (!Files.isDirectory(source)) {
+								System.out.format("deleting file %s\n", source);
+								Files.deleteIfExists(source);
+							}
+						}
+						catch (IOException e) {
+							throw new UncheckedIOException(e);
+						}
+					});
+					System.out.format("deleting dir %s\n", tmpDir);
+					Files.deleteIfExists(tmpDir);
+				}
+				catch (IOException e) {
+					// ignore
+				}
+			}
+		});
 		
 		Composite innerComposite = new Composite(shlMdlBackuprestore, SWT.NONE);
 		innerComposite.setLayout(new RowLayout(SWT.VERTICAL));
@@ -164,18 +209,18 @@ public class MdlBackupRestoreApp {
 			RowLayout portSelectionGroupLayout = new RowLayout(SWT.HORIZONTAL);
 			portSelectionGroupLayout.center = true;
 			serialPortSelectionGrp.setLayout(portSelectionGroupLayout);
-			serialPortSelectionGrp.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+			//serialPortSelectionGrp.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 			serialPortSelectionGrp.setLayoutData(new RowData(1024, 30));
 			{
 				this.portDescription = new CLabel(serialPortSelectionGrp, SWT.NONE);
-				this.portDescription.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+				//this.portDescription.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 				this.portDescription.setText("serieller Port");
 				this.portDescription.setLayoutData(new RowData(90, GDE.IS_LINUX ? 22 : GDE.IS_MAC ? 20 : 18));
 				this.portDescription.setToolTipText(Messages.getString(gde.messages.MessageIds.GDE_MSGT0165));
 			}
 			{
 				this.portSelectCombo = new CCombo(serialPortSelectionGrp, SWT.FLAT | SWT.BORDER);
-				this.portSelectCombo.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+				//this.portSelectCombo.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 				this.portSelectCombo.setLayoutData(new RowData(440, GDE.IS_LINUX ? 22 : GDE.IS_MAC ? 20 : 18));
 				this.portSelectCombo.setEditable(false);
 				this.portSelectCombo.setText(Messages.getString(gde.messages.MessageIds.GDE_MSGT0199));
@@ -184,7 +229,6 @@ public class MdlBackupRestoreApp {
 					@Override
 					public void widgetSelected(SelectionEvent evt) {
 						MdlBackupRestoreApp.this.selectedPort = MdlBackupRestoreApp.this.portSelectCombo.getItem(MdlBackupRestoreApp.this.portSelectCombo.getSelectionIndex()).trim().split(GDE.STRING_BLANK)[0];
-						MdlBackupRestoreApp.this.isUpdateSerialPorts = false;
 						log.log(Level.OFF, "Selected serial port = " + MdlBackupRestoreApp.this.selectedPort);
 						device.setPort(MdlBackupRestoreApp.this.selectedPort);
 						readMdlButton.setEnabled(true);
@@ -196,7 +240,7 @@ public class MdlBackupRestoreApp {
 
 		{
 			Group listMdlsGroup = new Group(innerComposite, SWT.NONE);
-			if (!GDE.IS_MAC) listMdlsGroup.setBackground(SWTResourceManager.getColor(this.settings.getUtilitySurroundingBackground()));
+			//if (!GDE.IS_MAC) listMdlsGroup.setBackground(SWTResourceManager.getColor(this.settings.getUtilitySurroundingBackground()));
 			listMdlsGroup.setLayout(new RowLayout(SWT.HORIZONTAL));
 			listMdlsGroup.setLayoutData(new RowData(1024, 320));
 			{
@@ -207,22 +251,47 @@ public class MdlBackupRestoreApp {
 			{
 				this.readMdlButton = new Button(listMdlsGroup, SWT.PUSH | SWT.CENTER);
 				this.readMdlButton.setLayoutData(new RowData(155, 33));
-				this.readMdlButton.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+				//this.readMdlButton.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 				this.readMdlButton.setText("Lese Modellspeicher");
 				this.readMdlButton.setEnabled(false);
 				this.readMdlButton.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent evt) {
 						log.log(Level.FINEST, "readMdlButton.widgetSelected, event=" + evt); //$NON-NLS-1$
+						isUpdateSerialPorts = false; //stop port scan
+						portSelectCombo.setEnabled(false);
+						readMdlButton.setEnabled(false);
+
 						new Thread("ReadModels") {
 							@Override
 							public void run() {
 									try {
-										serialPort.loadModelData(mdlArrayList, System.getProperty("java.io.tmpdir"), MdlBackupRestoreApp.this.mdlStatusInfoLabel, MdlBackupRestoreApp.this.mdlStatusProgressBar);
-										int index = 1;
-										for (String mdlName : mdlArrayList) {
-											new TableItem(txMdlsTable, SWT.NONE).setText(new String[] { String.format(" %-3d", index++), mdlName }); //$NON-NLS-1$
-										}
+										pcMdlList.clear();
+										selectedMdlList.clear();
+										selectedMdlFile.clear();
+										txType = serialPort.loadModelData(txMdlList, pcMdlList, System.getProperty("java.io.tmpdir"), MdlBackupRestoreApp.this.mdlStatusInfoLabel, MdlBackupRestoreApp.this.mdlStatusProgressBar);
+										display.asyncExec(new Runnable() {
+											@Override
+											public void run() {
+												pcMdlsTable.removeAll();
+												txMdlsTable.removeAll();
+												int index = 1;
+												for (String mdlName : txMdlList) {
+													new TableItem(pcMdlsTable, SWT.NONE).setText(new String[] { String.format(" %-3d", index), mdlName }); //$NON-NLS-1$
+													new TableItem(txMdlsTable, SWT.NONE).setText(new String[] { String.format(" %-3d", index++), mdlName }); //$NON-NLS-1$
+													selectedMdlList.add("");
+												}
+												portSelectCombo.setEnabled(true);
+												readMdlButton.setEnabled(true);
+												saveMdlsButton.setEnabled(true);
+												saveToTxButton.setEnabled(true);
+												fileSelectButton.setEnabled(true);
+												upButton.setEnabled(false);
+												downButton.setEnabled(false);
+												deleteSelectionButton.setEnabled(true);
+												deleteAllButton.setEnabled(true);
+											}
+										});
 									}
 									catch (IOException | TimeOutException e) {
 										log.log(Level.WARNING, e.getMessage());
@@ -239,7 +308,7 @@ public class MdlBackupRestoreApp {
 			}
 			{
 				pcMdlsGroup = new Group(listMdlsGroup, SWT.NONE);
-				if (!GDE.IS_MAC) pcMdlsGroup.setBackground(SWTResourceManager.getColor(this.settings.getUtilitySurroundingBackground()));
+				//if (!GDE.IS_MAC) pcMdlsGroup.setBackground(SWTResourceManager.getColor(this.settings.getUtilitySurroundingBackground()));
 				//pcMdlsGroup.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE + 2, SWT.NORMAL));
 				pcMdlsGroup.setText("PC");
 				pcMdlsGroup.setLayoutData(new RowData(780, 250));
@@ -255,8 +324,20 @@ public class MdlBackupRestoreApp {
 						@Override
 						public void handleEvent(Event event) {
 							TableItem item = (TableItem) event.item;
-							log.log(Level.FINE, "Selection={" + item.getText(1) + "}"); //$NON-NLS-1$ //$NON-NLS-2$
-							TableItem[] selection = pcMdlsTable.getSelection();
+							log.log(Level.INFO, "Selection={" + item.getText(0).trim() + "|" + item.getText(1) + "|" + item.getText(2) + "}"); //$NON-NLS-1$ //$NON-NLS-2$
+							int index = Integer.parseInt(item.getText(0).trim());
+							if (index == 1) {
+								upButton.setEnabled(false);
+								downButton.setEnabled(true);
+							}
+							else if (index > 1 && index <= 248) { //max mdls for transmitter mz-12pro
+								upButton.setEnabled(true);
+								downButton.setEnabled(true);
+							}
+							else if (index == 250) { //max mdls for transmitter mz-12pro
+								upButton.setEnabled(true);
+								downButton.setEnabled(false);
+							}
 						}
 					});
 				}
@@ -265,7 +346,7 @@ public class MdlBackupRestoreApp {
 			{
 				txMdlsGroup = new Group(listMdlsGroup, SWT.NONE);
 				txMdlsGroup.setLayoutData(new RowData(200, 250));
-				if (!GDE.IS_MAC) txMdlsGroup.setBackground(SWTResourceManager.getColor(this.settings.getUtilitySurroundingBackground()));
+				//if (!GDE.IS_MAC) txMdlsGroup.setBackground(SWTResourceManager.getColor(this.settings.getUtilitySurroundingBackground()));
 				//txMdlsGroup.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE + 2, SWT.NORMAL));
 				txMdlsGroup.setText("Tx");
 				txMdlsGroup.setLayout(new FillLayout(SWT.HORIZONTAL));
@@ -282,37 +363,77 @@ public class MdlBackupRestoreApp {
 		}
 		{
 			Composite actionButtonComposite = new Composite(innerComposite, SWT.NONE);
-			if (!GDE.IS_MAC) actionButtonComposite.setBackground(SWTResourceManager.getColor(this.settings.getUtilitySurroundingBackground()));
+			//if (!GDE.IS_MAC) actionButtonComposite.setBackground(SWTResourceManager.getColor(this.settings.getUtilitySurroundingBackground()));
 			actionButtonComposite.setLayout( new RowLayout(org.eclipse.swt.SWT.HORIZONTAL));
 			actionButtonComposite.setLayoutData(new RowData(1024, 100));
 			actionButtonComposite.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE + 2, SWT.NORMAL));
 			{
 				Composite filler = new Composite(actionButtonComposite, SWT.NONE);
-				if (!GDE.IS_MAC) filler.setBackground(SWTResourceManager.getColor(this.settings.getUtilitySurroundingBackground()));
+				//if (!GDE.IS_MAC) filler.setBackground(SWTResourceManager.getColor(this.settings.getUtilitySurroundingBackground()));
 				filler.setLayoutData( new RowData(5, 30));
 			}
 			{
 				this.saveMdlsButton = new Button(actionButtonComposite, SWT.PUSH | SWT.CENTER);
 				this.saveMdlsButton.setLayoutData(new RowData(155, 33));
 				this.saveMdlsButton.setEnabled(false);
-				this.saveMdlsButton.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+				//this.saveMdlsButton.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 				this.saveMdlsButton.setText(Messages.getString(MessageIds.GDE_MSGT2437));
 				this.saveMdlsButton.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent evt) {
-						log.log(Level.FINEST, "downLoadButton.widgetSelected, event=" + evt); //$NON-NLS-1$
+						log.log(Level.FINEST, "saveMdlsButton.widgetSelected, event=" + evt); //$NON-NLS-1$
+						//open base folder selection dialog
+						final String baseFolderName = MdlBackupRestoreApp.this.openDirFileDialog(Messages.getString(MessageIds.GDE_MSGT2432), MdlBackupRestoreApp.this.selectedPcBaseFolder.toString());
 						new Thread("BackupModels") {
 							@Override
 							public void run() {
 								try {
-									if (selectedPcFolder.length() < 3) {
-										application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGE2400));
+									if (baseFolderName.length() < 3) {
+										openMessageDialog(Messages.getString(MessageIds.GDE_MSGE2400));
 										return;
+									}
+									//merge moved selected Mdl into pcMdlList, actual it is not part of this list
+									if (!selectedMdlFile.isEmpty()) {
+										for (Integer index : selectedMdlFile.keySet())
+											pcMdlList.set(index - 1, selectedMdlFile.get(index));
+										selectedMdlFile.clear();
+									}
+									//start copy process
+									if (baseFolderName != null && baseFolderName.length() > 0) {
+										updateMdlTransferProgress(mdlStatusInfoLabel, mdlStatusProgressBar, 0, 0);
+										try {
+											java.nio.file.Path destDir = Paths.get(baseFolderName);
+											java.nio.file.Path srcDir = Paths.get(System.getProperty("java.io.tmpdir") + GDE.STRING_FILE_SEPARATOR_UNIX + "backup_" + txType.value().toLowerCase());
+											long size = Files.walk(srcDir).mapToLong(p -> p.toFile().length()).sum();
+											size = size - (size % 8192);
+											final long sizes[] = { size, size };
+											updateMdlTransferProgress(mdlStatusInfoLabel, mdlStatusProgressBar, sizes[0], sizes[1]);
+											final java.nio.file.Path dest = destDir.resolve(srcDir.getFileName());
+											log.log(Level.FINE, String.format("copying %s => %s%n", srcDir, dest));
+											Files.walk(srcDir).forEach(source -> {
+												java.nio.file.Path destination = dest.resolve(srcDir.relativize(source));
+												try {
+													if (!Files.isDirectory(destination)) {
+														log.log(Level.FINE, String.format("Files.copy(%s, %s)%n", source, destination));
+														Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
+														WaitTimer.delay(100);
+														updateMdlTransferProgress(mdlStatusInfoLabel, mdlStatusProgressBar, sizes[0], sizes[1] -= source.toFile().length());
+													}
+												}
+												catch (IOException e) {
+													throw new UncheckedIOException(e);
+												}
+											});
+											updateMdlTransferProgress(mdlStatusInfoLabel, mdlStatusProgressBar, 0, 0);
+										}
+										catch (IOException e) {
+											openMessageDialog(e.getMessage());
+										}
 									}
 								}
 								catch (Exception e) {
 									log.log(Level.SEVERE, e.getMessage(), e);
-									application.openMessageDialog(e.getMessage());
+									openMessageDialog(e.getMessage());
 								}
 							}
 						}.start();
@@ -323,59 +444,277 @@ public class MdlBackupRestoreApp {
 				this.fileSelectButton = new Button(actionButtonComposite, SWT.PUSH | SWT.CENTER);
 				this.fileSelectButton.setLayoutData(new RowData(155, 33));
 				this.fileSelectButton.setEnabled(false);
-				this.fileSelectButton.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+				//this.fileSelectButton.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 				this.fileSelectButton.setText("Datei");
+				this.fileSelectButton.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent evt) {
+						log.log(Level.FINEST, "fileSelectButton.widgetSelected, event=" + evt); //$NON-NLS-1$
+						FileDialog fd = openFileOpenDialog("MDL Selection", new String[] {"*.mdl"}, selectedPcFolder.toString(), GDE.STRING_EMPTY, SWT.SINGLE);
+						String path = fd.getFilterPath();
+						selectedPcFolder = path;
+						String fileName = fd.getFileName();
+						log.log(Level.INFO, path + " - " + fileName);
+						//TODO check if selected MDL is from txType, else open message dialog an return
+						//merge moved selected Mdl into pcMdlTable actual it is not part of this list
+						if (!selectedMdlFile.isEmpty()) {
+							for (Integer index : selectedMdlFile.keySet())
+								pcMdlList.set(index-1, selectedMdlFile.get(index));
+							selectedMdlFile.clear();
+						}
+						//put new selected MDL to index 1
+						selectedMdlFile.put(1, fileName.substring(0, fileName.length()-4) + ";" + path);
+						pcMdlsTable.removeAll();
+						new TableItem(pcMdlsTable, SWT.NONE).setText(new String[] { String.format(" %-3d", 1), fileName.substring(0, fileName.length()-4), path}); //$NON-NLS-1$
+						for (int i=1; i<pcMdlList.size(); ++i) {
+							new TableItem(pcMdlsTable, SWT.NONE).setText(new String[] { String.format(" %-3d", i+1), pcMdlList.get(i).split(";")[0], pcMdlList.get(i).split(";").length > 1 && !pcMdlList.get(i).split(";")[1].contains("Temp") ? pcMdlList.get(i).split(";")[1] : ""}); //$NON-NLS-1$
+						}
+						upButton.setEnabled(false);
+						downButton.setEnabled(false);
+						saveMdlsButton.setEnabled(true);
+						saveToTxButton.setEnabled(true);
+					}
+				});
 			}
 			{
 				deleteSelectionButton = new Button(actionButtonComposite,SWT.PUSH | SWT.CENTER);
 				this.deleteSelectionButton.setLayoutData(new RowData(155, 33));
 				this.deleteSelectionButton.setEnabled(false);
-				this.deleteSelectionButton.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+				//this.deleteSelectionButton.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 				deleteSelectionButton.setText("Löschen");
+				this.deleteSelectionButton.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent evt) {
+						log.log(Level.FINEST, "deleteSelectionButton.widgetSelected, event=" + evt); //$NON-NLS-1$
+						int selectionIndex = pcMdlsTable.getSelectionIndex();
+						TableItem item = pcMdlsTable.getSelection()[0];
+						log.log(Level.INFO, "index" + selectionIndex + " Selection={" + item.getText(0).trim() + "|" + item.getText(1) + "|" + item.getText(2) + "}"); //$NON-NLS-1$ //$NON-NLS-2$
+						if (item.getText(0).trim().length() > 0) {
+							int index = Integer.parseInt(item.getText(0).trim());
+							pcMdlsTable.clear(selectionIndex);
+							pcMdlList.set(index-1, "");
+						}
+						upButton.setEnabled(false);
+						downButton.setEnabled(false);
+					}
+				});
 			}
 			{
 				deleteAllButton = new Button(actionButtonComposite, SWT.PUSH | SWT.CENTER);
 				this.deleteAllButton.setLayoutData(new RowData(155, 33));
 				this.deleteAllButton.setEnabled(false);
-				this.deleteAllButton.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+				//this.deleteAllButton.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 				deleteAllButton.setText("Alles Löschen");
+				this.deleteAllButton.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent evt) {
+						log.log(Level.FINEST, "deleteSelectionButton.widgetSelected, event=" + evt); //$NON-NLS-1$
+						pcMdlsTable.clearAll();
+						for (int i=0; i<pcMdlList.size(); ++i)
+							pcMdlList.set(i, "");
+						saveMdlsButton.setEnabled(false);
+						saveToTxButton.setEnabled(true);
+						fileSelectButton.setEnabled(true);
+						upButton.setEnabled(false);
+						downButton.setEnabled(false);
+						deleteSelectionButton.setEnabled(false);
+						deleteAllButton.setEnabled(false);
+					}
+				});
 			}
 			{
 				upButton = new Button(actionButtonComposite, SWT.PUSH | SWT.CENTER);
 				this.upButton.setLayoutData(new RowData(60, 33));
 				this.upButton.setEnabled(false);
-				this.upButton.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
-				upButton.setText("Up");
+				//this.upButton.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+				upButton.setImage(SWTResourceManager.getImage("resource/ArrowUp.gif"));
+				//upButton.setText("Up");
+				this.upButton.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent evt) {
+						log.log(Level.FINEST, "upButton.widgetSelected, event=" + evt); //$NON-NLS-1$
+
+						int selectionIndex = pcMdlsTable.getSelectionIndex();
+						TableItem item = pcMdlsTable.getSelection()[0];
+						log.log(Level.INFO, "index" + selectionIndex + " Selection={" + item.getText(0).trim() + "|" + item.getText(1) + "|" + item.getText(2) + "}"); //$NON-NLS-1$ //$NON-NLS-2$
+						int index = Integer.parseInt(item.getText(0).trim());
+						String selectedMdl = selectedMdlFile.get(index);
+						if (selectedMdl != null) { //selected MDL file found
+							selectedMdlFile.put(index-1, selectedMdl);
+							selectedMdlFile.remove(index);
+							//pcMdlList.set(selectionIndex+1, selectedMdl);								
+						}
+						else {
+							for (int i=0; i<pcMdlList.size(); ++i) {
+								if (i == selectionIndex) {
+									String upShift = pcMdlList.get(selectionIndex);
+									String downShift = pcMdlList.get(selectionIndex-1);
+									pcMdlList.set(selectionIndex, downShift);
+									pcMdlList.set(selectionIndex-1, upShift);								
+									continue;
+								}
+							}
+						}
+
+						pcMdlsTable.removeAll();
+						int i=1;
+						for (String mdlEntry : pcMdlList) {  //TODO contains Temp Windows only
+							if (selectedMdlFile.get(i) != null) {
+								String[] mdlPath = selectedMdlFile.get(i).split(";");
+ 								new TableItem(pcMdlsTable, SWT.NONE).setText(new String[] { String.format(" %-3d", i), mdlPath[0], mdlPath[1]}); //$NON-NLS-1$
+							}
+							else
+								new TableItem(pcMdlsTable, SWT.NONE).setText(new String[] { String.format(" %-3d", i), mdlEntry.split(";")[0], mdlEntry.split(";").length > 1 && !mdlEntry.split(";")[1].contains("Temp") ? mdlEntry.split(";")[1] : ""}); //$NON-NLS-1$
+							++i;
+						}
+						pcMdlsTable.setSelection(selectionIndex-=1);
+						if (selectionIndex == 0) {
+							upButton.setEnabled(false);
+							downButton.setEnabled(true);
+						}
+						else if (selectionIndex > 0 && selectionIndex <= 248) { //max mdls for transmitter mz-12pro
+							upButton.setEnabled(true);
+							downButton.setEnabled(true);
+						}
+						else if (selectionIndex == 249) { //max mdls for transmitter mz-12pro
+							upButton.setEnabled(true);
+							downButton.setEnabled(false);
+						}
+					}
+				});
 			}
 			{
 				downButton = new Button(actionButtonComposite, SWT.PUSH | SWT.CENTER);
 				this.downButton.setLayoutData(new RowData(60, 33));
 				this.downButton.setEnabled(false);
-				this.downButton.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
-				downButton.setText("down");
+				//this.downButton.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+				downButton.setImage(SWTResourceManager.getImage("resource/ArrowDown.gif"));
+				//downButton.setText("down");
+				this.downButton.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent evt) {
+						log.log(Level.FINEST, "downButton.widgetSelected, event=" + evt); //$NON-NLS-1$
+
+						int selectionIndex = pcMdlsTable.getSelectionIndex();
+						TableItem item = pcMdlsTable.getSelection()[0];
+						log.log(Level.INFO, "index " + selectionIndex + " Selection={" + item.getText(0).trim() + "|" + item.getText(1) + "|" + item.getText(2) + "}"); //$NON-NLS-1$ //$NON-NLS-2$
+						int index = Integer.parseInt(item.getText(0).trim());
+						String selectedMdl = selectedMdlFile.get(index);
+						if (selectedMdl != null) { //selected MDL file found
+							selectedMdlFile.put(index+1, selectedMdl);
+							selectedMdlFile.remove(index);
+							//pcMdlList.set(selectionIndex+1, selectedMdl);
+						}
+						else {
+							for (int i=0; i<pcMdlList.size(); ++i) {
+								if (i == selectionIndex) {
+									String upShift = pcMdlList.get(selectionIndex+1);
+									String downShift = pcMdlList.get(selectionIndex);
+									pcMdlList.set(selectionIndex+1, downShift);
+									pcMdlList.set(selectionIndex, upShift);
+									++i;
+									continue;
+								}
+							}
+						}
+
+						pcMdlsTable.removeAll();
+						int i=1;
+						for (String mdlEntry : pcMdlList) {  //TODO contains Temp Windows only
+							if (selectedMdlFile.get(i) != null) {
+								String[] mdlPath = selectedMdlFile.get(i).split(";");
+								new TableItem(pcMdlsTable, SWT.NONE).setText(new String[] { String.format(" %-3d", i), mdlPath[0], mdlPath[1]}); //$NON-NLS-1$
+							}
+							else
+								new TableItem(pcMdlsTable, SWT.NONE).setText(new String[] { String.format(" %-3d", i), mdlEntry.split(";")[0], mdlEntry.split(";").length > 1 && !mdlEntry.split(";")[1].contains("Temp") ? mdlEntry.split(";")[1] : ""}); //$NON-NLS-1$
+							++i;
+						}
+						pcMdlsTable.setSelection(selectionIndex+=1);
+						log.log(Level.INFO, "new index " + selectionIndex); //$NON-NLS-1$ //$NON-NLS-2$
+						if (selectionIndex == 0) {
+							upButton.setEnabled(false);
+							downButton.setEnabled(true);
+						}
+						else if (selectionIndex > 0 && selectionIndex <= 248) { //max mdls for transmitter mz-12pro
+							upButton.setEnabled(true);
+							downButton.setEnabled(true);
+						}
+						else if (selectionIndex == 249) { //max mdls for transmitter mz-12pro
+							upButton.setEnabled(true);
+							downButton.setEnabled(false);
+						}
+					}
+				});
 			}
 			{
 				Composite filler = new Composite(actionButtonComposite, SWT.NONE);
-				if (!GDE.IS_MAC) filler.setBackground(SWTResourceManager.getColor(this.settings.getUtilitySurroundingBackground()));
+				//if (!GDE.IS_MAC) filler.setBackground(SWTResourceManager.getColor(this.settings.getUtilitySurroundingBackground()));
 				filler.setLayoutData( new RowData(90, 33));
 			}
 			{
 				saveToTxButton = new Button(actionButtonComposite, SWT.PUSH | SWT.CENTER);
 				this.saveToTxButton.setLayoutData(new RowData(155, 33));
 				this.saveToTxButton.setEnabled(false);
-				this.saveToTxButton.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+				//this.saveToTxButton.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 				saveToTxButton.setText("Schreibe Modellspeicher");
+				this.saveToTxButton.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent evt) {
+						log.log(Level.FINEST, "saveToTxButton.widgetSelected, event=" + evt); //$NON-NLS-1$
+						readMdlButton.setEnabled(false);
+						saveMdlsButton.setEnabled(false);
+						saveToTxButton.setEnabled(false);
+						fileSelectButton.setEnabled(false);
+						upButton.setEnabled(false);
+						downButton.setEnabled(false);
+						deleteSelectionButton.setEnabled(false);
+						deleteAllButton.setEnabled(false);
+
+						new Thread("WriteModels") {
+							@Override
+							public void run() {
+									try {
+										//merge moved + selected Mdl into pcMdlTable actual it is not part of this list
+										if (!selectedMdlFile.isEmpty()) {
+											for (Integer index : selectedMdlFile.keySet())
+												pcMdlList.set(index-1, selectedMdlFile.get(index));
+											selectedMdlFile.clear();
+										}
+
+										//merge pcMdlList with selectedMdlList
+										for (int i=0; i<selectedMdlList.size() && i<pcMdlList.size(); ++i) {
+											if (!(selectedMdlList.get(i).length() > 0 && selectedMdlList.get(i).contains(";")) && pcMdlList.get(i).length() > 0) { //mdl;path to mdl
+												selectedMdlList.set(i, pcMdlList.get(i));
+											}	
+										}
+										serialPort.writeModelData(selectedMdlList, mdlStatusInfoLabel, mdlStatusProgressBar);
+										display.asyncExec(new Runnable() {
+											@Override
+											public void run() {
+												pcMdlsTable.removeAll();
+												txMdlsTable.removeAll();
+											}
+										});
+									}
+									catch (Throwable e) {
+										log.log(Level.WARNING, e.getMessage());
+										openMessageDialog(e.getMessage());
+									}
+							}
+						}.start();
+					}
+				});
 			}
 			{
 				Composite mdlStatusComposite = new Composite(actionButtonComposite, SWT.NONE);
-				if (!GDE.IS_MAC) mdlStatusComposite.setBackground(SWTResourceManager.getColor(this.settings.getUtilitySurroundingBackground()));
+				//if (!GDE.IS_MAC) mdlStatusComposite.setBackground(SWTResourceManager.getColor(this.settings.getUtilitySurroundingBackground()));
 				mdlStatusComposite.setLayoutData(new RowData(1008, 36));
 				mdlStatusComposite.setLayout(new RowLayout(org.eclipse.swt.SWT.HORIZONTAL));
 				{
 					this.mdlStatusInfoLabel = new CLabel(mdlStatusComposite, SWT.NONE);
-					if (!GDE.IS_MAC) this.mdlStatusInfoLabel.setBackground(SWTResourceManager.getColor(this.settings.getUtilitySurroundingBackground()));
+					//if (!GDE.IS_MAC) this.mdlStatusInfoLabel.setBackground(SWTResourceManager.getColor(this.settings.getUtilitySurroundingBackground()));
 					this.mdlStatusInfoLabel.setLayoutData(new RowData(800, 15));
-					this.mdlStatusInfoLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+					//this.mdlStatusInfoLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 					this.mdlStatusInfoLabel.setText(Messages.getString(MessageIds.GDE_MSGT2443, new Object[] { 0, 0 }));
 				}
 				{
@@ -386,111 +725,7 @@ public class MdlBackupRestoreApp {
 				}
 			}
 		}
-		//updateSelectedPcFolder(null); //Initialize
 	}
-	
-
-	/**
-	 * update PC directory/folder
-	 */
-	public void updatePcFolder() {
-		final TreeItem treeItem = this.lastSelectedPcTreeItem;
-		GDE.display.asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				//updateSelectedPcFolder(treeItem);
-			}
-		});
-	}
-
-	
-	/**
-	 *
-	 */
-	private void updatePcBaseFolder() {
-		String baseFolderName = this.selectedPcBaseFolder.length() > this.selectedPcBaseFolder.lastIndexOf(GDE.STRING_FILE_SEPARATOR_UNIX) + 1 ? this.selectedPcBaseFolder.substring(this.selectedPcBaseFolder
-				.lastIndexOf(GDE.STRING_FILE_SEPARATOR_UNIX) + 1) : GDE.IS_WINDOWS ? this.selectedPcBaseFolder.substring(0, this.selectedPcBaseFolder.lastIndexOf(GDE.STRING_FILE_SEPARATOR_UNIX))
-				: this.selectedPcBaseFolder.substring(this.selectedPcBaseFolder.lastIndexOf(GDE.STRING_FILE_SEPARATOR_UNIX));
-		try {
-			//getDirListing gets only direct child folders, no sub child folders
-			List<File> folderList = FileUtils.getDirListing(new File(this.selectedPcBaseFolder.toString()));
-//			for (File folder : folderList) {
-//				TreeItem tmpTreeItem = new TreeItem(this.pcRootTreeItem, SWT.NONE);
-//				tmpTreeItem.setText(folder.getName());
-//				tmpTreeItem.setImage(SWTResourceManager.getImage("/gde/resource/Folder.gif")); //$NON-NLS-1$
-//			}
-
-			//display opened folder icon and expand the tree if there are child nodes
-//			if (this.pcRootTreeItem.getItemCount() > 1) {
-//				this.pcRootTreeItem.setExpanded(true);
-//				this.pcRootTreeItem.setImage(SWTResourceManager.getImage("/gde/resource/FolderOpen.gif")); //$NON-NLS-1$
-//			}
-		}
-		catch (FileNotFoundException e) {
-			FileTransferTabItem.log.log(Level.SEVERE, e.getMessage(), e);
-		}
-	}
-
-	/**
-	 * update the tree item icons and file listing of the selected directory/folder
-	 * @param evtItem
-	 */
-//	private void updateSelectedPcFolder(TreeItem evtItem) {
-//		try {
-//			TreeItem parentItem, tmpItem;
-//			setTableHeader(this.pcFoldersTable);
-//
-//			if (evtItem == null) evtItem = this.pcRootTreeItem;
-//			for (TreeItem item : evtItem.getItems()) {
-//				item.dispose();
-//			}
-//			//apply closed folder icon to previous selected tree item
-//			if (this.lastSelectedPcTreeItem != null && !this.lastSelectedPcTreeItem.isDisposed() && this.lastSelectedPcTreeItem.getParentItem() != null) {
-//				this.lastSelectedPcTreeItem.setImage(SWTResourceManager.getImage("/gde/resource/Folder.gif")); //$NON-NLS-1$
-//				while (!this.pcRootTreeItem.getText().equals((parentItem = this.lastSelectedPcTreeItem.getParentItem()).getText())) {
-//					parentItem.setImage(SWTResourceManager.getImage("/gde/resource/Folder.gif")); //$NON-NLS-1$
-//					this.lastSelectedPcTreeItem = parentItem;
-//				}
-//			}
-//
-//			//build path traversing tree items, apply open folder icon
-//			this.selectedPcFolder = new StringBuilder().append(GDE.STRING_FILE_SEPARATOR_UNIX).append(evtItem.getText());
-//			tmpItem = evtItem;
-//			parentItem = tmpItem.getParentItem();
-//			if (parentItem != null) {
-//				while (this.pcRootTreeItem != (parentItem = tmpItem.getParentItem())) {
-//					this.selectedPcFolder.insert(0, parentItem.getText());
-//					this.selectedPcFolder.insert(0, GDE.STRING_FILE_SEPARATOR_UNIX);
-//					parentItem.setImage(SWTResourceManager.getImage("/gde/resource/FolderOpen.gif")); //$NON-NLS-1$
-//					tmpItem = parentItem;
-//				}
-//				this.selectedPcFolder.insert(0, this.selectedPcBaseFolder);
-//			}
-//			else {
-//				this.selectedPcFolder = new StringBuilder().append(this.selectedPcBaseFolder);
-//			}
-//			//update with new folder and file information
-//			FileTransferTabItem.log.log(Level.FINE, "selectedPcFolder = " + this.selectedPcFolder.toString());
-//			List<File> files = FileUtils.getFileListing(new File(this.selectedPcFolder.toString()), 0);
-//			int index = 0;
-//			for (File file : files) {
-//				new TableItem(this.pcFoldersTable, SWT.NONE).setText(new String[] { GDE.STRING_EMPTY + index++, file.getName(), StringHelper.getFormatedTime("yyyy-MM-dd", file.lastModified()), //$NON-NLS-1$
-//						StringHelper.getFormatedTime("HH:mm", file.lastModified()), GDE.STRING_EMPTY + file.length() }); //$NON-NLS-1$
-//			}
-//			List<File> folders = FileUtils.getDirListing(new File(this.selectedPcFolder.toString()));
-//			for (File folder : folders) {
-//				TreeItem tmpTreeItem = new TreeItem(evtItem, SWT.NONE);
-//				tmpTreeItem.setText(folder.getName());
-//				tmpTreeItem.setImage(SWTResourceManager.getImage("/gde/resource/Folder.gif")); //$NON-NLS-1$
-//			}
-//			evtItem.setExpanded(true);
-//			evtItem.setImage(SWTResourceManager.getImage("/gde/resource/FolderOpen.gif")); //$NON-NLS-1$
-//			this.lastSelectedPcTreeItem = evtItem;
-//		}
-//		catch (Exception e) {
-//			FileTransferTabItem.log.log(Level.SEVERE, e.getMessage(), e);
-//		}
-//	}
 
 	/**
 	 * set the table header number, file name, date, time, size
@@ -501,13 +736,13 @@ public class MdlBackupRestoreApp {
 		for (TableColumn tableColumn : columns) {
 			tableColumn.dispose();
 		}
-		this.indexColumn = new TableColumn(table, SWT.CENTER);
+		this.indexColumn = new TableColumn(table, SWT.LEFT);
 		this.indexColumn.setWidth(50);
 		this.indexColumn.setText(Messages.getString(MessageIds.GDE_MSGT2445)); //0001
-		this.fileNameColum = new TableColumn(table, SWT.CENTER);
+		this.fileNameColum = new TableColumn(table, SWT.LEFT);
 		this.fileNameColum.setWidth(150);
 		this.fileNameColum.setText(Messages.getString(MessageIds.GDE_MSGT2446)); //qAlpha 250.mdl
-		this.fileDateColum = new TableColumn(table, SWT.CENTER);
+		this.fileDateColum = new TableColumn(table, SWT.LEFT);
 		this.fileDateColum.setWidth(450);
 		this.fileDateColum.setText("Path"); //C:/Users/Documents/DataExplorer/mz-12pro
 	}
@@ -520,10 +755,10 @@ public class MdlBackupRestoreApp {
 		for (TableColumn tableColumn : columns) {
 			tableColumn.dispose();
 		}
-		this.indexColumn = new TableColumn(table, SWT.CENTER);
+		this.indexColumn = new TableColumn(table, SWT.LEFT);
 		this.indexColumn.setWidth(40);
 		this.indexColumn.setText(Messages.getString(MessageIds.GDE_MSGT2445)); //0001
-		this.fileNameColum = new TableColumn(table, SWT.CENTER);
+		this.fileNameColum = new TableColumn(table, SWT.LEFT);
 		this.fileNameColum.setWidth(150);
 		this.fileNameColum.setText(Messages.getString(MessageIds.GDE_MSGT2446)); //qAlpha 250.mdl
 	}
@@ -540,12 +775,9 @@ public class MdlBackupRestoreApp {
 					while (MdlBackupRestoreApp.this.shlMdlBackuprestore != null && !MdlBackupRestoreApp.this.shlMdlBackuprestore.isDisposed()) {
 						if (MdlBackupRestoreApp.this.isUpdateSerialPorts) {
 							MdlBackupRestoreApp.this.availablePorts.clear();
-							MdlBackupRestoreApp.this.availablePorts.addAll(DeviceCommPort.listConfiguredSerialPorts(
-									MdlBackupRestoreApp.this.settings.doPortAvailabilityCheck(),
-									MdlBackupRestoreApp.this.settings.isSerialPortBlackListEnabled() ? MdlBackupRestoreApp.this.settings.getSerialPortBlackList() : GDE.STRING_EMPTY,
-									MdlBackupRestoreApp.this.settings.isSerialPortWhiteListEnabled() ? MdlBackupRestoreApp.this.settings.getSerialPortWhiteList() : new Vector<String>()).keySet());
+							MdlBackupRestoreApp.this.availablePorts.addAll(DeviceCommPort.listConfiguredSerialPorts(false, "", new Vector<String>()).keySet());
 							if (MdlBackupRestoreApp.this.shlMdlBackuprestore != null && !MdlBackupRestoreApp.this.shlMdlBackuprestore.isDisposed()) {
-								GDE.display.syncExec(new Runnable() {
+								display.syncExec(new Runnable() {
 									@Override
 									public void run() {
 										if (!MdlBackupRestoreApp.this.shlMdlBackuprestore.isDisposed()) {
@@ -568,6 +800,8 @@ public class MdlBackupRestoreApp {
 								});
 							}
 						}
+						else
+							return;
 						WaitTimer.delay(500);
 					}
 				}
@@ -578,6 +812,115 @@ public class MdlBackupRestoreApp {
 			}
 		};
 		this.listPortsThread.start();
+	}
+
+	public String openDirFileDialog(String name, String path) {
+		DirectoryDialog fileDirDialog = new DirectoryDialog(GDE.shell, SWT.PRIMARY_MODAL | SWT.NONE);
+		if (path != null) {
+			path = path.replace(GDE.STRING_FILE_SEPARATOR_UNIX, GDE.FILE_SEPARATOR);
+			path = !path.endsWith(GDE.FILE_SEPARATOR) ? path + GDE.FILE_SEPARATOR : path;
+		}
+		if (log.isLoggable(Level.FINER)) log.log(Level.FINER, "dialogName = " + name + " path = " + path); //$NON-NLS-1$ //$NON-NLS-2$
+		fileDirDialog.setText(name);
+		if (path != null) fileDirDialog.setFilterPath(path);
+		return fileDirDialog.open();
+	}
+
+	public FileDialog openFileOpenDialog(String name, String[] extensions, String path, String fileName, int addStyle) {
+		FileDialog fileOpenDialog = new FileDialog(GDE.shell, SWT.PRIMARY_MODAL | SWT.OPEN | addStyle);
+		if (path != null) {
+			path = path.replace(GDE.STRING_FILE_SEPARATOR_UNIX, GDE.FILE_SEPARATOR);
+			path = !path.endsWith(GDE.FILE_SEPARATOR) ? path + GDE.FILE_SEPARATOR : path;
+		}
+		if (log.isLoggable(Level.FINER)) log.log(Level.FINER, "dialogName = " + name + " path = " + path); //$NON-NLS-1$ //$NON-NLS-2$
+		fileOpenDialog.setText(name);
+		fileOpenDialog.setFileName(fileName == null ? GDE.STRING_EMPTY : fileName);
+		if (extensions != null) {
+			adaptFilter(fileOpenDialog, extensions);
+		}
+		if (path != null) fileOpenDialog.setFilterPath(path);
+		fileOpenDialog.open();
+		return fileOpenDialog;
+	}
+	
+	/**
+	 * adapt extensions list to upper and lower case if OS distinguish
+	 * @param fileOpenDialog
+	 * @param extensions
+	 */
+	private void adaptFilter(FileDialog fileOpenDialog, String[] extensions) {
+		if (!GDE.IS_WINDOWS) { // Apples MAC OS seams to reply with case insensitive file names
+			Vector<String> tmpExt = new Vector<String>();
+			for (String extension : extensions) {
+				if (!extension.equals(GDE.FILE_ENDING_STAR_STAR)) {
+					tmpExt.add(extension); // lower case is default
+					tmpExt.add(extension.toUpperCase());
+				} else
+					tmpExt.add(GDE.FILE_ENDING_STAR);
+			}
+			extensions = tmpExt.toArray(new String[1]);
+		}
+		fileOpenDialog.setFilterExtensions(extensions);
+		fileOpenDialog.setFilterNames(getExtensionDescription(extensions));
+	}
+
+	/**
+	 * @param extensions
+	 * @return the mapped extension description *.osd -> DataExplorer files
+	 */
+	public String[] getExtensionDescription(String[] extensions) {
+		String[] filterNames = new String[extensions.length];
+		for (int i = 0; i < filterNames.length; i++) {
+			int beginIndex = extensions[i].indexOf(GDE.CHAR_DOT);
+			String tmpExt = (beginIndex != -1 ? extensions[i].substring(beginIndex + 1) : extensions[i]);
+			filterNames[i] = this.extensionFilterMap.get(tmpExt.toLowerCase());
+
+			if (filterNames[i] == null)
+				filterNames[i] = extensions[i];
+			else {
+				beginIndex = filterNames[i].indexOf(GDE.CHAR_DOT);
+				if (beginIndex > 0) { // replace extension case
+					String tmpFilterExt = filterNames[i].substring(filterNames[i].indexOf(GDE.CHAR_DOT) + 1, filterNames[i].length() - 1);
+					filterNames[i] = tmpExt.equals(tmpFilterExt) ? filterNames[i] : filterNames[i].replace(tmpFilterExt, tmpExt);
+				}
+			}
+		}
+		return filterNames;
+	}
+
+
+	public void openMessageDialog(final String message) {
+		display.syncExec(new Runnable() {
+			@Override
+			public void run() {
+				MessageBox messageDialog = new MessageBox(GDE.shell, SWT.OK | SWT.ICON_WARNING);
+				messageDialog.setText(GDE.NAME_LONG);
+				messageDialog.setMessage(message);
+				messageDialog.open();
+			}
+		});
+	}
+	
+	/**
+	 * update text and progressbar information regarding the actual executing file transfer
+	 * @param infoLabel displaying the remaining and total size
+	 * @param progressBar displaying visual progress
+	 * @param totalSize
+	 * @param remainingSize
+	 */
+	public void updateMdlTransferProgress(final CLabel infoLabel, final ProgressBar progressBar, final long totalSize, final long remainingSize) {
+		display.syncExec(new Runnable() {
+			@Override
+			public void run() {
+				if (totalSize == 0) {
+					progressBar.setSelection(0);
+					infoLabel.setText(Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGT2443, new Object[] { 0, 0 }));
+				} else {
+					progressBar.setSelection((int) ((totalSize - remainingSize) * 100 / totalSize));
+					infoLabel.setText(Messages.getString(gde.device.graupner.hott.MessageIds.GDE_MSGT2443, new Object[] { (totalSize - remainingSize), totalSize }));
+				}
+			}
+		});
 	}
 
 }

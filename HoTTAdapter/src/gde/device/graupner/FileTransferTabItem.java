@@ -20,6 +20,7 @@ package gde.device.graupner;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
@@ -400,7 +401,7 @@ public class FileTransferTabItem extends CTabItem {
 												FileTransferTabItem.this.application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGE2400));
 												return;
 											}
-											FileTransferTabItem.this.serialPort.loadModelData(FileTransferTabItem.this.selectedPcFolder.toString(), FileTransferTabItem.this.mdlBackupInfoLabel, FileTransferTabItem.this.mdlBackupProgressBar);
+											FileTransferTabItem.this.serialPort.loadModelData(new ArrayList<String>(), new ArrayList<String>(), FileTransferTabItem.this.selectedPcFolder.toString(), FileTransferTabItem.this.mdlBackupInfoLabel, FileTransferTabItem.this.mdlBackupProgressBar);
 											FileTransferTabItem.this.updatePcFolder();
 										}
 										catch (Exception e) {
