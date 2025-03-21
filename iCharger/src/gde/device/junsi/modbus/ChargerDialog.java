@@ -1551,6 +1551,7 @@ public class ChargerDialog extends DeviceDialog {
 		this.combo.setItems(((iChargerUsb) this.device).isDataGathererActive() ? new String[] { Messages.getString(MessageIds.GDE_MSGT2624) } : this.readProgramMemories());
 		this.combo.select(0);
 		this.combo.setBackground(this.application.COLOR_WHITE);
+		this.combo.setForeground(this.application.COLOR_BLACK);
 		this.combo.setEditable(false);
 		this.combo.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -1743,7 +1744,7 @@ public class ChargerDialog extends DeviceDialog {
 		createStorageTabItem();
 		createCycleTabItem();
 		createOptionTabItem();
-		//createPowerTabItem();
+		//createPowerTabItem();capacity
 		this.tabFolderProgrMem.setSelection(0);
 		updateMemoryParameterControls();
 
