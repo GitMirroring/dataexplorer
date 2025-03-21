@@ -69,6 +69,7 @@ import org.eclipse.swt.widgets.ColorDialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Listener;
@@ -241,21 +242,18 @@ public class DataExplorer extends Composite {
 		this.threadId = Thread.currentThread().getId();
 
 		SWTResourceManager.registerResourceUser(this);
-COLOR_WHITE												= SWTResourceManager.getColor(SWT.COLOR_WHITE);
-COLOR_LIGHT_GREY									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_BACKGROUND);
-COLOR_GREY												= SWTResourceManager.getColor(SWT.COLOR_GRAY);
-COLOR_CANVAS_YELLOW								= SWTResourceManager.getColor(250, 249, 211);
-COLOR_BLUE												= SWTResourceManager.getColor(SWT.COLOR_BLUE);
-COLOR_LIGHT_BLUE									= SWTResourceManager.getColor(239, 239, 255);
-COLOR_DARK_GREEN									= SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN);
-COLOR_BLACK												= SWTResourceManager.getColor(SWT.COLOR_BLACK);
-COLOR_RED													= SWTResourceManager.getColor(SWT.COLOR_RED);
-COLOR_BACKGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_BACKGROUND);
-COLOR_FOREGROUND									= SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROUND);
-
-
-
-
+		boolean isDarkTheme = Display.isSystemDarkTheme();
+		COLOR_WHITE = isDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_BLACK) : SWTResourceManager.getColor(SWT.COLOR_WHITE);
+		COLOR_LIGHT_GREY = isDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY) : SWTResourceManager.getColor(SWT.COLOR_WIDGET_BACKGROUND);
+		COLOR_GREY = isDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY) : SWTResourceManager.getColor(SWT.COLOR_GRAY);
+		COLOR_CANVAS_YELLOW = isDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_BLACK) : SWTResourceManager.getColor(250, 249, 211);
+		COLOR_BLUE = isDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_DARK_BLUE) : SWTResourceManager.getColor(SWT.COLOR_BLUE);
+		COLOR_LIGHT_BLUE = isDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_BLACK) : SWTResourceManager.getColor(239, 239, 255);
+		COLOR_DARK_GREEN = isDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_GREEN) : SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN);
+		COLOR_BLACK = isDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_WHITE) : SWTResourceManager.getColor(SWT.COLOR_BLACK);
+		COLOR_RED = isDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_DARK_RED) : SWTResourceManager.getColor(SWT.COLOR_RED);
+		COLOR_BACKGROUND = isDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY) : SWTResourceManager.getColor(SWT.COLOR_WIDGET_BACKGROUND);
+		COLOR_FOREGROUND = isDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY) : SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROUND);
 
 	}
 
