@@ -121,6 +121,7 @@ public class ParameterConfigControl {
 			this.nameLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 			this.nameLabel.setText(parameterName);
 			this.nameLabel.setBackground(parent.getBackground());
+			this.nameLabel.setForeground(DataExplorer.getInstance().COLOR_BLACK);
 		}
 		{
 			this.text = new Text(this.baseComposite, SWT.CENTER | SWT.BORDER);
@@ -130,7 +131,7 @@ public class ParameterConfigControl {
 			this.text.setLayoutData(textLData);
 			this.text.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 			this.text.setEditable(isTextValueEditable);
-			this.text.setBackground(GDE.isSystemDarkTheme() ? SWTResourceManager.getColor(isTextValueEditable ? SWT.COLOR_BLACK : SWT.COLOR_WIDGET_DARK_SHADOW) 
+			this.text.setBackground(GDE.isSystemDarkTheme() ? SWTResourceManager.getColor(isTextValueEditable ? SWT.COLOR_GRAY : SWT.COLOR_WIDGET_DARK_SHADOW) 
 			: SWTResourceManager.getColor(isTextValueEditable ? SWT.COLOR_WHITE : SWT.COLOR_WIDGET_LIGHT_SHADOW));
 			if (isTextValueEditable) {
 				this.text.addVerifyListener(new VerifyListener() {
@@ -186,6 +187,7 @@ public class ParameterConfigControl {
 			this.descriptionLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 			this.descriptionLabel.setText(parameterDescription);
 			this.descriptionLabel.setBackground(parent.getBackground());
+			this.descriptionLabel.setForeground(DataExplorer.getInstance().COLOR_BLACK);
 		}
 		{
 			RowData sliderLData = new RowData();
@@ -283,6 +285,7 @@ public class ParameterConfigControl {
 			this.nameLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 			this.nameLabel.setText(parameterName);
 			this.nameLabel.setBackground(parent.getBackground());
+			this.nameLabel.setForeground(DataExplorer.getInstance().COLOR_BLACK);
 		}
 		{
 			this.text = new Text(this.baseComposite, SWT.CENTER | SWT.BORDER);
@@ -292,7 +295,7 @@ public class ParameterConfigControl {
 			this.text.setLayoutData(textLData);
 			this.text.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 			this.text.setEditable(isTextValueEditable);
-			this.text.setBackground(GDE.isSystemDarkTheme() ? SWTResourceManager.getColor(isTextValueEditable ? SWT.COLOR_BLACK : SWT.COLOR_WIDGET_DARK_SHADOW)
+			this.text.setBackground(GDE.isSystemDarkTheme() ? SWTResourceManager.getColor(isTextValueEditable ? SWT.COLOR_GRAY : SWT.COLOR_WIDGET_DARK_SHADOW)
 				:	SWTResourceManager.getColor(isTextValueEditable ? SWT.COLOR_WHITE : SWT.COLOR_WIDGET_LIGHT_SHADOW));
 			this.text.setForeground(textColor);
 			if (isTextValueEditable) {
@@ -354,6 +357,7 @@ public class ParameterConfigControl {
 			this.descriptionLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 			this.descriptionLabel.setText(parameterDescription);
 			this.descriptionLabel.setBackground(parent.getBackground());
+			this.descriptionLabel.setForeground(DataExplorer.getInstance().COLOR_BLACK);
 		}
 		{
 			RowData sliderLData = new RowData();
@@ -434,6 +438,7 @@ public class ParameterConfigControl {
 			this.nameLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 			this.nameLabel.setText(parameterName);
 			this.nameLabel.setBackground(parent.getBackground());
+			this.nameLabel.setForeground(DataExplorer.getInstance().COLOR_BLACK);
 		}
 		{
 			this.text = new Text(this.baseComposite, SWT.CENTER | SWT.BORDER);
@@ -443,7 +448,7 @@ public class ParameterConfigControl {
 			this.text.setLayoutData(textLData);
 			this.text.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 			this.text.setEditable(isTextValueEditable);
-			this.text.setBackground(GDE.isSystemDarkTheme() ? SWTResourceManager.getColor(isTextValueEditable ? SWT.COLOR_BLACK : SWT.COLOR_WIDGET_DARK_SHADOW)
+			this.text.setBackground(GDE.isSystemDarkTheme() ? SWTResourceManager.getColor(isTextValueEditable ? SWT.COLOR_GRAY : SWT.COLOR_WIDGET_DARK_SHADOW)
 				: SWTResourceManager.getColor(isTextValueEditable ? SWT.COLOR_WHITE : SWT.COLOR_WIDGET_LIGHT_SHADOW));
 			if (isTextValueEditable) {
 				this.text.addVerifyListener(new VerifyListener() {
@@ -490,6 +495,7 @@ public class ParameterConfigControl {
 			this.descriptionLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 			this.descriptionLabel.setText(parameterDescription);
 			this.descriptionLabel.setBackground(parent.getBackground());
+			this.descriptionLabel.setForeground(DataExplorer.getInstance().COLOR_BLACK);
 		}
 		{
 			RowData sliderLData = new RowData();
@@ -550,6 +556,7 @@ public class ParameterConfigControl {
 			this.nameLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 			this.nameLabel.setText(parameterName);
 			this.nameLabel.setBackground(parent.getBackground());
+			this.nameLabel.setForeground(DataExplorer.getInstance().COLOR_BLACK);
 		}
 		{
 			this.text = new Text(this.baseComposite, SWT.CENTER | SWT.BORDER);
@@ -571,6 +578,7 @@ public class ParameterConfigControl {
 			this.descriptionLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 			this.descriptionLabel.setText(parameterDescription);
 			this.descriptionLabel.setBackground(parent.getBackground());
+			this.descriptionLabel.setForeground(DataExplorer.getInstance().COLOR_BLACK);
 		}
 		{
 			RowData sliderLData = new RowData();

@@ -261,6 +261,7 @@ public class DeviceSelectionDialog extends org.eclipse.swt.widgets.Dialog {
 									this.deviceSelectCombo.setBounds(12, GDE.IS_MAC_COCOA ? 15 : 20, 375, GDE.IS_LINUX ? 22 : 20);
 									this.deviceSelectCombo.setEditable(false);
 									this.deviceSelectCombo.setBackground(this.application.COLOR_WHITE);
+									this.deviceSelectCombo.setForeground(this.application.COLOR_BLACK);
 									this.deviceSelectCombo.addSelectionListener(new SelectionAdapter() {
 										@Override
 										public void widgetSelected(SelectionEvent evt) {
@@ -408,6 +409,7 @@ public class DeviceSelectionDialog extends org.eclipse.swt.widgets.Dialog {
 									this.portSelectCombo.setText(Messages.getString(MessageIds.GDE_MSGT0199));
 									this.portSelectCombo.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0165));
 									this.portSelectCombo.setBackground(this.application.COLOR_WHITE);
+									this.portSelectCombo.setForeground(this.application.COLOR_BLACK);
 									this.portSelectCombo.addSelectionListener(new SelectionAdapter() {
 										@Override
 										public void widgetSelected(SelectionEvent evt) {

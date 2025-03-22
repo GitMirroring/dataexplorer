@@ -1513,7 +1513,8 @@ public final class Settings extends Properties {
 	 * @return the grid horizontal color of the compare window (r,g,b)
 	 */
 	public Color getGridCompareWindowHorizontalColor() {
-		return getColor(Settings.GRID_COMPARE_WINDOW_HOR_COLOR, "200,200,200"); //$NON-NLS-1$
+		return GDE.isSystemDarkTheme() ? SWTResourceManager.getColor(SWT.COLOR_WHITE)
+				: getColor(Settings.GRID_COMPARE_WINDOW_HOR_COLOR, "200,200,200"); //$NON-NLS-1$
 	}
 
 	/**
@@ -1551,7 +1552,8 @@ public final class Settings extends Properties {
 	 * @return the grid vertical color of the compare window (r,g,b)
 	 */
 	public Color getGridCompareWindowVerticalColor() {
-		return getColor(Settings.GRID_COMPARE_WINDOW_VER_COLOR, "200,200,200"); //$NON-NLS-1$
+		return GDE.isSystemDarkTheme() ? SWTResourceManager.getColor(SWT.COLOR_WHITE)
+				: getColor(Settings.GRID_COMPARE_WINDOW_VER_COLOR, "200,200,200"); //$NON-NLS-1$
 	}
 
 	/**

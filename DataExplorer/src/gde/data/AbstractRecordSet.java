@@ -303,7 +303,7 @@ public abstract class AbstractRecordSet extends LinkedHashMap<String, AbstractRe
 	 * contains the time grid position, updated from TimeLine.drawTickMarks
 	 */
 	protected Vector<Integer>										timeGrid									= new Vector<Integer>();
-	protected Color															timeGridColor							= DataExplorer.getInstance().COLOR_GREY;
+	protected Color															timeGridColor							= GDE.isSystemDarkTheme() ? DataExplorer.getInstance().COLOR_BLACK : DataExplorer.getInstance().COLOR_GREY;
 	protected int																timeGridLineStyle					= SWT.LINE_DOT;
 
 	public static final String									SMART_STATISTICS					= "RecordSet_smartStatistics";							// histo: Quantiles
@@ -324,7 +324,7 @@ public abstract class AbstractRecordSet extends LinkedHashMap<String, AbstractRe
 	 * contains the time grid position, updated from TimeLine.drawTickMarks
 	 */
 	protected Vector<Integer>										valueGrid									= new Vector<Integer>();
-	protected Color															valueGridColor						= DataExplorer.getInstance().COLOR_GREY;
+	protected Color															valueGridColor						= GDE.isSystemDarkTheme() ? DataExplorer.getInstance().COLOR_BLACK : DataExplorer.getInstance().COLOR_GREY;
 	protected int																valueGridLineStyle				= SWT.LINE_DASH;
 	/**
 	 * recordNames[horizontalGridRecord]

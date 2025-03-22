@@ -1587,7 +1587,8 @@ public final class RecordSet extends AbstractRecordSet {
 			tmpValue = recordSetProps.get(TIME_GRID_LINE_STYLE);
 			if (tmpValue != null && tmpValue.length() > 0) this.timeGridLineStyle = Integer.valueOf(tmpValue.trim()).intValue();
 			tmpValue = recordSetProps.get(TIME_GRID_COLOR);
-			if (tmpValue != null && tmpValue.length() > 5) this.timeGridColor = SWTResourceManager.getColor(Integer.valueOf(tmpValue.split(GDE.STRING_COMMA)[0]),
+			if (tmpValue != null && tmpValue.length() > 5) this.timeGridColor = GDE.isSystemDarkTheme() ? DataExplorer.getInstance().COLOR_BLACK 
+					: SWTResourceManager.getColor(Integer.valueOf(tmpValue.split(GDE.STRING_COMMA)[0]),
 					Integer.valueOf(tmpValue.split(GDE.STRING_COMMA)[1]), Integer.valueOf(tmpValue.split(GDE.STRING_COMMA)[2]));
 
 			// begin depreciated
@@ -1614,7 +1615,8 @@ public final class RecordSet extends AbstractRecordSet {
 			tmpValue = recordSetProps.get(VALUE_GRID_LINE_STYLE);
 			if (tmpValue != null && tmpValue.length() > 0) this.valueGridLineStyle = Integer.valueOf(tmpValue.trim()).intValue();
 			tmpValue = recordSetProps.get(VALUE_GRID_COLOR);
-			if (tmpValue != null && tmpValue.length() > 5) this.valueGridColor = SWTResourceManager.getColor(Integer.valueOf(tmpValue.split(GDE.STRING_COMMA)[0]),
+			if (tmpValue != null && tmpValue.length() > 5) this.valueGridColor = GDE.isSystemDarkTheme() ? DataExplorer.getInstance().COLOR_BLACK 
+					: SWTResourceManager.getColor(Integer.valueOf(tmpValue.split(GDE.STRING_COMMA)[0]),
 					Integer.valueOf(tmpValue.split(GDE.STRING_COMMA)[1]), Integer.valueOf(tmpValue.split(GDE.STRING_COMMA)[2]));
 
 			tmpValue = recordSetProps.get(SMOOTH_AT_CURRENT_DROP);

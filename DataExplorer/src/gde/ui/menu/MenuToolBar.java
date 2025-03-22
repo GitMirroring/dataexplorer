@@ -433,6 +433,7 @@ public class MenuToolBar {
 						this.objectSelectCombo.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0201));
 						this.objectSelectCombo.setEditable(false);
 						this.objectSelectCombo.setBackground(this.application.COLOR_WHITE);
+						this.objectSelectCombo.setForeground(this.application.COLOR_BLACK);
 						this.objectSelectCombo.setVisibleItemCount(20);
 						this.objectSelectCombo.addSelectionListener(new SelectionAdapter() {
 							@Override
@@ -700,7 +701,8 @@ public class MenuToolBar {
 						this.scopePointsCombo.setLayoutData(new RowData(GDE.IS_LINUX ? 80 : 60, this.comboHeight));
 						this.scopePointsCombo.setFont(SWTResourceManager.getFont(this.application, GDE.WIDGET_FONT_SIZE + 1, SWT.NORMAL));
 						this.scopePointsCombo.setItems(SCOPE_VALUES);
-						this.scopePointsCombo.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+						this.scopePointsCombo.setBackground(this.application.COLOR_WHITE);
+						this.scopePointsCombo.setForeground(this.application.COLOR_BLACK);
 						this.scopePointsCombo.select(0);
 						this.scopePointsCombo.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0072));
 						this.scopePointsCombo.addSelectionListener(new SelectionAdapter() {
@@ -796,6 +798,7 @@ public class MenuToolBar {
 						this.channelSelectCombo.setEditable(false);
 						this.channelSelectCombo.setVisibleItemCount(10);
 						this.channelSelectCombo.setBackground(this.application.COLOR_WHITE);
+						this.channelSelectCombo.setForeground(this.application.COLOR_BLACK);
 						this.channelSelectCombo.addSelectionListener(new SelectionAdapter() {
 							@Override
 							public void widgetSelected(SelectionEvent evt) {
@@ -866,6 +869,7 @@ public class MenuToolBar {
 						this.recordSelectCombo.setVisibleItemCount(20);
 						this.recordSelectCombo.setEditable(false);
 						this.recordSelectCombo.setBackground(this.application.COLOR_WHITE);
+						this.recordSelectCombo.setForeground(this.application.COLOR_BLACK);
 						this.recordSelectCombo.addSelectionListener(new SelectionAdapter() {
 							@Override
 							public void widgetSelected(SelectionEvent evt) {
