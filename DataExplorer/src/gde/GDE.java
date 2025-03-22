@@ -106,7 +106,7 @@ public class GDE {
 	private static boolean									isWithUi													= false;
 
 	// ****** begin global constants section *******
-	public static final String							VERSION														= "Version 3.9.4 beta 2"; // check device update list in settings getServiceUpdateList()																						//$NON-NLS-1$
+	public static final String							VERSION														= "Version 3.9.4 beta 3"; // check device update list in settings getServiceUpdateList()																						//$NON-NLS-1$
 	public static final int									VERSION_NUMBER										= GDE.VERSION.contains("beta") 
 															? Integer.parseInt(GDE.VERSION.substring(8, 8+5).replace(GDE.STRING_DOT, GDE.STRING_EMPTY)) - 1
 															: Integer.parseInt(GDE.VERSION.substring(8, 8+5).replace(GDE.STRING_DOT, GDE.STRING_EMPTY));
@@ -783,5 +783,14 @@ public class GDE {
       //@formatter:on
 		}
 		return GDE.uiNotification;
+	}
+	
+	/**
+	 * @return if dark theme is configured, ARM 32 swt.jar is to old and does not know dark theme 
+	 */
+	public static boolean isSystemDarkTheme() {
+		if (IS_OS_ARCH_ARM)
+			return false;
+		return Display.isSystemDarkTheme();
 	}
 }
