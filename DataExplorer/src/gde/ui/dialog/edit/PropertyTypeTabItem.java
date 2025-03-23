@@ -374,6 +374,7 @@ public class PropertyTypeTabItem extends CTabItem {
 				this.valueCombo.setBounds(90, 65, 120, 20);
 				this.valueCombo.setEditable(false);
 				this.valueCombo.setBackground(DataExplorer.getInstance().COLOR_WHITE);
+				this.valueCombo.setForeground(DataExplorer.getInstance().COLOR_BLACK);
 				this.valueCombo.setItems(GDE.STRING_ARRAY_TRUE_FALSE);
 				this.valueCombo.addSelectionListener(new SelectionAdapter() {
 					@Override

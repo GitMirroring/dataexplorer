@@ -491,8 +491,6 @@ public class GDE {
 			//data.tracking = true;
 			GDE.display = Display.getDefault();
 			GDE.shell = GDE.display.getActiveShell() == null ? new Shell(GDE.display) : GDE.display.getActiveShell();
-			if (GDE.IS_WINDOWS && GDE.isSystemDarkTheme)
-				GDE.shell.setBackground(SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY));
 
 			GDE.showSplash();
 			//Sleak sleak = new Sleak();

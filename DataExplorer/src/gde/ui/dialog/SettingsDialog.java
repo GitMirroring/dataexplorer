@@ -301,7 +301,8 @@ public class SettingsDialog extends Dialog {
 								this.localCombo.setBounds(138, GDE.IS_MAC ? 8 : GDE.IS_LINUX ? 12 : 20, 65, GDE.IS_LINUX ? 22 : GDE.IS_MAC ? 20 : 18);
 								this.localCombo.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0306));
 								this.localCombo.setEditable(false);
-								this.localCombo.setBackground(SWTResourceManager.getColor(255, 255, 255));
+								this.localCombo.setBackground(this.application.COLOR_WHITE);
+								this.localCombo.setForeground(this.application.COLOR_BLACK);
 								this.localCombo.addSelectionListener(new SelectionAdapter() {
 									@Override
 									public void widgetSelected(SelectionEvent evt) {
@@ -337,7 +338,8 @@ public class SettingsDialog extends Dialog {
 								this.timeFormatCombo.setBounds(90, GDE.IS_MAC ? 8 : GDE.IS_LINUX ? 12 : 20, 140, GDE.IS_LINUX ? 22 : GDE.IS_MAC ? 20 : 18);
 								this.timeFormatCombo.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0683));
 								this.timeFormatCombo.setEditable(false);
-								this.timeFormatCombo.setBackground(SWTResourceManager.getColor(255, 255, 255));
+								this.timeFormatCombo.setBackground(this.application.COLOR_WHITE);
+								this.timeFormatCombo.setForeground(this.application.COLOR_BLACK);
 								this.timeFormatCombo.addSelectionListener(new SelectionAdapter() {
 									@Override
 									public void widgetSelected(SelectionEvent evt) {

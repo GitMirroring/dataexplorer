@@ -188,6 +188,8 @@ public class TabAreaContextMenu {
 				this.separatorCopy = new MenuItem(popupMenu, SWT.SEPARATOR);
 				this.outherAreaColorItem = new MenuItem(popupMenu, SWT.PUSH);
 				this.outherAreaColorItem.setText(Messages.getString(MessageIds.GDE_MSGT0462));
+				if (GDE.isSystemDarkTheme)
+					this.outherAreaColorItem.setEnabled(false);
 				this.outherAreaColorItem.addListener(SWT.Selection, new Listener() {
 					@Override
 					public void handleEvent(Event e) {
@@ -200,6 +202,8 @@ public class TabAreaContextMenu {
 				});
 				this.innerAreaColorItem = new MenuItem(popupMenu, SWT.PUSH);
 				this.innerAreaColorItem.setText(Messages.getString(MessageIds.GDE_MSGT0463));
+				if (GDE.isSystemDarkTheme)
+					this.innerAreaColorItem.setEnabled(false);
 				this.innerAreaColorItem.addListener(SWT.Selection, new Listener() {
 					@Override
 					public void handleEvent(Event e) {
@@ -215,6 +219,8 @@ public class TabAreaContextMenu {
 			if (type == TabMenuType.GRAPHICS || type == TabMenuType.COMPARE || type == TabMenuType.UTILITY) {
 				this.borderColorItem = new MenuItem(popupMenu, SWT.PUSH);
 				this.borderColorItem.setText(Messages.getString(MessageIds.GDE_MSGT0464));
+				if (GDE.isSystemDarkTheme)
+					this.borderColorItem.setEnabled(false);
 				this.borderColorItem.addListener(SWT.Selection, new Listener() {
 					@Override
 					public void handleEvent(Event e) {

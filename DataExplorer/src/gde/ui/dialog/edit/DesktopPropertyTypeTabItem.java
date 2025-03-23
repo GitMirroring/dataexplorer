@@ -206,6 +206,7 @@ public class DesktopPropertyTypeTabItem extends CTabItem {
 				this.valueCombo.setBounds(90, 65, 120, 20);
 				this.valueCombo.setEditable(false);
 				this.valueCombo.setBackground(DataExplorer.getInstance().COLOR_WHITE);
+				this.valueCombo.setForeground(DataExplorer.getInstance().COLOR_BLACK);
 				this.valueCombo.setItems(GDE.STRING_ARRAY_TRUE_FALSE);
 				this.valueCombo.addSelectionListener(new SelectionAdapter() {
 					@Override
@@ -255,6 +256,7 @@ public class DesktopPropertyTypeTabItem extends CTabItem {
 					this.attributeCombo.setBounds(90, 145, 120, 20);
 					this.attributeCombo.setEditable(false);
 					this.attributeCombo.setBackground(DataExplorer.getInstance().COLOR_WHITE);
+					this.attributeCombo.setForeground(DataExplorer.getInstance().COLOR_BLACK);
 					this.attributeCombo.addSelectionListener(new SelectionAdapter() {
 						@Override
 						public void widgetSelected(SelectionEvent evt) {

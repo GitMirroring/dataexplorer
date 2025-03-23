@@ -89,7 +89,6 @@ public class AboutDialog extends org.eclipse.swt.widgets.Dialog {
 			this.dialogShell.pack();
 			this.dialogShell.setSize(650, 430);
 			this.dialogShell.setText(Messages.getString(MessageIds.GDE_MSGT0146));
-			this.dialogShell.setBackground(parent.getBackground());
 			this.dialogShell.addListener(SWT.Traverse, new Listener() {
 	      @Override
 				public void handleEvent(Event event) {
@@ -119,7 +118,6 @@ public class AboutDialog extends org.eclipse.swt.widgets.Dialog {
 						+ System.getProperty("line.separator") + Messages.getString(MessageIds.GDE_MSGT0149)  //$NON-NLS-1$
 						+ System.getProperty("line.separator")
 						+ System.getProperty("line.separator") + Messages.getString(MessageIds.GDE_MSGT0150)); //$NON-NLS-1$
-				this.infoText.setBackground(parent.getBackground());
 				//this.infoText.setCursor(SWTResourceManager.getCursor(SWT.CURSOR_ARROW));
 				//this.infoText.setForeground(this.application.COLOR_BLACK);
 			}
@@ -134,7 +132,6 @@ public class AboutDialog extends org.eclipse.swt.widgets.Dialog {
 				this.version.setFont(SWTResourceManager.getFont(this.application, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 				this.version.setLayoutData(versionLData);
 				this.version.setText(GDE.VERSION);
-				this.version.setBackground(parent.getBackground());
 			}
 			{
 				FormData okLData = new FormData();
@@ -166,7 +163,6 @@ public class AboutDialog extends org.eclipse.swt.widgets.Dialog {
 				this.aboutText.setLayoutData(aboutTextLData);
 				this.aboutText.setFont(SWTResourceManager.getFont(this.application, GDE.WIDGET_FONT_SIZE + 8, 2));
 				this.aboutText.setText("DataExplorer"); //$NON-NLS-1$
-				this.aboutText.setBackground(parent.getBackground());
 				this.aboutText.setText(DataExplorer.getInstance().getClass().getSimpleName());
 			}
 			{
