@@ -62,6 +62,7 @@ import gde.log.LogFormatter;
 import gde.messages.MessageIds;
 import gde.messages.Messages;
 import gde.ui.DataExplorer;
+import gde.ui.SWTResourceManager;
 import gde.utils.FileUtils;
 import gde.utils.StringHelper;
 
@@ -106,7 +107,7 @@ public class GDE {
 	private static boolean									isWithUi													= false;
 
 	// ****** begin global constants section *******
-	public static final String							VERSION														= "Version 3.9.4 beta 3"; // check device update list in settings getServiceUpdateList()																						//$NON-NLS-1$
+	public static final String							VERSION														= "Version 3.9.4 beta 4"; // check device update list in settings getServiceUpdateList()																						//$NON-NLS-1$
 	public static final int									VERSION_NUMBER										= GDE.VERSION.contains("beta") 
 															? Integer.parseInt(GDE.VERSION.substring(8, 8+5).replace(GDE.STRING_DOT, GDE.STRING_EMPTY)) - 1
 															: Integer.parseInt(GDE.VERSION.substring(8, 8+5).replace(GDE.STRING_DOT, GDE.STRING_EMPTY));
@@ -125,6 +126,7 @@ public class GDE {
 	public static final boolean							IS_MAC_COCOA											= GDE.IS_MAC && System.getProperty("DO_NOT_USE_COCOA") == null && SWT.getPlatform().toLowerCase().startsWith("cocoa");			//$NON-NLS-1$ //$NON-NLS-2$
 	public static final boolean							IS_ARCH_DATA_MODEL_64							= System.getProperty("sun.arch.data.model").equals("64");																																		//$NON-NLS-1$ //$NON-NLS-2$
 	public static final boolean							IS_OS_ARCH_ARM										= System.getProperty("os.arch").toLowerCase().startsWith("arm") || System.getProperty("os.arch").toLowerCase().startsWith("aarch");	//$NON-NLS-1$ //$NON-NLS-2$
+	public static final boolean							isSystemDarkTheme									= GDE.isSystemDarkTheme();
 
 	/** Depends on the Operating System type. Is empty if no valid OS. */
 	public static final String							APPL_HOME_PATH										= GDE.IS_WINDOWS
@@ -489,6 +491,8 @@ public class GDE {
 			//data.tracking = true;
 			GDE.display = Display.getDefault();
 			GDE.shell = GDE.display.getActiveShell() == null ? new Shell(GDE.display) : GDE.display.getActiveShell();
+			if (GDE.IS_WINDOWS && GDE.isSystemDarkTheme)
+				GDE.shell.setBackground(SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY));
 
 			GDE.showSplash();
 			//Sleak sleak = new Sleak();

@@ -652,7 +652,7 @@ public final class TrailRecordSet extends AbstractRecordSet {
 				r = Integer.parseInt(color.split(GDE.STRING_COMMA)[0].trim());
 				g = Integer.parseInt(color.split(GDE.STRING_COMMA)[1].trim());
 				b = Integer.parseInt(color.split(GDE.STRING_COMMA)[2].trim());
-				setValueGridColor(GDE.isSystemDarkTheme() ? DataExplorer.getInstance().COLOR_BLACK : SWTResourceManager.getColor(r, g, b));
+				setValueGridColor(GDE.isSystemDarkTheme ? DataExplorer.getInstance().COLOR_BLACK : SWTResourceManager.getColor(r, g, b));
 				setValueGridLineStyle(Integer.parseInt(template.getProperty(AbstractRecordSet.VALUE_GRID_LINE_STYLE, GDE.STRING_EMPTY + SWT.LINE_DOT)));
 				setValueGridType(Integer.parseInt(template.getProperty(AbstractRecordSet.VALUE_GRID_TYPE, "0")));
 

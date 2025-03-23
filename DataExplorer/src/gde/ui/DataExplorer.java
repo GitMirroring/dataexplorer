@@ -242,7 +242,7 @@ public class DataExplorer extends Composite {
 		this.threadId = Thread.currentThread().getId();
 
 		SWTResourceManager.registerResourceUser(this);
-		boolean isDarkTheme = GDE.isSystemDarkTheme();
+		boolean isDarkTheme = GDE.isSystemDarkTheme;
 		COLOR_WHITE = isDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_BLACK) : SWTResourceManager.getColor(SWT.COLOR_WHITE);
 		COLOR_LIGHT_GREY = isDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY) : SWTResourceManager.getColor(SWT.COLOR_WIDGET_BACKGROUND);
 		COLOR_GREY = isDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY) : SWTResourceManager.getColor(SWT.COLOR_GRAY);

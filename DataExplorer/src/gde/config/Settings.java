@@ -1513,7 +1513,7 @@ public final class Settings extends Properties {
 	 * @return the grid horizontal color of the compare window (r,g,b)
 	 */
 	public Color getGridCompareWindowHorizontalColor() {
-		return GDE.isSystemDarkTheme() ? SWTResourceManager.getColor(SWT.COLOR_WHITE)
+		return GDE.isSystemDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_WHITE)
 				: getColor(Settings.GRID_COMPARE_WINDOW_HOR_COLOR, "200,200,200"); //$NON-NLS-1$
 	}
 
@@ -1552,7 +1552,7 @@ public final class Settings extends Properties {
 	 * @return the grid vertical color of the compare window (r,g,b)
 	 */
 	public Color getGridCompareWindowVerticalColor() {
-		return GDE.isSystemDarkTheme() ? SWTResourceManager.getColor(SWT.COLOR_WHITE)
+		return GDE.isSystemDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_WHITE)
 				: getColor(Settings.GRID_COMPARE_WINDOW_VER_COLOR, "200,200,200"); //$NON-NLS-1$
 	}
 
@@ -1874,7 +1874,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getGraphicsCurveAreaBackground() {
-		return GDE.isSystemDarkTheme() ? SWTResourceManager.getColor(SWT.COLOR_GRAY)
+		return GDE.isSystemDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_GRAY)
 				: getColor(Settings.GRAPHICS_AREA_BACKGROUND, "250,249,211"); // COLOR_CANVAS_YELLOW //$NON-NLS-1$
 	}
 
@@ -1898,7 +1898,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getCompareCurveAreaBackground() {
-		return GDE.isSystemDarkTheme() ? SWTResourceManager.getColor(SWT.COLOR_GRAY)
+		return GDE.isSystemDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_GRAY)
 				: getColor(Settings.COMPARE_AREA_BACKGROUND, "250,249,211"); // COLOR_CANVAS_YELLOW //$NON-NLS-1$
 	}
 
@@ -1922,7 +1922,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getUtilityCurveAreaBackground() {
-		return GDE.isSystemDarkTheme() ? SWTResourceManager.getColor(SWT.COLOR_GRAY)
+		return GDE.isSystemDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_GRAY)
 				: getColor(Settings.UTILITY_AREA_BACKGROUND, "250,249,211"); // COLOR_CANVAS_YELLOW //$NON-NLS-1$
 	}
 
@@ -1946,7 +1946,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getGraphicsSurroundingBackground() {
-		return GDE.isSystemDarkTheme() ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY)
+		return GDE.isSystemDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY)
 				: getColor(Settings.GRAPHICS_SURROUND_BACKGRD, "250,249,230"); // COLOR_VERY_LIGHT_YELLOW //$NON-NLS-1$
 	}
 
@@ -1970,7 +1970,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getCompareSurroundingBackground() {
-		return GDE.isSystemDarkTheme() ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY)
+		return GDE.isSystemDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY)
 				: getColor(Settings.COMPARE_SURROUND_BACKGRD, "250,249,230"); // COLOR_VERY_LIGHT_YELLOW //$NON-NLS-1$
 	}
 
@@ -1994,7 +1994,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getUtilitySurroundingBackground() {
-		return GDE.isSystemDarkTheme() ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY)
+		return GDE.isSystemDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY)
 				: getColor(Settings.UTILITY_SURROUND_BACKGRD, "250,249,230"); // COLOR_VERY_LIGHT_YELLOW //$NON-NLS-1$
 	}
 
@@ -2018,7 +2018,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getGraphicsCurvesBorderColor() {
-		return GDE.isSystemDarkTheme() ? SWTResourceManager.getColor(SWT.COLOR_WHITE)
+		return GDE.isSystemDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_WHITE)
 				: getColor(Settings.GRAPHICS_BORDER_COLOR, "180,180,180"); // COLOR_GREY //$NON-NLS-1$
 	}
 
@@ -2042,7 +2042,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getCurveCompareBorderColor() {
-		return GDE.isSystemDarkTheme() ? SWTResourceManager.getColor(SWT.COLOR_WHITE)
+		return GDE.isSystemDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_WHITE)
 				: getColor(Settings.COMPARE_BORDER_COLOR, "180,180,180"); // COLOR_GREY //$NON-NLS-1$
 	}
 
@@ -2066,7 +2066,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getUtilityCurvesBorderColor() {
-		return GDE.isSystemDarkTheme() ? SWTResourceManager.getColor(SWT.COLOR_WHITE)
+		return GDE.isSystemDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_WHITE)
 				: getColor(Settings.UTILITY_BORDER_COLOR, "180,180,180"); // COLOR_GREY //$NON-NLS-1$
 	}
 
@@ -2090,7 +2090,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getStatisticsSurroundingAreaBackground() {
-		return GDE.isSystemDarkTheme() ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY)
+		return GDE.isSystemDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY)
 				: getColor(Settings.STATISTICS_SURROUND_BACKGRD, "250,249,230"); // COLOR_VERY_LIGHT_YELLOW //$NON-NLS-1$
 	}
 
@@ -2114,7 +2114,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getStatisticsInnerAreaBackground() {
-		return GDE.isSystemDarkTheme() ? SWTResourceManager.getColor(SWT.COLOR_GRAY)
+		return GDE.isSystemDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_GRAY)
 				: getColor(Settings.STATISTICS_INNER_BACKGROUND, "255,255,255"); // COLOR_WHITE //$NON-NLS-1$
 	}
 
@@ -2138,7 +2138,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getAnalogSurroundingAreaBackground() {
-		return GDE.isSystemDarkTheme() ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY)
+		return GDE.isSystemDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY)
 				: getColor(Settings.ANALOG_SURROUND_BACKGRD, "250,249,230"); // COLOR_VERY_LIGHT_YELLOW //$NON-NLS-1$
 	}
 
@@ -2162,7 +2162,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getAnalogInnerAreaBackground() {
-		return GDE.isSystemDarkTheme() ? SWTResourceManager.getColor(SWT.COLOR_GRAY)
+		return GDE.isSystemDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_GRAY)
 				: getColor(Settings.ANALOG_INNER_BACKGROUND, "250,249,211"); // COLOR_CANVAS_YELLOW //$NON-NLS-1$
 	}
 
@@ -2186,7 +2186,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getDigitalSurroundingAreaBackground() {
-		return GDE.isSystemDarkTheme() ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY)
+		return GDE.isSystemDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY)
 				: getColor(Settings.DIGITAL_SURROUND_BACKGRD, "250,249,230"); // COLOR_VERY_LIGHT_YELLOW //$NON-NLS-1$
 	}
 
@@ -2210,7 +2210,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getDigitalInnerAreaBackground() {
-		return GDE.isSystemDarkTheme() ? SWTResourceManager.getColor(SWT.COLOR_GRAY)
+		return GDE.isSystemDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_GRAY)
 				: getColor(Settings.DIGITAL_INNER_BACKGROUND, "250,249,211"); // COLOR_CANVAS_YELLOW //$NON-NLS-1$
 	}
 
@@ -2234,7 +2234,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getCellVoltageSurroundingAreaBackground() {
-		return GDE.isSystemDarkTheme() ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY)
+		return GDE.isSystemDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY)
 				: getColor(Settings.CELL_VOLTAGE_SURROUND_BACKGRD, "250,249,230"); // COLOR_VERY_LIGHT_YELLOW //$NON-NLS-1$
 	}
 
@@ -2258,7 +2258,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getCellVoltageInnerAreaBackground() {
-		return GDE.isSystemDarkTheme() ? SWTResourceManager.getColor(SWT.COLOR_GRAY)
+		return GDE.isSystemDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_GRAY)
 				: getColor(Settings.CELL_VOLTAGE_INNER_BACKGROUND, "250,249,211"); // COLOR_CANVAS_YELLOW //$NON-NLS-1$
 	}
 
@@ -2282,7 +2282,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getFileCommentSurroundingAreaBackground() {
-		return GDE.isSystemDarkTheme() ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY)
+		return GDE.isSystemDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY)
 				: getColor(Settings.FILE_COMMENT_SURROUND_BACKGRD, "250,249,230"); // COLOR_VERY_LIGHT_YELLOW //$NON-NLS-1$
 	}
 
@@ -2306,7 +2306,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getFileCommentInnerAreaBackground() {
-		return GDE.isSystemDarkTheme() ? SWTResourceManager.getColor(SWT.COLOR_GRAY)
+		return GDE.isSystemDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_GRAY)
 				: getColor(Settings.FILE_COMMENT_INNER_BACKGROUND, "255,255,255"); // COLOR_WHITE //$NON-NLS-1$
 	}
 
@@ -2330,7 +2330,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getObjectDescriptionSurroundingAreaBackground() {
-		return GDE.isSystemDarkTheme() ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY)
+		return GDE.isSystemDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY)
 				: getColor(Settings.OBJECT_DESC_SURROUND_BACKGRD, "250,249,230"); // COLOR_VERY_LIGHT_YELLOW //$NON-NLS-1$
 	}
 
@@ -2354,7 +2354,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getObjectDescriptionInnerAreaBackground() {
-		return GDE.isSystemDarkTheme() ? SWTResourceManager.getColor(SWT.COLOR_GRAY)
+		return GDE.isSystemDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_GRAY)
 				: getColor(Settings.OBJECT_DESC_INNER_BACKGROUND, "255,255,255"); // COLOR_WHITE //$NON-NLS-1$
 	}
 
