@@ -1630,7 +1630,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 					validModels.add(GDE.STRING_DASH);
 			}
 			HoTTAdapterSerialPort.log.log(Level.FINE, validModels.size() + " - " + validModels.toString());
-			String dirName = selectedFolder + "backup_" + sModels[0].toLowerCase() + System.getProperty("file.separator");
+			String dirName = selectedFolder + System.getProperty("file.separator") + "backup_" + sModels[0].toLowerCase() + System.getProperty("file.separator");
 			FileUtils.checkDirectoryAndCreate(dirName);
 			if (!FileUtils.checkDirectoryAndCreate(dirName)) {
 				throw new RuntimeException("Failed create directory " + dirName);
