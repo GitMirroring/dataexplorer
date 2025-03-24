@@ -62,7 +62,6 @@ import gde.log.LogFormatter;
 import gde.messages.MessageIds;
 import gde.messages.Messages;
 import gde.ui.DataExplorer;
-import gde.ui.SWTResourceManager;
 import gde.utils.FileUtils;
 import gde.utils.StringHelper;
 
@@ -791,7 +790,7 @@ public class GDE {
 	 * @return if dark theme is configured, ARM 32 swt.jar is to old and does not know dark theme 
 	 */
 	public static boolean isSystemDarkTheme() {
-		if (IS_OS_ARCH_ARM)
+		if (GDE.IS_OS_ARCH_ARM || GDE.IS_WINDOWS)
 			return false;
 		return Display.isSystemDarkTheme();
 	}

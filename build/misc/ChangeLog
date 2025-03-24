@@ -5,7 +5,7 @@ Generic changes/fixes
 	* update layout of update dialog
 	* fix some device XML using <usage>true</usage>
 	* keep zoom and measurement configuration while switching data set
-	* initial support dark color theme
+	* support dark color theme for macOS and Linux
 	
 Device specific changes/fixes
 	* MC3000_FM_NiMH_LiIo - update graphics template using rounding for capacity and current
