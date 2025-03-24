@@ -1353,6 +1353,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 	 * @throws TimeOutException
 	 */
 	public Transmitter loadModelData(ArrayList<String> txMdlList, ArrayList<String> pcMdlList, String selectedFolder,final CLabel infoLabel, final ProgressBar progressBar) throws IOException, TimeOutException {
+		updateMdlTransferProgress(infoLabel, progressBar, 0, 0);
 		boolean isPortOpenedByFunction = false;
 		Transmitter txType = Transmitter.UNSPECIFIED;
 		try {
@@ -1735,6 +1736,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 				}
 				++index;
 			}
+			updateMdlTransferProgress(infoLabel, progressBar, totalSize, 0);
 		}
 		catch (SerialPortException e) {
 			// TODO Auto-generated catch block
@@ -1750,7 +1752,6 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 				WaitTimer.delay(500);
 				this.port.close();
 			}
-			updateMdlTransferProgress(infoLabel, progressBar, 0, 0);
 		}
 		return txType;
 	}
@@ -1762,7 +1763,15 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 	 * @throws Throwable 
 	 */
 	@SuppressWarnings("resource")
-	public void writeModelData(ArrayList<String> selectedMdlFiles,final CLabel infoLabel, final ProgressBar progressBar) throws Throwable {
+	public String writeModelData(ArrayList<String> selectedMdlFiles, final CLabel infoLabel, final ProgressBar progressBar) throws Throwable {
+		long size = selectedMdlFiles.size() * 8192;
+		long remaining = size;
+		updateMdlTransferProgress(infoLabel, progressBar, size, remaining);
+		
+		String checkFiles = checkMdlFlies2Write(selectedMdlFiles);
+		if (checkFiles.length() > 0)
+			return checkFiles;
+		
 		boolean isPortOpenedByFunction = false;
 		try {
 			if (!this.port.isConnected()) {
@@ -1771,6 +1780,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 					isPortOpenedByFunction = true;
 				}
 			}
+
 			StringBuilder sb = new StringBuilder();
 			//set defined cntUp and cntDown
 			this.cntUp = 0x00;
@@ -1826,10 +1836,6 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 			}		
 			
 			sb = new StringBuilder();
-			long size = selectedMdlFiles.size() * 8192;
-			long remaining = size;
-			updateMdlTransferProgress(infoLabel, progressBar, size, remaining);
-
 			Vector<Byte> modelTyps = new Vector<>();
 			int number = 0;
 			for (String selectedMdlFile : selectedMdlFiles) {
@@ -1864,7 +1870,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 							break;
 						}
 						String realMdlName = String.format("%-9s", mdlName.length() >= 10 ?  mdlName.substring(1, 10) : mdlName.substring(1));
-						realMdlName = realMdlName.startsWith("NONAME") ? "         " : realMdlName;
+						realMdlName = realMdlName.startsWith("NONAME   ") ? "         " : realMdlName;
 						realMdlName = String.format("%-9s", realMdlName.substring(0, 9));
 						sb.append(realMdlName);
 						log.log(Level.INFO, "'" + mdlName + "' -> '" + realMdlName + "'");
@@ -1903,13 +1909,14 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 					}
 					log.log(Level.INFO, "mdl entry written -> " + number++);
 					updateMdlTransferProgress(infoLabel, progressBar, size, remaining -= 8192);
-					WaitTimer.delay(100);
 				}
 				catch (Exception e) {
 					log.log(Level.INFO, "not all of selected MDL could be written succesfull \n" + sb.toString());
 					e.printStackTrace();
 				}
 			}
+			updateMdlTransferProgress(infoLabel, progressBar, size, 0);
+
 			log.log(Level.INFO, sb.toString());
 			byte[] mdlNamesBytes = sb.toString().getBytes();
 			log.log(Level.INFO, StringHelper.byte2CharString(mdlNamesBytes, mdlNamesBytes.length));
@@ -1942,8 +1949,6 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 			System.arraycopy(modelNamesData, 0x0800, mdlNamesBuffer, 0, 0x0800);		
 			sendMdlWriteCmd(position, mdlNamesBuffer);
 			this.ANSWER_DATA = this.read(new byte[11], HoTTAdapterSerialPort.READ_TIMEOUT_MS, 5);
-
-			updateMdlTransferProgress(infoLabel, progressBar, 0, 0);
 		}
 		catch (Throwable e) {
 			e.printStackTrace();
@@ -1955,9 +1960,8 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 				WaitTimer.delay(500);
 				this.port.close();
 			}
-			updateMdlTransferProgress(infoLabel, progressBar, 0, 0);
 		}
-
+		return "";
 	}
 
 	/**
@@ -1994,6 +1998,54 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 		return Transmitter.fromValue(sb.substring(0, sb.indexOf(GDE.STRING_SEMICOLON)).toLowerCase());
 	}
 
+	public String checkMdlFlies2Write(final ArrayList<String> selectedMdlFiles) {
+		StringBuilder sb = new StringBuilder();
+		for (String selectedMdlFile : selectedMdlFiles) {
+			try {
+				if (selectedMdlFile.contains(";")) {
+					String mdlName = selectedMdlFile.split(";")[0];
+					switch (ModelType.fromValue(mdlName.substring(0,1))) {
+					case HELI:
+						//modelTyps.add((byte) 0x00);
+						break;
+					case ACRO:
+						//modelTyps.add((byte) 0x01);
+						break;
+					case CAR:
+						//modelTyps.add((byte) 0x02);
+						break;
+					case QUAD:
+						//modelTyps.add((byte) 0x03);
+						break;
+					case BOAT:
+						//modelTyps.add((byte) 0x04);
+						break;
+					case TANK:
+						//modelTyps.add((byte) 0x05);
+						break;
+					case CRAWLWER:
+						//modelTyps.add((byte) 0x06);
+						break;
+					case UNKNOWN:
+					default:
+						//modelTyps.add((byte) 0xFF);
+						sb.append("Unknown model type for " + selectedMdlFile.split(";")[1] + System.getProperty("file.separator") + mdlName + ".mdl\n");
+						break;
+					}
+					String mdlPath = selectedMdlFile.split(";")[1] + System.getProperty("file.separator") + mdlName + ".mdl";
+					
+					if (!Transmitter.detectTransmitter(mdlName + ".mdl", selectedMdlFile.split(";")[1] + System.getProperty("file.separator")).equals(Transmitter.MZ_12pro)) {
+						sb.append("No MZ-12Pro mdl file " + mdlPath + "\n");
+					}
+				}
+			}
+			catch (Exception e) {
+				sb.append(e.getMessage() + "\n");	
+			}
+		}
+
+		return sb.toString();
+	}
 	/**
 	 * query the model configuration data of the given address
 	 * @param queryModels byte array containing the address

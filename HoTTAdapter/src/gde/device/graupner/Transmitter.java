@@ -113,7 +113,7 @@ public enum Transmitter {
 		DataInputStream in = null;
 		
 		try {
-			in = new DataInputStream( new FileInputStream(new File(fqPathName)));
+			in = new DataInputStream( new FileInputStream(new File(fqPathName, fileName)));
 			in.read(inBytes);
 			in.close();
 		}

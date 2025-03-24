@@ -281,6 +281,7 @@ public class MdlBackupRestoreApp {
 													new TableItem(txMdlsTable, SWT.NONE).setText(new String[] { String.format(" %-3d", index++), mdlName }); //$NON-NLS-1$
 													selectedMdlList.add("");
 												}
+												WaitTimer.delay(500);
 												portSelectCombo.setEnabled(true);
 												readMdlButton.setEnabled(true);
 												saveMdlsButton.setEnabled(true);
@@ -471,7 +472,7 @@ public class MdlBackupRestoreApp {
 						}
 						upButton.setEnabled(false);
 						downButton.setEnabled(false);
-						saveMdlsButton.setEnabled(true);
+						saveMdlsButton.setEnabled(false);
 						saveToTxButton.setEnabled(true);
 					}
 				});
@@ -687,7 +688,11 @@ public class MdlBackupRestoreApp {
 												selectedMdlList.set(i, pcMdlList.get(i));
 											}	
 										}
-										serialPort.writeModelData(selectedMdlList, mdlStatusInfoLabel, mdlStatusProgressBar);
+										String errorMdlFiles = serialPort.writeModelData(selectedMdlList, mdlStatusInfoLabel, mdlStatusProgressBar);
+										if (errorMdlFiles.length() > 0) {
+											openMessageDialog(errorMdlFiles);
+											return;
+										}
 										display.asyncExec(new Runnable() {
 											@Override
 											public void run() {
