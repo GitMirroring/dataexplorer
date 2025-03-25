@@ -53,8 +53,27 @@ public enum Transmitter {
 	public final static byte[] mc_16_PROD_CODE 		=  new byte[] {(byte) 0xF8, 0x35, (byte) 0xF4, 0x00, (byte) 0x09, 0x03, 0x00, 0x00};
 	public final static byte[] mx_16_PROD_CODE		=  new byte[] {(byte) 0xe4, 0x30, (byte) 0xf4, 0x00, (byte) 0xb3, 0x06, 0x00, 0x00};
 	public final static byte[] mx_12_PROD_CODE 		=  new byte[] {(byte) 0x10, 0x32, (byte) 0xf4, 0x00, (byte) 0x73, 0x06, 0x00, 0x00};
-	//Die mz-12PRO hat die ProductID 16007800. 78 42 F4 00 0F 04 00 00
 	public final static byte[] mz_12pro_PROD_CODE =  new byte[] {(byte) 0x78, 0x42, (byte) 0xf4, 0x00, (byte) 0x0F, 0x04, 0x00, 0x00};
+	
+//	#define PRODUCT_ID_MX12			16003600
+//	#define PRODUCT_ID_MX16			16003300
+//	#define PRODUCT_ID_MX20			16003700
+//	#define PRODUCT_ID_MC32			16004100
+//	#define PRODUCT_ID_MC20			16004300
+//	#define PRODUCT_ID_MC16			16004600
+//	#define PRODUCT_ID_X8N			16006200
+//	#define PRODUCT_ID_X8E			16006500
+//	#define PRODUCT_ID_MC26			16007700
+//	#define PRODUCT_ID_MC28			16007100
+//	#define PRODUCT_ID_MZ12PRO	16007800
+//
+//	#define MZ_SERIESE_APP_NO_BACKUP
+//	#define MZ24_PCODE					16005200
+//	#define MZ24PRO_PCODE				16007200
+//	#define MZ18_PCODE					16005300
+//	#define X8E_PCODE						16006500
+
+//	mc-28 B4 5C 01 02 30, mc-26 B4 5C 01 0C 30, mz-12pro FC A1 00 00 50
 	
 	public final static byte[] mc_32_APP_VERSION 	=  new byte[] {(byte) 0xe8, 0x03, 0x00, 0x00};
 	public final static byte[] mc_28_APP_VERSION 	=  new byte[] {(byte) 0xea, 0x03, 0x00, 0x00};
