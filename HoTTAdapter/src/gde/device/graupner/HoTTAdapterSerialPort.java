@@ -75,7 +75,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 	final static byte[]		QUERY_SENSOR_DATA_GPS						= { 0x04, 0x38 };
 	final static byte[]		QUERY_SENSOR_DATA_MOTOR_DRIVER	= { 0x04, 0x39 };
 	final static byte[]		QUERY_SERVO_POSITIONS						= { 0x04, 0x40 };
-	final static byte[]		QUERY_PURPIL_POSITIONS									= { 0x04, 0x41 };
+	final static byte[]		QUERY_PURPIL_POSITIONS					= { 0x04, 0x41 };
 	final static byte[]		QUERY_CONTROL_POSITIONS1				= { 0x04, 0x42 };
 	final static byte[]		QUERY_CONTROL_POSITIONS2				= { 0x04, 0x43 };
 	final static byte[]		answerRx												= new byte[21];																					//byte array to cache receiver answer data
@@ -708,9 +708,10 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 	/**
 	 * send command to read model data
 	 * @param data
+	 * @return CRC16CCITT checksum
 	 * @throws IOException
 	 */
-	private void sendMdlReadCmd(byte[] data) throws IOException {
+	private short sendMdlReadCmd(byte[] data) throws IOException {
 		byte[] cmdAll = new byte[data.length + 2 + 7];
 
 		//cmd1 part
@@ -743,15 +744,18 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 		System.arraycopy(cmdAll, 7, cmd2, 0, cmdAll.length - 7);
 		if (HoTTAdapterSerialPort.log.isLoggable(Level.FINE)) HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2Hex2CharString(cmd2, cmd2.length));
 		this.write(cmd2);
+		
+		return crc16;
 	}
 
 	/**
 	 * send command to write model data
 	 * @param position 0x2000, 0x2800,...
 	 * @param data mdl data byte[2048]
+	 * @return CRC16CCITT checksum
 	 * @throws IOException
 	 */
-	private void sendMdlWriteCmd(int position, byte[] data) throws IOException {
+	private short sendMdlWriteCmd(int position, byte[] data) throws IOException {
 		byte[] cmdAll = new byte[11 + data.length + 2];
 		//00 0C F3 04 08 05 34 00 C8 0F 00 FF FF FF FF FF
 
@@ -792,6 +796,8 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 		if (HoTTAdapterSerialPort.log.isLoggable(Level.FINE)) 
 			HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2Hex2CharString(cmd2, cmd2.length));
 		this.write(cmd2);
+		
+		return crc16;
 	}
 
 	/**
@@ -1869,6 +1875,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 			}		
 			
 			sb = new StringBuilder();
+			byte[] checkSums = new byte[selectedMdlFiles.size() * 2 * 2];
 			Vector<Byte> modelTyps = new Vector<>();
 			int number = 0;
 			for (String selectedMdlFile : selectedMdlFiles) {
@@ -1924,8 +1931,10 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 							byte[] outData = new byte[0x0800];
 							if (outData.length != in.read(outData)) 
 								throw new IOException("failled reading bytes from " + mdlPath);
-							sendMdlWriteCmd(position, outData);
+							short crc16 = sendMdlWriteCmd(position, outData);
 							this.ANSWER_DATA = this.read(new byte[11], HoTTAdapterSerialPort.READ_TIMEOUT_MS, 5);
+							checkSums[number*2] = (byte) (crc16 & 0x00FF);
+							checkSums[number*2+1] = (byte) ((crc16 & 0xFF00) >> 8);
 							position += 8;
 						}
 						in.close();
@@ -1934,8 +1943,10 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 						modelTyps.add((byte) 0xFF);
 						sb.append("         ");
 						for (int i = 0; i < 2; ++i) {
-							sendMdlWriteCmd(position, ffBuffer);
+							short crc16 = sendMdlWriteCmd(position, ffBuffer);
 							this.ANSWER_DATA = this.read(new byte[11], HoTTAdapterSerialPort.READ_TIMEOUT_MS, 5);
+							checkSums[number*2] = (byte) (crc16 & 0x00FF);
+							checkSums[number*2+1] = (byte) ((crc16 & 0xFF00) >> 8);
 							position += 8;
 						}
 
@@ -1953,23 +1964,19 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 			log.log(Level.INFO, sb.toString());
 			byte[] mdlNamesBytes = sb.toString().getBytes();
 			log.log(Level.INFO, StringHelper.byte2CharString(mdlNamesBytes, mdlNamesBytes.length));
-
-			short crc16 = Checksum.CRC16CCITT(mdlNamesBytes, 0, mdlNamesBytes.length);
-			log.log(Level.INFO, String.format("mdlNamesBytes CRC16CCITT 0x%02X 0x%02X", (byte) (crc16 & 0x00FF), (byte) ((crc16 & 0xFF00) >> 8)));
 			
 			if (modelNamesData != null) { //impl some check for
 				System.arraycopy(mdlNamesBytes, 0, modelNamesData, 296, mdlNamesBytes.length);
 			}
-			log.log(Level.INFO, StringHelper.byte2Hex2CharString(modelNamesData, modelNamesData.length));
+			short crc16 = Checksum.CRC16CCITT(checkSums, 0, checkSums.length);
+			log.log(Level.INFO, String.format("checkSums CRC16CCITT 0x%02X 0x%02X", (byte) (crc16 & 0x00FF), (byte) ((crc16 & 0xFF00) >> 8)));
+			log.log(Level.INFO, StringHelper.byte2Hex2CharString(checkSums, checkSums.length));
 			
 			byte[] mdlTypes = new byte[modelTyps.size()];
 			for (int i=0; i<modelTyps.size(); ++i)
 				mdlTypes[i] = modelTyps.get(i);
 			System.arraycopy(mdlTypes, 0, modelNamesData, 46, mdlTypes.length);	
 			
-			crc16 = Checksum.CRC16CCITT(modelNamesData, 46, 296+(250*9));
-			log.log(Level.INFO, String.format("mdlTypes+Names CRC16CCITT 0x%02X 0x%02X", (byte) (crc16 & 0x00FF), (byte) ((crc16 & 0xFF00) >> 8)));
-
 			position = 0x20;
 			byte[] mdlNamesBuffer  = new byte[0x0800];
 			//signature all receiver bindings removed
@@ -1977,8 +1984,14 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 
 			
 			System.arraycopy(modelNamesData, 0, mdlNamesBuffer, 0, 0x0800);	//0x804 - 3	
-			sendMdlWriteCmd(position, mdlNamesBuffer);
+			crc16 = sendMdlWriteCmd(position, mdlNamesBuffer);
 			this.ANSWER_DATA = this.read(new byte[11], HoTTAdapterSerialPort.READ_TIMEOUT_MS, 5);
+			byte[] checkSumsFinal = new byte[checkSums.length + 2];
+			checkSumsFinal[checkSums.length] = (byte) (crc16 & 0x00FF);
+			checkSumsFinal[checkSums.length+1] = (byte) ((crc16 & 0xFF00) >> 8);
+			crc16 = Checksum.CRC16CCITT(checkSumsFinal, 0, checkSumsFinal.length);
+			log.log(Level.INFO, String.format("checkSumsFinal CRC16CCITT 0x%02X 0x%02X", (byte) (crc16 & 0x00FF), (byte) ((crc16 & 0xFF00) >> 8)));
+			log.log(Level.INFO, StringHelper.byte2Hex2CharString(checkSumsFinal, checkSumsFinal.length));
 			position += 8;
 			WaitTimer.delay(100);
 			mdlNamesBuffer  = new byte[0x0800];
