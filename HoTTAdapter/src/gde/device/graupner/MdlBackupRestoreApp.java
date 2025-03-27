@@ -268,7 +268,7 @@ public class MdlBackupRestoreApp {
 									try {
 										pcMdlList.clear();
 										selectedMdlList.clear();
-										selectedMdlFile.clear();
+										selectedMdlFile.clear();								
 										txType = serialPort.loadModelData(txMdlList, pcMdlList, System.getProperty("java.io.tmpdir"), MdlBackupRestoreApp.this.mdlStatusInfoLabel, MdlBackupRestoreApp.this.mdlStatusProgressBar);
 										display.asyncExec(new Runnable() {
 											@Override
@@ -295,6 +295,7 @@ public class MdlBackupRestoreApp {
 										});
 									}
 									catch (IOException | TimeOutException e) {
+										openMessageDialog(e.getMessage());
 										log.log(Level.WARNING, e.getMessage());
 									}
 							}
