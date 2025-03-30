@@ -1420,7 +1420,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 
 			int numMdls = this.ANSWER_DATA[7]; //number of mdl configurations
 			if (txType.equals(Transmitter.MZ_12pro))
-				numMdls = 250;
+				numMdls = Transmitter.MZ_12pro.getNumMdls();
 			sb.append(numMdls).append(GDE.STRING_SEMICOLON);
 			
 			boolean isMC_26_28 = false;
@@ -1561,23 +1561,31 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 				break;
 			}
 
-			recBindings = new byte[numMdls];
-			for (int i = 0; i < recBindings.length; ++i) {
-				recBindings[i] = (byte) 0xFF;
-			}		
-			System.arraycopy(this.ANSWER_DATA_EXT, 505, recBindings, 0, recBindings.length);
-			if (HoTTAdapterSerialPort.log.isLoggable(Level.INFO)) {
-				HoTTAdapterSerialPort.log.log(Level.INFO, StringHelper.byte2Hex2CharString(recBindings, recBindings.length));
-			}
-			
-			byte[] signature = new byte[] {(byte) 0xA1, (byte) 0x9C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-			System.arraycopy(this.ANSWER_DATA_EXT, 505+250, signature, 0, signature.length);
-			if (HoTTAdapterSerialPort.log.isLoggable(Level.INFO)) {
-				HoTTAdapterSerialPort.log.log(Level.INFO, StringHelper.byte2Hex2CharString(signature, signature.length));
-			}
+			switch (txType) {
+			case MZ_12pro:
+				recBindings = new byte[numMdls];
+				for (int i = 0; i < recBindings.length; ++i) {
+					recBindings[i] = (byte) 0xFF;
+				}		
+				System.arraycopy(this.ANSWER_DATA_EXT, 505, recBindings, 0, recBindings.length);
+				if (HoTTAdapterSerialPort.log.isLoggable(Level.INFO)) {
+					HoTTAdapterSerialPort.log.log(Level.INFO, StringHelper.byte2Hex2CharString(recBindings, recBindings.length));
+				}
+				
+				byte[] signature = new byte[] {(byte) 0xA1, (byte) 0x9C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+				System.arraycopy(this.ANSWER_DATA_EXT, 505+250, signature, 0, signature.length);
+				if (HoTTAdapterSerialPort.log.isLoggable(Level.INFO)) {
+					HoTTAdapterSerialPort.log.log(Level.INFO, StringHelper.byte2Hex2CharString(signature, signature.length));
+				}
 
-			short crc16 = Checksum.CRC16CCITT(recBindings, 0, recBindings.length);
-			log.log(Level.INFO, String.format("bindings CRC16CCITT 0x%02X 0x%02X", (byte) (crc16 & 0x00FF), (byte) ((crc16 & 0xFF00) >> 8)));
+				short crc16 = Checksum.CRC16CCITT(recBindings, 0, recBindings.length);
+				log.log(Level.INFO, String.format("bindings CRC16CCITT 0x%02X 0x%02X", (byte) (crc16 & 0x00FF), (byte) ((crc16 & 0xFF00) >> 8)));
+				break;
+				
+				default:
+					//nothing to do
+					break;
+			}
 
 
 			int modelNameLength = 10;//mx-20 i=178 j%10
@@ -1589,6 +1597,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 				startIndex = 86;
 				break;
 			default:
+			case MC_16:
 			case MC_20:
 				modelNameLength = 10;
 				noname = "          ";

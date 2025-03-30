@@ -41,7 +41,16 @@ import gde.utils.StringHelper;
 
 
 public enum Transmitter {
-	MC_32("mc-32"), MC_28("mc-28"), MC_26("mc-26"), MC_20("mc-20"), MX_20("mx-20"), MC_16("mc-16"), MX_16("mx-16"), MX_12("mx-12"), MZ_12pro("mz12pro"), UNSPECIFIED("unspecified");
+	MC_32("mc-32", 13, "             ", 86, 120), 
+	MC_28("mc-28", 10, "          ", 126, 120), 
+	MC_26("mc-26", 10, "          ", 126, 120), 
+	MC_20("mc-20", 10, "          ", 195, 24), 
+	MC_16("mc-16", 10, "          ", 195, 24),  
+	MX_20("mx-20", 10, "          ", 177, 24), 
+	MX_16("mx-16", 9, "         ", 53, 20), 
+	MX_12("mx-12", 9, "         ", 53, 10), 
+	MZ_12pro("mz12pro", 9, "         ", 302, 250), 
+	UNSPECIFIED("unspecified",10, "          ", -1, -1);
 
 	final static Logger						log	= Logger.getLogger(Transmitter.class.getName());
 
@@ -104,13 +113,33 @@ public enum Transmitter {
 	public final static int[]		mc_32_20_0x21C2					= new int[] { 0x224A, 0x2272, 0x229A, 0x22C2, 0x22EA, 0x2312, 0x233A, 0x2362 };
 
 	private final String	value;
+	private final int mdlNameLength;
+	private final String	noname;
+	private final int startIndex;
+	private final int numMdls;
 	
-	private Transmitter(String v) {
+	private Transmitter(String v, int modelNameLength, String noname, int startIndex, int numMdls) {
 		this.value = v;
+		this.mdlNameLength = modelNameLength;
+		this.noname = noname;
+		this.startIndex = startIndex;
+		this.numMdls = numMdls;
 	}
 
-	public String value() {
+	public String getName() {
 		return this.value;
+	}
+	public int getMdlNameLength() {
+		return this.mdlNameLength;
+	}
+	public String getNoName() {
+		return this.noname;
+	}
+	public int getStartIndex() {
+		return this.startIndex;
+	}
+	public int getNumMdls() {
+		return this.numMdls;
 	}
 
   public static Transmitter fromValue(String v) {
@@ -238,7 +267,7 @@ public enum Transmitter {
 			File inputFile = new File(filepath);
 			in = new DataInputStream( new FileInputStream(inputFile));
 			String outFilePath = filepath.substring(0, filepath.lastIndexOf(GDE.CHAR_FILE_SEPARATOR_UNIX));
-			outFilePath = outFilePath.substring(0, outFilePath.lastIndexOf(GDE.CHAR_FILE_SEPARATOR_UNIX)+1) + targetTransmitter.value() + GDE.STRING_FILE_SEPARATOR_UNIX;
+			outFilePath = outFilePath.substring(0, outFilePath.lastIndexOf(GDE.CHAR_FILE_SEPARATOR_UNIX)+1) + targetTransmitter.getName() + GDE.STRING_FILE_SEPARATOR_UNIX;
 			FileUtils.checkDirectoryAndCreate(outFilePath);
 			outFilePath = outFilePath+ inputFile.getName();
 			File outputFile = new File(outFilePath);
@@ -248,7 +277,7 @@ public enum Transmitter {
 
 			switch (targetTransmitter) {
 			case MC_32:
-				if (log.isLoggable(Level.FINE)) System.out.println("to " + MC_32.value());
+				if (log.isLoggable(Level.FINE)) System.out.println("to " + MC_32.getName());
 				cleanReceiverBinding(bytes);
 				
 				switch (detectSourceTransmitter(bytes)) {
@@ -275,7 +304,7 @@ public enum Transmitter {
 				break;
 				
 			case MC_28:
-				if (log.isLoggable(Level.FINE)) System.out.println("to " + MC_28.value());
+				if (log.isLoggable(Level.FINE)) System.out.println("to " + MC_28.getName());
 				cleanReceiverBinding(bytes);
 
 				switch (detectSourceTransmitter(bytes)) {
@@ -316,7 +345,7 @@ public enum Transmitter {
 				break;
 				
 			case MC_26:
-				if (log.isLoggable(Level.FINE)) System.out.println("to " + MC_26.value());
+				if (log.isLoggable(Level.FINE)) System.out.println("to " + MC_26.getName());
 				cleanReceiverBinding(bytes);
 
 
@@ -358,7 +387,7 @@ public enum Transmitter {
 				break;
 				
 			case MX_20:
-				if (log.isLoggable(Level.FINE)) System.out.println("to " + MX_20.value());			
+				if (log.isLoggable(Level.FINE)) System.out.println("to " + MX_20.getName());			
 				cleanReceiverBinding(bytes);
 								
 				switch (detectSourceTransmitter(bytes)) {
@@ -399,7 +428,7 @@ public enum Transmitter {
 				break;
 				
 			case MC_20:
-				if (log.isLoggable(Level.FINE)) System.out.println("to " + MC_20.value());
+				if (log.isLoggable(Level.FINE)) System.out.println("to " + MC_20.getName());
 				cleanReceiverBinding(bytes);
 
 				switch (detectSourceTransmitter(bytes)) {
@@ -440,7 +469,7 @@ public enum Transmitter {
 				break;
 
 			case MC_16:
-				if (log.isLoggable(Level.FINE)) System.out.println("to " + MC_16.value());
+				if (log.isLoggable(Level.FINE)) System.out.println("to " + MC_16.getName());
 				cleanReceiverBinding(bytes);
 
 				switch (detectSourceTransmitter(bytes)) {

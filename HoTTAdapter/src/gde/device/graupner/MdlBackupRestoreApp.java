@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Vector;
+import java.util.jar.JarFile;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -36,59 +37,68 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.TreeItem;
 
 import gde.Analyzer;
 import gde.GDE;
 import gde.comm.DeviceCommPort;
 import gde.config.Settings;
+import gde.device.DataBitsTypes;
 import gde.device.DeviceConfiguration;
+import gde.device.DevicePropertiesType;
+import gde.device.DeviceType;
+import gde.device.FlowControlTypes;
 import gde.device.IDevice;
+import gde.device.ObjectFactory;
+import gde.device.ParityTypes;
+import gde.device.SerialPortType;
+import gde.device.StopBitsTypes;
 import gde.device.graupner.hott.MessageIds;
 import gde.exception.TimeOutException;
 import gde.log.LogFormatter;
 import gde.messages.Messages;
 import gde.ui.SWTResourceManager;
+import gde.utils.FileUtils;
 import gde.utils.StringHelper;
 import gde.utils.WaitTimer;
 
 public class MdlBackupRestoreApp {
-	final static Logger					log											= Logger.getLogger("MdlBackupRestoreApp");
+	final static Logger									log											= Logger.getLogger("MdlBackupRestoreApp");
 	
 	private String selectedPort;
-	HoTTAdapterSerialPort	serialPort = null;
-	final Settings							settings								= Settings.getInstance();
-	IDevice device;
-	final HashMap<String, String>	extensionFilterMap								= new HashMap<String, String>();
+	HoTTAdapterSerialPort								serialPort = null;
+	final Settings											settings								= Settings.getInstance();
+	private IDevice 										device;
+	final HashMap<String, String>				extensionFilterMap								= new HashMap<String, String>();
 
 
-	protected Shell shlMdlBackuprestore;
-	protected Display display = Display.getDefault();
+	protected Shell 										shlMdlBackuprestore;
+	protected Display 									display = Display.getDefault();
 	
-	private CCombo							portSelectCombo;
-	private CLabel							portDescription;
-	private Thread																listPortsThread;
-	private boolean																isUpdateSerialPorts					= true;
+	private CCombo											portSelectCombo;
+	private CLabel											portDescription;
+	private Thread											listPortsThread;
+	private boolean											isUpdateSerialPorts					= true;
 
-	private Vector<String>												availablePorts							= new Vector<String>();
+	private Vector<String>							availablePorts							= new Vector<String>();
 
-	private final ArrayList<String> txMdlList = new ArrayList<>();
-	private final ArrayList<String> pcMdlList = new ArrayList<>();
-	private final ArrayList<String> selectedMdlList = new ArrayList<>();
-	private Transmitter	txType = Transmitter.UNSPECIFIED;
+	private final ArrayList<String> 		txMdlList = new ArrayList<>();
+	private final ArrayList<String> 		pcMdlList = new ArrayList<>();
+	private final ArrayList<String>			selectedMdlList = new ArrayList<>();
+	private Transmitter									txType = Transmitter.UNSPECIFIED;
 	
-	private Button							readMdlButton;
-	private Table								pcMdlsTable, txMdlsTable;
-	private TableColumn					indexColumn, fileNameColum, fileDateColum;
+	private Button											readMdlButton;
+	private Table												pcMdlsTable, txMdlsTable;
+	private TableColumn									indexColumn, fileNameColum, fileDateColum;
 
-	private CLabel							mdlStatusInfoLabel;
-	private ProgressBar					mdlStatusProgressBar;
-	private Button							saveMdlsButton;
+	private CLabel											mdlStatusInfoLabel;
+	private ProgressBar									mdlStatusProgressBar;
+	private Button											saveMdlsButton;
 	
-	StringBuilder								selectedPcBaseFolder		= new StringBuilder().append(this.settings.getDataFilePath());
-	String											selectedPcFolder				= selectedPcBaseFolder.toString();
-	HashMap<Integer,String>			selectedMdlFile = new HashMap<>();
-	TreeItem										lastSelectedPcTreeItem;
+	private StringBuilder								selectedPcBaseFolder		= new StringBuilder().append(this.settings.getDataFilePath());
+	private String											selectedPcFolder				= selectedPcBaseFolder.toString();
+	private HashMap<Integer,String>			selectedMdlFile = new HashMap<>();
+	private int 												pcMdlsTableSelectionIndex = 1;
+
 	private Group pcMdlsGroup;
 	private Group txMdlsGroup;
 	private Button fileSelectButton;
@@ -150,6 +160,19 @@ public class MdlBackupRestoreApp {
 	public void open() {
 		
 		DeviceConfiguration deviceConfig = Analyzer.getInstance().getDeviceConfigurations().get("HoTTAdapter");
+		if (deviceConfig == null) {
+			JarFile jarFile;
+			try {
+				jarFile = new JarFile(String.format("%s%s%s", FileUtils.getDevicePluginJarBasePath(), GDE.STRING_FILE_SEPARATOR_UNIX, "HoTTAdapter.jar"));
+				settings.extractDeviceProperties(jarFile, "HoTTAdapter", Settings.getDevicesPath());
+				Analyzer.getInstance().getDeviceConfigurations().add(Analyzer.getInstance(), "HoTTAdapter", "HoTTAdapter" + GDE.FILE_ENDING_DOT_XML, false);
+				deviceConfig = Analyzer.getInstance().getDeviceConfigurations().get("HoTTAdapter");
+			}
+			catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		device = this.getInstanceOfDevice(deviceConfig);
 		Messages.setDeviceResourceBundle("gde.device.graupner.hott.messages", Settings.getInstance().getLocale(), this.getClass().getClassLoader()); //$NON-NLS-1$
 		
@@ -180,7 +203,7 @@ public class MdlBackupRestoreApp {
 			public void handleEvent(Event evt) {
 				if (log.isLoggable(Level.FINE)) log.log(Level.FINE, shlMdlBackuprestore.getLocation().toString() + "event = " + evt); //$NON-NLS-1$
 
-				java.nio.file.Path tmpDir = Paths.get(System.getProperty("java.io.tmpdir") + GDE.STRING_FILE_SEPARATOR_UNIX + "backup_" + txType.value().toLowerCase());
+				java.nio.file.Path tmpDir = Paths.get(System.getProperty("java.io.tmpdir") + GDE.STRING_FILE_SEPARATOR_UNIX + "backup_" + txType.getName().toLowerCase());
 				try {
 					Files.walk(tmpDir).forEach(source -> {
 						try {
@@ -285,7 +308,7 @@ public class MdlBackupRestoreApp {
 												portSelectCombo.setEnabled(true);
 												readMdlButton.setEnabled(true);
 												saveMdlsButton.setEnabled(true);
-												saveToTxButton.setEnabled(true);
+												saveToTxButton.setEnabled(true && txType.equals(Transmitter.MZ_12pro));
 												fileSelectButton.setEnabled(true);
 												upButton.setEnabled(false);
 												downButton.setEnabled(false);
@@ -325,19 +348,27 @@ public class MdlBackupRestoreApp {
 					this.pcMdlsTable.addListener(SWT.Selection, new Listener() {
 						@Override
 						public void handleEvent(Event event) {
+							pcMdlsTableSelectionIndex = pcMdlsTable.getSelectionIndex() + 1;
+							log.log(Level.INFO, "pcMdlsTableSelectionIndex = " + pcMdlsTableSelectionIndex);
 							TableItem item = (TableItem) event.item;
 							log.log(Level.INFO, "Selection={" + item.getText(0).trim() + "|" + item.getText(1) + "|" + item.getText(2) + "}"); //$NON-NLS-1$ //$NON-NLS-2$
-							int index = Integer.parseInt(item.getText(0).trim());
-							if (index == 1) {
+							if (item.getText(1) != null && item.getText(1).length() > 0) {
+								int index = Integer.parseInt(item.getText(0).trim());
+								if (index == 1) {
+									upButton.setEnabled(false);
+									downButton.setEnabled(true);
+								}
+								else if (index > 1 && index <= 248) { //max mdls for transmitter mz-12pro
+									upButton.setEnabled(true);
+									downButton.setEnabled(true);
+								}
+								else if (index == 250) { //max mdls for transmitter mz-12pro
+									upButton.setEnabled(true);
+									downButton.setEnabled(false);
+								} 
+							}
+							else {
 								upButton.setEnabled(false);
-								downButton.setEnabled(true);
-							}
-							else if (index > 1 && index <= 248) { //max mdls for transmitter mz-12pro
-								upButton.setEnabled(true);
-								downButton.setEnabled(true);
-							}
-							else if (index == 250) { //max mdls for transmitter mz-12pro
-								upButton.setEnabled(true);
 								downButton.setEnabled(false);
 							}
 						}
@@ -405,7 +436,7 @@ public class MdlBackupRestoreApp {
 										updateMdlTransferProgress(mdlStatusInfoLabel, mdlStatusProgressBar, 0, 0);
 										try {
 											java.nio.file.Path destDir = Paths.get(baseFolderName);
-											java.nio.file.Path srcDir = Paths.get(System.getProperty("java.io.tmpdir") + GDE.STRING_FILE_SEPARATOR_UNIX + "backup_" + txType.value().toLowerCase());
+											java.nio.file.Path srcDir = Paths.get(System.getProperty("java.io.tmpdir") + GDE.STRING_FILE_SEPARATOR_UNIX + "backup_" + txType.getName().toLowerCase());
 											long size = Files.walk(srcDir).mapToLong(p -> p.toFile().length()).sum();
 											size = size - (size % 8192);
 											final long sizes[] = { size, size };
@@ -426,7 +457,6 @@ public class MdlBackupRestoreApp {
 													throw new UncheckedIOException(e);
 												}
 											});
-											updateMdlTransferProgress(mdlStatusInfoLabel, mdlStatusProgressBar, 0, 0);
 										}
 										catch (IOException e) {
 											openMessageDialog(e.getMessage());
@@ -458,23 +488,30 @@ public class MdlBackupRestoreApp {
 						String fileName = fd.getFileName();
 						log.log(Level.INFO, path + " - " + fileName);
 						//TODO check if selected MDL is from txType, else open message dialog an return
+						if (!txType.equals(Transmitter.detectTransmitter(fileName, path))) {
+							openMessageDialog("Transmitter radio type doesn't match " + txType.getName() +"/" + Transmitter.detectTransmitter(fileName, path).getName());
+							return;
+						}
 						//merge moved selected Mdl into pcMdlTable actual it is not part of this list
 						if (!selectedMdlFile.isEmpty()) {
 							for (Integer index : selectedMdlFile.keySet())
 								pcMdlList.set(index-1, selectedMdlFile.get(index));
 							selectedMdlFile.clear();
 						}
-						//put new selected MDL to index 1
-						selectedMdlFile.put(1, fileName.substring(0, fileName.length()-4) + ";" + path);
+						//put new selected MDL to table selection index
+						selectedMdlFile.put(pcMdlsTableSelectionIndex, fileName.substring(0, fileName.length()-4) + ";" + path);
 						pcMdlsTable.removeAll();
-						new TableItem(pcMdlsTable, SWT.NONE).setText(new String[] { String.format(" %-3d", 1), fileName.substring(0, fileName.length()-4), path}); //$NON-NLS-1$
-						for (int i=1; i<pcMdlList.size(); ++i) {
-							new TableItem(pcMdlsTable, SWT.NONE).setText(new String[] { String.format(" %-3d", i+1), pcMdlList.get(i).split(";")[0], pcMdlList.get(i).split(";").length > 1 && !pcMdlList.get(i).split(";")[1].contains("Temp") ? pcMdlList.get(i).split(";")[1] : ""}); //$NON-NLS-1$
+						String tmpdir = System.getProperty("java.io.tmpdir");
+						for (int i=0; i<pcMdlList.size(); ++i) {
+							if (i == pcMdlsTableSelectionIndex-1)
+								new TableItem(pcMdlsTable, SWT.NONE).setText(new String[] { String.format(" %-3d", i+1), fileName.substring(0, fileName.length()-4), path}); //$NON-NLS-1$
+							else
+								new TableItem(pcMdlsTable, SWT.NONE).setText(new String[] { String.format(" %-3d", i+1), pcMdlList.get(i).split(";")[0], pcMdlList.get(i).split(";").length > 1 && !pcMdlList.get(i).split(";")[1].contains(tmpdir) ? pcMdlList.get(i).split(";")[1] : ""}); //$NON-NLS-1$
 						}
 						upButton.setEnabled(false);
 						downButton.setEnabled(false);
 						saveMdlsButton.setEnabled(false);
-						saveToTxButton.setEnabled(true);
+						saveToTxButton.setEnabled(true && txType.equals(Transmitter.MZ_12pro));
 					}
 				});
 			}
@@ -515,7 +552,7 @@ public class MdlBackupRestoreApp {
 						for (int i=0; i<pcMdlList.size(); ++i)
 							pcMdlList.set(i, "");
 						saveMdlsButton.setEnabled(false);
-						saveToTxButton.setEnabled(true);
+						saveToTxButton.setEnabled(true && txType.equals(Transmitter.MZ_12pro));
 						fileSelectButton.setEnabled(true);
 						upButton.setEnabled(false);
 						downButton.setEnabled(false);
@@ -559,14 +596,15 @@ public class MdlBackupRestoreApp {
 						}
 
 						pcMdlsTable.removeAll();
+						String tmpdir = System.getProperty("java.io.tmpdir");
 						int i=1;
-						for (String mdlEntry : pcMdlList) {  //TODO contains Temp Windows only
+						for (String mdlEntry : pcMdlList) {  
 							if (selectedMdlFile.get(i) != null) {
 								String[] mdlPath = selectedMdlFile.get(i).split(";");
  								new TableItem(pcMdlsTable, SWT.NONE).setText(new String[] { String.format(" %-3d", i), mdlPath[0], mdlPath[1]}); //$NON-NLS-1$
 							}
 							else
-								new TableItem(pcMdlsTable, SWT.NONE).setText(new String[] { String.format(" %-3d", i), mdlEntry.split(";")[0], mdlEntry.split(";").length > 1 && !mdlEntry.split(";")[1].contains("Temp") ? mdlEntry.split(";")[1] : ""}); //$NON-NLS-1$
+								new TableItem(pcMdlsTable, SWT.NONE).setText(new String[] { String.format(" %-3d", i), mdlEntry.split(";")[0], mdlEntry.split(";").length > 1 && !mdlEntry.split(";")[1].contains(tmpdir) ? mdlEntry.split(";")[1] : ""}); //$NON-NLS-1$
 							++i;
 						}
 						pcMdlsTable.setSelection(selectionIndex-=1);
@@ -621,6 +659,7 @@ public class MdlBackupRestoreApp {
 						}
 
 						pcMdlsTable.removeAll();
+						String tmpdir = System.getProperty("java.io.tmpdir");
 						int i=1;
 						for (String mdlEntry : pcMdlList) {  //TODO contains Temp Windows only
 							if (selectedMdlFile.get(i) != null) {
@@ -628,7 +667,7 @@ public class MdlBackupRestoreApp {
 								new TableItem(pcMdlsTable, SWT.NONE).setText(new String[] { String.format(" %-3d", i), mdlPath[0], mdlPath[1]}); //$NON-NLS-1$
 							}
 							else
-								new TableItem(pcMdlsTable, SWT.NONE).setText(new String[] { String.format(" %-3d", i), mdlEntry.split(";")[0], mdlEntry.split(";").length > 1 && !mdlEntry.split(";")[1].contains("Temp") ? mdlEntry.split(";")[1] : ""}); //$NON-NLS-1$
+								new TableItem(pcMdlsTable, SWT.NONE).setText(new String[] { String.format(" %-3d", i), mdlEntry.split(";")[0], mdlEntry.split(";").length > 1 && !mdlEntry.split(";")[1].contains(tmpdir) ? mdlEntry.split(";")[1] : ""}); //$NON-NLS-1$
 							++i;
 						}
 						pcMdlsTable.setSelection(selectionIndex+=1);
