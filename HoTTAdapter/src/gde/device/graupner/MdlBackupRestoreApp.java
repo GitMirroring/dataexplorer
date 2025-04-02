@@ -396,7 +396,7 @@ public class MdlBackupRestoreApp {
 							@Override
 							public void run() {
 								try {
-									if (baseFolderName.length() < 3) {
+									if (baseFolderName != null && baseFolderName.length() < 3) {
 										openMessageDialog(Messages.getString(MessageIds.GDE_MSGE2400));
 										return;
 									}
