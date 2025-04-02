@@ -499,15 +499,17 @@ public class MdlBackupRestoreApp {
 					public void widgetSelected(SelectionEvent evt) {
 						log.log(Level.FINEST, "deleteSelectionButton.widgetSelected, event=" + evt); //$NON-NLS-1$
 						int selectionIndex = pcMdlsTable.getSelectionIndex();
-						TableItem item = pcMdlsTable.getSelection()[0];
-						log.log(Level.INFO, "index" + selectionIndex + " Selection={" + item.getText(0).trim() + "|" + item.getText(1) + "|" + item.getText(2) + "}"); //$NON-NLS-1$ //$NON-NLS-2$
-						if (item.getText(0).trim().length() > 0) {
-							int index = Integer.parseInt(item.getText(0).trim());
-							pcMdlsTable.clear(selectionIndex);
-							pcMdlList.set(index-1, "");
+						if (selectionIndex >= 0) {
+							TableItem item = pcMdlsTable.getSelection()[0];
+							log.log(Level.INFO, "index" + selectionIndex + " Selection={" + item.getText(0).trim() + "|" + item.getText(1) + "|" + item.getText(2) + "}"); //$NON-NLS-1$ //$NON-NLS-2$
+							if (item.getText(0).trim().length() > 0) {
+								int index = Integer.parseInt(item.getText(0).trim());
+								pcMdlsTable.clear(selectionIndex);
+								pcMdlList.set(index - 1, "");
+							}
+							upButton.setEnabled(false);
+							downButton.setEnabled(false);
 						}
-						upButton.setEnabled(false);
-						downButton.setEnabled(false);
 					}
 				});
 			}

@@ -1410,7 +1410,6 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 			if (HoTTAdapterSerialPort.log.isLoggable(Level.INFO)) {
 				HoTTAdapterSerialPort.log.log(Level.INFO, "App Version " + StringHelper.byte2Hex2CharString(header, 8, 4));
 			}
-			//System.arraycopy(this.ANSWER_DATA, 56, header, 0x0108, 4);
 
 			sendCmd("PREPARE_LIST_MDL", HoTTAdapterSerialPort.PREPARE_LIST_MDL);
 			this.ANSWER_DATA = this.read(new byte[1000], HoTTAdapterSerialPort.READ_TIMEOUT_MS, 5);
@@ -1432,6 +1431,7 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 				 isMC_26_28 = true;
 				if (HoTTAdapterSerialPort.log.isLoggable(Level.INFO)) {
 					HoTTAdapterSerialPort.log.log(Level.INFO, StringHelper.byte2CharString(this.ANSWER_DATA_EXT, this.ANSWER_DATA_EXT.length));
+					HoTTAdapterSerialPort.log.log(Level.INFO, StringHelper.byte2Hex2CharString(this.ANSWER_DATA_EXT, this.ANSWER_DATA_EXT.length));
 				}
 				break;
 			case MZ_12pro:
@@ -1439,6 +1439,12 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 				this.ANSWER_DATA_EXT = this.read(new byte[100], HoTTAdapterSerialPort.READ_TIMEOUT_MS, 5);
 				if (HoTTAdapterSerialPort.log.isLoggable(Level.INFO)) {
 					HoTTAdapterSerialPort.log.log(Level.INFO, StringHelper.byte2CharString(this.ANSWER_DATA_EXT, this.ANSWER_DATA_EXT.length));
+					HoTTAdapterSerialPort.log.log(Level.INFO, StringHelper.byte2Hex2CharString(this.ANSWER_DATA_EXT, this.ANSWER_DATA_EXT.length));
+				}
+				//update header data, copy transmitter radio ID
+				System.arraycopy(this.ANSWER_DATA_EXT, 7, header, 0x0100, 5);
+				if (HoTTAdapterSerialPort.log.isLoggable(Level.INFO)) {
+					HoTTAdapterSerialPort.log.log(Level.INFO, "transmitter radio ID " + StringHelper.byte2Hex2CharString(header, 0x0100, 5));
 				}
 				break;
 			default:
@@ -2042,11 +2048,9 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 			sendCmd("QUERY_TX_INFO", HoTTAdapterSerialPort.QUERY_TX_INFO);
 			this.ANSWER_DATA = this.read(new byte[100], HoTTAdapterSerialPort.READ_TIMEOUT_MS, 5);
 		}
-		if (HoTTAdapterSerialPort.log.isLoggable(Level.FINE)) {
-			HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2CharString(this.ANSWER_DATA, this.ANSWER_DATA.length));
-//				HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.fourDigitsRunningNumber(this.ANSWER_DATA.length));
-//				HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2FourDigitsIntegerString(this.ANSWER_DATA));
-//				HoTTAdapterSerialPort.log.log(Level.FINE, StringHelper.byte2Hex4CharString(this.ANSWER_DATA, this.ANSWER_DATA.length));
+		if (HoTTAdapterSerialPort.log.isLoggable(Level.INFO)) {
+			HoTTAdapterSerialPort.log.log(Level.INFO, StringHelper.byte2CharString(this.ANSWER_DATA, this.ANSWER_DATA.length));
+			HoTTAdapterSerialPort.log.log(Level.INFO, StringHelper.byte2Hex4CharString(this.ANSWER_DATA, this.ANSWER_DATA.length));
 		}
 
 		if (sb.length() == 0) {
