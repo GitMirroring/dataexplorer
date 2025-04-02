@@ -42,16 +42,8 @@ import gde.Analyzer;
 import gde.GDE;
 import gde.comm.DeviceCommPort;
 import gde.config.Settings;
-import gde.device.DataBitsTypes;
 import gde.device.DeviceConfiguration;
-import gde.device.DevicePropertiesType;
-import gde.device.DeviceType;
-import gde.device.FlowControlTypes;
 import gde.device.IDevice;
-import gde.device.ObjectFactory;
-import gde.device.ParityTypes;
-import gde.device.SerialPortType;
-import gde.device.StopBitsTypes;
 import gde.device.graupner.hott.MessageIds;
 import gde.exception.TimeOutException;
 import gde.log.LogFormatter;
@@ -88,7 +80,7 @@ public class MdlBackupRestoreApp {
 	
 	private Button											readMdlButton;
 	private Table												pcMdlsTable, txMdlsTable;
-	private TableColumn									indexColumn, fileNameColum, fileDateColum;
+	private TableColumn									indexColumn, fileNameColum, filePathColum;
 
 	private CLabel											mdlStatusInfoLabel;
 	private ProgressBar									mdlStatusProgressBar;
@@ -181,11 +173,9 @@ public class MdlBackupRestoreApp {
 		createContents();
 		updateAvailablePorts();
 		shlMdlBackuprestore.open();
-		log.log(Level.INFO, "shlMdlBackuprestore size = " + shlMdlBackuprestore.getSize());
-//		shlMdlBackuprestore.pack();
-//		log.log(Level.INFO, "shlMdlBackuprestore size = " + shlMdlBackuprestore.getSize());
-//		shlMdlBackuprestore.layout();
-//		log.log(Level.INFO, "shlMdlBackuprestore size = " + shlMdlBackuprestore.getSize());
+		//log.log(Level.INFO, "shlMdlBackuprestore size = " + shlMdlBackuprestore.getSize());
+		shlMdlBackuprestore.pack();
+		//log.log(Level.INFO, "shlMdlBackuprestore size = " + shlMdlBackuprestore.getSize());
 		while (!shlMdlBackuprestore.isDisposed()) {
 			if (!display.readAndDispatch()) {
 				display.sleep();
@@ -235,18 +225,15 @@ public class MdlBackupRestoreApp {
 			RowLayout portSelectionGroupLayout = new RowLayout(SWT.HORIZONTAL);
 			portSelectionGroupLayout.center = true;
 			serialPortSelectionGrp.setLayout(portSelectionGroupLayout);
-			//serialPortSelectionGrp.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 			serialPortSelectionGrp.setLayoutData(new RowData(1024, 30));
 			{
 				this.portDescription = new CLabel(serialPortSelectionGrp, SWT.NONE);
-				//this.portDescription.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 				this.portDescription.setText("serieller Port");
 				this.portDescription.setLayoutData(new RowData(90, GDE.IS_LINUX ? 22 : GDE.IS_MAC ? 20 : 18));
 				this.portDescription.setToolTipText(Messages.getString(gde.messages.MessageIds.GDE_MSGT0165));
 			}
 			{
 				this.portSelectCombo = new CCombo(serialPortSelectionGrp, SWT.FLAT | SWT.BORDER);
-				//this.portSelectCombo.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 				this.portSelectCombo.setLayoutData(new RowData(440, GDE.IS_LINUX ? 22 : GDE.IS_MAC ? 20 : 18));
 				this.portSelectCombo.setEditable(false);
 				this.portSelectCombo.setText(Messages.getString(gde.messages.MessageIds.GDE_MSGT0199));
@@ -266,18 +253,15 @@ public class MdlBackupRestoreApp {
 
 		{
 			Group listMdlsGroup = new Group(innerComposite, SWT.NONE);
-			//if (!GDE.IS_MAC) listMdlsGroup.setBackground(SWTResourceManager.getColor(this.settings.getUtilitySurroundingBackground()));
 			listMdlsGroup.setLayout(new RowLayout(SWT.HORIZONTAL));
 			listMdlsGroup.setLayoutData(new RowData(1024, 320));
 			{
 				Composite filler = new Composite(listMdlsGroup, SWT.NONE);
-				//if (!GDE.IS_MAC) filler.setBackground(SWTResourceManager.getColor(this.settings.getUtilitySurroundingBackground()));
 				filler.setLayoutData(new RowData(5, 20));
 			}
 			{
 				this.readMdlButton = new Button(listMdlsGroup, SWT.PUSH | SWT.CENTER);
 				this.readMdlButton.setLayoutData(new RowData(155, 33));
-				//this.readMdlButton.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 				this.readMdlButton.setText("Lese MDLs");
 				this.readMdlButton.setEnabled(false);
 				this.readMdlButton.addSelectionListener(new SelectionAdapter() {
@@ -331,22 +315,17 @@ public class MdlBackupRestoreApp {
 			}
 			{
 				Composite filler = new Composite(listMdlsGroup, SWT.NONE);
-				//if (!GDE.IS_MAC) filler.setBackground(SWTResourceManager.getColor(this.settings.getUtilitySurroundingBackground()));
 				filler.setLayoutData(new RowData(700, 20));
 			}
 			{
 				pcMdlsGroup = new Group(listMdlsGroup, SWT.NONE);
-				//if (!GDE.IS_MAC) pcMdlsGroup.setBackground(SWTResourceManager.getColor(this.settings.getUtilitySurroundingBackground()));
-				//pcMdlsGroup.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE + 2, SWT.NORMAL));
 				pcMdlsGroup.setText("PC");
 				pcMdlsGroup.setLayoutData(new RowData(780, 250));
 				pcMdlsGroup.setLayout(new FillLayout(SWT.HORIZONTAL));
 				{
 					this.pcMdlsTable = new Table(pcMdlsGroup, SWT.FULL_SELECTION | SWT.BORDER | SWT.MULTI);
-					//pcMdlsTable.setLayoutData(new RowData(500, 180));
 					this.pcMdlsTable.setLinesVisible(true);
 					this.pcMdlsTable.setHeaderVisible(true);
-					//this.pcMdlsTable.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 					setPcTableHeader(this.pcMdlsTable);
 					this.pcMdlsTable.addListener(SWT.Selection, new Listener() {
 						@Override
@@ -381,17 +360,13 @@ public class MdlBackupRestoreApp {
 			}
 			{
 				txMdlsGroup = new Group(listMdlsGroup, SWT.NONE);
-				txMdlsGroup.setLayoutData(new RowData(230, 250));
-				//if (!GDE.IS_MAC) txMdlsGroup.setBackground(SWTResourceManager.getColor(this.settings.getUtilitySurroundingBackground()));
-				//txMdlsGroup.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE + 2, SWT.NORMAL));
+				txMdlsGroup.setLayoutData(new RowData(GDE.IS_LINUX ? 230 : 200, 250));
 				txMdlsGroup.setText("Tx");
 				txMdlsGroup.setLayout(new FillLayout(SWT.HORIZONTAL));
 				{
 					this.txMdlsTable = new Table(txMdlsGroup, SWT.FULL_SELECTION | SWT.BORDER | SWT.MULTI);
-					//txMdlsTable.setLayoutData(new RowData(500, 180));
 					this.txMdlsTable.setLinesVisible(true);
 					this.txMdlsTable.setHeaderVisible(true);
-					//this.txMdlsTable.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 					setTxTableHeader(this.txMdlsTable);
 				}
 				txMdlsGroup.layout();
@@ -399,20 +374,17 @@ public class MdlBackupRestoreApp {
 		}
 		{
 			Composite actionButtonComposite = new Composite(innerComposite, SWT.NONE);
-			//if (!GDE.IS_MAC) actionButtonComposite.setBackground(SWTResourceManager.getColor(this.settings.getUtilitySurroundingBackground()));
 			actionButtonComposite.setLayout( new RowLayout(org.eclipse.swt.SWT.HORIZONTAL));
 			actionButtonComposite.setLayoutData(new RowData(1024, 100));
 			actionButtonComposite.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE + 2, SWT.NORMAL));
 			{
 				Composite filler = new Composite(actionButtonComposite, SWT.NONE);
-				//if (!GDE.IS_MAC) filler.setBackground(SWTResourceManager.getColor(this.settings.getUtilitySurroundingBackground()));
 				filler.setLayoutData( new RowData(5, 30));
 			}
 			{
 				this.saveMdlsButton = new Button(actionButtonComposite, SWT.PUSH | SWT.CENTER);
 				this.saveMdlsButton.setLayoutData(new RowData(155, 33));
 				this.saveMdlsButton.setEnabled(false);
-				//this.saveMdlsButton.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 				this.saveMdlsButton.setText("sichere MDLs");
 				this.saveMdlsButton.addSelectionListener(new SelectionAdapter() {
 					@Override
@@ -479,7 +451,6 @@ public class MdlBackupRestoreApp {
 				this.fileSelectButton = new Button(actionButtonComposite, SWT.PUSH | SWT.CENTER);
 				this.fileSelectButton.setLayoutData(new RowData(155, 33));
 				this.fileSelectButton.setEnabled(false);
-				//this.fileSelectButton.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 				this.fileSelectButton.setText("Datei");
 				this.fileSelectButton.addSelectionListener(new SelectionAdapter() {
 					@Override
@@ -490,7 +461,7 @@ public class MdlBackupRestoreApp {
 						selectedPcFolder = path;
 						String fileName = fd.getFileName();
 						log.log(Level.INFO, path + " - " + fileName);
-						//TODO check if selected MDL is from txType, else open message dialog an return
+						//check if selected MDL is from txType, else open message dialog an return
 						if (!txType.equals(Transmitter.detectTransmitter(fileName, path))) {
 							openMessageDialog("Transmitter radio type doesn't match " + txType.getName() +"/" + Transmitter.detectTransmitter(fileName, path).getName());
 							return;
@@ -522,7 +493,6 @@ public class MdlBackupRestoreApp {
 				deleteSelectionButton = new Button(actionButtonComposite,SWT.PUSH | SWT.CENTER);
 				this.deleteSelectionButton.setLayoutData(new RowData(155, 33));
 				this.deleteSelectionButton.setEnabled(false);
-				//this.deleteSelectionButton.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 				deleteSelectionButton.setText("Löschen");
 				this.deleteSelectionButton.addSelectionListener(new SelectionAdapter() {
 					@Override
@@ -545,7 +515,6 @@ public class MdlBackupRestoreApp {
 				deleteAllButton = new Button(actionButtonComposite, SWT.PUSH | SWT.CENTER);
 				this.deleteAllButton.setLayoutData(new RowData(155, 33));
 				this.deleteAllButton.setEnabled(false);
-				//this.deleteAllButton.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 				deleteAllButton.setText("Alles Löschen");
 				this.deleteAllButton.addSelectionListener(new SelectionAdapter() {
 					@Override
@@ -568,9 +537,7 @@ public class MdlBackupRestoreApp {
 				upButton = new Button(actionButtonComposite, SWT.PUSH | SWT.CENTER);
 				this.upButton.setLayoutData(new RowData(55, 33));
 				this.upButton.setEnabled(false);
-				//this.upButton.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 				upButton.setImage(SWTResourceManager.getImage("resource/ArrowUp.gif"));
-				//upButton.setText("Up");
 				this.upButton.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent evt) {
@@ -630,9 +597,7 @@ public class MdlBackupRestoreApp {
 				downButton = new Button(actionButtonComposite, SWT.PUSH | SWT.CENTER);
 				this.downButton.setLayoutData(new RowData(55, 33));
 				this.downButton.setEnabled(false);
-				//this.downButton.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 				downButton.setImage(SWTResourceManager.getImage("resource/ArrowDown.gif"));
-				//downButton.setText("down");
 				this.downButton.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent evt) {
@@ -692,14 +657,12 @@ public class MdlBackupRestoreApp {
 			}
 			{
 				Composite filler = new Composite(actionButtonComposite, SWT.NONE);
-				//if (!GDE.IS_MAC) filler.setBackground(SWTResourceManager.getColor(this.settings.getUtilitySurroundingBackground()));
 				filler.setLayoutData( new RowData(90, 33));
 			}
 			{
 				saveToTxButton = new Button(actionButtonComposite, SWT.PUSH | SWT.CENTER);
 				this.saveToTxButton.setLayoutData(new RowData(155, 33));
 				this.saveToTxButton.setEnabled(false);
-				//this.saveToTxButton.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 				saveToTxButton.setText("Schreibe MDLs");
 				this.saveToTxButton.addSelectionListener(new SelectionAdapter() {
 					@Override
@@ -755,14 +718,11 @@ public class MdlBackupRestoreApp {
 			}
 			{
 				Composite mdlStatusComposite = new Composite(actionButtonComposite, SWT.NONE);
-				//if (!GDE.IS_MAC) mdlStatusComposite.setBackground(SWTResourceManager.getColor(this.settings.getUtilitySurroundingBackground()));
 				mdlStatusComposite.setLayoutData(new RowData(1008, 36));
 				mdlStatusComposite.setLayout(new RowLayout(org.eclipse.swt.SWT.HORIZONTAL));
 				{
 					this.mdlStatusInfoLabel = new CLabel(mdlStatusComposite, SWT.NONE);
-					//if (!GDE.IS_MAC) this.mdlStatusInfoLabel.setBackground(SWTResourceManager.getColor(this.settings.getUtilitySurroundingBackground()));
 					this.mdlStatusInfoLabel.setLayoutData(new RowData(800, 15));
-					//this.mdlStatusInfoLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 					this.mdlStatusInfoLabel.setText(Messages.getString(MessageIds.GDE_MSGT2443, new Object[] { 0, 0 }));
 				}
 				{
@@ -784,15 +744,15 @@ public class MdlBackupRestoreApp {
 		for (TableColumn tableColumn : columns) {
 			tableColumn.dispose();
 		}
-		this.indexColumn = new TableColumn(table, SWT.LEFT);
+		this.indexColumn = new TableColumn(table, SWT.NONE);
 		this.indexColumn.setWidth(50);
 		this.indexColumn.setText(Messages.getString(MessageIds.GDE_MSGT2445)); //0001
-		this.fileNameColum = new TableColumn(table, SWT.LEFT);
+		this.fileNameColum = new TableColumn(table, SWT.NONE);
 		this.fileNameColum.setWidth(150);
-		this.fileNameColum.setText(Messages.getString(MessageIds.GDE_MSGT2446)); //qAlpha 250.mdl
-		this.fileDateColum = new TableColumn(table, SWT.LEFT);
-		this.fileDateColum.setWidth(450);
-		this.fileDateColum.setText("Path"); //C:/Users/Documents/DataExplorer/mz-12pro
+		this.fileNameColum.setText("Name"); //qAlpha 250.mdl
+		this.filePathColum = new TableColumn(table, SWT.NONE);
+		this.filePathColum.setWidth(500);
+		this.filePathColum.setText("Path"); //C:/Users/Documents/DataExplorer/mz-12pro
 	}
 	/**
 	 * set the table header number, file name, date, time, size
@@ -803,12 +763,12 @@ public class MdlBackupRestoreApp {
 		for (TableColumn tableColumn : columns) {
 			tableColumn.dispose();
 		}
-		this.indexColumn = new TableColumn(table, SWT.LEFT);
+		this.indexColumn = new TableColumn(table, SWT.NONE);
 		this.indexColumn.setWidth(40);
 		this.indexColumn.setText(Messages.getString(MessageIds.GDE_MSGT2445)); //0001
-		this.fileNameColum = new TableColumn(table, SWT.LEFT);
+		this.fileNameColum = new TableColumn(table, SWT.NONE);
 		this.fileNameColum.setWidth(150);
-		this.fileNameColum.setText(Messages.getString(MessageIds.GDE_MSGT2446)); //qAlpha 250.mdl
+		this.fileNameColum.setText("Name"); //qAlpha 250.mdl
 	}
 
 	/**
