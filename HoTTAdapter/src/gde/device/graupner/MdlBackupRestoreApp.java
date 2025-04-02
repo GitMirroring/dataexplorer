@@ -181,8 +181,11 @@ public class MdlBackupRestoreApp {
 		createContents();
 		updateAvailablePorts();
 		shlMdlBackuprestore.open();
-		shlMdlBackuprestore.pack();
-		shlMdlBackuprestore.layout();
+		log.log(Level.INFO, "shlMdlBackuprestore size = " + shlMdlBackuprestore.getSize());
+//		shlMdlBackuprestore.pack();
+//		log.log(Level.INFO, "shlMdlBackuprestore size = " + shlMdlBackuprestore.getSize());
+//		shlMdlBackuprestore.layout();
+//		log.log(Level.INFO, "shlMdlBackuprestore size = " + shlMdlBackuprestore.getSize());
 		while (!shlMdlBackuprestore.isDisposed()) {
 			if (!display.readAndDispatch()) {
 				display.sleep();
@@ -195,7 +198,7 @@ public class MdlBackupRestoreApp {
 	 */
 	protected void createContents() {
 		shlMdlBackuprestore = new Shell();
-		shlMdlBackuprestore.setSize(450, 300);
+		shlMdlBackuprestore.setSize(1032, 466);
 		shlMdlBackuprestore.setText("MDL Backup/Restore");
 		shlMdlBackuprestore.setLayout(new FillLayout(SWT.HORIZONTAL));
 		shlMdlBackuprestore.addListener(SWT.Close, new Listener() {
@@ -275,7 +278,7 @@ public class MdlBackupRestoreApp {
 				this.readMdlButton = new Button(listMdlsGroup, SWT.PUSH | SWT.CENTER);
 				this.readMdlButton.setLayoutData(new RowData(155, 33));
 				//this.readMdlButton.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
-				this.readMdlButton.setText("Lese Modellspeicher");
+				this.readMdlButton.setText("Lese MDLs");
 				this.readMdlButton.setEnabled(false);
 				this.readMdlButton.addSelectionListener(new SelectionAdapter() {
 					@Override
@@ -378,7 +381,7 @@ public class MdlBackupRestoreApp {
 			}
 			{
 				txMdlsGroup = new Group(listMdlsGroup, SWT.NONE);
-				txMdlsGroup.setLayoutData(new RowData(200, 250));
+				txMdlsGroup.setLayoutData(new RowData(230, 250));
 				//if (!GDE.IS_MAC) txMdlsGroup.setBackground(SWTResourceManager.getColor(this.settings.getUtilitySurroundingBackground()));
 				//txMdlsGroup.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE + 2, SWT.NORMAL));
 				txMdlsGroup.setText("Tx");
@@ -410,7 +413,7 @@ public class MdlBackupRestoreApp {
 				this.saveMdlsButton.setLayoutData(new RowData(155, 33));
 				this.saveMdlsButton.setEnabled(false);
 				//this.saveMdlsButton.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
-				this.saveMdlsButton.setText(Messages.getString(MessageIds.GDE_MSGT2437));
+				this.saveMdlsButton.setText("sichere MDLs");
 				this.saveMdlsButton.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent evt) {
@@ -563,7 +566,7 @@ public class MdlBackupRestoreApp {
 			}
 			{
 				upButton = new Button(actionButtonComposite, SWT.PUSH | SWT.CENTER);
-				this.upButton.setLayoutData(new RowData(60, 33));
+				this.upButton.setLayoutData(new RowData(55, 33));
 				this.upButton.setEnabled(false);
 				//this.upButton.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 				upButton.setImage(SWTResourceManager.getImage("resource/ArrowUp.gif"));
@@ -625,7 +628,7 @@ public class MdlBackupRestoreApp {
 			}
 			{
 				downButton = new Button(actionButtonComposite, SWT.PUSH | SWT.CENTER);
-				this.downButton.setLayoutData(new RowData(60, 33));
+				this.downButton.setLayoutData(new RowData(55, 33));
 				this.downButton.setEnabled(false);
 				//this.downButton.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 				downButton.setImage(SWTResourceManager.getImage("resource/ArrowDown.gif"));
@@ -697,7 +700,7 @@ public class MdlBackupRestoreApp {
 				this.saveToTxButton.setLayoutData(new RowData(155, 33));
 				this.saveToTxButton.setEnabled(false);
 				//this.saveToTxButton.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
-				saveToTxButton.setText("Schreibe Modellspeicher");
+				saveToTxButton.setText("Schreibe MDLs");
 				this.saveToTxButton.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent evt) {
