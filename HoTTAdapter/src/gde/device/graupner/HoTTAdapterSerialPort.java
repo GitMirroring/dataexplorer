@@ -1433,6 +1433,11 @@ public class HoTTAdapterSerialPort extends DeviceCommPort {
 					HoTTAdapterSerialPort.log.log(Level.INFO, StringHelper.byte2CharString(this.ANSWER_DATA_EXT, this.ANSWER_DATA_EXT.length));
 					HoTTAdapterSerialPort.log.log(Level.INFO, StringHelper.byte2Hex2CharString(this.ANSWER_DATA_EXT, this.ANSWER_DATA_EXT.length));
 				}
+				//update header data, copy transmitter radio ID
+				System.arraycopy(this.ANSWER_DATA_EXT, 7, header, 0x0100, 5);
+				if (HoTTAdapterSerialPort.log.isLoggable(Level.INFO)) {
+					HoTTAdapterSerialPort.log.log(Level.INFO, "transmitter radio ID " + StringHelper.byte2Hex2CharString(header, 0x0100, 5));
+				}
 				break;
 			case MZ_12pro:
 				sendCmd("PREPARE_LIST_MDL_2", HoTTAdapterSerialPort.PREPARE_LIST_MDL_2);
