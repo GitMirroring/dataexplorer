@@ -1,24 +1,38 @@
-GNU DataExplorer - News - comes with Version 3.9.3 - 15 Oct 2024
+GNU DataExplorer - News - comes with Version 3.9.4 - 03 Apr 2024
 
 Generic changes/fixes 
-	* update German translation of curve selector as well as add additional hints to tool tip
-	* update snap tolerance finding measure pointer
-	* change version query since download page replies with 429
+	* update layout of update dialog
+	* fix some device XML using <usage>true</usage>
+	* keep zoom and measurement configuration while switching data set
+	* support dark color theme for macOS and Linux
 	
 Device specific changes/fixes
-	* MC3000* - update/synchronize graphics templates
-	* MC3000* - extended data recording for the time of the loading pause after the end of processing, if continuous recording is activated
-	* MC3000_FM_NiMH_LiIo - add device using predefined graphics templates for NiMH and LiIo
-	
+	* MC3000_FM_NiMH_LiIo - update graphics template using rounding for capacity and current
+	* HoTTAdapter* - update package loss statistics even if receiver only
+	* ZeroAdapter - enable GPS coordinates in [°] as well as in [° '], normalize coordinates to 6 decimal digits
+	* Eagle PR - add support of special device with special FW for pylon racing
+	* CSVImportAdapter - enable constant time step, enhance mapping files
+	* HoTTAdapter* - enable MDL backup, MC-26, MC-28
+	* HoTTAdapter* - add capability to backup MDL MZ-12Pro using file transfer tab
+	* IGCAdapter - update naming of additional statistics values
+		
 Allgemeine Änderungen/Korrekturen
-	* deutscher Name für Kurvenselektor in Kurvenauswahl geändert und den anzeigbaren Tool-Tip angepasst
-	* Toleranz zum Auffinden des Messpunktes vergrößert, um das Arbeiten mit dem TouchPad zu erleichtern
-	* Abfrage URL zur Versionsabfrage geändert, alte URL antwortete oft mit HTTP Fehler Code 429
+	* Layout des Aktualisierungsdialogs aktualisiert
+	* Korrektur einiger Geräte-XML mit <usage>true</usage>
+	* Beibehaltung der Zoom- und Messkonfiguration beim Wechsel des Datensatzes
+	* Unterstützung des dunklen Farbthemas für macOS und Linux
 
 Gerätespezifische Änderungen/Korrekturen
-	* MC3000* - Anpassung/Synchronisation der Grafik-Vorlagen
-	* MC3000* - Datenaufnahmezeit um Pausenzeit des gewählten Prozesses bei fortlaufender Aufnahme verlängert
-	* MC3000_FM_NiMH_LiIo - Gerätebeschreibung mit vordefinierten Grafik-Vorlagen für NiMH und LiIo hinzu gefügt
+	* MC3000_FM_NiMH_LiIo - Aktualisierung der Grafikvorlage mit Rundung für Kapazität und Strom
+	* HoTTAdapter* - Paketverluststatistiken aktualisiert, auch wenn nur Empfänger
+	* ZeroAdapter - ermöglicht GPS-Koordinaten sowohl in [°] als auch in [° '], normalisiert die Koordinaten auf 6 Dezimalstellen
+	* Eagle PR - Unterstützung für spezielles Gerät mit spezieller FW für Pylon-Rennen hinzugefügt
+	* CSVImportAdapter - konstante Zeitschritte ermöglicht, verbesserte Mapping-Dateien
+	* HoTTAdapter* - MDL-Backup MC-26, MC-28 ermöglicht 
+	* HoTTAdapter* - Sicherung der MDL MZ-12Pro über die Registerkarte Dateitransfer ermöglicht
+	* IGCAdapter - Benennung von zusätzlichen statistischen Werten aktualisiert
+
+Übersetzt mit DeepL.com (kostenlose Version)
 
 
 
