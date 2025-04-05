@@ -1,5 +1,12 @@
 Development history / change log, please read from bottom up
 
+Version 3.9.5 - xx yyy 2024
+Generic changes/fixes 
+	* 
+	
+Device specific changes/fixes
+	* HoTTAdapter* - update MDL viewer plug-in to 1408 and add dark theme support
+
 Version 3.9.4 - 03 Apr 2024
 Generic changes/fixes 
 	* update layout of update dialog
