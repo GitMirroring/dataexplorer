@@ -384,7 +384,7 @@ public class Channel extends HashMap<String, RecordSet> {
 					//smooth voltage curve
 					recordSet.setSmoothVoltageCurve(Boolean.valueOf(this.template.getProperty(RecordSet.SMOOTH_VOLTAGE_CURVE, "false"))); //$NON-NLS-1$
 					// time grid
-					String color = this.template.getProperty(RecordSet.TIME_GRID_COLOR, "128,128,128"); //$NON-NLS-1$
+					String color = GDE.isSystemDarkTheme ? "255,255,255" : this.template.getProperty(RecordSet.TIME_GRID_COLOR, "128,128,128"); //$NON-NLS-1$
 					r = Integer.valueOf(color.split(GDE.STRING_COMMA)[0].trim()).intValue();
 					g = Integer.valueOf(color.split(GDE.STRING_COMMA)[1].trim()).intValue();
 					b = Integer.valueOf(color.split(GDE.STRING_COMMA)[2].trim()).intValue();
@@ -392,7 +392,7 @@ public class Channel extends HashMap<String, RecordSet> {
 					recordSet.setTimeGridLineStyle(Integer.valueOf(this.template.getProperty(RecordSet.TIME_GRID_LINE_STYLE, GDE.STRING_EMPTY + SWT.LINE_DOT)).intValue());
 					recordSet.setTimeGridType(Integer.valueOf(this.template.getProperty(RecordSet.TIME_GRID_TYPE, "0")).intValue()); //$NON-NLS-1$
 					// curve grid
-					color = this.template.getProperty(RecordSet.VALUE_GRID_COLOR, "128,128,128"); //$NON-NLS-1$
+					color = GDE.isSystemDarkTheme ? "255,255,255" : this.template.getProperty(RecordSet.VALUE_GRID_COLOR, "128,128,128"); //$NON-NLS-1$
 					r = Integer.valueOf(color.split(GDE.STRING_COMMA)[0].trim()).intValue();
 					g = Integer.valueOf(color.split(GDE.STRING_COMMA)[1].trim()).intValue();
 					b = Integer.valueOf(color.split(GDE.STRING_COMMA)[2].trim()).intValue();
@@ -480,7 +480,7 @@ public class Channel extends HashMap<String, RecordSet> {
 				//smooth voltage curve
 				recordSet.setSmoothVoltageCurve(Boolean.parseBoolean(this.template.getProperty(RecordSet.SMOOTH_VOLTAGE_CURVE, "false"))); //$NON-NLS-1$
 				// time grid
-				String color = this.template.getProperty(RecordSet.TIME_GRID_COLOR, "128,128,128"); //$NON-NLS-1$
+				String color = GDE.isSystemDarkTheme ? "255,255,255" : this.template.getProperty(RecordSet.TIME_GRID_COLOR, "128,128,128"); //$NON-NLS-1$
 				r = Integer.parseInt(color.split(GDE.STRING_COMMA)[0].trim());
 				g = Integer.parseInt(color.split(GDE.STRING_COMMA)[1].trim());
 				b = Integer.parseInt(color.split(GDE.STRING_COMMA)[2].trim());
@@ -488,7 +488,7 @@ public class Channel extends HashMap<String, RecordSet> {
 				recordSet.setTimeGridLineStyle(Integer.parseInt(this.template.getProperty(RecordSet.TIME_GRID_LINE_STYLE, GDE.STRING_EMPTY + SWT.LINE_DOT)));
 				recordSet.setTimeGridType(Integer.parseInt(this.template.getProperty(RecordSet.TIME_GRID_TYPE, "0"))); //$NON-NLS-1$
 				// curve grid
-				color = this.template.getProperty(RecordSet.VALUE_GRID_COLOR, "128,128,128"); //$NON-NLS-1$
+				color = GDE.isSystemDarkTheme ? "255,255,255" : this.template.getProperty(RecordSet.VALUE_GRID_COLOR, "128,128,128"); //$NON-NLS-1$
 				r = Integer.parseInt(color.split(GDE.STRING_COMMA)[0].trim());
 				g = Integer.parseInt(color.split(GDE.STRING_COMMA)[1].trim());
 				b = Integer.parseInt(color.split(GDE.STRING_COMMA)[2].trim());
