@@ -125,6 +125,7 @@ public class LogViewReader {
 		deviceMap.put("graupner ultra duo plus 50", "UltraDuoPlus50"); //$NON-NLS-1$ //$NON-NLS-2$
 		deviceMap.put("graupner ultra duo plus 60", "UltraDuoPlus60"); //$NON-NLS-1$ //$NON-NLS-2$
 		deviceMap.put("graupner ultra duo plus 80", "UltraDuoPlus80"); //$NON-NLS-1$ //$NON-NLS-2$
+		deviceMap.put("raytronic c60", "Raytronic C60"); //$NON-NLS-1$ //$NON-NLS-2$
 		deviceMap.put("robbe powerpeak twin 1000w", "Robbe Powerpeak Twin 1000W"); //$NON-NLS-1$ //$NON-NLS-2$
 		deviceMap.put("robbe powerpeak iv", "Robbe PowerPeak IV"); //$NON-NLS-1$ //$NON-NLS-2$
 		deviceMap.put("megapower gemini 2014 duo2", "UltraDuoPlus80"); //$NON-NLS-1$ //$NON-NLS-2$

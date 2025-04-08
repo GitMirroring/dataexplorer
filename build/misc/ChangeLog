@@ -1,13 +1,14 @@
 Development history / change log, please read from bottom up
 
-Version 3.9.5 - xx yyy 2024
+Version 3.9.5 - xx yyy 2025
 Generic changes/fixes 
 	* update default grid color main graphics dark mode
 	
 Device specific changes/fixes
 	* HoTTAdapter* - update MDL viewer plug-in to 1408 and add dark theme support
+	* Raytronic C60 - initial support
 
-Version 3.9.4 - 03 Apr 2024
+Version 3.9.4 - 03 Apr 2025
 Generic changes/fixes 
 	* update layout of update dialog
 	* fix some device XML using <usage>true</usage>
