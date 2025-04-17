@@ -135,6 +135,8 @@ public class SetupReaderWriter {
 	int									fixPositionLatitude					= 0;																										// 61,62
 	int									fixPositionLongitude				= 0;																										// 63,64
 	short 							fixPositionAltitude					= 0;																										// 65
+	byte								isHottDeadBand							= 0;																										// 67
+
 	//short[]						unused											= new short[192 - 68 * 2];
 	short 							betaVersion									= 0;																										// 94
 	short								hardwareVersion							= 0;																										// 95
@@ -198,6 +200,7 @@ public class SetupReaderWriter {
 				this.language								= buffer[62];													// 32.. 0= german, 1=english
 				this.hottSpeedType					= buffer[63];													// ..32 speed type 0=auto, 1=GPS, 2=AirSpeed
 				this.jetiExMask_UL					= DataParser.parse2Short(buffer, 64);	// 33
+				this.isHottDeadBand					= buffer[67];													// 34
 				//B[4]
 				this.mLinkAddressVarioTec			= buffer[74];		// 38..
 				this.mLinkAddressVoltageRx		= buffer[75];		// ..38
@@ -324,6 +327,7 @@ public class SetupReaderWriter {
 				buffer[63] = (byte) (this.hottSpeedType	& 0x00FF);								// ..32 0=auto, 1=GPS, 2=AirSpeed
 				buffer[64] = (byte) (this.jetiExMask_UL & 0x00FF);								// 33
 				buffer[65] = (byte) ((this.jetiExMask_UL & 0xFF00) >> 8);
+				buffer[67] = this.isHottDeadBand;																	// 34
 				//B[4]
 				buffer[74] = this.mLinkAddressVarioTec;														// 38..
 				buffer[75] = this.mLinkAddressVoltageRx;													// ..38

@@ -118,7 +118,7 @@ public class GPSLoggerDialog extends DeviceDialog {
 				this.dialogShell.setLayout(dialogShellLayout);
 				this.dialogShell.layout();
 				this.dialogShell.pack();
-				this.dialogShell.setSize(650, 155 + this.measurementsCount * 32 + 60 + 42); //header + tab + label + this.measurementsCount * 23 + buttons
+				this.dialogShell.setSize(650, 155 + this.measurementsCount * (GDE.IS_MAC ? 32 : 34) + 60 + 42); //header + tab + label + this.measurementsCount * 23 + buttons
 				this.dialogShell.setText(this.device.getName() + Messages.getString(gde.messages.MessageIds.GDE_MSGT0273));
 				this.dialogShell.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 				this.dialogShell.setImage(SWTResourceManager.getImage("gde/resource/ToolBoxHot.gif")); //$NON-NLS-1$
