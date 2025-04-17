@@ -58,7 +58,7 @@ public class GPSLoggerSetupConfiguration1 extends Composite {
 
 	final static Logger			log							= Logger.getLogger(GPSLoggerSetupConfiguration1.class.getName());
 	static final int 				COMBO_WIDTH 		= 66;
-	static final int 				COMBO_HEIGHT 		= GDE.IS_MAC ? 17 : 16;
+	static final int 				COMBO_HEIGHT 		= GDE.IS_WINDOWS ? 16 : 17;
 
 	final GPSLoggerDialog		dialog;
 	final DataExplorer		  application;
