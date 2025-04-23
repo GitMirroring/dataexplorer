@@ -8,6 +8,7 @@ Device specific changes/fixes
 	* HoTTAdapter* - update MDL viewer plug-in to 1408 and add dark theme support
 	* Raytronic C60 - initial support
 	* GPS-Logger3 - add HoTT vario dead band switch
+	* IGCAdapter - add support for extensions defined by J record and values in K records of IGC
 
 Version 3.9.4 - 03 Apr 2025
 Generic changes/fixes 

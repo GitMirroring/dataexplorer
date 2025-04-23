@@ -139,7 +139,8 @@ public class IGCReaderWriter {
 		File inputFile = new File(filePath);
 		String dllID = "XXX";
 		IgcExtension timeStepExtension = null;
-		Vector<IgcExtension> extensions = new Vector<IgcExtension>();
+		Vector<IgcExtension> bExtensions = new Vector<IgcExtension>();
+		Vector<IgcExtension> kExtensions = new Vector<IgcExtension>();
 		GDE.getUiNotification().setProgress(0);
 		
 		GpsTaskResult result = null;
@@ -210,7 +211,7 @@ public class IGCReaderWriter {
 						dllID = line.substring(1, 4);
 						log.log(Level.FINE, "IGCDLL iddentifier = " + dllID);
 					}
-					else if (line.startsWith("I")) { // extension specification record
+					else if (line.startsWith("I")) { // B extension specification record
 						try {
 							final int numExtensions = Integer.parseInt(line.substring(1, 3));
 							for (int i = 0; i < numExtensions; i++) {
@@ -218,7 +219,22 @@ public class IGCReaderWriter {
 								if (extension.getThreeLetterCode().equals("TDS") || extension.getThreeLetterCode().equals("SUS") )
 									timeStepExtension = extension;
 								else
-									extensions.add(extension);
+									bExtensions.add(extension);
+							}
+						}
+						catch (Exception e) {
+							log.log(Level.SEVERE, e.getMessage(), e);
+						}
+					}
+					else if (line.startsWith("J")) { // K extension specification record
+						try {
+							final int numExtensions = Integer.parseInt(line.substring(1, 3));
+							for (int i = 0; i < numExtensions; i++) {
+								IgcExtension extension = new IgcExtension(Integer.parseInt(line.substring(7 * i + 3, 7 * i + 5))-1, Integer.parseInt(line.substring(7 * i + 5, 7 * i + 7)), line.substring(7 * i + 7, 7 * i + 10));
+								if (extension.getThreeLetterCode().equals("TDS") || extension.getThreeLetterCode().equals("SUS") )
+									timeStepExtension = extension;
+								else
+									kExtensions.add(extension);
 							}
 						}
 						catch (Exception e) {
@@ -335,14 +351,20 @@ public class IGCReaderWriter {
 							//values[4] = climb calculated;
 							//values[5] = speed calculated;
 							int i=0;
-							for (IgcExtension extension : extensions) {
+							for (IgcExtension extension : bExtensions) {
 								if (recordSet.realSize() > 6+i && !recordSet.get(6+i).getName().equals(extension.getThreeLetterCode())) {
-									if (log.isLoggable(Level.FINE)) log.log(Level.FINE, String.format("set record with name %s # %d to name %s", recordSet.get(6+i).getName(), 6+i, extension.getThreeLetterCode()));
+									if (log.isLoggable(Level.INFO)) log.log(Level.INFO, String.format("set record with name %s # %d to name %s", recordSet.get(6+i).getName(), 6+i, extension.getThreeLetterCode()));
 									recordSet.get(6+i).setName(extension.getThreeLetterCode());
 								}
 								++i;
 							}
-
+							for (IgcExtension extension : kExtensions) {
+								if (recordSet.realSize() > 6+i && !recordSet.get(6+i).getName().equals(extension.getThreeLetterCode())) {
+									if (log.isLoggable(Level.INFO)) log.log(Level.INFO, String.format("set record with name %s # %d to name %s", recordSet.get(6+i).getName(), 6+i, extension.getThreeLetterCode()));
+									recordSet.get(6+i).setName(extension.getThreeLetterCode());
+								}
+								++i;
+							}
 						}
 
 						if (timeStamp < actualTimeStamp) {
@@ -410,18 +432,23 @@ public class IGCReaderWriter {
 							values[2] = altBaro * 1000;
 							values[3] = altGPS * 1000;
 
-							for (int i = 0; i < extensions.size() && i+4 < values.length; i++) {
-								values[i + 4] = extensions.get(i).getValue(line);
+							for (int i = 0; i < bExtensions.size() && i+4 < values.length; i++) {
+								values[i + 4] = bExtensions.get(i).getValue(line);
 							}
-
-							recordSet.addNoneCalculationRecordsPoints(values, actualTimeStamp - startTimeStamp);
-							timeStamp = actualTimeStamp;
 						}
 						else 
 							if (actualTimeStamp - timeStamp != 0 && Math.abs(actualTimeStamp - timeStamp) > 1000) {
 								log.log(Level.SEVERE, String.format(Locale.getDefault(), "High time\t deviation at line %d %s", lineNumber - 1, line));
 								error.append(String.format(Locale.getDefault(), "High time deviation %dms at line %d %s", actualTimeStamp - timeStamp, lineNumber - 1, line)).append(GDE.LINE_SEPARATOR);
 							}
+					}
+					else if (line.startsWith("K")) {
+						log.log(Level.FINE, "K RECORD - Data extensioni = " + line);
+
+						for (int i = 0; i < kExtensions.size() && i+4+bExtensions.size() < values.length; i++) {
+							values[i + 4 + bExtensions.size()] = kExtensions.get(i).getValue(line);
+							log.log(Level.FINE, String.format("%s = %d", kExtensions.get(i).threeLetterCode, kExtensions.get(i).getValue(line)/1000));
+						}
 					}
 					else if (line.startsWith("F")) {
 						//skip F RECORD - SATELLITE CONSTELLATION.
@@ -488,6 +515,10 @@ public class IGCReaderWriter {
 						log.log(Level.WARNING, "line number " + lineNumber + " line length to short or missing " + device.getDataBlockLeader() + " !"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						continue;
 					}
+
+					recordSet.addNoneCalculationRecordsPoints(values, actualTimeStamp - startTimeStamp);
+					timeStamp = actualTimeStamp;
+
 				}
 				while ((line = reader.readLine()) != null);
 

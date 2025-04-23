@@ -69,42 +69,84 @@
 				<statistics sigma="false" avg="true" max="true" min="true" />
 			</Measurement>
 			<Measurement>
-				<name>_FXA_</name>
+				<name>_I01_</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 				<statistics sigma="false" avg="true" max="true" min="true" />
 			</Measurement>
 			<Measurement>
-				<name>_SIU_</name>
+				<name>_I02_</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 				<statistics sigma="false" avg="true" max="true" min="true" />
 			</Measurement>
 			<Measurement>
-				<name>_ENL_</name>
+				<name>_I03_</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 				<statistics sigma="false" avg="true" max="true" min="true" />
 			</Measurement>
 			<Measurement>
-				<name>_RPM_</name>
+				<name>_I04_</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 				<statistics sigma="false" avg="true" max="true" min="true" />
 			</Measurement>
 			<Measurement>
-				<name>_RSI_</name>
+				<name>_I05_</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
 				<statistics sigma="true" avg="true" max="true" min="true" />
 			</Measurement>
 			<Measurement>
-				<name>_LQI_</name>
+				<name>_I06_</name>
+				<symbol></symbol>
+				<unit></unit>
+				<active>true</active>
+				<statistics sigma="true" avg="true" max="true" min="true" />
+			</Measurement>
+			<Measurement>
+				<name>_J01_</name>
+				<symbol></symbol>
+				<unit></unit>
+				<active>true</active>
+				<statistics sigma="false" avg="true" max="true" min="true" />
+			</Measurement>
+			<Measurement>
+				<name>_J02_</name>
+				<symbol></symbol>
+				<unit></unit>
+				<active>true</active>
+				<statistics sigma="false" avg="true" max="true" min="true" />
+			</Measurement>
+			<Measurement>
+				<name>_J03_</name>
+				<symbol></symbol>
+				<unit></unit>
+				<active>true</active>
+				<statistics sigma="false" avg="true" max="true" min="true" />
+			</Measurement>
+			<Measurement>
+				<name>_J04_</name>
+				<symbol></symbol>
+				<unit></unit>
+				<active>true</active>
+				<statistics sigma="false" avg="true" max="true" min="true" />
+			</Measurement>
+			<Measurement>
+				<name>_J05_</name>
+				<symbol></symbol>
+				<unit></unit>
+				<active>true</active>
+				<statistics sigma="true" avg="true" max="true" min="true" />
+			</Measurement>
+			<Measurement>
+				<name>_J06_</name>
 				<symbol></symbol>
 				<unit></unit>
 				<active>true</active>
