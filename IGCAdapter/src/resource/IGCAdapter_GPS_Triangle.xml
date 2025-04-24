@@ -6,7 +6,7 @@
         <manufacturerURL>-</manufacturerURL>
         <group>logger</group>
         <image>IGCAdapter.png</image>
-        <usage>false</usage>
+        <usage>true</usage>
     </Device>
     <TimeBase>
         <name>time</name>
@@ -109,6 +109,48 @@
                 <active>true</active>
                 <statistics min="true" max="true" avg="true" sigma="true"/>
             </Measurement>
+			<Measurement>
+				<name>_J01_</name>
+				<symbol></symbol>
+				<unit></unit>
+				<active>true</active>
+				<statistics sigma="false" avg="true" max="true" min="true" />
+			</Measurement>
+			<Measurement>
+				<name>_J02_</name>
+				<symbol></symbol>
+				<unit></unit>
+				<active>true</active>
+				<statistics sigma="false" avg="true" max="true" min="true" />
+			</Measurement>
+			<Measurement>
+				<name>_J03_</name>
+				<symbol></symbol>
+				<unit></unit>
+				<active>true</active>
+				<statistics sigma="false" avg="true" max="true" min="true" />
+			</Measurement>
+			<Measurement>
+				<name>_J04_</name>
+				<symbol></symbol>
+				<unit></unit>
+				<active>true</active>
+				<statistics sigma="false" avg="true" max="true" min="true" />
+			</Measurement>
+			<Measurement>
+				<name>_J05_</name>
+				<symbol></symbol>
+				<unit></unit>
+				<active>true</active>
+				<statistics sigma="true" avg="true" max="true" min="true" />
+			</Measurement>
+			<Measurement>
+				<name>_J06_</name>
+				<symbol></symbol>
+				<unit></unit>
+				<active>true</active>
+				<statistics sigma="true" avg="true" max="true" min="true" />
+			</Measurement>
             <Settlements/>
             <ReferenceGroups/>
             <TransitionGroups/>

@@ -3339,11 +3339,15 @@ public final class Settings extends Properties {
 	
 	/**
 	 * check updated version number and entries in service update list
-	 * method should return true if update get installed over 383 until next XSD update
+	 * after update to next release version the DataExplorer.properties still contained the previous release version first startup
+	 * if new release version is 395 and previous is 394 method will return true
+	 * closing app will update the DataExplorer.properties version number to actual version number and method will return false
+	 * while initial installation version property does not exist and method return false, device XML get export by user device selection
+	 * beta versions require manual XML update, removing device and add again
 	 * @return true if possible device XML update required
 	 */
 	public boolean isDeviceXmlUpdateRequired() {
-		return Integer.valueOf(this.getProperty(Settings.APPL_VERSION_NUMBER, "383").replace(".", "")) == 383 && !getServiceUpdateList().isEmpty();
+		return Integer.valueOf(this.getProperty(Settings.APPL_VERSION_NUMBER, "395").replace(".", "")) == 394 && !getServiceUpdateList().isEmpty();
 	}
 	
 	/**
@@ -3352,6 +3356,7 @@ public final class Settings extends Properties {
 	 */
 	public List<String> getServiceUpdateList() {
 		List<String> deviceList = new ArrayList<>();
+		deviceList.add("IGCAdapter");
 //		deviceList.add("HoTTAdapter");
 //		deviceList.add("HoTTAdapterM");
 //		deviceList.add("HoTTAdapter2");
