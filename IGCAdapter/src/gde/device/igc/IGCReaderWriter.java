@@ -285,7 +285,6 @@ public class IGCReaderWriter {
 				}
 					
 
-
 				//parse B records B160240 5407121N 00249342W A 00280 00421
 				do {
 					lastLine = line = line.trim();
@@ -301,6 +300,7 @@ public class IGCReaderWriter {
 						if (bTimeStepExtension != null) {
 							actualTimeStamp += Long.parseLong(line.substring(bTimeStepExtension.start, bTimeStepExtension.end));
 						}
+						
 
 						int progress = (int) (lineNumber * 100 / approximateLines);
 						if (progress % 5 == 0) GDE.getUiNotification().setProgress(progress);
@@ -434,6 +434,9 @@ public class IGCReaderWriter {
 							for (int i = 0; i < bExtensions.size() && i+4 < values.length; i++) {
 								values[i + 4] = bExtensions.get(i).getValue(line);
 							}
+
+							recordSet.addNoneCalculationRecordsPoints(values, actualTimeStamp - startTimeStamp);
+							timeStamp = actualTimeStamp;
 						}
 						else 
 							if (actualTimeStamp - timeStamp != 0 && Math.abs(actualTimeStamp - timeStamp) > 1000) {
@@ -456,6 +459,14 @@ public class IGCReaderWriter {
 							values[i + 4 + bExtensions.size()] = kExtensions.get(i).getValue(line);
 							log.log(Level.FINE, String.format("%s = %d", kExtensions.get(i).threeLetterCode, kExtensions.get(i).getValue(line)/1000));
 						}
+						if (actualTimeStamp > timeStamp)
+							recordSet.addNoneCalculationRecordsPoints(values, actualTimeStamp - startTimeStamp);
+						else if (actualTimeStamp == timeStamp) {
+							if (log.isLoggable(Level.INFO))
+								log.log(Level.INFO, String.format("%s at %s ms %s", recordSet.getName(), new SimpleDateFormat("HH:mm:ss.SSS").format(actualTimeStamp), StringHelper.arrayToString1000(values)));
+							recordSet.replaceUpdateNoneCalculationRecordsPoints(values);
+						}
+						timeStamp = actualTimeStamp;
 					}
 					else if (line.startsWith("F")) {
 						//skip F RECORD - SATELLITE CONSTELLATION.
@@ -522,10 +533,6 @@ public class IGCReaderWriter {
 						log.log(Level.WARNING, "line number " + lineNumber + " line length to short or missing " + device.getDataBlockLeader() + " !"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						continue;
 					}
-					
-					recordSet.addNoneCalculationRecordsPoints(values, actualTimeStamp - startTimeStamp);
-					timeStamp = actualTimeStamp;
-
 				}
 				while ((line = reader.readLine()) != null);
 

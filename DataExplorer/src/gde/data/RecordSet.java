@@ -457,15 +457,8 @@ public final class RecordSet extends AbstractRecordSet {
 	 * @throws DataInconsitsentException
 	 */
 	public synchronized void addPoints(int[] points, double time_ms) throws DataInconsitsentException {
-		if (this.timeStep_ms.size() == 0 || this.timeStep_ms.getLast() < time_ms) {
 			this.timeStep_ms.add(time_ms);
 			this.addPoints(points);
-		}
-		else if (this.timeStep_ms.getLast() == time_ms) {
-			if (log.isLoggable(Level.INFO))
-				log.log(Level.INFO, String.format("%s at %.1f ms %s", this.getName(), time_ms, StringHelper.arrayToString1000(points)));
-			this.replaceUpdatePoints(points);
-		}
 	}
 
 	/**
@@ -533,15 +526,8 @@ public final class RecordSet extends AbstractRecordSet {
 	 * @throws DataInconsitsentException
 	 */
 	public synchronized void addNoneCalculationRecordsPoints(int[] points, double time_ms) throws DataInconsitsentException {
-		if (this.timeStep_ms.size() == 0 || this.timeStep_ms.getLast()/10. < time_ms) {
 			this.timeStep_ms.add(time_ms);
 			this.addNoneCalculationRecordsPoints(points);
-		}
-		else if (this.timeStep_ms.getLast()/10. == time_ms) {
-			if (log.isLoggable(Level.INFO))
-				log.log(Level.INFO, String.format("%s at %.1f ms %s", this.getName(), time_ms, StringHelper.arrayToString1000(points)));
-			this.replaceUpdateNoneCalculationRecordsPoints(points);
-		}
 	}
 
 	/**
