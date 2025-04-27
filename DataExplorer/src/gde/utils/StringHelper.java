@@ -1053,6 +1053,14 @@ public class StringHelper {
 		}
 		return sb.toString();
 	}
+	
+	public static String arrayToString1000(int[] inputArray) {
+		StringBuffer sb = new StringBuffer();
+		for (Integer object : inputArray) {
+			sb.append(object/1000).append(GDE.STRING_COMMA_BLANK);
+		}
+		return sb.toString();
+	}
 
 	public static Object arrayToString(byte[] inputArray) {
 		StringBuffer sb = new StringBuffer();

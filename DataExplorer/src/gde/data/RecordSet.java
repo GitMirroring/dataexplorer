@@ -424,6 +424,31 @@ public final class RecordSet extends AbstractRecordSet {
 
 		this.hasDisplayableData = true;
 	}
+	/**
+	 * method to replace/update a series of points to the associated records
+	 * @param points as int[], where the length must fit records.size()
+	 * @throws DataInconsitsentException
+	 */
+	public synchronized void replaceUpdatePoints(int[] points) throws DataInconsitsentException {
+		final String $METHOD_NAME = "replaceUpdatePoints"; //$NON-NLS-1$
+		if (points.length == this.size()) {
+			int index = this.get(this.recordNames[0]).size() - 1;
+			for (int i = 0; i < points.length; i++) {
+				//log.log(Level.OFF, String.format("%s %d -> %d", this.recordNames[i], this.get(this.recordNames[i]).get(index), points[i]));
+				this.get(this.recordNames[i]).set(index, points[i]);
+			}
+			if (log.isLoggable(Level.FINEST)) {
+				StringBuilder sb = new StringBuilder();
+				for (int point : points) {
+					sb.append(point).append(GDE.STRING_BLANK);
+				}
+				log.logp(Level.FINEST, $CLASS_NAME, $METHOD_NAME, sb.toString());
+			}
+		} else
+			throw new DataInconsitsentException(Messages.getString(MessageIds.GDE_MSGE0035, new Object[] { this.getClass().getSimpleName(), $METHOD_NAME, points.length, this.size() })); // $NON-NLS-1$
+
+		this.hasDisplayableData = true;
+	}
 
 	/**
 	 * method to add a series of points to the associated records
@@ -432,8 +457,15 @@ public final class RecordSet extends AbstractRecordSet {
 	 * @throws DataInconsitsentException
 	 */
 	public synchronized void addPoints(int[] points, double time_ms) throws DataInconsitsentException {
-		this.timeStep_ms.add(time_ms);
-		this.addPoints(points);
+		if (this.timeStep_ms.size() == 0 || this.timeStep_ms.getLast() < time_ms) {
+			this.timeStep_ms.add(time_ms);
+			this.addPoints(points);
+		}
+		else if (this.timeStep_ms.getLast() == time_ms) {
+			if (log.isLoggable(Level.INFO))
+				log.log(Level.INFO, String.format("%s at %.1f ms %s", this.getName(), time_ms, StringHelper.arrayToString1000(points)));
+			this.replaceUpdatePoints(points);
+		}
 	}
 
 	/**
@@ -465,14 +497,51 @@ public final class RecordSet extends AbstractRecordSet {
 	}
 
 	/**
+	 * method to update/replace a series of points to none calculation records (records active or inactive)
+	 * @param points as int[], where the length must fit records.size()
+	 * @throws DataInconsitsentException
+	 */
+	public synchronized void replaceUpdateNoneCalculationRecordsPoints(int[] points) throws DataInconsitsentException {
+		final String $METHOD_NAME = "addNoneCalculationRecordsPoints"; //$NON-NLS-1$
+		if (points.length <= this.getNoneCalculationRecordNames().length) {
+			int index = this.get(this.noneCalculationRecords[0]).size() - 1;
+			for (int i = 0; i < points.length; i++) {
+				try {
+					//log.log(Level.OFF, String.format("%s %d -> %d", this.recordNames[i], this.get(this.noneCalculationRecords[i]).get(index), points[i]));
+					this.get(this.noneCalculationRecords[i]).set(index, points[i]);
+				} catch (Exception e) {
+					log.log(Level.SEVERE, String.format("Record %s not found, matching recordName %s", this.noneCalculationRecords[i], get(i).name));
+				}
+			}
+			if (log.isLoggable(Level.FINEST)) {
+				StringBuilder sb = new StringBuilder();
+				for (int point : points) {
+					sb.append(point).append(GDE.STRING_BLANK);
+				}
+				log.logp(Level.FINEST, $CLASS_NAME, $METHOD_NAME, sb.toString());
+			}
+		} else
+			throw new DataInconsitsentException(Messages.getString(MessageIds.GDE_MSGE0036, new Object[] { this.getClass().getSimpleName(), $METHOD_NAME }));
+
+		this.hasDisplayableData = true;
+	}
+
+	/**
 	 * method to add a series of points to none calculation records (records active or inactive)
 	 * @param points as int[], where the length must fit records.size()
 	 * @param time_ms
 	 * @throws DataInconsitsentException
 	 */
 	public synchronized void addNoneCalculationRecordsPoints(int[] points, double time_ms) throws DataInconsitsentException {
-		this.timeStep_ms.add(time_ms);
-		this.addNoneCalculationRecordsPoints(points);
+		if (this.timeStep_ms.size() == 0 || this.timeStep_ms.getLast()/10. < time_ms) {
+			this.timeStep_ms.add(time_ms);
+			this.addNoneCalculationRecordsPoints(points);
+		}
+		else if (this.timeStep_ms.getLast()/10. == time_ms) {
+			if (log.isLoggable(Level.INFO))
+				log.log(Level.INFO, String.format("%s at %.1f ms %s", this.getName(), time_ms, StringHelper.arrayToString1000(points)));
+			this.replaceUpdateNoneCalculationRecordsPoints(points);
+		}
 	}
 
 	/**

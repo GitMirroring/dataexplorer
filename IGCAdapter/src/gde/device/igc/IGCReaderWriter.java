@@ -133,12 +133,14 @@ public class IGCReaderWriter {
 		StringBuilder gpsTriangleRelated = new StringBuilder();
 		String date = "000000", time; //16 02 40
 		int hour, minute, second;
+		int year, month, day;
 		int latitude, longitude, altBaro, altGPS;
 		int lastLatitude = 0, lastLongitude = 0, lastAltBaro = 0, lastAltGPS = 0;
 		int values[] = new int[device.getNumberOfMeasurements(1)-2]; //climb and speed will be calculated
 		File inputFile = new File(filePath);
 		String dllID = "XXX";
-		IgcExtension timeStepExtension = null;
+		IgcExtension bTimeStepExtension = null;
+		IgcExtension kTimeStepExtension = null;
 		Vector<IgcExtension> bExtensions = new Vector<IgcExtension>();
 		Vector<IgcExtension> kExtensions = new Vector<IgcExtension>();
 		GDE.getUiNotification().setProgress(0);
@@ -217,7 +219,7 @@ public class IGCReaderWriter {
 							for (int i = 0; i < numExtensions; i++) {
 								IgcExtension extension = new IgcExtension(Integer.parseInt(line.substring(7 * i + 3, 7 * i + 5))-1, Integer.parseInt(line.substring(7 * i + 5, 7 * i + 7)), line.substring(7 * i + 7, 7 * i + 10));
 								if (extension.getThreeLetterCode().equals("TDS") || extension.getThreeLetterCode().equals("SUS") )
-									timeStepExtension = extension;
+									bTimeStepExtension = extension;
 								else
 									bExtensions.add(extension);
 							}
@@ -232,7 +234,7 @@ public class IGCReaderWriter {
 							for (int i = 0; i < numExtensions; i++) {
 								IgcExtension extension = new IgcExtension(Integer.parseInt(line.substring(7 * i + 3, 7 * i + 5))-1, Integer.parseInt(line.substring(7 * i + 5, 7 * i + 7)), line.substring(7 * i + 7, 7 * i + 10));
 								if (extension.getThreeLetterCode().equals("TDS") || extension.getThreeLetterCode().equals("SUS") )
-									timeStepExtension = extension;
+									kTimeStepExtension = extension;
 								else
 									kExtensions.add(extension);
 							}
@@ -250,9 +252,6 @@ public class IGCReaderWriter {
 				}
 
 				//calculate the start time stamp using the first B record
-				int year;
-				int month;
-				int day;
 				if (date.contains(":")) {
 					int startIndex = date.indexOf(":");
 					year = Integer.parseInt(date.substring(startIndex+5, startIndex+7)) + 2000;
@@ -281,8 +280,8 @@ public class IGCReaderWriter {
 				minute = Integer.parseInt(time.substring(2, 4));
 				second = Integer.parseInt(time.substring(4, 6));
 				startTimeStamp = new GregorianCalendar(year, month - 1, day, hour, minute, second).getTimeInMillis();
-				if (timeStepExtension != null) {
-					startTimeStamp += Long.parseLong(line.substring(timeStepExtension.start, timeStepExtension.end));
+				if (bTimeStepExtension != null) {
+					startTimeStamp += Long.parseLong(line.substring(bTimeStepExtension.start, bTimeStepExtension.end));
 				}
 					
 
@@ -299,8 +298,8 @@ public class IGCReaderWriter {
 						minute = Integer.parseInt(time.substring(2, 4));
 						second = Integer.parseInt(time.substring(4, 6));
 						actualTimeStamp = new GregorianCalendar(year, month - 1, day, hour, minute, second).getTimeInMillis();
-						if (timeStepExtension != null) {
-							actualTimeStamp += Long.parseLong(line.substring(timeStepExtension.start, timeStepExtension.end));
+						if (bTimeStepExtension != null) {
+							actualTimeStamp += Long.parseLong(line.substring(bTimeStepExtension.start, bTimeStepExtension.end));
 						}
 
 						int progress = (int) (lineNumber * 100 / approximateLines);
@@ -444,6 +443,14 @@ public class IGCReaderWriter {
 					}
 					else if (line.startsWith("K")) {
 						log.log(Level.FINE, "K RECORD - Data extensioni = " + line);
+						time = line.substring(1, 7); //16 02 40
+						hour = Integer.parseInt(time.substring(0, 2));
+						minute = Integer.parseInt(time.substring(2, 4));
+						second = Integer.parseInt(time.substring(4, 6));
+						actualTimeStamp = new GregorianCalendar(year, month - 1, day, hour, minute, second).getTimeInMillis();
+						if (kTimeStepExtension != null) {
+							actualTimeStamp += Long.parseLong(line.substring(kTimeStepExtension.start, kTimeStepExtension.end));
+						}
 
 						for (int i = 0; i < kExtensions.size() && i+4+bExtensions.size() < values.length; i++) {
 							values[i + 4 + bExtensions.size()] = kExtensions.get(i).getValue(line);
@@ -515,7 +522,7 @@ public class IGCReaderWriter {
 						log.log(Level.WARNING, "line number " + lineNumber + " line length to short or missing " + device.getDataBlockLeader() + " !"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						continue;
 					}
-
+					
 					recordSet.addNoneCalculationRecordsPoints(values, actualTimeStamp - startTimeStamp);
 					timeStamp = actualTimeStamp;
 
