@@ -113,7 +113,10 @@ public class GPSLoggerDialog extends DeviceDialog {
 
 				SWTResourceManager.registerResourceUser(this.dialogShell);
 				this.loggerSetup = new SetupReaderWriter(this.dialogShell, this.device);
-
+				//copy setup line and uncomment to exchange default parameter of SetupReaderWriter, do not select a ini file
+				//String setup = "$GPSSETUP,95EB,0,1,1,0,0,1,0,0,0,1,3,0,0,0,0,6,0,C8,C8,1F4,1C2,32,64,7C,64,7D0,5,1,1,1E,0,0,0,0,0,0,1003,4,10,5,6,10,10,10,10,10,10,10,10,10,BC10,0,80,0,108,302,604,0,20F,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,20,12C,109C*33";
+				//loggerSetup.loadSetup(setup);
+				
 				FormLayout dialogShellLayout = new FormLayout();
 				this.dialogShell.setLayout(dialogShellLayout);
 				this.dialogShell.layout();

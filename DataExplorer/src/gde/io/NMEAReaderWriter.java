@@ -159,6 +159,7 @@ public class NMEAReaderWriter {
 							|| line.startsWith(device.getDataBlockLeader() + NMEA.UL2SETUP.name()))) {
 						Vector<String> setupLine = new Vector<String>();
 						setupLine.add(line);
+						log.log(Level.INFO, line);
 						data.parse(setupLine, lineNumber);
 					}
 					else if (line != null && line.startsWith(device.getDataBlockLeader()) && !data.isSupportedSentence(line.substring(1, line.indexOf(device.getDataBlockSeparator().value(), 2)))) {

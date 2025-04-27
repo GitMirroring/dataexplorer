@@ -400,6 +400,83 @@ public class SetupReaderWriter {
 		}
 	}
 	
+	/**
+	 * method to load setup values from a NMEA GPSSEUP line for debugging only
+	 */
+	public void loadSetup(String csvLine) {
+		String[] data = csvLine.split(GDE.STRING_COMMA);
+		
+		this.serialNumber 					= Integer.parseInt(data[1], 16);
+		this.datarate 							= Short.parseShort(data[2], 16);
+		this.startModus 						= Short.parseShort(data[3], 16);
+		this.timeZone 							= Short.parseShort(data[4], 16);
+		//units
+		this.varioThreshold 				= Short.parseShort(data[6], 16);
+		this.varioTon 							= Short.parseShort(data[7], 16);
+		this.stopModus 							= Short.parseShort(data[8], 16);
+		this.modusDistance					= Short.parseShort(data[9], 16);
+		this.varioThresholdSink			= Short.parseShort(data[10], 16);
+		this.daylightSavingModus		= Short.parseShort(data[11], 16);
+		this.telemetryType					= Short.parseShort(data[12], 16);
+		this.rxControl							= Short.parseShort(data[13], 16);
+		this.jetiExMask							= Short.parseShort(data[14], 16);
+		this.varioFactor 						= Short.parseShort(data[15], 16);
+		this.frskyAddr							= Short.parseShort(data[16], 16);
+		this.telemetryAlarms 				= Short.parseShort(data[17], 16);
+		this.heightAlarm 						= Short.parseShort(data[18], 16);
+		this.speedMaxAlarm 					= Short.parseShort(data[19], 16);
+		this.distanceMaxAlarm 			= Short.parseShort(data[20], 16);
+		this.voltageRxAlarm 				= Short.parseShort(data[21], 16);
+		this.tripLengthAlarm 				= Short.parseShort(data[22], 16);
+		this.currentUlAlarm 				= Short.parseShort(data[23], 16);
+		this.voltageStartUlAlarm 		= Short.parseShort(data[24], 16);
+		this.voltageUlAlarm 				= Short.parseShort(data[25], 16);
+		this.capacityUlAlarm 				= Short.parseShort(data[26], 16);
+		this.distanceMinAlarm				= Short.parseShort(data[27], 16);
+		this.serialNumberFix 				= Byte.parseByte(data[29], 16);												// 29.. fixe_Seriennummer;
+		this.robbe_T_Box 						= Byte.parseByte(data[29], 16); 												// ..29 Robbe_T_Box;
+		this.varioFilter 						= Short.parseShort(data[30], 16); // 30 Vario filter
+		this.speedMinAlarm					= Short.parseShort(data[31], 16);	// 31 10km/h --> 1000km/h
+		this.language								= Byte.parseByte(data[32], 16);													// 32.. 0= german, 1=english
+		this.hottSpeedType					= Byte.parseByte(data[32], 16);												// ..32 speed type 0=auto, 1=GPS, 2=AirSpeed
+		this.jetiExMask_UL					= Short.parseShort(data[33], 16);	// 33
+		this.isHottDeadBand					= Byte.parseByte(data[34], 16);													// 34
+		//B[4]
+		this.mLinkAddressVarioTec			= Byte.parseByte(data[2], 16);		// 38..
+		this.mLinkAddressVoltageRx		= Byte.parseByte(data[2], 16);		// ..38
+		this.mLinkAddressSpeed 				= Byte.parseByte(data[2], 16);		// 39..
+		this.mLinkAddressVario   			= Byte.parseByte(data[2], 16);		// ..39
+		this.mLinkAddressDirection 		= Byte.parseByte(data[2], 16);		// 40..
+		this.mLinkAddressAirSpeed 		= Byte.parseByte(data[2], 16);		// ..40
+		this.mLinkAddressAltitude 		= Byte.parseByte(data[2], 16);		// 41..
+		this.mLinkAddressDistance 		= Byte.parseByte(data[2], 16);		// 42..
+		this.mLinkAddressTripLength 	= Byte.parseByte(data[2], 16);		// 43..
+		this.mLinkAddressSpeedMax			= Byte.parseByte(data[2], 16);		// 44..
+		this.mLinkAddressHeightMax		= Byte.parseByte(data[2], 16);;		// 45..
+		this.mLinkAddressENL					= Byte.parseByte(data[2], 16);		// 46..
+		this.mLinkAddressAccX					= Byte.parseByte(data[2], 16);		// 47..
+		this.mLinkAddressAccY					= Byte.parseByte(data[2], 16);		// 48..
+		this.mLinkAddressAccZ					= Byte.parseByte(data[2], 16);		// 49..		
+		this.mLinkAddressFlightDirection	= Byte.parseByte(data[2], 16);// 50..
+		this.mLinkAddressDirectionRel	= Byte.parseByte(data[2], 16);	// 51..
+		this.smoothAltitudeNulling		= Byte.parseByte(data[2], 16);	// ..51
+		this.mLinkAddressAltitudeGain	= Byte.parseByte(data[2], 16);	// 52..
+		this.powerBoxP2BusAdresse			= Byte.parseByte(data[2], 16);	// ..52
+		//short[] C 									= short int[1]; // 53..
+		this.firmwareVersion 					= Short.parseShort(data[54], 16);	// 54
+		this.modusIGC 								= Short.parseShort(data[55], 16);	// 55
+		//System.arraycopy(buffer, 110, this.startSlotSBUS, 0, 8);
+		this.spektrumSensors 					= Byte.parseByte(data[2], 16);	// 60..
+		this.spektrumNumber 					= Byte.parseByte(data[2], 16);	// ..60
+		this.fixPositionLatitude			= Integer.parseInt(data[61], 16);		// 61,62
+		this.fixPositionLongitude			= Integer.parseInt(data[62], 16);		// 63,64
+		this.fixPositionAltitude			= Short.parseShort(data[63], 16);	// 65
+		//unused
+		this.betaVersion 							= Short.parseShort(data[94], 16);	// 94
+		this.hardwareVersion 					= Short.parseShort(data[95], 16);	// 95
+
+	}
+	
 	public int getJetiMeasurementCount() {
 		int count = 37;
 		for (int i = 0; i < GDE.SIZE_BYTES_INTEGER * 8; i++) {
