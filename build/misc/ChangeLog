@@ -9,6 +9,7 @@ Device specific changes/fixes
 	* Raytronic C60 - initial support
 	* GPS-Logger3 - add HoTT vario dead band switch
 	* IGCAdapter - add support for extensions defined by J record and values in K records of IGC
+	* OpenTx-Telemetrie - add GPS coordinates given as Latitude/Longitude without a unit and assume degree only
 
 Version 3.9.4 - 03 Apr 2025
 Generic changes/fixes 

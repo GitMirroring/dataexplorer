@@ -318,13 +318,13 @@ public class CSVReaderWriter {
 						record.setDataType(Record.DataType.GPS_ALTITUDE);
 					else if ((record.getUnit().contains("°") && record.getUnit().contains("'") && (record.getName().toLowerCase().contains("long") || record.getName().toLowerCase().contains("länge")))
 							|| (record.getName().toLowerCase().contains("gps") && (record.getName().toLowerCase().contains("long") || record.getName().toLowerCase().contains("länge")))
-							|| record.getName().toLowerCase().contains("ngengrad")) {
+							|| record.getName().toLowerCase().contains("ngengrad") || record.getName().toLowerCase().contains("longitude")) {
 						record.setDataType(Record.DataType.GPS_LONGITUDE);
 						if (record.getUnit().equals(GDE.STRING_DASH)) record.setUnit("°");
 					}
 					else if (record.getUnit().contains("°") && record.getUnit().contains("'") && (record.getName().toLowerCase().contains("lat") || record.getName().toLowerCase().contains("breit"))
 							|| (record.getName().toLowerCase().contains("gps") && (record.getName().toLowerCase().contains("lat") || record.getName().toLowerCase().contains("breit")))
-							|| record.getName().toLowerCase().contains("breitengrad")) {
+							|| record.getName().toLowerCase().contains("breitengrad") || record.getName().toLowerCase().contains("breitengrad")) {
 						record.setDataType(Record.DataType.GPS_LATITUDE);
 						if (record.getUnit().equals(GDE.STRING_DASH)) record.setUnit("°");
 					}
@@ -433,13 +433,13 @@ public class CSVReaderWriter {
 								record.setDataType(Record.DataType.GPS_ALTITUDE);
 							else if ((record.getUnit().contains("°") && record.getUnit().contains("'") && (record.getName().toLowerCase().contains("long") || record.getName().toLowerCase().contains("länge")))
 									|| (record.getName().toLowerCase().contains("gps") && (record.getName().toLowerCase().contains("long") || record.getName().toLowerCase().contains("länge")))
-									|| record.getName().toLowerCase().contains("gengrad")) {
+									|| record.getName().toLowerCase().contains("gengrad") || record.getName().toLowerCase().contains("longitude")) {
 								record.setDataType(Record.DataType.GPS_LONGITUDE);
 								if (record.getUnit().equals(GDE.STRING_DASH)) record.setUnit("°");
 							}
 							else if (record.getUnit().contains("°") && record.getUnit().contains("'") && (record.getName().toLowerCase().contains("lat") || record.getName().toLowerCase().contains("breit"))
 									|| (record.getName().toLowerCase().contains("gps") && (record.getName().toLowerCase().contains("lat") || record.getName().toLowerCase().contains("breit")))
-									|| record.getName().toLowerCase().contains("tengrad")) {
+									|| record.getName().toLowerCase().contains("tengrad") || record.getName().toLowerCase().contains("latitude")) {
 								record.setDataType(Record.DataType.GPS_LATITUDE);
 								if (record.getUnit().equals(GDE.STRING_DASH)) record.setUnit("°");
 							}
