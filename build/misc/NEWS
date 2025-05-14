@@ -1,37 +1,24 @@
-GNU DataExplorer - News - comes with Version 3.9.4 - 03 Apr 2025
+GNU DataExplorer - News - comes with Version 3.9.5 - 14 May 2025
 
 Generic changes/fixes 
-	* update layout of update dialog
-	* fix some device XML using <usage>true</usage>
-	* keep zoom and measurement configuration while switching data set
-	* support dark color theme for macOS and Linux
+	* update default grid color main graphics dark mode
 	
 Device specific changes/fixes
-	* MC3000_FM_NiMH_LiIo - update graphics template using rounding for capacity and current
-	* HoTTAdapter* - update package loss statistics even if receiver only
-	* ZeroAdapter - enable GPS coordinates in [°] as well as in [° '], normalize coordinates to 6 decimal digits
-	* Eagle PR - add support of special device with special FW for pylon racing
-	* CSVImportAdapter - enable constant time step, enhance mapping files
-	* HoTTAdapter* - enable MDL backup, MC-26, MC-28
-	* HoTTAdapter* - add capability to backup MDL MZ-12Pro using file transfer tab
-	* IGCAdapter - update naming of additional statistics values
+	* HoTTAdapter* - update MDL viewer plug-in to versioon 1408 and add dark theme support
+	* Raytronic C60 - initial support
+	* GPS-Logger3 - add HoTT vario dead band switch
+	* IGCAdapter - add support for extensions defined by J record and values in K records of IGC
+	* OpenTx-Telemetrie - Ethos GPS-coordinates support (Latitude/Longitude without a unit, assume degree only)
 		
 Allgemeine Änderungen/Korrekturen
-	* Layout des Aktualisierungsdialogs aktualisiert
-	* Korrektur einiger Geräte-XML mit <usage>true</usage>
-	* Beibehaltung der Zoom- und Messkonfiguration beim Wechsel des Datensatzes
-	* Unterstützung des dunklen Farbthemas für macOS und Linux
+	* Standard Farbe der Grafikhilfslinien angepasst
 
 Gerätespezifische Änderungen/Korrekturen
-	* MC3000_FM_NiMH_LiIo - Aktualisierung der Grafikvorlage mit Rundung für Kapazität und Strom
-	* HoTTAdapter* - Paketverluststatistiken aktualisiert, auch wenn nur Empfänger
-	* ZeroAdapter - ermöglicht GPS-Koordinaten sowohl in [°] als auch in [° '], normalisiert die Koordinaten auf 6 Dezimalstellen
-	* Eagle PR - Unterstützung für spezielles Gerät mit spezieller FW für Pylon-Rennen hinzugefügt
-	* CSVImportAdapter - konstante Zeitschritte ermöglicht, verbesserte Mapping-Dateien
-	* HoTTAdapter* - MDL-Backup MC-26, MC-28 ermöglicht 
-	* HoTTAdapter* - Sicherung der MDL MZ-12Pro über die Registerkarte Dateitransfer ermöglicht
-	* IGCAdapter - Benennung von zusätzlichen statistischen Werten aktualisiert
-
+	* HoTTAdapter* - Aktualisierung des MDL-Viewer-Plug-ins auf Version 1408, Unterstützung für dunkle Themen
+	* Raytronic C60 - initiale Unterstützung
+	* GPS-Logger3 - HoTT Vario Totzonenschalter hinzugefügt
+	* IGCAdapter - Unterstützung für Erweiterungen, die durch J-Records und Werte in K-Records von IGC definiert sind
+	* OpenTx-Telemetrie - Ethos GPS-Koordinaten Unterstützung (Breitengrad/Längengrad ohne Einheit werden als Grad Angaben übernommmen)
 
 
 

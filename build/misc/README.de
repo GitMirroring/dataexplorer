@@ -1,9 +1,9 @@
-******** DataExplorer README ***********  12 Jul 2024 WB
+******** DataExplorer README ***********  14 May 2025
 
 Der GNU DataExplorer ist freie Software, siehe http://www.gnu.org/philosophy/free-sw.html. Sie wird kostenfrei und ohne Spende 
 zur Verfügung gestellt. Es gibt aber auch keinerlei Gewährleistung. Durch die Implementierung in Java auf der Basis von der freien Bibliotheken 
-jSerialComm, libjava4usb und SWT ist die Ausführung des Programms auf vielen populären Betriebssystemplattformen in 32 oder 64 Bit wie Windows, GNU/Linux 
-und MAC OS X möglich. Die einzige Voraussetzung dazu ist die Installation einer Java Run-time der Version 11 bis Java 21, wie z.B. IcedTea oder openJDK
+jSerialComm, libjava4usb und SWT ist die Ausführung des Programms auf vielen populären Betriebssystemplattformen wie Windows, GNU/Linux 
+und MAC OS X möglich. Die einzige Voraussetzung dazu ist die Installation einer Java Run-time der Version 17 bis Java 21, wie z.B. IcedTea oder openJDK
 oder der SUN/Oracle Java Runtime, soweit die Runtime nicht Teil der Installation ist. Vorzugsweise Versionen mit Long Term Support (LTS) verwenden.
 Der Einfachheit halber werden die 64 Bit Versionen für Windows und MAC OS mit integrierter Java Laufzeit bereitgestellt. Eine Java Laufzeit muss für 
 diese Fälle nicht mehr installiert werden. Da die MAC OS Versionen auf Intel Code basieren läuft der DataExplorer in der Emulationsschicht Rosetta.
@@ -13,13 +13,14 @@ Die Liste der unterstützten Geräte findet man hier http://www.nongnu.org/dataexp
 											 
 Weitere Geräte sind in Arbeit. Hilfe bei der Einbindung von zusätzlichen Geräten ist herzlich willkommen.
 
-Eine Geräte API (IDevice) wird zur Verfügung gestellt, die ein relativ einfaches Einbinden eigener Geräte ermöglichen soll. 
+Eine Geräte API (IDevice) wird zur Verfügung gestellt, die ein relativ einfaches Einbinden eigener Geräte ermöglichen soll. Gewisse Programmierkenntnisse
+sind aber Voraussetzung.
 
 Für das Verzeichnis der Nutzerdaten (Logdateien) ist der Anwender selbst verantwortlich, es wird nach dem ersten Start des Programms
 in den Anwendungkonfigurationsdatei (DataExplorer.properties) hinterlegt.
 
 Hinweis: Soll der DataExplorer gleichzeitig auf mehreren Betriebssystemen verwendet werden, oder werden die Daten auf zentraler Stelle abgelegt,
-sind Umlaute in den Dateinamen und Objektnamen zu vermeiden. (Umwandlung ISO-8859-1 nach UTF-8 und umgekehrt). Dateilinks unterscheiden sich von den 
+sind Umlaute in den Dateinamen und Objektnamen zu vermeiden. (Umwandlung ISO-8859-1 nach UTF-8 und umgekehrt). Dateilinks unterscheiden sich zwischen den 
 verschiedenen Betriebssystemen. Objekt bezogene Dateien werden nicht dupliziert, sondern über Dateilinks referenziert. Vor einem Umzug der gesammelten 
 Daten auf ein anderes Betriebssystem sind die Objekt bezogenen Dateilinks zu entfernen und auf der Zielplatform wieder herzustellen. Dazu bitte den 
 Einstellungsdialog, "Wartung" Tabulator benutzen.
@@ -55,3 +56,7 @@ Die DMG Datei enthält eine Java-Laufzeitumgebung. Das funktiioniert auch mit ein
 Die bereit gestellt DMG Datei zeigt die Anwendung DataExplorer.app, die einfach auf den Applications Ordner zu ziehen ist.
 Beim ersten Start des Programms werden dann noch Anwendungkonfigurationsverzeichnisse unter /User/<Benutzer>/Library/Application Support/DataExplorer
 angelegt. Hierunter werden auch Anwendungkonfiguration und Tracelogdaten abgelegt.
+
+Ab MAC OS Sequoia werden Anwendungen, die nicht über den Apple Store verteilt werden als fragwürdig eingestuft. Ein entsprechender Dialog erscheint.
+Über die Einstellung "Privatsphähre & Sicherheit" muss einmalig die Erlaubnis zur Ausführung erteilt werden. Über Virustotal kann man überprüfen
+das kein Schadcode enthalten ist.

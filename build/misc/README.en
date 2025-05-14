@@ -1,9 +1,9 @@
-﻿******** DataExplorer README ***********  01 Jul 2024 WB
+﻿******** DataExplorer README ***********  14 May 2025
 
 The GNU DataExplorer is free software, please see http://www.gnu.org/philosophy/free-sw.html. It is also available at no
 cost, but without any warranty. Since the implementation is based on Java using the free available libraries jSerialComm, 
 libjava4usb and SWT the execution of this program is possible under a number of popular operating systems like Windows, GNU/Linux 
-and MAC OS. The only requirement is the installation of a Java run-time of version 11 to Java 21, such as IcedTea or open 
+and MAC OS. The only requirement is the installation of a Java run-time of version 17 to Java 21, such as IcedTea or open 
 JDK or SUN/Oracles Java Runtime, if the runtime is not part of the installation. Prefer using Long Term Support (LTS) version.
 For simplicity, the 64 bit versions for Windows and MAC OS are provided with built-in Java run-time. There is no need to 
 install a Java runtime for these cases. Since the MAC OS versions are based on Intel code, DataExplorer runs in the Rosetta 
@@ -56,3 +56,7 @@ The DMG contains a Java runtime environment. A separate Java installation is not
 The download and opened DMG file show up DataExplorer.app which need simply drag to the Applications folder.
 During the first execution of the program the application configuration directories are created /User/<user>/Library/Application Support/DataExplorer.
 Below this directory also application configuration and trace log files are located.
+
+Starting with MAC OS Sequoia, applications that are not distributed via the Apple Store are classified as questionable. A corresponding dialog appears.
+Permission to run the application must be granted once via the "Privacy & Security" setting. You can check via Virustotal
+that no malicious code is contained.
