@@ -1,5 +1,12 @@
 Development history / change log, please read from bottom up
 
+Version 3.9.6 - xx xx 2025
+Generic changes/fixes 
+	* switch using /usr/local/bin/rsync (homebrew rsync)
+	
+Device specific changes/fixes
+	* 
+	
 Version 3.9.5 - 14 May 2025
 Generic changes/fixes 
 	* update default grid color main graphics dark mode
