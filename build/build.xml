@@ -1187,14 +1187,16 @@
 	<target name="rsync" description="copy new release content while deleting old once">
 		<echo>rsync -vr ${basedir}/build/target/install/* brueg@dl.sv.nongnu.org:/releases/dataexplorer/</echo>
 		<exec executable="bash" dir="${basedir}/build/target/install/">
+			<arg value="-l" />
 			<arg value="-c" />
-			<arg value="/usr/local/bin/rsync -vr ${basedir}/build/target/install/* brueg@dl.sv.nongnu.org:/releases/dataexplorer/" />
+			<arg value="rsync -vr ${basedir}/build/target/install/* brueg@dl.sv.nongnu.org:/releases/dataexplorer/" />
 		</exec>
 	</target>
 
 	<target name="rsync_delete" description="copy new release content while deleting old once">
 		<echo>rsync -vr --delete install/ brueg@dl.sv.nongnu.org:/releases/dataexplorer/</echo>
 		<exec executable="bash" dir="${basedir}/build/target/">
+			<arg value="-l" />
 			<arg value="-c" />
 			<arg value="/usr/local/bin/rsync -vr --delete install/ brueg@dl.sv.nongnu.org:/releases/dataexplorer/" />
 		</exec>
