@@ -1028,7 +1028,7 @@ public class GraphicsComposite extends Composite {
 		if (this.canvasImage != null) GraphicsComposite.this.canvasImage.dispose();
 		try {
 			if (this.canvasBounds.width > 0 && this.canvasBounds.height > 0) {
-				this.canvasImage = new Image(GDE.display, GraphicsComposite.this.canvasBounds);
+				this.canvasImage = new Image(GDE.display, this.canvasBounds.width, this.canvasBounds.height);
 				this.canvasImageGC = new GC(this.canvasImage); //SWTResourceManager.getGC(this.canvasImage);
 				this.canvasImageGC.setBackground(this.surroundingBackground);
 				this.canvasImageGC.fillRectangle(this.canvasBounds);
@@ -1955,7 +1955,7 @@ public class GraphicsComposite extends Composite {
 				RecordSet activeRecordSet = activeChannel.getActiveRecordSet();
 				if (activeRecordSet != null) {
 					if (this.canvasImage != null) this.canvasImage.dispose();
-					this.canvasImage = new Image(GDE.display, this.canvasBounds);
+					this.canvasImage = new Image(GDE.display, this.canvasBounds.width, this.canvasBounds.height);
 					this.canvasImageGC = new GC(this.canvasImage); //SWTResourceManager.getGC(this.canvasImage);
 					this.canvasImageGC.setBackground(this.surroundingBackground);
 					this.canvasImageGC.fillRectangle(this.canvasBounds);

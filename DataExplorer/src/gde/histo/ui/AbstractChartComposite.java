@@ -316,7 +316,7 @@ public abstract class AbstractChartComposite extends Composite {
 		TrailRecordSet trailRecordSet = windowActor.getTrailRecordSet();
 		if (trailRecordSet != null && trailRecordSet.getTimeStepSize() > 0) {
 			if (this.canvasImage != null) this.canvasImage.dispose();
-			this.canvasImage = new Image(GDE.display, this.canvasBounds);
+			this.canvasImage = new Image(GDE.display, this.canvasBounds.width, this.canvasBounds.height);
 			this.canvasImageGC = new GC(this.canvasImage); // SWTResourceManager.getGC(this.canvasImage);
 			this.canvasImageGC.setBackground(this.surroundingBackground);
 			this.canvasImageGC.fillRectangle(this.canvasBounds);
@@ -353,7 +353,7 @@ public abstract class AbstractChartComposite extends Composite {
 			if (this.canvasBounds.height <= 0 || this.canvasBounds.width <= 0) return;
 	
 			if (this.canvasImage != null) this.canvasImage.dispose();
-				this.canvasImage = new Image(GDE.display, this.canvasBounds);
+				this.canvasImage = new Image(GDE.display, this.canvasBounds.width, this.canvasBounds.height);
 			this.canvasImageGC = new GC(this.canvasImage); // SWTResourceManager.getGC(this.canvasImage);
 			this.canvasImageGC.setBackground(this.surroundingBackground);
 			this.canvasImageGC.fillRectangle(this.canvasBounds);
