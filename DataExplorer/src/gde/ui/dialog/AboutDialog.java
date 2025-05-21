@@ -85,8 +85,6 @@ public class AboutDialog extends org.eclipse.swt.widgets.Dialog {
 			this.dialogShell.setImage(SWTResourceManager.getImage("gde/resource/DataExplorer.png")); //$NON-NLS-1$
 			SWTResourceManager.registerResourceUser(this.dialogShell);
 			this.dialogShell.setLayout(new FormLayout());
-			this.dialogShell.layout();
-			this.dialogShell.pack();
 			this.dialogShell.setSize(650, 430);
 			this.dialogShell.setText(Messages.getString(MessageIds.GDE_MSGT0146));
 			this.dialogShell.addListener(SWT.Traverse, new Listener() {
@@ -155,7 +153,7 @@ public class AboutDialog extends org.eclipse.swt.widgets.Dialog {
 			{
 				FormData aboutTextLData = new FormData();
 				aboutTextLData.width = 593;
-				aboutTextLData.height = 39;
+				aboutTextLData.height = 30;
 				aboutTextLData.left =  new FormAttachment(0, 1000, 20);
 				aboutTextLData.top =  new FormAttachment(0, 1000, 21);
 				aboutTextLData.right =  new FormAttachment(1000, 1000, -20);
@@ -171,8 +169,6 @@ public class AboutDialog extends org.eclipse.swt.widgets.Dialog {
 				aboutImageLData.top =  new FormAttachment(aboutText, 0, SWT.CENTER);
 				this.aboutImage = new Canvas(this.dialogShell, SWT.NO_REDRAW_RESIZE);
 				this.aboutImage.setLayoutData(aboutImageLData);
-				this.aboutImage.moveAbove(this.aboutText);
-				this.aboutImage.moveAbove(this.version);
 
 				final Image ideaImage = SWTResourceManager.getImage("gde/resource/DataExplorer.png");
 				this.aboutImage.addPaintListener(event -> {
