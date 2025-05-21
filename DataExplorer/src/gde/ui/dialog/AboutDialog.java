@@ -134,7 +134,7 @@ public class AboutDialog extends org.eclipse.swt.widgets.Dialog {
 			{
 				FormData okLData = new FormData();
 				okLData.width = 40;
-				okLData.height = 35;
+				okLData.height = 30;
 				okLData.left =  new FormAttachment(0, 1000, 147);
 				okLData.bottom =  new FormAttachment(1000, 1000, -12);
 				okLData.right =  new FormAttachment(1000, 1000, -154);
@@ -169,7 +169,10 @@ public class AboutDialog extends org.eclipse.swt.widgets.Dialog {
 				aboutImageLData.top =  new FormAttachment(aboutText, 0, SWT.CENTER);
 				this.aboutImage = new Canvas(this.dialogShell, SWT.NO_REDRAW_RESIZE);
 				this.aboutImage.setLayoutData(aboutImageLData);
-
+				if (! GDE.IS_OS_ARCH_ARM) {
+					this.aboutImage.moveAbove(this.aboutText);
+					this.aboutImage.moveAbove(this.version);
+				}
 				final Image ideaImage = SWTResourceManager.getImage("gde/resource/DataExplorer.png");
 				this.aboutImage.addPaintListener(event -> {
 					event.gc.drawImage(ideaImage,0,0);
