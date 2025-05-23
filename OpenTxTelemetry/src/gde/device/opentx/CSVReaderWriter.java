@@ -346,7 +346,7 @@ public class CSVReaderWriter {
 				// now get all data   0; 14,780;  0,598;  1,000;  8,838;  0,002
 				String[] updateRecordNames = recordSet.getRecordNames();
 				int[] points = new int[updateRecordNames.length];
-				String[] tmpHeader = fileHeader.get(GDE.CSV_DATA_HEADER).split(" |"+separator);
+				String[] tmpHeader = fileHeader.get(GDE.CSV_DATA_HEADER).split(""+separator);
 				
 				while ((line = reader.readLine()) != null) {
 					++lineNumber;
@@ -363,13 +363,15 @@ public class CSVReaderWriter {
 						String[] tmpData = line.split(""+separator);
 						StringBuilder sb = new StringBuilder();
 						for (; index < tmpData.length; ++index) {
-							if (tmpData[index].equals(GDE.STRING_EMPTY)) if (tmpHeader[index].equals("GPS")) {
-								tmpData[index] = "0.0,0.0";
-								log.log(Level.WARNING, "empty GPS placeholder found line #" + lineNumber + " - replace with zero coords");
-							}
-							else {
-								tmpData[index] = "0.0";
-								log.log(Level.WARNING, "empty value placeholder found line #" + lineNumber + " - replace with zero");
+							if (tmpData[index].equals(GDE.STRING_EMPTY)) {
+								if (tmpHeader[index].equals("GPS")) {
+									tmpData[index] = "0.0,0.0";
+									log.log(Level.WARNING, "empty GPS placeholder found line #" + lineNumber + " - replace with zero coords");
+								}
+								else {
+									tmpData[index] = "0.0";
+									log.log(Level.WARNING, "empty value placeholder found line #" + lineNumber + " - replace with zero");
+								}
 							}
 							sb.append(tmpData[index]).append(separator);
 						}
@@ -476,9 +478,7 @@ public class CSVReaderWriter {
 							switch (recordSet.get(i).getDataType()) {
 							case GPS_LONGITUDE:
 							case GPS_LATITUDE:
-								if (data.contains(GDE.STRING_MINUS))
-									points[i] = 0;
-								else { //normalize GPS coordinate to enable %9.6f
+								{ //normalize GPS coordinate to enable %9.6f
 									data = data.replace("E", GDE.STRING_EMPTY).replace('W', GDE.CHAR_DASH).replace("N", GDE.STRING_EMPTY).replace('S', GDE.CHAR_DASH).replace(GDE.STRING_COLON, GDE.STRING_EMPTY);
 									if (recordSet.get(i).getUnit().endsWith("'"))
 										data = data.replace(GDE.STRING_DOT, GDE.STRING_EMPTY);

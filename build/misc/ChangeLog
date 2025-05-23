@@ -7,7 +7,7 @@ Generic changes/fixes
 	* update build compliance to release 17 (already documented)
 	
 Device specific changes/fixes
-	* 
+	* OpenTx-Telemetry - fix handling of negative GPS coordinates
 	
 Version 3.9.5 - 14 May 2025
 Generic changes/fixes 
