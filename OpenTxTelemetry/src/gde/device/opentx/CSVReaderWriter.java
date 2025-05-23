@@ -478,8 +478,19 @@ public class CSVReaderWriter {
 							switch (recordSet.get(i).getDataType()) {
 							case GPS_LONGITUDE:
 							case GPS_LATITUDE:
-								{ //normalize GPS coordinate to enable %9.6f
-									data = data.replace("E", GDE.STRING_EMPTY).replace('W', GDE.CHAR_DASH).replace("N", GDE.STRING_EMPTY).replace('S', GDE.CHAR_DASH).replace(GDE.STRING_COLON, GDE.STRING_EMPTY);
+								if (data.endsWith(GDE.STRING_MINUS))
+									points[i] = 0;
+								else { //normalize GPS coordinate to enable %9.6f
+									if (data.endsWith("E") || data.endsWith("N") || data.contains(GDE.STRING_COLON)) {
+										data = data.replace("E", GDE.STRING_EMPTY).replace("N", GDE.STRING_EMPTY).replace(GDE.STRING_COLON, GDE.STRING_EMPTY);
+										if (recordSet.get(i).getUnit().equals("°") && data.charAt(data.length() - 5) == GDE.CHAR_DOT) 
+											recordSet.get(i).setUnit("° '");
+									}
+									else if (data.endsWith("W") || data.endsWith("S")) {
+										data = GDE.STRING_DASH + data.replace("W", GDE.STRING_EMPTY).replace("W", GDE.STRING_EMPTY);
+										if (recordSet.get(i).getUnit().equals("°") && data.charAt(data.length() - 5) == GDE.CHAR_DOT) 
+											recordSet.get(i).setUnit("° '");
+									}
 									if (recordSet.get(i).getUnit().endsWith("'"))
 										data = data.replace(GDE.STRING_DOT, GDE.STRING_EMPTY);
 									else {
