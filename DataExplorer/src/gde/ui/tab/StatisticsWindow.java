@@ -281,7 +281,7 @@ public class StatisticsWindow extends CTabItem {
 		Channel activeChannel = this.channels.getActiveChannel();
 		if (activeChannel != null) {
 			RecordSet activeRecordSet = activeChannel.getActiveRecordSet();
-			if (activeRecordSet != null && !activeRecordSet.isZoomMode() && activeRecordSet.getRecordDataSize(true) > 0 && (forceUpdate || !activeRecordSet.equals(oldRecordSet))) {
+			if (activeRecordSet != null && activeRecordSet.getRecordDataSize(true) > 0 && (forceUpdate || !activeRecordSet.equals(oldRecordSet))) {
 				// cleanup old data table
 				this.dataTable.removeAll();
 

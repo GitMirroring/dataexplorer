@@ -2,9 +2,10 @@ Development history / change log, please read from bottom up
 
 Version 3.9.6 - xx xx 2025
 Generic changes/fixes 
-	* switch using /usr/local/bin/rsync (homebrew rsync) via login shell
+	* enhance build, using login shell calling rsync to load environment
 	* update swt.jar Windows
 	* update build compliance to release 17 (already documented)
+	* fix statistics update while switching record set, even if a zoomed part of the data are visible
 	
 Device specific changes/fixes
 	* OpenTx-Telemetry - fix handling of negative GPS coordinates
