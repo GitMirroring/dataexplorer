@@ -683,6 +683,9 @@ public final class RecordSet extends AbstractRecordSet {
 		// add all others
 		for (int i = 0; i < this.size(); ++i) {
 			final Record record = this.get(i);
+//			if (record.getName().startsWith("Höhe") || record.getName().startsWith("StartR")) {
+//				log.log(Level.OFF, record.getName() + " size = " + record.size() + " zoomTimeOffset = " + record.zoomTimeOffset + " drawTimeWidth = " + record.drawTimeWidth);
+//			}
 			if (record.size() > 0 && record.ordinal != this.valueGridRecordOrdinal && !record.isScaleSyncMaster()) displayRecords.add(record);
 		}
 
@@ -1329,6 +1332,9 @@ public final class RecordSet extends AbstractRecordSet {
 		} else {
 			if (!this.isZoomMode) {
 				for (Record record : this.getValues()) {
+					record.zoomOffset = 0;
+					record.zoomTimeOffset = 0.0;
+					record.drawTimeWidth = record.getMaxTime_ms();
 					record.minZoomScaleValue = record.minScaleValue;
 					record.maxZoomScaleValue = record.maxScaleValue;
 				}

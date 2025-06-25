@@ -6,6 +6,7 @@ Generic changes/fixes
 	* update swt.jar Windows
 	* update build compliance to release 17 (already documented)
 	* fix statistics update while switching record set, even if a zoomed part of the data are visible
+	* fix record set initialization, setting visibility after zoom
 	
 Device specific changes/fixes
 	* OpenTx-Telemetry - fix handling of negative GPS coordinates

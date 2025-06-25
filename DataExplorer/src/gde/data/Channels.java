@@ -164,8 +164,8 @@ public final class Channels extends HashMap<Integer, Channel> {
 	 * @param channelName assuming p.e. " 1 : Ausgang"
 	 */
 	public void switchChannel(String channelName) {
-		RecordSet recordSet = this.getActiveChannel().getActiveRecordSet();
-		if (recordSet != null) recordSet.resetZoomAndMeasurement();
+//		RecordSet recordSet = this.getActiveChannel().getActiveRecordSet();
+//		if (recordSet != null) recordSet.resetZoomAndMeasurement();
 
 		this.switchChannel(Integer.valueOf(channelName.split(GDE.STRING_COLON)[0].trim()).intValue(), GDE.STRING_EMPTY);
 	}
@@ -212,7 +212,7 @@ public final class Channels extends HashMap<Integer, Channel> {
 					if (!recordSet.hasDisplayableData) {
 						recordSet.loadFileData(activeChannel.getFullQualifiedFileName(), true);
 					}
-					recordSet.resetZoomAndMeasurement();
+					//recordSet.resetZoomAndMeasurement();
 					if (recordSet.isRecalculation) recordSet.checkAllDisplayable(); // updates graphics window
 					recordSet.updateVisibleAndDisplayableRecordsForTable();
 				}

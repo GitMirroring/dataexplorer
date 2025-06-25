@@ -3243,16 +3243,20 @@ public class DataExplorer extends Composite {
 							if (DataExplorer.this.isTmpWriteStop) break;
 
 							String tmpFilePath = Settings.getApplHomePath() + GDE.STRING_FILE_SEPARATOR_UNIX + GDE.TEMP_FILE_STEM;
-							if (log.isLoggable(Level.FINE)) log.log(Level.FINE, "attempt to save a temporary file(s)");
-							if (DataExplorer.this.analyzer.getActiveChannel() != null && DataExplorer.this.analyzer.getActiveChannel().getType() == ChannelTypes.TYPE_CONFIG) {
-								if (DataExplorer.this.analyzer.getActiveChannel().getActiveRecordSet() != null)
-									OsdReaderWriter.write(tmpFilePath + GDE.FILE_ENDING_DOT_OSD, DataExplorer.this.analyzer.getActiveChannel(), GDE.DATA_EXPLORER_FILE_VERSION_INT);
-							} else
-								for (int i = 1; i <= DataExplorer.this.analyzer.getChannels().size() && DataExplorer.this.analyzer.getActiveChannel().getActiveRecordSet() != null;
-										++i) {
-									if (DataExplorer.this.analyzer.getChannels().get(i).size() > 0)
-										OsdReaderWriter.write(tmpFilePath + "_" + i + GDE.FILE_ENDING_DOT_OSD, DataExplorer.this.analyzer.getChannels().get(i), GDE.DATA_EXPLORER_FILE_VERSION_INT);
+							if (DataExplorer.this.analyzer.getActiveChannel() != null && DataExplorer.this.analyzer.getActiveChannel().getActiveRecordSet() != null 
+									&& !DataExplorer.this.analyzer.getActiveChannel().getActiveRecordSet().isZoomMode()) {
+								if (log.isLoggable(Level.FINE)) log.log(Level.FINE, "attempt to save a temporary file(s)");
+								if (DataExplorer.this.analyzer.getActiveChannel() != null && DataExplorer.this.analyzer.getActiveChannel().getType() == ChannelTypes.TYPE_CONFIG) {
+									if (DataExplorer.this.analyzer.getActiveChannel().getActiveRecordSet() != null)
+										OsdReaderWriter.write(tmpFilePath + GDE.FILE_ENDING_DOT_OSD, DataExplorer.this.analyzer.getActiveChannel(), GDE.DATA_EXPLORER_FILE_VERSION_INT);
 								}
+								else {
+									for (int i = 1; i <= DataExplorer.this.analyzer.getChannels().size() && DataExplorer.this.analyzer.getActiveChannel().getActiveRecordSet() != null; ++i) {
+										if (DataExplorer.this.analyzer.getChannels().get(i).size() > 0)
+											OsdReaderWriter.write(tmpFilePath + "_" + i + GDE.FILE_ENDING_DOT_OSD, DataExplorer.this.analyzer.getChannels().get(i), GDE.DATA_EXPLORER_FILE_VERSION_INT);
+									}
+								}
+							}
 						} catch (Exception e) {
 							log.log(Level.WARNING, e.getMessage(), e);
 						}
