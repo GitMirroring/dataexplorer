@@ -1064,9 +1064,9 @@ public class TelemetryData {
 				label = param;
 				//Insert a new sensor and exit the queue
 				if (timestamp == 0 && paramId == 0) {
-					if (TelemetryData.log.isLoggable(Level.INFO)) TelemetryData.log.log(Level.INFO, "adding sensor " + label);
 					TelemetrySensor sensor = new TelemetrySensor(deviceId, label);
-					this.data.add(sensor);
+					if (this.data.add(sensor))
+						if (TelemetryData.log.isLoggable(Level.INFO)) TelemetryData.log.log(Level.INFO, "adding sensor " + label);
 					return;
 				}
 				//call the parameter label
