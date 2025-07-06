@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with GNU DataExplorer.  If not, see <https://www.gnu.org/licenses/>.
 
-    Copyright (c) 2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024 Winfried Bruegmann
+    Copyright (c) 2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025 Winfried Bruegmann
     							2016,2017,2018,2019 Thomas Eickert
 ****************************************************************************************/
 package gde.config;
@@ -3356,7 +3356,7 @@ public final class Settings extends Properties {
 	 */
 	public List<String> getServiceUpdateList() {
 		List<String> deviceList = new ArrayList<>();
-		deviceList.add("IGCAdapter");
+//		deviceList.add("IGCAdapter");
 //		deviceList.add("HoTTAdapter");
 //		deviceList.add("HoTTAdapterM");
 //		deviceList.add("HoTTAdapter2");

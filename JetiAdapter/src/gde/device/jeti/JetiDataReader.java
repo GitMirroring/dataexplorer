@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with GNU DataExplorer.  If not, see <https://www.gnu.org/licenses/>.
 
-    Copyright (c) 2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024 Winfried Bruegmann
+    Copyright (c) 2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025 Winfried Bruegmann
 ****************************************************************************************/
 package gde.device.jeti;
 
@@ -129,31 +129,29 @@ public class JetiDataReader {
 					if (JetiDataReader.application.getMenuBar() != null) device.matchModelNameObjectKey(data.getModelName());
 
 					//find best fit number of values to time step
-					int maxHit = 0, numValues = 0;
+					int numValues = 0;
 					Map<Integer, Integer> valuesMap = new HashMap<Integer, Integer>();
 					for (TelemetrySensor telemetrySensor : recordSetData) {
-						boolean isTimeStepEvaluated = false;
-						if (JetiDataReader.log.isLoggable(Level.INFO)) JetiDataReader.log.log(Level.INFO, telemetrySensor.getName() + " - ");
-						for (TelemetryData.TelemetryVar dataVar : telemetrySensor.getVariables()) {
-							int dataItemsSize = dataVar.getItems().size();
-							if (JetiDataReader.log.isLoggable(Level.INFO)) JetiDataReader.log.log(Level.INFO, dataVar.getName() + " data items size = " + dataItemsSize);
-							if (dataVar.getItems().size() > 3) { //Alarm has 3 values start time, alarm time , end time
-								if (valuesMap.containsKey(dataItemsSize) && dataItemsSize > 1) { //for sensor statistics two times identical num of values
-									valuesMap.put(dataItemsSize, valuesMap.get(dataItemsSize) + 1);
-									maxHit = Math.max(maxHit, valuesMap.get(dataItemsSize));
-									if (!isTimeStepEvaluated && dataVar.getTimeSteps().size() > 0) {
-										if (telemetrySensor.getName().length() <= 8 )
-											reverseChannelStatistics.append(String.format(Locale.getDefault(), "%s\t\tmin %.3fsec avg %.3fsec max %.3fsec at %s", telemetrySensor.getName(), dataVar.getTimeSteps().getMinValue()/1000., dataVar.getTimeSteps().getAvgValue()/1000., dataVar.getTimeSteps().getMaxValue()/1000., TimeLine.getFomatedTimeWithUnit(dataVar.getTimeSteps().getMaxValueTimeStamp()))).append(GDE.CHAR_NEW_LINE);
-										else 
-											reverseChannelStatistics.append(String.format(Locale.getDefault(), "%s\tmin %.3fsec avg %.3fsec max %.3fsec at %s", telemetrySensor.getName(), dataVar.getTimeSteps().getMinValue()/1000., dataVar.getTimeSteps().getAvgValue()/1000., dataVar.getTimeSteps().getMaxValue()/1000., TimeLine.getFomatedTimeWithUnit(dataVar.getTimeSteps().getMaxValueTimeStamp()))).append(GDE.CHAR_NEW_LINE);
-										if (JetiDataReader.log.isLoggable(Level.INFO)) JetiDataReader.log.log(Level.INFO, String.format(Locale.getDefault(), "%10s: min %.3fsec avg %.3fsec max %.3fsec at %s", telemetrySensor.getName(), dataVar.getTimeSteps().getMinValue()/1000., dataVar.getTimeSteps().getAvgValue()/1000., dataVar.getTimeSteps().getMaxValue()/1000., TimeLine.getFomatedTimeWithUnit(dataVar.getTimeSteps().getMaxValueTimeStamp())));
-										isTimeStepEvaluated = true;
-									}
+						if (telemetrySensor.getId() != 0) {
+							boolean isTimeStepEvaluated = false;
+							if (JetiDataReader.log.isLoggable(Level.INFO)) JetiDataReader.log.log(Level.INFO, telemetrySensor.getName() + " -  length " + telemetrySensor.getName().length());
+							for (TelemetryData.TelemetryVar dataVar : telemetrySensor.getVariables()) {
+								int dataItemsSize = dataVar.getItems().size();
+								if (JetiDataReader.log.isLoggable(Level.INFO)) JetiDataReader.log.log(Level.INFO, dataVar.getName() + " data items size = " + dataItemsSize);
+								if (dataVar.getItems().size() > 3) { //Alarm has 3 values start time, alarm time , end time
+										if (!isTimeStepEvaluated && dataVar.getTimeSteps().size() > 0) {
+											int nameLength = telemetrySensor.getName().length();
+											if (nameLength <= 5)
+												reverseChannelStatistics.append(String.format(Locale.getDefault(), "%-8s\t\tmin %.3fsec avg %.3fsec max %.3fsec at %s", telemetrySensor.getName(), dataVar.getTimeSteps().getMinValue()/1000., dataVar.getTimeSteps().getAvgValue()/1000., dataVar.getTimeSteps().getMaxValue()/1000., TimeLine.getFomatedTimeWithUnit(dataVar.getTimeSteps().getMaxValueTimeStamp()))).append(GDE.CHAR_NEW_LINE);
+											else
+												reverseChannelStatistics.append(String.format(Locale.getDefault(), "%-8s\tmin %.3fsec avg %.3fsec max %.3fsec at %s", telemetrySensor.getName(), dataVar.getTimeSteps().getMinValue()/1000., dataVar.getTimeSteps().getAvgValue()/1000., dataVar.getTimeSteps().getMaxValue()/1000., TimeLine.getFomatedTimeWithUnit(dataVar.getTimeSteps().getMaxValueTimeStamp()))).append(GDE.CHAR_NEW_LINE);
+											if (JetiDataReader.log.isLoggable(Level.INFO)) JetiDataReader.log.log(Level.INFO, String.format(Locale.getDefault(), "%10s: min %.3fsec avg %.3fsec max %.3fsec at %s", telemetrySensor.getName(), dataVar.getTimeSteps().getMinValue()/1000., dataVar.getTimeSteps().getAvgValue()/1000., dataVar.getTimeSteps().getMaxValue()/1000., TimeLine.getFomatedTimeWithUnit(dataVar.getTimeSteps().getMaxValueTimeStamp())));
+											isTimeStepEvaluated = true;
+										}
+										valuesMap.put(dataItemsSize, 1);
 								}
-								else
-									valuesMap.put(dataItemsSize, 1);
+								if (JetiDataReader.log.isLoggable(Level.FINE)) JetiDataReader.log.log(Level.FINE, String.format("%10s [%s]", dataVar.getName(), dataVar.getUnit()));
 							}
-							if (JetiDataReader.log.isLoggable(Level.FINE)) JetiDataReader.log.log(Level.FINE, String.format("%10s [%s]", dataVar.getName(), dataVar.getUnit()));
 						}
 					}
 					Integer[] occurrence = valuesMap.values().toArray(new Integer[1]);

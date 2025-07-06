@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with GNU DataExplorer.  If not, see <https://www.gnu.org/licenses/>.
 
-    Copyright (c) 2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024 Winfried Bruegmann
+    Copyright (c) 2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025 Winfried Bruegmann
     							2016,2017,2018,2019 Thomas Eickert
 ****************************************************************************************/
 package gde;
@@ -106,7 +106,7 @@ public class GDE {
 	private static boolean									isWithUi													= false;
 
 	// ****** begin global constants section *******
-	public static final String							VERSION														= "Version 3.9.6 beta 3"; // check device update list in settings getServiceUpdateList()																						//$NON-NLS-1$
+	public static final String							VERSION														= "Version 3.9.6"; // check device update list in settings getServiceUpdateList()																						//$NON-NLS-1$
 	public static final int									VERSION_NUMBER										= GDE.VERSION.contains("beta") 
 															? Integer.parseInt(GDE.VERSION.substring(8, 8+5).replace(GDE.STRING_DOT, GDE.STRING_EMPTY)) - 1
 															: Integer.parseInt(GDE.VERSION.substring(8, 8+5).replace(GDE.STRING_DOT, GDE.STRING_EMPTY));
