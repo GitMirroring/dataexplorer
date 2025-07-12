@@ -44,9 +44,9 @@ public class GpsTaskResult extends HashMap<String, String> {
 		gpsLaps.add(lap);
 	}
 
-// LSTAT{"allTrianglesAvgSpeed":7.65,"averageTriangleTime":126.31,"currentTime":1655283214352,"distanceCovered":1597.1399,"flightStart":1655281983030,"laps":9,"lapsStats":[],"lastStartAltitude":121.0,"lastStartCrossing":1655283119830,"lastTriangleAvgSpeed":13.11,"lastTriangleIndex":115.0,"lastTriangleTime":73.65,"scoringCode":"0000","signatureValid":false,"startAltitude":244.0,"startEntryAlti":244.0,"startEntrySpeed":9.291832,"startPenaltyPoints":138,"taskHeight":200,"taskLength":200,"timeElapsedSeconds":1231,"triangleAlt":-10.0,"zoneEntered":false}
-
 	/**
+	 * LRCE_GPS_TRIANGLE:{"flightTime":288,"laps":2,"penaltyPoints":0,"penaltyZoneHit":false,"speed":6.7061486,"startAlt":221.9,"startSpeed":18.133545,"startTime":1751725335248,"taskHeight":250,"taskLen":200}
+	 * LSTAT{"allTrianglesAvgSpeed":7.65,"averageTriangleTime":126.31,"currentTime":1655283214352,"distanceCovered":1597.1399,"flightStart":1655281983030,"laps":9,"lapsStats":[],"lastStartAltitude":121.0,"lastStartCrossing":1655283119830,"lastTriangleAvgSpeed":13.11,"lastTriangleIndex":115.0,"lastTriangleTime":73.65,"scoringCode":"0000","signatureValid":false,"startAltitude":244.0,"startEntryAlti":244.0,"startEntrySpeed":9.291832,"startPenaltyPoints":138,"taskHeight":200,"taskLength":200,"timeElapsedSeconds":1231,"triangleAlt":-10.0,"zoneEntered":false}
 	 * add entries from string
 	 * @param input "allTrianglesAvgSpeed":3.63,"averageTriangleTime":266.06,"currentTime":1653484985032,"distanceCovered":0.0,"flightStart":1653484452960,"laps":2,"lapsStats":[],"lastStartAltitude":77.0,"lastStartCrossing":1653484985080,"lastTriangleAvgSpeed":2.34,"lastTriangleIndex":505.41,"lastTriangleTime":412.05,"scoringCode":"0000","signatureValid":false,"startAltitude":194.0,"startEntryAlti":194.0,"startEntrySpeed":25.672728,"startPenaltyPoints":94,"taskHeight":200,"taskLength":200,"timeElapsedSeconds":532,"triangleAlt":-29.0,"zoneEntered":false
 	 */
@@ -59,27 +59,43 @@ public class GpsTaskResult extends HashMap<String, String> {
 	}
 
 	public double getAllTrianglesAvgSpeed() {
-		return Double.parseDouble(this.get("allTrianglesAvgSpeed"));
+		if (this.get("allTrianglesAvgSpeed") != null)
+			return Double.parseDouble(this.get("allTrianglesAvgSpeed"));
+		else if (this.get("speed") != null)
+			return Double.parseDouble(this.get("speed"));
+		return 0.0;
 	}
 
 	public int getAverageTriangleTime() {
-		return Double.valueOf(this.get("averageTriangleTime")).intValue();
+		if (this.get("averageTriangleTime") != null)
+			return Double.valueOf(this.get("averageTriangleTime")).intValue();
+		return 0;
 	}
 
 	public long getCurrentTime() {
-		return Long.parseLong(this.get("currentTime"));
+		if (this.get("currentTime") != null)
+			return Long.parseLong(this.get("currentTime"));
+		return 0L;
 	}
 
 	public double getDistanceCovered() {
-		return Double.parseDouble(this.get("distanceCovered"));
+		if (this.get("distanceCovered") != null)
+			return Double.parseDouble(this.get("distanceCovered"));
+		return 0.0;
 	}
 
 	public long getFlightStart() {
-		return Long.parseLong(this.get("flightStart"));
+		if (this.get("flightStart") != null)
+			return Long.parseLong(this.get("flightStart"));
+		else if (this.get("startTime") != null)
+			return Long.parseLong(this.get("startTime"));
+		return 0L;
 	}
 
 	public int getLaps() {
-		return Integer.parseInt(this.get("laps"));
+		if (this.get("laps") != null)
+			return Integer.parseInt(this.get("laps"));
+		return 0;
 	}
 
 	public Vector<GpsLap> getLapsStats() {
@@ -91,39 +107,64 @@ public class GpsTaskResult extends HashMap<String, String> {
 	}
 
 	public double getLastStartAltitude() {
-		return Double.parseDouble(this.get("lastStartAltitude"));
+		if (this.get("lastStartAltitude") != null)
+			return Double.parseDouble(this.get("lastStartAltitude"));
+		return 0.0;
 	}
 
 	public long getLastStartCrossing() {
-		return Long.parseLong(this.get("lastStartCrossing"));
+		if (this.get("lastStartCrossing") != null)
+			return Long.parseLong(this.get("lastStartCrossing"));
+		return 0L;
 	}
 
 	public double getLastTriangleAvgSpeed() {
-		return Double.parseDouble(this.get("lastTriangleAvgSpeed"));
+		if (this.get("lastTriangleAvgSpeed") != null)
+			return Double.parseDouble(this.get("lastTriangleAvgSpeed"));
+		return 0.0;
 	}
 
 	public double getLastTriangleIndex() {
-		return Double.parseDouble(this.get("lastTriangleIndex"));
+		if (this.get("lastTriangleIndex") != null)
+			return Double.parseDouble(this.get("lastTriangleIndex"));
+		return 0.0;
 	}
 
 	public double getLastTriangleTime() {
-		return Double.parseDouble(this.get("lastTriangleTime"));
+		if (this.get("lastTriangleTime") != null)
+			return Double.parseDouble(this.get("lastTriangleTime"));
+		else 
+			return 0.0;
 	}
 
 	public int getScoringCode() {
-		return Integer.parseInt(this.get("scoringCode"));
+		if (this.get("scoringCode") != null)
+			return Integer.parseInt(this.get("scoringCode"));
+		return 0;
 	}
 
 	public double getStartAltitude() {
-		return Double.parseDouble(this.get("startAltitude"));
+		if (this.get("startAltitude") != null)
+			return Double.parseDouble(this.get("startAltitude"));
+		else if (this.get("startAlt") != null)
+			return Double.parseDouble(this.get("startAlt"));
+		return 0.0;
 	}
 
 	public double getStartEntryAlti() {
-		return Double.parseDouble(this.get("startEntryAlti"));
+		if (this.get("startEntryAlti") != null)
+			return Double.parseDouble(this.get("startEntryAlti"));
+		else if (this.get("startAlt") != null)
+			return Double.parseDouble(this.get("startAlt"));
+		return 0.0;
 	}
 
 	public double getStartEntrySpeed() {
-		return Double.parseDouble(this.get("startEntrySpeed"));
+		if (this.get("startEntrySpeed") != null)
+			return Double.parseDouble(this.get("startEntrySpeed"));
+		else if (this.get("startSpeed") != null)
+			return Double.parseDouble(this.get("startSpeed"));
+		return 0.0;
 	}
 
 	public boolean getSignatureValid() {
@@ -131,7 +172,11 @@ public class GpsTaskResult extends HashMap<String, String> {
 	}
 
 	public int getStartPenaltyPoints() {
-		return Integer.parseInt(this.get("startPenaltyPoints"));
+		if (this.get("startPenaltyPoints") != null)
+			return Integer.parseInt(this.get("startPenaltyPoints"));
+		else if (this.get("penaltyPoints") != null)
+			return Integer.parseInt(this.get("penaltyPoints"));
+		return 0;
 	}
 
 	public int getTaskHeight() {
@@ -139,11 +184,20 @@ public class GpsTaskResult extends HashMap<String, String> {
 	}
 
 	public int getTaskLength() {
-		return Integer.parseInt(this.get("taskLength"));
+		if (this.get("taskLength") != null)
+			return Integer.parseInt(this.get("taskLength"));
+		else if (this.get("taskLen") != null)
+			return Integer.parseInt(this.get("taskLen"));
+		return 0;
 	}
 
 	public int getTimeElapsedSeconds() {
-		return Integer.parseInt(this.get("timeElapsedSeconds"));
+		if (this.get("timeElapsedSeconds") != null)
+			return Integer.parseInt(this.get("timeElapsedSeconds"));
+		else if (this.get("flightTime") != null)
+			return Integer.parseInt(this.get("flightTime"));
+		else 
+			return 0;
 	}
 
 	public double getTriangleAlt() {
@@ -151,7 +205,11 @@ public class GpsTaskResult extends HashMap<String, String> {
 	}
 
 	public boolean getZoneEntered() {
-		return Boolean.parseBoolean(this.get("zoneEntered"));
+		if (this.get("zoneEntered") != null)
+			return Boolean.parseBoolean(this.get("zoneEntered"));
+		else if (this.get("penaltyZoneHit") != null)
+			return Boolean.parseBoolean(this.get("penaltyZoneHit"));
+		return false;
 	}
 	
 	public String getFormatedTime(int time) {
@@ -163,7 +221,10 @@ public class GpsTaskResult extends HashMap<String, String> {
 		StringBuilder sb = new StringBuilder("\n\n");
 		sb.append(String.format("Task: %s  Date Time: %s  Duration: %s [mm:ss]\n", taskType, StringHelper.getFormatedTime("yyyy-MM-dd, HH:mm:ss", getFlightStart()), getFormatedTime(getTimeElapsedSeconds())));
 		sb.append(String.format("Start Alt/Speed: %3.0f m/%6.2f km/h  Penalty: %d  SavetyZoneHit: %b\n", getStartEntryAlti(), getStartEntrySpeed()*3.6, getStartPenaltyPoints(), getZoneEntered()));
-		sb.append(String.format("Laps: %2d  AvgSpeed: %5.2f km/h  AvgLapTime: %s\n", getLaps(), getAllTrianglesAvgSpeed()*3.6, getFormatedTime(getAverageTriangleTime())));
+		if (this.get("averageTriangleTime") != null)
+			sb.append(String.format("Laps: %2d  AvgSpeed: %5.2f km/h  AvgLapTime: %s\n", getLaps(), getAllTrianglesAvgSpeed()*3.6, getFormatedTime(getAverageTriangleTime())));
+		else
+			sb.append(String.format("Laps: %2d  AvgSpeed: %5.2f km/h  AvgLapTime: %s\n", getLaps(), getAllTrianglesAvgSpeed()*3.6, getFormatedTime(getTimeElapsedSeconds() / getLaps())));
 		
 		
 		sb.append("\nLAP INDEX DURATION LAP-TIME  ALT  ∆ALT LapSpeed IndexSpeed  Ratio   Sink");

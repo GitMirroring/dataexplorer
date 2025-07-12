@@ -25,6 +25,8 @@ public class GpsLap extends HashMap<String, String>{
 	private static final long serialVersionUID = -415113738338117060L;
 
 	/**
+	 * LISTAT:LAP:{"alt":74,"altGainLos":-163,"index":118.03,"time":100.62}
+	 * LRCE_TRIANGLE_LAP_STAT:{"alt":92,"altGainLos":-58,"index":115.25492,"time":86.0}
 	 * @param lapInput "alt":106,"altGainLos":-88,"index":155,"time":120.07
 	 */
 	public GpsLap(String lapInput) {
@@ -33,6 +35,8 @@ public class GpsLap extends HashMap<String, String>{
 	}
 	
 	/**
+	 * LISTAT:LAP:{"alt":74,"altGainLos":-163,"index":118.03,"time":100.62}
+	 * LRCE_TRIANGLE_LAP_STAT:{"alt":92,"altGainLos":-58,"index":115.25492,"time":86.0}
 	 * @param input "alt":106,"altGainLos":-88,"index":155,"time":120.07
 	 */
 	public void add(String input) {

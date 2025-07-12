@@ -11,6 +11,7 @@ Generic changes/fixes
 Device specific changes/fixes
 	* OpenTx-Telemetry - fix handling of negative GPS coordinates
 	* JetiAdapter - add some INFO traces
+	* IGCAdapter - update to support new GPS triangle parsing
 	
 Version 3.9.5 - 14 May 2025
 Generic changes/fixes 
