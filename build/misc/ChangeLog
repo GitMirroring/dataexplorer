@@ -1,6 +1,6 @@
 Development history / change log, please read from bottom up
 
-Version 3.9.6 - xx xx 2025
+Version 3.9.6 - 14 Jul 2025
 Generic changes/fixes 
 	* enhance build, using login shell calling rsync to load environment
 	* update swt.jar Windows

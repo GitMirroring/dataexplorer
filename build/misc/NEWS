@@ -1,24 +1,27 @@
-GNU DataExplorer - News - comes with Version 3.9.5 - 14 May 2025
+GNU DataExplorer - News - comes with Version 3.9.6 - 14 Jul 2025
 
 Generic changes/fixes 
-	* update default grid color main graphics dark mode
+	* enhance build, using login shell calling rsync to load environment
+	* update swt.jar Windows
+	* update build compliance to release of Java 17 (already documented)
+	* fix statistics update while switching record set, even if a zoomed part of the data are visible
+	* fix record set initialization, setting visibility after zoom
 	
 Device specific changes/fixes
-	* HoTTAdapter* - update MDL viewer plug-in to versioon 1408 and add dark theme support
-	* Raytronic C60 - initial support
-	* GPS-Logger3 - add HoTT vario dead band switch
-	* IGCAdapter - add support for extensions defined by J record and values in K records of IGC
-	* OpenTx-Telemetrie - Ethos GPS-coordinates support (Latitude/Longitude without a unit, assume degree only)
+	* OpenTx-Telemetry - fix handling of negative GPS coordinates
+	* JetiAdapter - add some INFO traces
+	* IGCAdapter - update to support new GPS triangle parsing
 		
 Allgemeine Änderungen/Korrekturen
-	* Standard Farbe der Grafikhilfslinien angepasst
-
+	* Build verbessert, mit Login-Shell und Aufruf von rsync zum Laden der Umgebungsvariablen
+	* swt.jar Windows aktualisiert
+	* Aktualisierung der Build-Konformität bezügliich Java Release 17 (bereits dokumentiert)
+	* Update der Statistik beim Wechsel des Datensatzes, auch wenn ein gezoomter Teil der Daten sichtbar ist
+	
 Gerätespezifische Änderungen/Korrekturen
-	* HoTTAdapter* - Aktualisierung des MDL-Viewer-Plug-ins auf Version 1408, Unterstützung für dunkle Themen
-	* Raytronic C60 - initiale Unterstützung
-	* GPS-Logger3 - HoTT Vario Totzonenschalter hinzugefügt
-	* IGCAdapter - Unterstützung für Erweiterungen, die durch J-Records und Werte in K-Records von IGC definiert sind
-	* OpenTx-Telemetrie - Ethos GPS-Koordinaten Unterstützung (Breitengrad/Längengrad ohne Einheit werden als Grad Angaben übernommmen)
+	* OpenTx-Telemetry - Handling mit negatiiven Koordinaten verbessert
+	* JetiAdapter - einige INFO Ausgaben hinzugefügt, Statistikausgabe erfolgt jetzt immer 
+	* IGCAdapter - Update zur Unterstützung der neuen GPS-Dreieck-Analyse
 
 
 
