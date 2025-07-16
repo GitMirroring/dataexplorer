@@ -1,5 +1,12 @@
 Development history / change log, please read from bottom up
 
+Version 3.9.7 - xx yyy 2025
+Generic changes/fixes 
+	* 
+	
+Device specific changes/fixes
+	* GPS-Logger2/3 - add warning message regarding not unique measurement name with index hint to resolve it editing XML
+
 Version 3.9.6 - 14 Jul 2025
 Generic changes/fixes 
 	* enhance build, using login shell calling rsync to load environment

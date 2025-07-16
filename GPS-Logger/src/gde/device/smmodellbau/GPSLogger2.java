@@ -22,12 +22,16 @@ import gde.GDE;
 import gde.data.Record;
 import gde.data.RecordSet;
 import gde.device.DeviceConfiguration;
+import gde.device.smmodellbau.gpslogger.MessageIds;
 import gde.exception.DataInconsitsentException;
 import gde.log.Level;
+import gde.messages.Messages;
 import gde.utils.StringHelper;
 
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 
 import javax.xml.bind.JAXBException;
@@ -71,6 +75,17 @@ public class GPSLogger2 extends GPSLogger {
 	 */
 	public GPSLogger2(DeviceConfiguration deviceConfig) {
 		super(deviceConfig);
+	}
+
+	/**
+	 * query if the measurements get build up dynamically while reading (import) the data
+	 * the implementation must create measurementType while reading the import data,
+	 * refer to Weatronic-Telemetry implementation DataHeader
+	 * @return true
+	 */
+	@Override
+	public boolean isVariableMeasurementSize() {
+		return true;
 	}
 
 	/**
@@ -157,6 +172,7 @@ public class GPSLogger2 extends GPSLogger {
 						}
 					}
 					else { //already adapted record set stored
+						List<String> recordNamesList = Arrays.asList(recordKeys);
 						for (int i = 0; i < recordKeys.length; i++) {
 							if (!fileRecordsProperties[i].contains("_isActive")) {
 								sb.append(String.format("%02d added measurement set to isCalculation=true -> %s\n", i, recordKeys[i]));
@@ -166,9 +182,14 @@ public class GPSLogger2 extends GPSLogger {
 							else {
 								HashMap<String, String> recordProps = StringHelper.splitString(fileRecordsProperties[i], Record.DELIMITER, Record.propertyKeys);
 								sb.append(String.format("%02d %19s match %19s isAvtive = %s\n", i, recordKeys[i], recordProps.get(Record.NAME), recordProps.get(Record.IS_ACTIVE)));
+								if (!recordKeys[i].equals(recordProps.get(Record.NAME)) && recordNamesList.contains(recordProps.get(Record.NAME))) {
+										log.log(Level.SEVERE, "Found not unique recordName : " + recordProps.get(Record.NAME));
+										application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGW2001) + recordProps.get(Record.NAME) + "\n Index " + i + "/" + recordNamesList.indexOf(recordProps.get(Record.NAME)));
+								}
 								cleanedRecordNames.add(recordKeys[i]);
 								noneCalculationRecordNames.add(recordProps.get(Record.NAME));
-								if (fileRecordsProperties[i].contains("_isActive=false")) recordSet.get(i).setActive(false);
+								if (fileRecordsProperties[i].contains("_isActive=false")) 
+									recordSet.get(i).setActive(false);
 							}
 						}
 					}

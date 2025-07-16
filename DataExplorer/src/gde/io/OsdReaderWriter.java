@@ -499,7 +499,7 @@ public class OsdReaderWriter {
 				HashMap<String, String> recordProperties = StringHelper.splitString(recordsProperties[i], Record.DELIMITER, Record.propertyKeys);
 				MeasurementType gdeMeasurement = device.getMeasurement(channelNumber, i);
 				gdeMeasurement.setName(recordNames[i] = recordProperties.get(Record.NAME));
-				gdeMeasurement.setUnit(recordUnits[i] = recordProperties.get(Record.UNIT));
+				gdeMeasurement.setUnit(recordUnits[i] = recordProperties.getOrDefault(Record.UNIT, GDE.STRING_EMPTY));
 				gdeMeasurement.setSymbol(recordSymbols[i] = recordProperties.getOrDefault(Record.SYMBOL, GDE.STRING_EMPTY));
 				gdeMeasurement.setActive(Boolean.valueOf(recordProperties.get(Record.IS_ACTIVE)));
 			}
