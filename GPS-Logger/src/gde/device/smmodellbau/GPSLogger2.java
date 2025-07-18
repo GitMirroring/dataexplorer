@@ -18,16 +18,6 @@
 ****************************************************************************************/
 package gde.device.smmodellbau;
 
-import gde.GDE;
-import gde.data.Record;
-import gde.data.RecordSet;
-import gde.device.DeviceConfiguration;
-import gde.device.smmodellbau.gpslogger.MessageIds;
-import gde.exception.DataInconsitsentException;
-import gde.log.Level;
-import gde.messages.Messages;
-import gde.utils.StringHelper;
-
 import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -35,6 +25,14 @@ import java.util.List;
 import java.util.Vector;
 
 import javax.xml.bind.JAXBException;
+
+import gde.GDE;
+import gde.data.Record;
+import gde.data.RecordSet;
+import gde.device.DeviceConfiguration;
+import gde.exception.DataInconsitsentException;
+import gde.log.Level;
+import gde.utils.StringHelper;
 
 /**
  * GPS-Logger2 device class, used as template for new device implementations
