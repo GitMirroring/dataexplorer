@@ -5,7 +5,8 @@ Generic changes/fixes
 	* 
 	
 Device specific changes/fixes
-	* GPS-Logger2/3 - add warning message regarding not unique measurement name with index hint to resolve it editing XML
+	* GPS-Logger2/3 - add warning message regarding not unique measurement name and resolve it
+	* GPS-Logger2/3 - use active record set to display variable measurements in dialog
 
 Version 3.9.6 - 14 Jul 2025
 Generic changes/fixes 

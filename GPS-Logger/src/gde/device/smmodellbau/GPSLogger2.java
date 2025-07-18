@@ -78,17 +78,6 @@ public class GPSLogger2 extends GPSLogger {
 	}
 
 	/**
-	 * query if the measurements get build up dynamically while reading (import) the data
-	 * the implementation must create measurementType while reading the import data,
-	 * refer to Weatronic-Telemetry implementation DataHeader
-	 * @return true
-	 */
-	@Override
-	public boolean isVariableMeasurementSize() {
-		return true;
-	}
-
-	/**
 	 * check and adapt stored measurement properties against actual record set records which gets created by device properties XML
 	 * - calculated measurements could be later on added to the device properties XML
 	 * - devices with battery cell voltage does not need to all the cell curves which does not contain measurement values
@@ -160,7 +149,8 @@ public class GPSLogger2 extends GPSLogger {
 								sb.append(String.format("%02d %19s match %19s isAvtive = %s\n", i, recordKeys[i], recordProps.get(Record.NAME), recordProps.get(Record.IS_ACTIVE)));
 								cleanedRecordNames.add(recordKeys[i]);
 								noneCalculationRecordNames.add(recordProps.get(Record.NAME));
-								if (fileRecordsProperties[j].contains("_isActive=false")) recordSet.get(i).setActive(false);
+								if (fileRecordsProperties[j].contains("_isActive=false")) 
+									recordSet.get(i).setActive(false);
 								++j;
 							}
 							else {//some Android saved record sets contain less fileRecordsProperties, mark rest as calculation
@@ -183,8 +173,12 @@ public class GPSLogger2 extends GPSLogger {
 								HashMap<String, String> recordProps = StringHelper.splitString(fileRecordsProperties[i], Record.DELIMITER, Record.propertyKeys);
 								sb.append(String.format("%02d %19s match %19s isAvtive = %s\n", i, recordKeys[i], recordProps.get(Record.NAME), recordProps.get(Record.IS_ACTIVE)));
 								if (!recordKeys[i].equals(recordProps.get(Record.NAME)) && recordNamesList.contains(recordProps.get(Record.NAME))) {
-										log.log(Level.SEVERE, "Found not unique recordName : " + recordProps.get(Record.NAME));
-										application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGW2001) + recordProps.get(Record.NAME) + "\n Index " + i + "/" + recordNamesList.indexOf(recordProps.get(Record.NAME)));
+										log.log(Level.SEVERE, "Found not unique recordName : " + recordProps.get(Record.NAME) + " Index " + i + "/" + recordNamesList.indexOf(recordProps.get(Record.NAME)));				
+										int index = recordNamesList.indexOf(recordProps.get(Record.NAME)) > i ? recordNamesList.indexOf(recordProps.get(Record.NAME)) : i;
+										String newRecordSetName = "_"+recordKeys[index];
+										recordSet.replaceRecordName(recordSet.get(recordKeys[index]), newRecordSetName);
+										recordKeys[index] = newRecordSetName;
+										//application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGW2001) + recordProps.get(Record.NAME) + "\n Index " + i + "/" + recordNamesList.indexOf(recordProps.get(Record.NAME)));
 								}
 								cleanedRecordNames.add(recordKeys[i]);
 								noneCalculationRecordNames.add(recordProps.get(Record.NAME));
