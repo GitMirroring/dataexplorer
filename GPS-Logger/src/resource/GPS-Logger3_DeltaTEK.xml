@@ -394,6 +394,13 @@
                 <active>true</active>
                 <statistics min="true" max="true" avg="true" sigma="false"/>
             </Measurement>
+            <Measurement>
+                <name>temperature ESC_ML</name>
+                <symbol></symbol>
+                <unit>°C</unit>
+                <active>true</active>
+                <statistics sigma="false" avg="true" max="true" min="true"/>
+            </Measurement>
             <Settlements/>
             <ReferenceGroups/>
             <TransitionGroups/>
@@ -829,6 +836,13 @@
                 <unit>m</unit>
                 <active>true</active>
                 <statistics min="true" max="true" avg="true" sigma="false"/>
+            </Measurement>
+            <Measurement>
+                <name>temperature ESC_ML</name>
+                <symbol></symbol>
+                <unit>°C</unit>
+                <active>true</active>
+                <statistics sigma="false" avg="true" max="true" min="true"/>
             </Measurement>
             <Settlements/>
             <ReferenceGroups/>

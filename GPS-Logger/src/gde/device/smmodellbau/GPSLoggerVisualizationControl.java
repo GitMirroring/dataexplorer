@@ -32,6 +32,7 @@ import gde.ui.SWTResourceManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.eclipse.swt.SWT;
@@ -111,28 +112,35 @@ public class GPSLoggerVisualizationControl extends Composite {
 		{
 			int activeChannelNumber = application.getActiveChannelNumber();
 			RecordSet activeRecordSet = application.getActiveRecordSet();
+			List<MeasurementType> measurementNames = this.device.getChannelMeasuremtsReplacedNames(this.channelConfigNumber);
+			MeasurementType measurementType;
 			
 			if (this.channelConfigNumber == 1) {
 				int Ai = 1;
 				if (activeChannelNumber == 1 && activeRecordSet != null) {
 					for (int i = this.measurementOffset; i < this.measurementOffset + this.measurementCount; i++) {
-						MeasurementType measurementType = this.device.getChannelMeasuremtsReplacedNames(this.channelConfigNumber).get(i);
-						if (this.typeName.startsWith(Messages.getString(MessageIds.GDE_MSGT2012))) { //M-Link
-							if (i < activeRecordSet.size()) 
-								measurementType = getRecordSetMeasurementType(activeRecordSet, i);
-							this.measurementTypes.add(new MeasurementControlConfigurable(this, this.dialog, this.channelConfigNumber, i, measurementType, this.device,
-											1, GDE.STRING_BLANK + (i - this.measurementOffset), GPSLoggerVisualizationControl.MLINK_EXTEND_ML));
-							this.device.storeDeviceProperties();
+						try {
+							measurementType = measurementNames.get(i);
+							if (this.typeName.startsWith(Messages.getString(MessageIds.GDE_MSGT2012))) { //M-Link
+								if (i < activeRecordSet.size()) 
+									measurementType = getRecordSetMeasurementType(activeRecordSet, i);
+								this.measurementTypes.add(new MeasurementControlConfigurable(this, this.dialog, this.channelConfigNumber, i, measurementType, this.device,
+												1, GDE.STRING_BLANK + (i - this.measurementOffset), GPSLoggerVisualizationControl.MLINK_EXTEND_ML));
+								this.device.storeDeviceProperties();
+							}
+							else if (this.typeName.startsWith(Messages.getString(MessageIds.GDE_MSGT2011)) && i >= this.measurementOffset + this.measurementCount - 3) { //UniLog
+								if (i < activeRecordSet.size()) 
+									measurementType = getRecordSetMeasurementType(activeRecordSet, i);
+								this.measurementTypes.add(new MeasurementControlConfigurable(this, this.dialog, this.channelConfigNumber, i,
+										measurementType, this.device, 1, "A" + Ai++, GPSLoggerVisualizationControl.UNILOG_EXTEND_UL)); //$NON-NLS-1$
+								this.device.storeDeviceProperties();
+							}
+							else {
+								this.measurementTypes.add(new MeasurementControl(this, this.dialog, this.channelConfigNumber, i, measurementType, this.device, 1));
+							}
 						}
-						else if (this.typeName.startsWith(Messages.getString(MessageIds.GDE_MSGT2011)) && i >= this.measurementOffset + this.measurementCount - 3) { //UniLog
-							if (i < activeRecordSet.size()) 
-								measurementType = getRecordSetMeasurementType(activeRecordSet, i);
-							this.measurementTypes.add(new MeasurementControlConfigurable(this, this.dialog, this.channelConfigNumber, i,
-									measurementType, this.device, 1, "A" + Ai++, GPSLoggerVisualizationControl.UNILOG_EXTEND_UL)); //$NON-NLS-1$
-							this.device.storeDeviceProperties();
-						}
-						else {
-							this.measurementTypes.add(new MeasurementControl(this, this.dialog, this.channelConfigNumber, i, measurementType, this.device, 1));
+						catch (Exception e) {
+							log.log(Level.WARNING, e.getMessage());
 						}
 					} 
 				} else {
@@ -150,17 +158,23 @@ public class GPSLoggerVisualizationControl extends Composite {
 					//Unilog 26=voltage_UL 27=current_UL 28=power_UL 29=revolution_UL 30=voltageRx_UL 31=altitude_UL 32=a1_UL 33=a2_UL 34=a3_UL;
 					//M-LINK 35=valAdd00 36=valAdd01 37=valAdd02 38=valAdd03 39=valAdd04 40=valAdd05 41=valAdd06 42=valAdd07 43=valAdd08 44=valAdd09 45=valAdd10 46=valAdd11 47=valAdd12 48=valAdd13 49=valAdd14;
 					for (int i = this.measurementOffset; i < this.measurementOffset + this.measurementCount; i++) {
-						if (this.typeName.startsWith(Messages.getString(MessageIds.GDE_MSGT2012))) {
-							this.measurementTypes.add(new MeasurementControlConfigurable(this, this.dialog, this.channelConfigNumber, i, this.device.getChannelMeasuremtsReplacedNames(this.channelConfigNumber).get(i), this.device,
-											1, GDE.STRING_BLANK + (i - this.measurementOffset), GPSLoggerVisualizationControl.MLINK_EXTEND_ML));
+						try {
+							measurementType = this.device.getChannelMeasuremtsReplacedNames(this.channelConfigNumber).get(i);
+							if (this.typeName.startsWith(Messages.getString(MessageIds.GDE_MSGT2012))) {
+								this.measurementTypes.add(new MeasurementControlConfigurable(this, this.dialog, this.channelConfigNumber, i, measurementType, this.device,
+												1, GDE.STRING_BLANK + (i - this.measurementOffset), GPSLoggerVisualizationControl.MLINK_EXTEND_ML));
+							}
+							else if (this.typeName.startsWith(Messages.getString(MessageIds.GDE_MSGT2011)) && i >= this.measurementOffset + this.measurementCount - 3) {
+								//log.log(Level.OFF, this.channelConfigNumber + " - " + i + " - " + this.device.getChannelMeasuremtsReplacedNames(this.channelConfigNumber).get(i).getName());
+								this.measurementTypes.add(new MeasurementControlConfigurable(this, this.dialog, this.channelConfigNumber, i,
+										measurementType, this.device, 1, "A" +  Ai++, GPSLoggerVisualizationControl.UNILOG_EXTEND_UL)); //$NON-NLS-1$
+							}
+							else {
+								this.measurementTypes.add(new MeasurementControl(this, this.dialog, this.channelConfigNumber, i, measurementType, this.device, 1));
+							}
 						}
-						else if (this.typeName.startsWith(Messages.getString(MessageIds.GDE_MSGT2011)) && i >= this.measurementOffset + this.measurementCount - 3) {
-							//log.log(Level.OFF, this.channelConfigNumber + " - " + i + " - " + this.device.getChannelMeasuremtsReplacedNames(this.channelConfigNumber).get(i).getName());
-							this.measurementTypes.add(new MeasurementControlConfigurable(this, this.dialog, this.channelConfigNumber, i,
-									this.device.getChannelMeasuremtsReplacedNames(this.channelConfigNumber).get(i), this.device, 1, "A" +  Ai++, GPSLoggerVisualizationControl.UNILOG_EXTEND_UL)); //$NON-NLS-1$
-						}
-						else {
-							this.measurementTypes.add(new MeasurementControl(this, this.dialog, this.channelConfigNumber, i, this.device.getChannelMeasuremtsReplacedNames(this.channelConfigNumber).get(i), this.device, 1));
+						catch (Exception e) {
+							log.log(Level.WARNING, e.getMessage());
 						}
 					} 
 				}
@@ -169,23 +183,28 @@ public class GPSLoggerVisualizationControl extends Composite {
 				int Ai = 1;
 				if (activeChannelNumber == 2 && activeRecordSet != null) {
 					for (int i = this.measurementOffset; i < this.measurementOffset + this.measurementCount; i++) { 
-						MeasurementType measurementType = this.device.getChannelMeasuremtsReplacedNames(this.channelConfigNumber).get(i);
-						if (this.typeName.startsWith(Messages.getString(MessageIds.GDE_MSGT2012))) { //M-Link
-							if (i < activeRecordSet.size()) 
-								measurementType = getRecordSetMeasurementType(activeRecordSet, i);
-							this.measurementTypes.add(new MeasurementControlConfigurable(this, this.dialog, this.channelConfigNumber, i, measurementType,
-									this.device, 1, GDE.STRING_BLANK + (i - this.measurementOffset), GPSLoggerVisualizationControl.MLINK_EXTEND_ML));
-							this.device.storeDeviceProperties();
+						try {
+							measurementType = measurementNames.get(i);
+							if (this.typeName.startsWith(Messages.getString(MessageIds.GDE_MSGT2012))) { //M-Link
+								if (i < activeRecordSet.size()) 
+									measurementType = getRecordSetMeasurementType(activeRecordSet, i);
+								this.measurementTypes.add(new MeasurementControlConfigurable(this, this.dialog, this.channelConfigNumber, i, measurementType,
+										this.device, 1, GDE.STRING_BLANK + (i - this.measurementOffset), GPSLoggerVisualizationControl.MLINK_EXTEND_ML));
+								this.device.storeDeviceProperties();
+							}
+							else if (this.typeName.startsWith(Messages.getString(MessageIds.GDE_MSGT2011)) && (i >= this.measurementOffset + this.measurementCount - 4 && i != this.measurementOffset + this.measurementCount - 1)) {
+								if (i < activeRecordSet.size()) 
+									measurementType = getRecordSetMeasurementType(activeRecordSet, i);
+								this.measurementTypes.add(new MeasurementControlConfigurable(this, this.dialog, this.channelConfigNumber, i, measurementType,
+										this.device, 1, "A" +  Ai++, GPSLoggerVisualizationControl.UNILOG_EXTEND_UL)); //$NON-NLS-1$
+								this.device.storeDeviceProperties();
+							}
+							else {
+								this.measurementTypes.add(new MeasurementControl(this, this.dialog, this.channelConfigNumber, i, measurementType, this.device, 1));
+							}
 						}
-						else if (this.typeName.startsWith(Messages.getString(MessageIds.GDE_MSGT2011)) && (i >= this.measurementOffset + this.measurementCount - 4 && i != this.measurementOffset + this.measurementCount - 1)) {
-							if (i < activeRecordSet.size()) 
-								measurementType = getRecordSetMeasurementType(activeRecordSet, i);
-							this.measurementTypes.add(new MeasurementControlConfigurable(this, this.dialog, this.channelConfigNumber, i, measurementType,
-									this.device, 1, "A" +  Ai++, GPSLoggerVisualizationControl.UNILOG_EXTEND_UL)); //$NON-NLS-1$
-							this.device.storeDeviceProperties();
-						}
-						else {
-							this.measurementTypes.add(new MeasurementControl(this, this.dialog, this.channelConfigNumber, i, measurementType, this.device, 1));
+						catch (Exception e) {
+							log.log(Level.WARNING, e.getMessage());
 						}
 					}
 				}
@@ -204,17 +223,23 @@ public class GPSLoggerVisualizationControl extends Composite {
 					//Unilog2 26=voltage_UL 27=current_UL2 28=capacity_UL2 29=power_UL2 30=energy_UL2 31=balance_UL 32=cellVoltage1 33=cellVolt2_ul 34=cellVolltage3_UL 35=cellVoltage4_UL 36=cellVoltage5_UL 37=cellVoltage6_UL 38=revolution_UL 39=a1_UL 40=a2_UL 41=a3_UL 42=temp_UL;
 					//M-LINK 43=valAdd00 44=valAdd01 45=valAdd02 46=valAdd03 47=valAdd04 48=valAdd05 49=valAdd06 50=valAdd07 51=valAdd08 52=valAdd09 53=valAdd10 54=valAdd11 55=valAdd12 56=valAdd13 57=valAdd14;
 					for (int i = this.measurementOffset; i < this.measurementOffset + this.measurementCount; i++) {
-						if (this.typeName.startsWith(Messages.getString(MessageIds.GDE_MSGT2012))) {
-							this.measurementTypes.add(new MeasurementControlConfigurable(this, this.dialog, this.channelConfigNumber, i, this.device.getChannelMeasuremtsReplacedNames(this.channelConfigNumber).get(i),
-									this.device, 1, GDE.STRING_BLANK + (i - this.measurementOffset), GPSLoggerVisualizationControl.MLINK_EXTEND_ML));
+						try {
+							measurementType = this.device.getChannelMeasuremtsReplacedNames(this.channelConfigNumber).get(i);
+							if (this.typeName.startsWith(Messages.getString(MessageIds.GDE_MSGT2012))) {
+								this.measurementTypes.add(new MeasurementControlConfigurable(this, this.dialog, this.channelConfigNumber, i, measurementType,
+										this.device, 1, GDE.STRING_BLANK + (i - this.measurementOffset), GPSLoggerVisualizationControl.MLINK_EXTEND_ML));
+							}
+							else if (this.typeName.startsWith(Messages.getString(MessageIds.GDE_MSGT2011)) && (i >= this.measurementOffset + this.measurementCount - 4 && i != this.measurementOffset + this.measurementCount - 1)) {
+								//log.log(Level.OFF, this.channelConfigNumber + " - " + i + " - " + this.device.getChannelMeasuremtsReplacedNames(this.channelConfigNumber).get(i).getName());
+								this.measurementTypes.add(new MeasurementControlConfigurable(this, this.dialog, this.channelConfigNumber, i, measurementType,
+										this.device, 1, "A" +  Ai++, GPSLoggerVisualizationControl.UNILOG_EXTEND_UL)); //$NON-NLS-1$
+							}
+							else {
+								this.measurementTypes.add(new MeasurementControl(this, this.dialog, this.channelConfigNumber, i, measurementType, this.device, 1));
+							}
 						}
-						else if (this.typeName.startsWith(Messages.getString(MessageIds.GDE_MSGT2011)) && (i >= this.measurementOffset + this.measurementCount - 4 && i != this.measurementOffset + this.measurementCount - 1)) {
-							//log.log(Level.OFF, this.channelConfigNumber + " - " + i + " - " + this.device.getChannelMeasuremtsReplacedNames(this.channelConfigNumber).get(i).getName());
-							this.measurementTypes.add(new MeasurementControlConfigurable(this, this.dialog, this.channelConfigNumber, i, this.device.getChannelMeasuremtsReplacedNames(this.channelConfigNumber).get(i),
-									this.device, 1, "A" +  Ai++, GPSLoggerVisualizationControl.UNILOG_EXTEND_UL)); //$NON-NLS-1$
-						}
-						else {
-							this.measurementTypes.add(new MeasurementControl(this, this.dialog, this.channelConfigNumber, i, this.device.getChannelMeasuremtsReplacedNames(this.channelConfigNumber).get(i), this.device, 1));
+						catch (Exception e) {
+							log.log(Level.WARNING, e.getMessage());
 						}
 					}
 				}

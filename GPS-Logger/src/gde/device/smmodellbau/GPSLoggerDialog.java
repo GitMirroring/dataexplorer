@@ -186,10 +186,10 @@ public class GPSLoggerDialog extends DeviceDialog {
 								//CH1-UniLog
 								//Unilog 26=voltage_UL 27=current_UL 28=power_UL 29=revolution_UL 30=voltageRx_UL 31=altitude_UL 32=a1_UL 33=a2_UL 34=a3_UL;
 								//M-LINK 35=valAdd00 36=valAdd01 37=valAdd02 38=valAdd03 39=valAdd04 40=valAdd05 41=valAdd06 42=valAdd07 43=valAdd08 44=valAdd09 45=valAdd10 46=valAdd11 47=valAdd12 48=valAdd13 49=valAdd14;
-								createVisualizationTabItem(1, this.device.getName().equals("GPS-Logger") ? 17 : 26, 9, 15);
+								createVisualizationTabItem(1, this.device.getName().equals("GPS-Logger") ? 17 : 26, 9, 16);
 							}
 							else {
-								createVisualizationTabItem(2, this.device.getName().equals("GPS-Logger") ? 17 : 20, 17, 15);
+								createVisualizationTabItem(2, this.device.getName().equals("GPS-Logger") ? 17 : 20, 17, 16);
 							}
 						}
 						if (this.device.getChannelCount() >= 2) {
@@ -206,7 +206,7 @@ public class GPSLoggerDialog extends DeviceDialog {
 							//CH2-UniLog2
 							//Unilog2 26=voltage_UL 27=current_UL2 28=capacity_UL2 29=power_UL2 30=energy_UL2 31=balance_UL 32=cellVoltage1 33=cellVolt2_ul 34=cellVolltage3_UL 35=cellVoltage4_UL 36=cellVoltage5_UL 37=cellVoltage6_UL 38=revolution_UL 39=a1_UL 40=a2_UL 41=a3_UL 42=temp_UL;
 							//M-LINK 43=valAdd00 44=valAdd01 45=valAdd02 46=valAdd03 47=valAdd04 48=valAdd05 49=valAdd06 50=valAdd07 51=valAdd08 52=valAdd09 53=valAdd10 54=valAdd11 55=valAdd12 56=valAdd13 57=valAdd14;
-							createVisualizationTabItem(2, this.device.getName().equals("GPS-Logger") ? 17 : 26, 17, 15);
+							createVisualizationTabItem(2, this.device.getName().equals("GPS-Logger") ? 17 : 26, 17, 16);
 						}
 					}
 					{

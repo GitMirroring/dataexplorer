@@ -328,6 +328,13 @@
                 <active>true</active>
                 <statistics sigma="false" avg="true" max="true" min="true"/>
             </Measurement>
+            <Measurement>
+                <name>temperature ESC_ML</name>
+                <symbol></symbol>
+                <unit>°C</unit>
+                <active>true</active>
+                <statistics sigma="false" avg="true" max="true" min="true"/>
+            </Measurement>
         </Channel>
         <Channel type="TYPE_CONFIG" name="UniLog2">
             <Measurement>
@@ -690,6 +697,13 @@
                 <name>altitude (relativ)2_ML</name>
                 <symbol>h</symbol>
                 <unit>m</unit>
+                <active>true</active>
+                <statistics sigma="false" avg="true" max="true" min="true"/>
+            </Measurement>
+            <Measurement>
+                <name>temperature ESC_ML</name>
+                <symbol></symbol>
+                <unit>°C</unit>
                 <active>true</active>
                 <statistics sigma="false" avg="true" max="true" min="true"/>
             </Measurement>

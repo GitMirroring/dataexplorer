@@ -95,6 +95,7 @@ public class GPSLogger2 extends GPSLogger {
 		//CH2-UniLog2
 		//Unilog2 20=voltage_UL 21=current_UL2 22=capacity_UL2 23=power_UL2 24=energy_UL2 25=balance_UL 26=cellVoltage1 27=cellVolt2_ul 28=cellVolltage3_UL 29=cellVoltage4_UL 30=cellVoltage5_UL 31=cellVoltage6_UL 32=revolution_UL 33=a1_UL 34=a2_UL 35=a3_UL 36=temp_UL;
 		//M-LINK 37=valAdd00 38=valAdd01 39=valAdd02 40=valAdd03 41=valAdd04 42=valAdd05 43=valAdd06 44=valAdd07 45=valAdd08 46=valAdd09 47=valAdd10 48=valAdd11 49=valAdd12 50=valAdd13 51=valAdd14;
+		
 		//GDE 3.4.9 begin FW1.26 Ch1=49 measurements, Ch2=57 measurements
 		//GPS 		0=latitude 1=longitude 2=altitudeGPS 3=numSatelites 4=PDOP 5=HDOP 6=VDOP 7=velocity;
 		//SMGPS 	8=altitudeRel 9=climb 10=voltageRx 11=distanceTotal 12=distanceStart 13=directionStart 14=azimuth/track 15=GlideRatio 16=SpeedGlideRatio;
@@ -105,6 +106,17 @@ public class GPSLogger2 extends GPSLogger {
 		//CH2-UniLog2
 		//Unilog2 26=voltage_UL 27=current_UL2 28=capacity_UL2 29=power_UL2 30=energy_UL2 31=balance_UL 32=cellVoltage1 33=cellVolt2_ul 34=cellVolltage3_UL 35=cellVoltage4_UL 36=cellVoltage5_UL 37=cellVoltage6_UL 38=revolution_UL 39=a1_UL 40=a2_UL 41=a3_UL 42=temp_UL;
 		//M-LINK 43=valAdd00 44=valAdd01 45=valAdd02 46=valAdd03 47=valAdd04 48=valAdd05 49=valAdd06 50=valAdd07 51=valAdd08 52=valAdd09 53=valAdd10 54=valAdd11 55=valAdd12 56=valAdd13 57=valAdd14;
+		
+		//GDE 3.9.7 Ch1=51 measurements, Ch2=59 measurements
+		//GPS 		0=latitude 1=longitude 2=altitudeGPS 3=numSatelites 4=PDOP 5=HDOP 6=VDOP 7=velocity;
+		//SMGPS 	8=altitudeRel 9=climb 10=voltageRx 11=distanceTotal 12=distanceStart 13=directionStart 14=azimuth/track 15=GlideRatio 16=SpeedGlideRatio;
+		//SMGPS2 17=AccelerationX 18=AccelerationY 19=AccelerationZ 20=ENL 21=Impulse 22=AirSpeed 23=pressure static 24=pressure TEK 25=climb TEK
+		//CH1-UniLog
+		//Unilog 26=voltage_UL 27=current_UL 28=power_UL 29=revolution_UL 30=voltageRx_UL 31=altitude_UL 32=a1_UL 33=a2_UL 34=a3_UL;
+		//M-LINK 35=valAdd00 36=valAdd01 37=valAdd02 38=valAdd03 39=valAdd04 40=valAdd05 41=valAdd06 42=valAdd07 43=valAdd08 44=valAdd09 45=valAdd10 46=valAdd11 47=valAdd12 48=valAdd13 49=valAdd14 50=valAdd15;
+		//CH2-UniLog2
+		//Unilog2 26=voltage_UL 27=current_UL2 28=capacity_UL2 29=power_UL2 30=energy_UL2 31=balance_UL 32=cellVoltage1 33=cellVolt2_ul 34=cellVolltage3_UL 35=cellVoltage4_UL 36=cellVoltage5_UL 37=cellVoltage6_UL 38=revolution_UL 39=a1_UL 40=a2_UL 41=a3_UL 42=temp_UL;
+		//M-LINK 43=valAdd00 44=valAdd01 45=valAdd02 46=valAdd03 47=valAdd04 48=valAdd05 49=valAdd06 50=valAdd07 51=valAdd08 52=valAdd09 53=valAdd10 54=valAdd11 55=valAdd12 56=valAdd13 57=valAdd14 58=valAdd15;
 
 		String[] recordKeys = recordSet.getRecordNames();
 
@@ -113,6 +125,8 @@ public class GPSLogger2 extends GPSLogger {
 		Vector<String> cleanedRecordNames = new Vector<String>();
 		//incoming filePropertiesRecordNames may mismatch recordKeyNames, but addNoneCalculation will use original name
 		Vector<String> noneCalculationRecordNames = new Vector<String>();
+		
+		List<String> recordNamesList = Arrays.asList(recordKeys); //helper list to find none unique entries
 
 		try {
 			switch (fileRecordsProperties.length) {
@@ -123,69 +137,104 @@ public class GPSLogger2 extends GPSLogger {
 			case 35: //Android GPS-Logger2/3_UL >=1.5.2
 			case 43: //Android GPS-Logger2/3_UL2 >=1.5.2
 				return super.crossCheckMeasurements(fileRecordsProperties, recordSet);
-				
-			default: //GDE handling
-				if (fileRecordsProperties.length != recordKeys.length) {
-					//GDE 3.4.9 firmware < 126 Ch1=44 measurements, CH2=52 measurements
-					//begin FW1.26 Ch1=50 measurements, Ch2=58 measurements
-					//SMGPS  added 15=GlideRatio 16=SpeedGlideRatio;
-					//SMGPS2 added 22=AirSpeed 23=pressure static 24=pressure TEK 25=climb TEK
-					for (int i = 0, j = 0; i < recordKeys.length; i++) {
-						switch (i) {
-						case 15: //GlideRatio
-						case 16: //SpeedGlideRatio
-						case 22: //AirSpeed
-						case 23: //pressure static
-						case 24: //pressure TEK
-						case 25: //climb TEK
+
+			case 44: //GDE 3.4.9 firmware < 126 Ch1=44 measurements, CH2=52 measurements
+			case 52: //GDE 3.4.9 firmware < 126 Ch1=44 measurements, CH2=52 measurements
+				//begin FW1.26 Ch1=50 measurements, Ch2=58 measurements
+				//SMGPS  added 15=GlideRatio 16=SpeedGlideRatio;
+				//SMGPS2 added 22=AirSpeed 23=pressure static 24=pressure TEK 25=climb TEK
+				for (int i = 0, j = 0; i < recordKeys.length; i++) {
+					switch (i) {
+					case 15: //GlideRatio
+					case 16: //SpeedGlideRatio
+					case 22: //AirSpeed
+					case 23: //pressure static
+					case 24: //pressure TEK
+					case 25: //climb TEK
+						sb.append(String.format("%02d added measurement set to isCalculation=true -> %s\n", i, recordKeys[i]));
+						recordSet.get(i).setActive(null);
+						break;
+					default:
+						if (j < fileRecordsProperties.length) {
+							HashMap<String, String> recordProps = StringHelper.splitString(fileRecordsProperties[j], Record.DELIMITER, Record.propertyKeys);
+							sb.append(String.format("%02d %19s match %19s isAvtive = %s\n", i, recordKeys[i], recordProps.get(Record.NAME), recordProps.get(Record.IS_ACTIVE)));
+							if (!recordKeys[i].equals(recordProps.get(Record.NAME)) && recordNamesList.contains(recordProps.get(Record.NAME))) {
+								log.log(Level.WARNING, "Found not unique recordName : " + recordProps.get(Record.NAME) + " Index " + i + "/" + recordNamesList.indexOf(recordProps.get(Record.NAME)));
+								int index = recordNamesList.indexOf(recordProps.get(Record.NAME)) > i ? recordNamesList.indexOf(recordProps.get(Record.NAME)) : i;
+								String newRecordSetName = index + "_" + recordKeys[index];
+								recordSet.replaceRecordName(recordSet.get(recordKeys[index]), newRecordSetName);
+								recordKeys[index] = newRecordSetName;
+								//application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGW2001) + recordProps.get(Record.NAME) + "\n Index " + i + "/" + recordNamesList.indexOf(recordProps.get(Record.NAME)));
+							}
+							cleanedRecordNames.add(recordKeys[i]);
+							noneCalculationRecordNames.add(recordProps.get(Record.NAME));
+							if (fileRecordsProperties[j].contains("_isActive=false")) recordSet.get(i).setActive(false);
+							++j;
+						}
+						else {//some Android saved record sets contain less fileRecordsProperties, mark rest as calculation
 							sb.append(String.format("%02d added measurement set to isCalculation=true -> %s\n", i, recordKeys[i]));
 							recordSet.get(i).setActive(null);
-							break;
-						default:
-							if (j < fileRecordsProperties.length) {
-								HashMap<String, String> recordProps = StringHelper.splitString(fileRecordsProperties[j], Record.DELIMITER, Record.propertyKeys);
-								sb.append(String.format("%02d %19s match %19s isAvtive = %s\n", i, recordKeys[i], recordProps.get(Record.NAME), recordProps.get(Record.IS_ACTIVE)));
-								cleanedRecordNames.add(recordKeys[i]);
-								noneCalculationRecordNames.add(recordProps.get(Record.NAME));
-								if (fileRecordsProperties[j].contains("_isActive=false")) 
-									recordSet.get(i).setActive(false);
-								++j;
-							}
-							else {//some Android saved record sets contain less fileRecordsProperties, mark rest as calculation
-								sb.append(String.format("%02d added measurement set to isCalculation=true -> %s\n", i, recordKeys[i]));
-								recordSet.get(i).setActive(null);
-							}
-							break;
-							}
+							++j;
 						}
+						break;
 					}
-					else { //already adapted record set stored
-						List<String> recordNamesList = Arrays.asList(recordKeys);
-						for (int i = 0; i < recordKeys.length; i++) {
-							if (!fileRecordsProperties[i].contains("_isActive")) {
-								sb.append(String.format("%02d added measurement set to isCalculation=true -> %s\n", i, recordKeys[i]));
-								recordSet.get(i).setActive(null);
-								cleanedRecordNames.add(recordKeys[i]);
-							}
-							else {
-								HashMap<String, String> recordProps = StringHelper.splitString(fileRecordsProperties[i], Record.DELIMITER, Record.propertyKeys);
-								sb.append(String.format("%02d %19s match %19s isAvtive = %s\n", i, recordKeys[i], recordProps.get(Record.NAME), recordProps.get(Record.IS_ACTIVE)));
-								if (!recordKeys[i].equals(recordProps.get(Record.NAME)) && recordNamesList.contains(recordProps.get(Record.NAME))) {
-										log.log(Level.SEVERE, "Found not unique recordName : " + recordProps.get(Record.NAME) + " Index " + i + "/" + recordNamesList.indexOf(recordProps.get(Record.NAME)));				
-										int index = recordNamesList.indexOf(recordProps.get(Record.NAME)) > i ? recordNamesList.indexOf(recordProps.get(Record.NAME)) : i;
-										String newRecordSetName = "_"+recordKeys[index];
-										recordSet.replaceRecordName(recordSet.get(recordKeys[index]), newRecordSetName);
-										recordKeys[index] = newRecordSetName;
-										//application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGW2001) + recordProps.get(Record.NAME) + "\n Index " + i + "/" + recordNamesList.indexOf(recordProps.get(Record.NAME)));
-								}
-								cleanedRecordNames.add(recordKeys[i]);
-								noneCalculationRecordNames.add(recordProps.get(Record.NAME));
-								if (fileRecordsProperties[i].contains("_isActive=false")) 
-									recordSet.get(i).setActive(false);
-							}
+				}
+				break;
+
+			case 50: //GDE up to 3.9.6 Ch1=50 measurements, Ch2=58 measurements
+			case 58: //GDE up to 3.9.6 Ch1=50 measurements, Ch2=58 measurements
+				//GDE 3.9.7 added 50=valAdd15 58=valAdd15 -> Ch1=51 measurements, Ch2=59 measurements
+				for (int i = 0, j = 0; i < recordKeys.length; i++) {
+					if (j < fileRecordsProperties.length) {
+						HashMap<String, String> recordProps = StringHelper.splitString(fileRecordsProperties[j], Record.DELIMITER, Record.propertyKeys);
+						sb.append(String.format("%02d %19s match %19s isAvtive = %s\n", i, recordKeys[i], recordProps.get(Record.NAME), recordProps.get(Record.IS_ACTIVE)));
+						if (!recordKeys[i].equals(recordProps.get(Record.NAME)) && recordNamesList.contains(recordProps.get(Record.NAME))) {
+							log.log(Level.WARNING, "Found not unique recordName : " + recordProps.get(Record.NAME) + " Index " + i + "/" + recordNamesList.indexOf(recordProps.get(Record.NAME)));
+							int index = recordNamesList.indexOf(recordProps.get(Record.NAME)) > i ? recordNamesList.indexOf(recordProps.get(Record.NAME)) : i;
+							String newRecordSetName = index + "_" + recordKeys[index];
+							recordSet.replaceRecordName(recordSet.get(recordKeys[index]), newRecordSetName);
+							recordKeys[index] = newRecordSetName;
+							//application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGW2001) + recordProps.get(Record.NAME) + "\n Index " + i + "/" + recordNamesList.indexOf(recordProps.get(Record.NAME)));
 						}
+						cleanedRecordNames.add(recordKeys[i]);
+						noneCalculationRecordNames.add(recordProps.get(Record.NAME));
+						if (fileRecordsProperties[j].contains("_isActive=false")) recordSet.get(i).setActive(false);
+						++j;
 					}
-					break;
+					else {
+						sb.append(String.format("%02d added measurement set to isCalculation=true -> %s\n", i, recordKeys[i]));
+						recordSet.get(i).setActive(null);
+						++j;
+					}
+				}
+				break;
+
+			case 51: //GDE 3.9.7 added 50=valAdd15 58=valAdd15 -> Ch1=51 measurements, Ch2=59 measurements
+			case 59: //GDE 3.9.7 added 50=valAdd15 58=valAdd15 -> Ch1=51 measurements, Ch2=59 measurements
+			default: //GDE handling
+				for (int i = 0; i < recordKeys.length; i++) {
+					if (!fileRecordsProperties[i].contains("_isActive")) {
+						sb.append(String.format("%02d added measurement set to isCalculation=true -> %s\n", i, recordKeys[i]));
+						recordSet.get(i).setActive(null);
+						cleanedRecordNames.add(recordKeys[i]);
+					}
+					else {
+						HashMap<String, String> recordProps = StringHelper.splitString(fileRecordsProperties[i], Record.DELIMITER, Record.propertyKeys);
+						sb.append(String.format("%02d %19s match %19s isAvtive = %s\n", i, recordKeys[i], recordProps.get(Record.NAME), recordProps.get(Record.IS_ACTIVE)));
+						if (!recordKeys[i].equals(recordProps.get(Record.NAME)) && recordNamesList.contains(recordProps.get(Record.NAME))) {
+							log.log(Level.WARNING, "Found not unique recordName : " + recordProps.get(Record.NAME) + " Index " + i + "/" + recordNamesList.indexOf(recordProps.get(Record.NAME)));
+							int index = recordNamesList.indexOf(recordProps.get(Record.NAME)) > i ? recordNamesList.indexOf(recordProps.get(Record.NAME)) : i;
+							String newRecordSetName = index + "_" + recordKeys[index];
+							recordSet.replaceRecordName(recordSet.get(recordKeys[index]), newRecordSetName);
+							recordKeys[index] = newRecordSetName;
+							//application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGW2001) + recordProps.get(Record.NAME) + "\n Index " + i + "/" + recordNamesList.indexOf(recordProps.get(Record.NAME)));
+						}
+						cleanedRecordNames.add(recordKeys[i]);
+						noneCalculationRecordNames.add(recordProps.get(Record.NAME));
+						if (fileRecordsProperties[i].contains("_isActive=false")) recordSet.get(i).setActive(false);
+					}
+				}
+				break;
 			}
 		}
 		catch (Exception e) {
