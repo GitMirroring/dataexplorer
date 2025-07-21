@@ -151,6 +151,7 @@ public class GPSLogger2 extends GPSLogger {
 					case 23: //pressure static
 					case 24: //pressure TEK
 					case 25: //climb TEK
+					//case 58: //value15_ML
 						sb.append(String.format("%02d added measurement set to isCalculation=true -> %s\n", i, recordKeys[i]));
 						recordSet.get(i).setActive(null);
 						break;
@@ -168,7 +169,7 @@ public class GPSLogger2 extends GPSLogger {
 							}
 							cleanedRecordNames.add(recordKeys[i]);
 							noneCalculationRecordNames.add(recordProps.get(Record.NAME));
-							if (fileRecordsProperties[i].contains("_isActive=false")) {
+							if (fileRecordsProperties[j].contains("_isActive=false")) {
 								sb.append(String.format("%02d measurement set to isActive==false -> %s\n", i, recordKeys[i]));
 								recordSet.get(i).setActive(false);
 							}
@@ -177,7 +178,6 @@ public class GPSLogger2 extends GPSLogger {
 						else {//some Android saved record sets contain less fileRecordsProperties, mark rest as calculation
 							sb.append(String.format("%02d added measurement set to isCalculation=true -> %s\n", i, recordKeys[i]));
 							recordSet.get(i).setActive(null);
-							++j;
 						}
 						break;
 					}
@@ -201,7 +201,7 @@ public class GPSLogger2 extends GPSLogger {
 						}
 						cleanedRecordNames.add(recordKeys[i]);
 						noneCalculationRecordNames.add(recordProps.get(Record.NAME));
-						if (fileRecordsProperties[i].contains("_isActive=false")) {
+						if (fileRecordsProperties[j].contains("_isActive=false")) {
 							sb.append(String.format("%02d measurement set to isActive==false -> %s\n", i, recordKeys[i]));
 							recordSet.get(i).setActive(false);
 						}
@@ -210,7 +210,6 @@ public class GPSLogger2 extends GPSLogger {
 					else {
 						sb.append(String.format("%02d added measurement set to isCalculation=true -> %s\n", i, recordKeys[i]));
 						recordSet.get(i).setActive(null);
-						++j;
 					}
 				}
 				break;
