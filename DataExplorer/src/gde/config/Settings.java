@@ -3339,7 +3339,7 @@ public final class Settings extends Properties {
 	
 	/**
 	 * check updated version number and entries in service update list
-	 * after update to next release version the DataExplorer.properties still contained the previous release version first startup
+	 * while update to next release version the DataExplorer.properties still contained the previous release version first startup
 	 * if new release version is 395 and previous is 394 method will return true
 	 * closing app will update the DataExplorer.properties version number to actual version number and method will return false
 	 * while initial installation version property does not exist and method return false, device XML get export by user device selection
@@ -3347,7 +3347,7 @@ public final class Settings extends Properties {
 	 * @return true if possible device XML update required
 	 */
 	public boolean isDeviceXmlUpdateRequired() {
-		return Integer.valueOf(this.getProperty(Settings.APPL_VERSION_NUMBER, "395").replace(".", "")) == 394 && !getServiceUpdateList().isEmpty();
+		return Integer.valueOf(this.getProperty(Settings.APPL_VERSION_NUMBER, "397").replace(".", "")) <= 396 && !getServiceUpdateList().isEmpty();
 	}
 	
 	/**
@@ -3356,7 +3356,11 @@ public final class Settings extends Properties {
 	 */
 	public List<String> getServiceUpdateList() {
 		List<String> deviceList = new ArrayList<>();
-//		deviceList.add("IGCAdapter");
+		//devices need update with 3.9.7
+		deviceList.add("GPS-Logger");
+		deviceList.add("GPS-Logger2");
+		deviceList.add("GPS-Logger3");
+		deviceList.add("IGCAdapter");
 //		deviceList.add("HoTTAdapter");
 //		deviceList.add("HoTTAdapterM");
 //		deviceList.add("HoTTAdapter2");

@@ -2,7 +2,7 @@ Development history / change log, please read from bottom up
 
 Version 3.9.7 - xx yyy 2025
 Generic changes/fixes 
-	* 
+	* add GPS-Logger* to update list while installing the release 3.9.7
 	
 Device specific changes/fixes
 	* GPS-Logger2/3 - add warning message regarding not unique measurement name and resolve it
