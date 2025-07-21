@@ -168,7 +168,10 @@ public class GPSLogger2 extends GPSLogger {
 							}
 							cleanedRecordNames.add(recordKeys[i]);
 							noneCalculationRecordNames.add(recordProps.get(Record.NAME));
-							if (fileRecordsProperties[j].contains("_isActive=false")) recordSet.get(i).setActive(false);
+							if (fileRecordsProperties[i].contains("_isActive=false")) {
+								sb.append(String.format("%02d measurement set to isActive==false -> %s\n", i, recordKeys[i]));
+								recordSet.get(i).setActive(false);
+							}
 							++j;
 						}
 						else {//some Android saved record sets contain less fileRecordsProperties, mark rest as calculation
@@ -198,7 +201,10 @@ public class GPSLogger2 extends GPSLogger {
 						}
 						cleanedRecordNames.add(recordKeys[i]);
 						noneCalculationRecordNames.add(recordProps.get(Record.NAME));
-						if (fileRecordsProperties[j].contains("_isActive=false")) recordSet.get(i).setActive(false);
+						if (fileRecordsProperties[i].contains("_isActive=false")) {
+							sb.append(String.format("%02d measurement set to isActive==false -> %s\n", i, recordKeys[i]));
+							recordSet.get(i).setActive(false);
+						}
 						++j;
 					}
 					else {
@@ -214,7 +220,7 @@ public class GPSLogger2 extends GPSLogger {
 			default: //GDE handling
 				for (int i = 0; i < recordKeys.length; i++) {
 					if (!fileRecordsProperties[i].contains("_isActive")) {
-						sb.append(String.format("%02d added measurement set to isCalculation=true -> %s\n", i, recordKeys[i]));
+						sb.append(String.format("%02d measurement set to isCalculation=true -> %s\n", i, recordKeys[i]));
 						recordSet.get(i).setActive(null);
 						cleanedRecordNames.add(recordKeys[i]);
 					}
@@ -231,7 +237,10 @@ public class GPSLogger2 extends GPSLogger {
 						}
 						cleanedRecordNames.add(recordKeys[i]);
 						noneCalculationRecordNames.add(recordProps.get(Record.NAME));
-						if (fileRecordsProperties[i].contains("_isActive=false")) recordSet.get(i).setActive(false);
+						if (fileRecordsProperties[i].contains("_isActive=false")) {
+							sb.append(String.format("%02d measurement set to isActive==false -> %s\n", i, recordKeys[i]));
+							recordSet.get(i).setActive(false);
+						}
 					}
 				}
 				break;
