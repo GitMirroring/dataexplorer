@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<DeviceProperties xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="DeviceProperties_V49.xsd">
+<DeviceProperties xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="DeviceProperties_V50.xsd">
     <Device>
         <name implementation="gde.device.ardupilot.ArduPilot">ArduPilot</name>
         <manufacturer>ArduPilot</manufacturer>
         <manufacturerURL>https://ardupilot.org/</manufacturerURL>
         <group>logger</group>
         <image>ArduPilot.png</image>
+        <editable>true</editable>
         <usage>false</usage>
     </Device>
     <TimeBase>

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<DeviceProperties xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="DeviceProperties_V49.xsd">
+<DeviceProperties xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="DeviceProperties_V50.xsd">
     <Device>
         <name implementation="gde.device.csv.ImportAdapter">Tesla</name>
         <manufacturer>Tesla</manufacturer>
         <manufacturerURL>https://www.tesla.com/</manufacturerURL>
         <group>logger</group>
         <image>Tesla.png</image>
+        <editable>true</editable>
         <usage>false</usage>
     </Device>
     <TimeBase>

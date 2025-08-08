@@ -40,6 +40,7 @@ import javax.xml.bind.annotation.XmlValue;
  *         &lt;element name="manufacturerURL" type="{http://www.w3.org/2001/XMLSchema}anyURI"/>
  *         &lt;element name="group" type="{}device_types"/>
  *         &lt;element name="image" type="{http://www.w3.org/2001/XMLSchema}anyURI"/>
+ *         &lt;element name="editable" type="{http://www.w3.org/2001/XMLSchema}anyURI"/>
  *         &lt;element name="usage" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -56,6 +57,7 @@ import javax.xml.bind.annotation.XmlValue;
     "manufacturerURL", //$NON-NLS-1$
     "group", //$NON-NLS-1$
     "image", //$NON-NLS-1$
+    "editable", //$NON-NLS-1$
     "usage" //$NON-NLS-1$
 })
 public class DeviceType {
@@ -72,6 +74,7 @@ public class DeviceType {
     @XmlElement(required = true)
     @XmlSchemaType(name = "anyURI") //$NON-NLS-1$
     protected String image;
+    protected boolean editable;
     protected boolean usage;
 
     /**
@@ -192,6 +195,22 @@ public class DeviceType {
      */
     public void setImage(String value) {
         this.image = value;
+    }
+
+    /**
+     * Gets the value of the usage property.
+     * 
+     */
+    public boolean isEditable() {
+        return Boolean.valueOf(this.editable).booleanValue();
+    }
+
+    /**
+     * Sets the value of the usage property.
+     * 
+     */
+    public void setEditable(boolean value) {
+        this.usage = value;
     }
 
     /**

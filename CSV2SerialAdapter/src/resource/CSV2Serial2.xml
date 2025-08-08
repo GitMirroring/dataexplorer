@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<DeviceProperties xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="DeviceProperties_V49.xsd">
+<DeviceProperties xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="DeviceProperties_V50.xsd">
     <Device>
         <name implementation="CSV2SerialAdapter">CSV2Serial2</name>
         <manufacturer>WB</manufacturer>
         <manufacturerURL>https://www.nongnu.org/dataexplorer</manufacturerURL>
         <group>charger</group>
         <image>CSV2Serial.png</image>
+        <editable>true</editable>
         <usage>false</usage>
     </Device>
     <SerialPort>

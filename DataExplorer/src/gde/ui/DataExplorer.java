@@ -1844,6 +1844,13 @@ public class DataExplorer extends Composite {
 	}
 
 	/**
+	 * update menu entry regarding editable device XML, most of the device XMLs should never been updated by user
+	 */
+	public void updateMenuRegardingEditableDeviceXml() {
+		this.menuBar.updateDevicePropertyEditorItem();
+	}
+	
+	/**
 	 * update menu items and tool bar items according GPS data availability
 	 */
 	public void updateMenusRegardingGPSData() {

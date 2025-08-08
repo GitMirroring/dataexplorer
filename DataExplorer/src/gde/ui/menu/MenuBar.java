@@ -1407,7 +1407,7 @@ public class MenuBar {
 	}
 
 	/**
-	 * toggle enabling additional export menu items in dependency of device data capability
+	 * toggle enabling GPS related export menu items in dependency of device data capability
 	 */
 	public void updateAdditionalGPSMenuItems() {
 		final boolean isGPSData = this.application.getActiveDevice().isActualRecordSetWithGpsData();
@@ -1435,6 +1435,24 @@ public class MenuBar {
 							if (isAdditionalExportItem) menuItem.setEnabled(isGPSData);
 						}
 					}
+				}
+			});
+		}
+	}
+
+	/**
+	 * toggle enabling GPS related menu items in dependency of device data capability
+	 */
+	public void updateDevicePropertyEditorItem() {
+		final boolean isEnabled = this.application.getActiveDevice().getDeviceConfiguration().isEditable();
+		if (Thread.currentThread().getId() == this.application.getThreadId()) {
+			this.devicePropertyFileEditMenuItem.setEnabled(isEnabled);
+		}
+		else {
+			GDE.display.asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					MenuBar.this.devicePropertyFileEditMenuItem.setEnabled(isEnabled);
 				}
 			});
 		}

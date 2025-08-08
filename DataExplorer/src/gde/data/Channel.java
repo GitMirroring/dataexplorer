@@ -646,6 +646,7 @@ public class Channel extends HashMap<String, RecordSet> {
 			if (recordSet.isRecalculation)
 				recordSet.checkAllDisplayable(); // updates graphics window
 
+			application.updateMenuRegardingEditableDeviceXml();
 			application.getMenuToolBar().updateRecordSetSelectCombo();
 			application.updateMenusRegardingGPSData();
 			application.cleanHeaderAndCommentInGraphicsWindow();

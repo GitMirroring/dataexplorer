@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<DeviceProperties xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="DeviceProperties_V49.xsd">
+<DeviceProperties xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="DeviceProperties_V50.xsd">
     <Device>
         <name implementation="gde.device.smmodellbau.GPSLogger3">GPS-Logger3</name>
         <manufacturer>SM-Modellbau</manufacturer>
         <manufacturerURL>https://www.sm-modellbau.de</manufacturerURL>
         <group>logger</group>
         <image>GPS-Logger3.png</image>
+        <editable>true</editable>
         <usage>true</usage>
     </Device>
     <TimeBase>
@@ -304,7 +305,7 @@
                 <statistics min="true" max="true" avg="true" sigma="false"/>
             </Measurement>
             <Measurement>
-                <name>empty_ML</name>
+                <name>empty 1_ML</name>
                 <symbol>x</symbol>
                 <unit>-</unit>
                 <active>true</active>
@@ -388,7 +389,7 @@
                 <statistics min="true" max="true" avg="true" sigma="false"/>
             </Measurement>
             <Measurement>
-                <name>altitude (relativ)2_ML</name>
+                <name>empty 2_ML</name>
                 <symbol>h</symbol>
                 <unit>m</unit>
                 <active>true</active>
@@ -747,7 +748,7 @@
                 <statistics min="true" max="true" avg="true" sigma="false"/>
             </Measurement>
             <Measurement>
-                <name>empty_ML</name>
+                <name>empty 1_ML</name>
                 <symbol>x</symbol>
                 <unit>-</unit>
                 <active>true</active>
@@ -831,7 +832,7 @@
                 <statistics min="true" max="true" avg="true" sigma="false"/>
             </Measurement>
             <Measurement>
-                <name>altitude (relativ)2_ML</name>
+                <name>empty 2_ML</name>
                 <symbol>h</symbol>
                 <unit>m</unit>
                 <active>true</active>

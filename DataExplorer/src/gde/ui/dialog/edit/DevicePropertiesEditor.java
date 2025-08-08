@@ -130,6 +130,7 @@ public class DevicePropertiesEditor extends Composite {
 	String																imageFileName														= GDE.STRING_EMPTY;
 	String																manufacturer														= GDE.STRING_EMPTY;
 	boolean																isDeviceUsed														= false;
+	boolean																isDeviceEditable												= false;
 	DeviceTypes														deviceGroup															= DeviceTypes.LOGGER;
 
 	SeriaPortTypeTabItem									serialPortTabItem;
@@ -1838,6 +1839,7 @@ public class DevicePropertiesEditor extends Composite {
 		this.manufacturer = this.deviceConfig.getManufacturer();
 		this.manufacuturerURL = this.deviceConfig.getManufacturerURL();
 		this.imageFileName = this.deviceConfig.getImageFileName();
+		this.isDeviceEditable = this.deviceConfig.isEditable();
 		this.isDeviceUsed = this.deviceConfig.isUsed();
 		this.deviceGroup = this.deviceConfig.getDeviceGroup();
 		initializeDeviceProperties();

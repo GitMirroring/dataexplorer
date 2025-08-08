@@ -3356,11 +3356,6 @@ public final class Settings extends Properties {
 	 */
 	public List<String> getServiceUpdateList() {
 		List<String> deviceList = new ArrayList<>();
-		//devices need update with 3.9.7
-		deviceList.add("GPS-Logger");
-		deviceList.add("GPS-Logger2");
-		deviceList.add("GPS-Logger3");
-		deviceList.add("IGCAdapter");
 //		deviceList.add("HoTTAdapter");
 //		deviceList.add("HoTTAdapterM");
 //		deviceList.add("HoTTAdapter2");

@@ -219,6 +219,7 @@ public final class Channels extends HashMap<Integer, Channel> {
 				application.resetGraphicsWindowZoomAndMeasurement();
 				// update viewable
 				// application.getMenuToolBar().updateObjectSelector();
+				application.updateMenuRegardingEditableDeviceXml();
 				application.getMenuToolBar().updateChannelSelector();
 				application.getMenuToolBar().updateRecordSetSelectCombo();
 				application.updateMenusRegardingGPSData();
