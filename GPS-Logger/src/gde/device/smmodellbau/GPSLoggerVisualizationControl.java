@@ -39,6 +39,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowData;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -244,6 +246,21 @@ public class GPSLoggerVisualizationControl extends Composite {
 					}
 				}
 			}	
+			Composite textComposite = new Composite(this, SWT.NONE);
+			textComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
+			GridData thisLData = new GridData();
+			thisLData.horizontalSpan = 1;
+			thisLData.horizontalAlignment = GridData.BEGINNING;
+			thisLData.verticalAlignment = GridData.BEGINNING;
+			thisLData.heightHint = 60;
+			textComposite.setLayoutData(thisLData);
+			textComposite.layout();
+			Label attentionText = new Label(textComposite, SWT.CENTER | SWT.WRAP);
+			attentionText.setLayoutData(new RowData(300, 100));
+			attentionText.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.BOLD));
+			attentionText.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
+			attentionText.setText(Messages.getString(MessageIds.GDE_MSGW2002));
+			this.measurementTypes.add(textComposite);
 		}
 	}
 
