@@ -1,27 +1,20 @@
-GNU DataExplorer - News - comes with Version 3.9.6 - 14 Jul 2025
+GNU DataExplorer - News - comes with Version 3.9.7 - 14 Aug 2025
 
 Generic changes/fixes 
-	* enhance build, using login shell calling rsync to load environment
-	* update swt.jar Windows
-	* update build compliance to release of Java 17 (already documented)
-	* fix statistics update while switching record set, even if a zoomed part of the data are visible
-	* fix record set initialization, setting visibility after zoom
+	* new DeviceProperties schema (XSD) V50, to prevent user editing device XML for devices not supposed to edit
 	
 Device specific changes/fixes
-	* OpenTx-Telemetry - fix handling of negative GPS coordinates
-	* JetiAdapter - add some INFO traces
-	* IGCAdapter - update to support new GPS triangle parsing
+	* GPS-Logger2/3 - add warning message, regarding not unique measurement name, automatically rename the measurement name to resolve this
+	* GPS-Logger2/3 - use active record set to display re-namable measurements in dialog and enable take over
+	* GPS-Logger2/3 - add M-Link measurement to have all 16 (0-15) values possible
 		
 Allgemeine Änderungen/Korrekturen
-	* Build verbessert, mit Login-Shell und Aufruf von rsync zum Laden der Umgebungsvariablen
-	* swt.jar Windows aktualisiert
-	* Aktualisierung der Build-Konformität bezügliich Java Release 17 (bereits dokumentiert)
-	* Update der Statistik beim Wechsel des Datensatzes, auch wenn ein gezoomter Teil der Daten sichtbar ist
+	* neue DeviceProperties-Schema (XSD) V50, um zu verhindern, dass Benutzer die XML-Datei für Geräte zu bearbeiten, die nicht bearbeitet werden sollen.
 	
 Gerätespezifische Änderungen/Korrekturen
-	* OpenTx-Telemetry - Handling mit negatiiven Koordinaten verbessert
-	* JetiAdapter - einige INFO Ausgaben hinzugefügt, Statistikausgabe erfolgt jetzt immer 
-	* IGCAdapter - Update zur Unterstützung der neuen GPS-Dreieck-Analyse
+	* GPS-Logger2/3 – Warnmeldung hinzugefügt, dass der Messungwertname nicht eindeutig ist, diese Messungwertnamen werden automatisch umbenannt, um dieses Problem zu beheben
+	* GPS-Logger2/3 – Verwendung des aktiven Datensatz, um umbenennbare Messungen im Dialogfeld anzuzeigen und zu übenehmen
+	* GPS-Logger2/3 – M-Link-Messung hinzugefügt, damit alle 16 (0–15) Werte möglich sind.
 
 
 
