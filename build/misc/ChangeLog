@@ -1,5 +1,13 @@
 Development history / change log, please read from bottom up
 
+Version 3.9.8 - xx yyy 2025
+Generic changes/fixes 
+	*
+	
+Device specific changes/fixes
+	* Core-Telemetrie - correct GPS coordinates handling
+
+
 Version 3.9.7 - 14 Aug 2025
 Generic changes/fixes 
 	* update DeviceProperties schema (XSD) to version V50, to prevent user try editing device XML

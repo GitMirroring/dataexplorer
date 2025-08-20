@@ -570,7 +570,7 @@ public class CoreAdapter extends DeviceConfiguration implements IDevice {
 				int ordinalLongitude = activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_LONGITUDE);
 				ordinalLongitude = ordinalLongitude == -1 ? activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_LONGITUDE_DEGREE) : ordinalLongitude;
 				int ordinalLatitude = activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_LATITUDE);
-				ordinalLatitude = ordinalLatitude == -1 ? activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_LATITUDE_DEGREE) : ordinalLongitude;
+				ordinalLatitude = ordinalLatitude == -1 ? activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_LATITUDE_DEGREE) : ordinalLatitude;
 
 				new FileHandler().exportFileKMZ(Messages.getString(MessageIds.GDE_MSGT2953), 
 						ordinalLongitude,
@@ -623,7 +623,7 @@ public class CoreAdapter extends DeviceConfiguration implements IDevice {
 				int ordinalLongitude = activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_LONGITUDE);
 				ordinalLongitude = ordinalLongitude == -1 ? activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_LONGITUDE_DEGREE) : ordinalLongitude;
 				int ordinalLatitude = activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_LATITUDE);
-				ordinalLatitude = ordinalLatitude == -1 ? activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_LATITUDE_DEGREE) : ordinalLongitude;
+				ordinalLatitude = ordinalLatitude == -1 ? activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_LATITUDE_DEGREE) : ordinalLatitude;
 
 				exportFileName = new FileHandler().exportFileKMZ(
 						ordinalLongitude, 
