@@ -200,7 +200,7 @@ public class CoreDataReader {
 												vecRecordNames.add(newRecordName);
 												if (CoreDataReader.log.isLoggable(Level.INFO)) CoreDataReader.log.log(Level.INFO, String.format("add new record = %s [%s]", newRecordName, dataVar.getUnit()));
 
-												if (dataVar.getDataType() == TelemetryData.T_GPS) {
+												if (dataVar.getDataType() == TelemetryData.T_GPS && (!telemetrySensor.getName().equals("Core") && !telemetrySensor.getName().equals("Atom"))) {
 													if (dataVar.getName().toLowerCase().startsWith("lon") || dataVar.getName().toLowerCase().startsWith("län")) {
 														isActualgps = true;
 														mapRecordType.put(index, Record.DataType.GPS_LATITUDE);

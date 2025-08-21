@@ -5,7 +5,7 @@ Generic changes/fixes
 	*
 	
 Device specific changes/fixes
-	* Core-Telemetrie - correct GPS coordinates handling
+	* Core-Telemetrie - correct GPS coordinates handling, do not use transmitter coordinates
 
 
 Version 3.9.7 - 14 Aug 2025
