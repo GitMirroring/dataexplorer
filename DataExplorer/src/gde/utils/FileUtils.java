@@ -1611,7 +1611,7 @@ public class FileUtils {
 					String versionString = inputLine.toLowerCase().substring(inputLine.lastIndexOf("<b>") + 3, inputLine.lastIndexOf("</b>")); //$NON-NLS-1$ //$NON-NLS-2$
 					versionString = versionString.substring(versionString.indexOf(" ")+1, versionString.lastIndexOf(" ")); //$NON-NLS-1$ //$NON-NLS-2$
 					int availableVersion = Integer.parseInt(versionString.replace(GDE.STRING_DOT, GDE.STRING_EMPTY));
-					FileUtils.log.log(Level.OFF, "actualVersion = " + GDE.VERSION_NUMBER + " - availableVersion = " + availableVersion); //$NON-NLS-1$ //$NON-NLS-2$
+					log.log(Level.OFF, "actualVersion = " + GDE.VERSION_NUMBER + " - availableVersion = " + availableVersion); //$NON-NLS-1$ //$NON-NLS-2$
 					versionCheck = new String[] { Boolean.valueOf(GDE.VERSION_NUMBER < availableVersion).toString(), versionString };
 					break;
 				}
@@ -1621,7 +1621,7 @@ public class FileUtils {
 			in = null;
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			log.log(Level.OFF, e.getMessage(), e);
 		}
 		finally {
 			if (in != null) try {

@@ -855,7 +855,7 @@
 			<arg value="--module-path" />
 			<arg value="/Library/Java/JavaVirtualMachines/jdk-21.jdk/Contents/Home/jmods" />
 			<arg value="--add-modules" />
-			<arg value="java.se,jdk.xml.dom" />
+			<arg value="java.se,jdk.xml.dom,jdk.crypto.cryptoki" />
 		</exec>
 	</target>
 	
@@ -871,7 +871,7 @@
 			<arg value="--module-path" />
 			<arg value="C:\Program Files\Java\jdk-21\jmods" />
 			<arg value="--add-modules" />
-			<arg value="java.se,jdk.xml.dom" />
+			<arg value="java.se,jdk.xml.dom,jdk.crypto.cryptoki" />
 		</exec>
 	</target>
 	
