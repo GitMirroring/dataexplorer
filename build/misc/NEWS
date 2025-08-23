@@ -1,20 +1,16 @@
-GNU DataExplorer - News - comes with Version 3.9.7 - 14 Aug 2025
+GNU DataExplorer - News - comes with Version 3.9.8 - 24 Aug 2025
 
 Generic changes/fixes 
-	* new DeviceProperties schema (XSD) V50, to prevent user editing device XML for devices not supposed to edit
+	* enable correct SSL handshake for daily update check
 	
 Device specific changes/fixes
-	* GPS-Logger2/3 - add warning message, regarding not unique measurement name, automatically rename the measurement name to resolve this
-	* GPS-Logger2/3 - use active record set to display re-namable measurements in dialog and enable take over
-	* GPS-Logger2/3 - add M-Link measurement to have all 16 (0-15) values possible
+	* Core-Telemetrie - correct GPS coordinates handling, do not use transmitter coordinates anymore
 		
 Allgemeine Änderungen/Korrekturen
-	* neue DeviceProperties-Schema (XSD) V50, um zu verhindern, dass Benutzer die XML-Datei für Geräte zu bearbeiten, die nicht bearbeitet werden sollen.
+	* ermögliche korrekte SSL Verbindung beim täglichen Update-Check
 	
 Gerätespezifische Änderungen/Korrekturen
-	* GPS-Logger2/3 – Warnmeldung hinzugefügt, dass der Messungwertname nicht eindeutig ist, diese Messungwertnamen werden automatisch umbenannt, um dieses Problem zu beheben
-	* GPS-Logger2/3 – Verwendung des aktiven Datensatz, um umbenennbare Messungen im Dialogfeld anzuzeigen und zu übenehmen
-	* GPS-Logger2/3 – M-Link-Messung hinzugefügt, damit alle 16 (0–15) Werte möglich sind.
+	* Core-Telemetrie - GPS Koordinaten Verwendung korrigiert, verwendet nun keine Sender GPS Koordinaten mehr
 
 
 

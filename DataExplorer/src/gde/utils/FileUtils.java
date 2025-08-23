@@ -32,6 +32,7 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -1602,7 +1603,7 @@ public class FileUtils {
 		BufferedReader in = null;
 		String[] versionCheck = new String[] { "false", GDE.VERSION.substring(8) }; //$NON-NLS-1$
 		try {
-			URL gdeDownload = new URL("https://savannah.nongnu.org/news/?group=dataexplorer"); //$NON-NLS-1$
+			URL gdeDownload = new URI("https://savannah.nongnu.org/news/?group=dataexplorer").toURL(); //$NON-NLS-1$
 			in = new BufferedReader(new InputStreamReader(gdeDownload.openStream()));
 
 			String inputLine;

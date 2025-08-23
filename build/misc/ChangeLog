@@ -1,8 +1,8 @@
 Development history / change log, please read from bottom up
 
-Version 3.9.8 - xx yyy 2025
+Version 3.9.8 - 24 Aug 2025
 Generic changes/fixes 
-	* add module jdk.crypto.cryptoki to build runtime and correct handle SSL handshake
+	* enable correct SSL handshake for daily update check
 	
 Device specific changes/fixes
 	* Core-Telemetrie - correct GPS coordinates handling, do not use transmitter coordinates anymore
