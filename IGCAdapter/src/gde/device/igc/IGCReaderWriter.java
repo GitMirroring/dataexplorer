@@ -475,18 +475,18 @@ public class IGCReaderWriter {
 						log.log(Level.FINE, "F RECORD - SATELLITE CONSTELLATION = " + line);
 					}
 					else if (line.startsWith("E")) {
-						//skip E RECORD - Albatross enties
-						if (line.endsWith("ARM")) {
-							log.log(Level.FINE, "E RECORD - Albatross task arm = " + line);
-						}
-						if ((line.endsWith("STA") || line.endsWith("STO")) && result != null) {
-							log.log(Level.FINE, "E RECORD - Albatross task start/stop = " + line);
+						if ((line.endsWith("STA") || line.endsWith("STO") || line.endsWith("ARM")) && result != null) {
+							log.log(Level.FINE, "E RECORD - Albatross task start/stop/arm = " + line);
 							String taskType = "Sport";
 							if (albatrossTask.toString().contains("200,250,70"))
 								taskType = "Light";
-							else if (albatrossTask.toString().contains("500,500,120")) taskType = "SLS";
-							log.log(Level.OFF, result.toString(taskType));
-							triangles.append(result.toString(taskType));
+							else if (albatrossTask.toString().contains("500,500,120"))
+								taskType = "SLS";
+							
+							if (result != null && result.getLaps() > 0) {
+								log.log(Level.OFF, result.toString(taskType));
+								triangles.append(result.toString(taskType));
+							}
 							result = null;
 						}
 						else if (line.endsWith("TPC"))
@@ -515,7 +515,8 @@ public class IGCReaderWriter {
 							String taskType = "Sport";
 							if (albatrossTask.toString().contains("200,250,70"))
 								taskType = "Light";
-							else if (albatrossTask.toString().contains("500,500,120")) taskType = "SLS";
+							else if (albatrossTask.toString().contains("500,500,120")) 
+								taskType = "SLS";
 							log.log(Level.OFF, result.toString(taskType));
 							triangles.append(result.toString(taskType));
 							result = null;
@@ -523,9 +524,9 @@ public class IGCReaderWriter {
 					}
 					else if (line.startsWith("LRCE_GPS_TRIANGLE")) {
 						log.log(Level.FINE, "L RECORD - Albatross stat = " + line);
-						if (result != null) {
-							result.add(line);
-						}
+						if (result == null)
+							result = new GpsTaskResult();
+							result.add(line); //refresh GPS-Triangle statistics
 					}
 					else if (line.startsWith("LSTART")) {
 						log.log(Level.FINE, "L RECORD - Albatross start = " + line);
@@ -566,8 +567,8 @@ public class IGCReaderWriter {
 			
 			if (error.length() > 10)
 				recordSet.setRecordSetDescription(recordSet.getRecordSetDescription() + GDE.LINE_SEPARATOR + error);
-			//if (triangles.length() > 10)
-			//	recordSet.setRecordSetDescription(recordSet.getRecordSetDescription() + GDE.LINE_SEPARATOR + triangles);
+			if (triangles.length() > 10)
+				recordSet.setRecordSetDescription(recordSet.getRecordSetDescription() + GDE.LINE_SEPARATOR + triangles);
 			
 		}
 		catch (FileNotFoundException e) {
