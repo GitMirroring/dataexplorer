@@ -25,7 +25,6 @@ import java.util.logging.Logger;
 
 import javax.usb.UsbClaimException;
 import javax.usb.UsbException;
-import javax.usb.UsbInterface;
 import javax.xml.bind.JAXBException;
 
 import gde.GDE;
@@ -1341,7 +1340,7 @@ public class MC3000 extends DeviceConfiguration implements IDevice {
 						((MC3000Dialog)this.getDialog()).dataGatherThread = new MC3000GathererThread(this.application, this, this.usbPort, activChannel.getNumber(), (MC3000Dialog) this.getDialog());
 						try {
 							if (((MC3000Dialog)this.getDialog()).dataGatherThread != null && this.usbPort.isConnected()) {
-								this.systemSettings = new MC3000.SystemSettings(this.usbPort.getSystemSettings(((MC3000Dialog)this.getDialog()).dataGatherThread.getUsbInterface()));
+								this.systemSettings = new MC3000.SystemSettings(this.usbPort.getSystemSettings());
 								//WaitTimer.delay(100);
 								//this.usbPort.startProcessing(this.getDialog().dataGatherThread.getUsbInterface());
 								WaitTimer.delay(100);
@@ -1765,9 +1764,9 @@ public class MC3000 extends DeviceConfiguration implements IDevice {
 	 * @param usbInterface
 	 * @return slot related program/memory number
 	 */
-	public byte getBatteryMemoryNumber(final int slotNumber, UsbInterface usbInterface) {
+	public byte getBatteryMemoryNumber(final int slotNumber) {
 		try {
-			this.systemSettings = new SystemSettings(this.usbPort.getSystemSettings(usbInterface));
+			this.systemSettings = new SystemSettings(this.usbPort.getSystemSettings());
 		}
 		catch (Exception e) {
 			return 0x00;

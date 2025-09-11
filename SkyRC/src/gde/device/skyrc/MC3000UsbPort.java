@@ -22,7 +22,6 @@ import gde.comm.DeviceCommPort;
 import gde.comm.IDeviceCommPort;
 import gde.device.IDevice;
 import gde.device.InputTypes;
-import gde.exception.TimeOutException;
 import gde.log.Level;
 import gde.ui.DataExplorer;
 import gde.utils.Checksum;
@@ -31,9 +30,11 @@ import gde.utils.StringHelper;
 import java.io.IOException;
 import java.util.logging.Logger;
 
+import javax.usb.UsbClaimException;
 import javax.usb.UsbDisconnectedException;
 import javax.usb.UsbException;
-import javax.usb.UsbInterface;
+
+import org.usb4java.DeviceHandle;
 
 /**
  * QC-Copter or QuadroConrtol serial port implementation
@@ -55,11 +56,14 @@ public class MC3000UsbPort extends DeviceCommPort implements IDeviceCommPort {
   protected static final byte OUT_ENDPOINT = 0x01;
 
   // The communication timeout in milliseconds. */
-  protected static final int TIMEOUT = 1000;
+  protected static final int 	TIMEOUT = 1000;
+	protected static final long	timeout_ms	= 1200;
+
   
-  protected final byte interfaceId;
-  protected final byte endpointIn;
-  protected final byte endpointOut;
+	protected DeviceHandle		libUsbHandle;
+  protected final byte 			interfaceId;
+  protected final byte 			endpointIn;
+  protected final byte 			endpointOut;
 
 	public enum TakeMtuData {
 		SLOT_0(new byte[]{0x0f, 0x04, 0x55, 0x00, 0x00, 0x55, (byte) 0xff, (byte) 0xff}), 
@@ -159,108 +163,118 @@ public class MC3000UsbPort extends DeviceCommPort implements IDeviceCommPort {
 		STOP_PROCESSING = tmpData;
 	}
 	
-	/**
-	 * start the processing just before query slot data
-	 * @param usbInterface
-	 * @throws Exception
-	 */
-	public synchronized void startProcessing(UsbInterface usbInterface) throws Exception {
-		final String $METHOD_NAME = "startProcessing"; //$NON-NLS-1$
-		UsbInterface iface = null;
-		boolean isPortOpenedByCall = false;
-
-		try {
-			if (usbInterface == null) {
-				iface = this.openUsbPort(this.device);
-				isPortOpenedByCall = true;
-			}
-			iface = usbInterface == null ? this.openUsbPort(this.device) : usbInterface;
-			this.write(iface, this.endpointIn, this.START_PROCESSING);					
-		}
-		catch (Exception e) {
-			if (!(e instanceof TimeOutException)) {
-				log.logp(Level.SEVERE, $CLASS_NAME, $METHOD_NAME, e.getMessage(), e);
-			}
-			throw e;
-		}
-		finally {
-				if (isPortOpenedByCall) this.closeUsbPort(iface);
-		}
+	public void openUsbPort() throws UsbClaimException, UsbException {
+		this.libUsbHandle = this.openLibUsbPort(this.device);
 	}
-	
-	/**
-	 * stop the data collection not really processing
-	 * @param usbInterface
-	 * @throws Exception
-	 */
-	public synchronized void stopProcessing(UsbInterface usbInterface) {
-		final String $METHOD_NAME = "stopProcessing"; //$NON-NLS-1$
-		UsbInterface iface = null;
-		boolean isPortOpenedByCall = false;
 
-		try {
-			if (usbInterface == null) {
-				iface = this.openUsbPort(this.device);
-				isPortOpenedByCall = true;
-			}
-			iface = usbInterface == null ? this.openUsbPort(this.device) : usbInterface;
-			this.write(iface, this.endpointIn, this.STOP_PROCESSING);					
+	public void closeUsbPort(boolean cacheSelectedUsbDevice) throws UsbClaimException, UsbException {
+		if (this.libUsbHandle != null) {
+			this.closeLibUsbPort(this.libUsbHandle, cacheSelectedUsbDevice);
+			this.libUsbHandle = null;
 		}
-		catch (Exception e) {
-			if (!(e instanceof TimeOutException)) {
-				log.logp(Level.SEVERE, $CLASS_NAME, $METHOD_NAME, e.getMessage(), e);
-			}
-		}
-		finally {
-				if (isPortOpenedByCall) try {
-					this.closeUsbPort(iface);
-				}
-				catch (Throwable e) {
-					log.logp(Level.SEVERE, $CLASS_NAME, $METHOD_NAME, e.getMessage(), e);
-				}
-		}
+		else this.closeLibUsbPort(null, false);
 	}
+
+//	/**
+//	 * start the processing just before query slot data
+//	 * @param usbInterface
+//	 * @throws Exception
+//	 */
+//	public synchronized void startProcessing(UsbInterface usbInterface) throws Exception {
+//		final String $METHOD_NAME = "startProcessing"; //$NON-NLS-1$
+//		UsbInterface iface = null;
+//		boolean isPortOpenedByCall = false;
+//
+//		try {
+//			if (usbInterface == null) {
+//				iface = this.openUsbPort(this.device);
+//				isPortOpenedByCall = true;
+//			}
+//			iface = usbInterface == null ? this.openUsbPort(this.device) : usbInterface;
+//			this.write(iface, this.endpointIn, this.START_PROCESSING);					
+//		}
+//		catch (Exception e) {
+//			if (!(e instanceof TimeOutException)) {
+//				log.logp(Level.SEVERE, $CLASS_NAME, $METHOD_NAME, e.getMessage(), e);
+//			}
+//			throw e;
+//		}
+//		finally {
+//				if (isPortOpenedByCall) this.closeUsbPort(iface);
+//		}
+//	}
+//	
+//	/**
+//	 * stop the data collection not really processing
+//	 * @param usbInterface
+//	 * @throws Exception
+//	 */
+//	public synchronized void stopProcessing(UsbInterface usbInterface) {
+//		final String $METHOD_NAME = "stopProcessing"; //$NON-NLS-1$
+//		UsbInterface iface = null;
+//		boolean isPortOpenedByCall = false;
+//
+//		try {
+//			if (usbInterface == null) {
+//				iface = this.openUsbPort(this.device);
+//				isPortOpenedByCall = true;
+//			}
+//			iface = usbInterface == null ? this.openUsbPort(this.device) : usbInterface;
+//			this.write(iface, this.endpointIn, this.STOP_PROCESSING);					
+//		}
+//		catch (Exception e) {
+//			if (!(e instanceof TimeOutException)) {
+//				log.logp(Level.SEVERE, $CLASS_NAME, $METHOD_NAME, e.getMessage(), e);
+//			}
+//		}
+//		finally {
+//				if (isPortOpenedByCall) try {
+//					this.closeUsbPort(iface);
+//				}
+//				catch (Throwable e) {
+//					log.logp(Level.SEVERE, $CLASS_NAME, $METHOD_NAME, e.getMessage(), e);
+//				}
+//		}
+//	}
 	
 	/**
 	 * query the actual system settings
-	 * @param usbInterface
 	 * @return
 	 * @throws Exception
 	 */
-	public synchronized byte[] getSystemSettings(UsbInterface usbInterface) throws Exception {
+	public synchronized byte[] getSystemSettings() throws Exception {
 		final String $METHOD_NAME = "getSystemSettings"; //$NON-NLS-1$
 		byte[] data = new byte[Math.abs(this.dataSize)];
-		UsbInterface iface = null;
 		boolean isPortOpenedByCall = false;
 
 		try {
-			if (usbInterface == null) {
-				iface = this.openUsbPort(this.device);
+			if (this.libUsbHandle == null) {
+				this.openUsbPort();
 				isPortOpenedByCall = true;
 			}
-			iface = usbInterface == null ? this.openUsbPort(this.device) : usbInterface;
-			this.write(iface, this.endpointIn, this.GET_SYSTEM_SETTING);					
+			
+			this.write(this.libUsbHandle, this.endpointIn, this.GET_SYSTEM_SETTING, timeout_ms);					
 			try {
 				Thread.sleep(10);
 			}
 			catch (Exception e) {
 				// ignore
 			}
-			this.read(iface, this.endpointOut, data);
+			this.read(this.libUsbHandle, this.endpointOut, data, timeout_ms);
 			
 			if (log.isLoggable(Level.FINE)) log.logp(Level.FINE, $CLASS_NAME, $METHOD_NAME, StringHelper.byte2Hex2CharString(data, data.length));
 			if (log.isLoggable(Level.FINE)) log.logp(Level.FINE, $CLASS_NAME, $METHOD_NAME, String.format("Checksum = 0x%02X -> %b", MC3000UsbPort.calculateCheckSum(data, data.length-2), this.isChecksumOK(data, 16, 30, 31)));
 			
 			if (!this.isChecksumOK(data, 16, 30, 31) && this.retrys-- >= 0) {
 				log.logp(Level.WARNING, $CLASS_NAME, $METHOD_NAME, String.format("Error: Checksum = 0x%02X -> %b", MC3000UsbPort.calculateCheckSum(data, data.length-2), this.isChecksumOK(data, 16, 30, 31)));
-				return this.getSystemSettings(iface);
+				return this.getSystemSettings();
 			}
 		}
 		catch (Exception e) {
 				log.logp(Level.WARNING, $CLASS_NAME, $METHOD_NAME, e.getMessage(), e);
 		}
 		finally {
-				if (isPortOpenedByCall) this.closeUsbPort(iface);
+				if (isPortOpenedByCall) this.closeUsbPort(true);
 		}
 		this.retrys = 1;
 		return data;
@@ -273,27 +287,25 @@ public class MC3000UsbPort extends DeviceCommPort implements IDeviceCommPort {
 	 * @return
 	 * @throws Exception
 	 */
-	public synchronized byte[] setSlotProgram(final UsbInterface usbInterface, final byte[] buffer) throws Exception {
+	public synchronized byte[] setSlotProgram(final byte[] buffer) throws Exception {
 		final String $METHOD_NAME = "setSlotProgram"; //$NON-NLS-1$
 		byte[] data = new byte[Math.abs(this.dataSize)];
-		UsbInterface iface = null;
 		boolean isPortOpenedByCall = false;
 
 		try {
-			if (usbInterface == null) {
-				iface = this.openUsbPort(this.device);
+			if (this.libUsbHandle == null) {
+				this.openUsbPort();
 				isPortOpenedByCall = true;
 			}
 			if (log.isLoggable(Level.FINE)) log.logp(Level.FINE, $CLASS_NAME, $METHOD_NAME, StringHelper.byte2Hex2CharString(buffer, buffer.length));
-			iface = usbInterface == null ? this.openUsbPort(this.device) : usbInterface;
-			this.write(iface, this.endpointIn, buffer);					
+			this.write(this.libUsbHandle, this.endpointIn, buffer, timeout_ms);					
 			try {
 				Thread.sleep(10);
 			}
 			catch (Exception e) {
 				// ignore
 			}
-			this.read(iface, this.endpointOut, data);			
+			this.read(this.libUsbHandle, this.endpointOut, data, timeout_ms);			
 			if (log.isLoggable(Level.FINE)) log.logp(Level.FINE, $CLASS_NAME, $METHOD_NAME, StringHelper.byte2Hex2CharString(data, data.length));
 			
 			if ((data[0]&0xFF) != 0xF0) {
@@ -305,7 +317,7 @@ public class MC3000UsbPort extends DeviceCommPort implements IDeviceCommPort {
 				log.logp(Level.WARNING, $CLASS_NAME, $METHOD_NAME, e.getMessage(), e);
 		}
 		finally {
-				if (isPortOpenedByCall) this.closeUsbPort(iface);
+				if (isPortOpenedByCall) this.closeUsbPort(true);
 		}
 		this.retrys = 1;
 		return data;
@@ -317,26 +329,26 @@ public class MC3000UsbPort extends DeviceCommPort implements IDeviceCommPort {
 	 * @return byte array containing gathered data - this can individual specified per device
 	 * @throws IOException
 	 */
-	public synchronized byte[] getData(final UsbInterface iface, final byte[] request) throws Exception {
+	public synchronized byte[] getData(final byte[] request) throws Exception {
 		final String $METHOD_NAME = "getData"; //$NON-NLS-1$
 		byte[] data = new byte[Math.abs(this.dataSize)];
 
 		try {
-			this.write(iface, this.endpointIn, request);			
+			this.write(this.libUsbHandle, this.endpointIn, request, timeout_ms);			
 			try {
 				Thread.sleep(10);
 			}
 			catch (Exception e) {
 				// ignore
 			}
-			this.read(iface, this.endpointOut, data);
+			this.read(this.libUsbHandle, this.endpointOut, data, timeout_ms);
 			
 			if (log.isLoggable(Level.FINE)) log.logp(Level.FINE, $CLASS_NAME, $METHOD_NAME, StringHelper.byte2Hex2CharString(data, data.length));
 			if (log.isLoggable(Level.FINER)) log.logp(Level.FINER, $CLASS_NAME, $METHOD_NAME, String.format("Checksum = 0x%02X -> %b", MC3000UsbPort.calculateCheckSum(data), this.isChecksumOK(data)));
 			
 			if (!this.isChecksumOK(data) && this.retrys-- >= 0) {
 				log.logp(Level.WARNING, $CLASS_NAME, $METHOD_NAME, String.format("Error: Checksum = 0x%02X -> %b", MC3000UsbPort.calculateCheckSum(data), this.isChecksumOK(data)));
-				return this.getData(iface, request);
+				return this.getData(request);
 			}
 		}
 		catch (UsbDisconnectedException dce) {
@@ -349,19 +361,19 @@ public class MC3000UsbPort extends DeviceCommPort implements IDeviceCommPort {
 		this.retrys = 1;
 		return data;
 	}
-	
+
 
 	/**
 	 * method to gather data from device, implementation is individual for device
 	 * @return byte array containing gathered data - this can individual specified per device
 	 * @throws IOException
 	 */
-	public synchronized byte[] getSlotData(final UsbInterface iface, final byte[] request) throws Exception {
+	public synchronized byte[] getSlotData(final byte[] request) throws Exception {
 		final String $METHOD_NAME = "getSlotData"; //$NON-NLS-1$
 		byte[] data = new byte[Math.abs(this.dataSize)];
 
 		try {
-			this.write(iface, this.endpointIn, request);			
+			this.write(this.libUsbHandle, this.endpointIn, request, timeout_ms);			
 			if (log.isLoggable(Level.FINE)) log.logp(Level.FINE, $CLASS_NAME, $METHOD_NAME, StringHelper.byte2Hex2CharString(request, request.length));
 			try {
 				Thread.sleep(10);
@@ -369,14 +381,14 @@ public class MC3000UsbPort extends DeviceCommPort implements IDeviceCommPort {
 			catch (Exception e) {
 				// ignore
 			}
-			this.read(iface, this.endpointOut, data);
+			this.read(this.libUsbHandle, this.endpointOut, data, timeout_ms);
 			
 			if (log.isLoggable(Level.FINE)) log.logp(Level.FINE, $CLASS_NAME, $METHOD_NAME, StringHelper.byte2Hex2CharString(data, data.length));
 			if (log.isLoggable(Level.FINE)) log.logp(Level.FINE, $CLASS_NAME, $METHOD_NAME, String.format("Checksum = 0x%02X -> %b", MC3000UsbPort.calculateCheckSum(data), this.isChecksumOK(data)));
 			
 			if (!this.isChecksumOK(data) && this.retrys-- >= 0) {
 				log.logp(Level.WARNING, $CLASS_NAME, $METHOD_NAME, String.format("Error: Checksum = 0x%02X -> %b", MC3000UsbPort.calculateCheckSum(data), this.isChecksumOK(data)));
-				return this.getData(iface, request);
+				return this.getData(request);
 			}
 		}
 		catch (Exception e) {

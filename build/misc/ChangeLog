@@ -1,5 +1,12 @@
 Development history / change log, please read from bottom up
 
+Version 3.9.9 - xx yyy 2025
+Generic changes/fixes 
+	* enable device selection with identical USB VID/PID without product string using libUSB
+	
+Device specific changes/fixes
+	* MC3000* - change implementation to use libUSB instead of javax.USB
+
 Version 3.9.8 - 24 Aug 2025
 Generic changes/fixes 
 	* enable correct SSL handshake for daily update check

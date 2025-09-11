@@ -637,20 +637,29 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
 					handle = null;
 				}
 				String descriptorString = descriptor.dump(handle);
-				if (descriptorString.contains("iProduct") && descriptorString.contains(activeDevice.getUsbProductString()) && descriptorString.contains("iSerial")) {
-					String usbDeviceString = LibUsb.getStringDescriptor(handle, descriptor.iProduct()) + " S/N " + LibUsb.getStringDescriptor(handle, descriptor.iSerialNumber());
-					myUsbDevices.put(usbDeviceString, libUsbDevice);
-				}				
-				LibUsb.close(handle);
+				String productString = activeDevice.getUsbProductString();
+				if (productString != null) {
+					if (descriptorString.contains("iProduct") && descriptorString.contains(activeDevice.getUsbProductString()) && descriptorString.contains("iSerial")) {
+						String usbDeviceString = LibUsb.getStringDescriptor(handle, descriptor.iProduct()) + " S/N " + LibUsb.getStringDescriptor(handle, descriptor.iSerialNumber());
+						myUsbDevices.put(usbDeviceString, libUsbDevice);
+					}				
+					LibUsb.close(handle);
+				} else {
+					if (descriptorString.contains("iProduct") && descriptorString.contains("iSerial")) {
+						String usbDeviceString = LibUsb.getStringDescriptor(handle, descriptor.iProduct()) + " S/N " + LibUsb.getStringDescriptor(handle, descriptor.iSerialNumber());
+						myUsbDevices.put(usbDeviceString, libUsbDevice);
+					}				
+					LibUsb.close(handle);
+				}
 			}
 			if (myUsbDevices.size() > 0 && selectedUsbDevice == null) {
 				//several identical USB HID  found, manual select usbDevice
-				selectedUsbDevice = (Device) new LibUsbDeviceSelectionDialog(myUsbDevices).open();
+				DeviceUsbPortImpl.selectedUsbDevice = (Device) new LibUsbDeviceSelectionDialog(myUsbDevices).open();
 				claimLibUsbDevice(selectedUsbDevice, libUsbDeviceHandle, ifaceId);
 			}
 			else if (myUsbDevices.size() > 0 && selectedUsbDevice != null) {
 				//several identical USB HID  found, selected usbDevice available for this GDE instance
-				claimLibUsbDevice(selectedUsbDevice, libUsbDeviceHandle, ifaceId);
+				claimLibUsbDevice(DeviceUsbPortImpl.selectedUsbDevice, libUsbDeviceHandle, ifaceId);
 			}
 			else
 				throw new UsbException(String.format("%s\n===>>>  %s", Messages.getString(MessageIds.GDE_MSGE0050), activeDevice.getUsbProductString()));
@@ -685,6 +694,7 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
 		result = LibUsb.claimInterface(libUsbDeviceHandle, ifaceId);
 		if (result < 0) {
 			LibUsb.close(libUsbDeviceHandle);
+			DeviceUsbPortImpl.selectedUsbDevice = null;
 			log.log(Level.SEVERE, String.format("Unable to claim device: %s.", LibUsb.strError(result)));
 			throw new UsbClaimException(new LibUsbException(result).getMessage());
 		}

@@ -39,7 +39,6 @@ import java.util.logging.Logger;
 
 import javax.usb.UsbDisconnectedException;
 import javax.usb.UsbException;
-import javax.usb.UsbInterface;
 import javax.usb.UsbNotClaimedException;
 
 /**
@@ -66,7 +65,6 @@ public class MC3000FmGathererThread extends Thread {
 	boolean							isPortOpenedByLiveGatherer	= false;
 	boolean							isGatheredRecordSetVisible	= true;
 	boolean							isCollectDataStopped				= false;
-	UsbInterface				usbInterface								= null;
 	boolean							isProgrammExecuting1				= false;
 	boolean							isProgrammExecuting2				= false;
 	boolean							isProgrammExecuting3				= false;
@@ -104,7 +102,7 @@ public class MC3000FmGathererThread extends Thread {
 		this.channel = this.channels.get(this.channelNumber);
 
 		if (!this.usbPort.isConnected()) {
-			this.usbInterface = this.usbPort.openUsbPort(this.device);
+			this.usbPort.openUsbPort();
 			this.isPortOpenedByLiveGatherer = true;
 		}
 		this.setPriority(Thread.MAX_PRIORITY);
@@ -157,22 +155,22 @@ public class MC3000FmGathererThread extends Thread {
 							this.application.setSerialRxOn();
 						}
 						//get data from device for all4 slots
-						if (this.usbPort.isConnected()) dataBuffer1 = this.usbPort.getData(this.usbInterface, MC3000UsbPort.TakeMtuData.SLOT_0.value());
+						if (this.usbPort.isConnected()) dataBuffer1 = this.usbPort.getData(MC3000UsbPort.TakeMtuData.SLOT_0.value());
 						WaitTimer.delay(USB_QUERY_DELAY);
-						if (this.usbPort.isConnected()) dataBuffer2 = this.usbPort.getData(this.usbInterface, MC3000UsbPort.TakeMtuData.SLOT_1.value());
+						if (this.usbPort.isConnected()) dataBuffer2 = this.usbPort.getData(MC3000UsbPort.TakeMtuData.SLOT_1.value());
 						if (this.application != null) this.application.setSerialTxOff();
 						WaitTimer.delay(USB_QUERY_DELAY);
-						if (this.usbPort.isConnected()) dataBuffer3 = this.usbPort.getData(this.usbInterface, MC3000UsbPort.TakeMtuData.SLOT_2.value());
+						if (this.usbPort.isConnected()) dataBuffer3 = this.usbPort.getData(MC3000UsbPort.TakeMtuData.SLOT_2.value());
 						WaitTimer.delay(USB_QUERY_DELAY);
-						if (this.usbPort.isConnected()) dataBuffer4 = this.usbPort.getData(this.usbInterface, MC3000UsbPort.TakeMtuData.SLOT_3.value());
+						if (this.usbPort.isConnected()) dataBuffer4 = this.usbPort.getData(MC3000UsbPort.TakeMtuData.SLOT_3.value());
 						if (this.application != null) this.application.setSerialRxOff();
 
 						if (dataBuffer1 != null && dataBuffer1.length >= 6 && dataBuffer1[5] == 4) --retryCounterEnd_1_sec;
 						this.isProgrammExecuting1 = this.device.isProcessing(1, dataBuffer1) && retryCounterEnd_1_sec >= 0;
 						if (this.isProgrammExecuting1 && !this.wasProgrammExecuting1) {
 							this.wasProgrammExecuting1 = this.isProgrammExecuting1;
-							this.retryCounterEnd_1_sec = this.device.new SlotSettings(this.usbPort.getSlotData(this.usbInterface,
-									QuerySlotData.SLOT_0.value()), this.device.getFirmwareVersionAsInt()).getChargeRestingTime()*60; 
+							this.retryCounterEnd_1_sec = this.device.new SlotSettings(this.usbPort.getSlotData(QuerySlotData.SLOT_0.value()), 
+									this.device.getFirmwareVersionAsInt()).getChargeRestingTime()*60; 
 							log.log(Level.OFF, "Resting time slot 1 [min] " + retryCounterEnd_1_sec/60);
 						} else if (!this.isProgrammExecuting1) {
 							this.wasProgrammExecuting1 = this.isProgrammExecuting1;
@@ -181,8 +179,8 @@ public class MC3000FmGathererThread extends Thread {
 						this.isProgrammExecuting2 = this.device.isProcessing(2, dataBuffer2) && retryCounterEnd_2_sec >= 0;
 						if (this.isProgrammExecuting2 && !this.wasProgrammExecuting2) {
 							this.wasProgrammExecuting2 = this.isProgrammExecuting2;
-							this.retryCounterEnd_2_sec = this.device.new SlotSettings(this.usbPort.getSlotData(this.usbInterface,
-									QuerySlotData.SLOT_1.value()), this.device.getFirmwareVersionAsInt()).getChargeRestingTime()*60; 
+							this.retryCounterEnd_2_sec = this.device.new SlotSettings(this.usbPort.getSlotData(QuerySlotData.SLOT_1.value()), 
+									this.device.getFirmwareVersionAsInt()).getChargeRestingTime()*60; 
 							log.log(Level.OFF, "Resting time slot 2 [min] " + retryCounterEnd_2_sec/60);
 						} else if (!this.isProgrammExecuting2) {
 							this.wasProgrammExecuting2 = this.isProgrammExecuting2;
@@ -191,8 +189,8 @@ public class MC3000FmGathererThread extends Thread {
 						this.isProgrammExecuting3 = this.device.isProcessing(3, dataBuffer3) && retryCounterEnd_3_sec >= 0;
 						if (this.isProgrammExecuting3 && !this.wasProgrammExecuting3) {
 							this.wasProgrammExecuting3 = this.isProgrammExecuting3;
-							this.retryCounterEnd_3_sec = this.device.new SlotSettings(this.usbPort.getSlotData(this.usbInterface,
-									QuerySlotData.SLOT_2.value()), this.device.getFirmwareVersionAsInt()).getChargeRestingTime()*60; 
+							this.retryCounterEnd_3_sec = this.device.new SlotSettings(this.usbPort.getSlotData(QuerySlotData.SLOT_2.value()), 
+									this.device.getFirmwareVersionAsInt()).getChargeRestingTime()*60; 
 							log.log(Level.OFF, "Resting time slot 3 [min] " + retryCounterEnd_3_sec/60);
 						} else if (!this.isProgrammExecuting3) {
 							this.wasProgrammExecuting3 = this.isProgrammExecuting3;
@@ -201,8 +199,8 @@ public class MC3000FmGathererThread extends Thread {
 						this.isProgrammExecuting4 = this.device.isProcessing(4, dataBuffer4) && retryCounterEnd_4_sec >= 0;
 						if (this.isProgrammExecuting4 && !this.wasProgrammExecuting4) {
 							this.wasProgrammExecuting4 = this.isProgrammExecuting4;
-							this.retryCounterEnd_4_sec = this.device.new SlotSettings(this.usbPort.getSlotData(this.usbInterface,
-									QuerySlotData.SLOT_3.value()), this.device.getFirmwareVersionAsInt()).getChargeRestingTime()*60; 
+							this.retryCounterEnd_4_sec = this.device.new SlotSettings(this.usbPort.getSlotData(QuerySlotData.SLOT_3.value()), 
+									this.device.getFirmwareVersionAsInt()).getChargeRestingTime()*60; 
 							log.log(Level.OFF, "Resting time slot 4 [min] " + retryCounterEnd_4_sec/60);
 						} else if (!this.isProgrammExecuting4) {
 							this.wasProgrammExecuting4 = this.isProgrammExecuting4;
@@ -411,8 +409,8 @@ public class MC3000FmGathererThread extends Thread {
 		}
 		finally {
 			try {
-				if (this.usbInterface != null) {
-					this.device.usbPort.closeUsbPort(this.usbInterface);
+				if (this.device.usbPort.libUsbHandle != null) {
+					this.device.usbPort.closeUsbPort(false);
 					MC3000FmGathererThread.log.log(Level.FINE, "USB interface closed");
 				}
 			}
@@ -536,9 +534,5 @@ public class MC3000FmGathererThread extends Thread {
 	 */
 	boolean isCollectDataStopped() {
 		return this.isCollectDataStopped;
-	}
-	
-	public UsbInterface getUsbInterface() {
-		return this.usbInterface;
 	}
 }

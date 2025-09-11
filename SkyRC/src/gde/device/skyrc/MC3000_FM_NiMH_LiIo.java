@@ -183,7 +183,7 @@ public class MC3000_FM_NiMH_LiIo extends MC3000 {
 						this.dataGatherThread = new MC3000FmGathererThread(this.application, this, this.usbPort, activChannel.getNumber(), (MC3000Dialog) this.getDialog());
 						try {
 							if (this.dataGatherThread != null && this.usbPort.isConnected()) {
-								this.systemSettings = new MC3000.SystemSettings(this.usbPort.getSystemSettings(this.dataGatherThread.getUsbInterface()));
+								this.systemSettings = new MC3000.SystemSettings(this.usbPort.getSystemSettings());
 								//WaitTimer.delay(100);
 								//this.usbPort.startProcessing(this.getDialog().dataGatherThread.getUsbInterface());
 								WaitTimer.delay(100);
