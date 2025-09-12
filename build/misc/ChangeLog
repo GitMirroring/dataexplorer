@@ -3,6 +3,7 @@ Development history / change log, please read from bottom up
 Version 3.9.9 - xx yyy 2025
 Generic changes/fixes 
 	* enable device selection with identical USB VID/PID without product string using libUSB
+	* set location of USB HID selection dialog relative to main window
 	
 Device specific changes/fixes
 	* MC3000* - change implementation to use libUSB instead of javax.USB

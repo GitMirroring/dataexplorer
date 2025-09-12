@@ -59,7 +59,7 @@ public class LibUsbDeviceSelectionDialog extends Dialog {
 	 * @param style
 	 */
 	public LibUsbDeviceSelectionDialog(Map<String, Device> fondUsbDevices) {
-		super(DataExplorer.getInstance().getShell(), SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL);
+		super(DataExplorer.getInstance().getShell(), SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
 		setText(Messages.getString(MessageIds.GDE_MSGW0049));
 		this.usbDevices = fondUsbDevices;
 	}
@@ -72,7 +72,7 @@ public class LibUsbDeviceSelectionDialog extends Dialog {
 		createContents();
 		shell.open();
 		shell.layout();
-		shell.setLocation(250, 150);
+		shell.setLocation(getParent().toDisplay(250, 150));
 		Display display = getParent().getDisplay();
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {
