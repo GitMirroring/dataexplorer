@@ -346,6 +346,12 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
 					throw new LibUsbException("Unable to read device descriptor", result);
 				else if (descriptor.idVendor() == vendorId && descriptor.idProduct() == productId) {
 					if (productString == null || productString.length() == 0) {
+						DeviceHandle handle = new DeviceHandle();
+						result = LibUsb.open(libUsbDevice, handle);
+						if (result < 0) {
+							log.log(Level.WARNING, String.format("Unable to open device: %s. " + "Continuing without device handle.", LibUsb.strError(result)));
+							handle = null;
+						}
 						libUsbDevices.add(libUsbDevice);
 					} else { //find device with matching product string
 						DeviceHandle handle = new DeviceHandle();
@@ -415,32 +421,7 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
 
 		try {
 			for (Device libUsbDevice : list) {
-				DeviceDescriptor descriptor = new DeviceDescriptor();
-				result = LibUsb.getDeviceDescriptor(libUsbDevice, descriptor);
-				if (result == LibUsb.SUCCESS) {
-					log.log(Level.INFO, libUsbDevice.toString());
-					// Try to open the device. This may fail because user has no
-					// permission to communicate with the device. This is not
-					// important for the dumps, we are just not able to resolve string
-					// descriptor numbers to strings in the descriptor dumps.
-					DeviceHandle handle = new DeviceHandle();
-					result = LibUsb.open(libUsbDevice, handle);
-					if (result < 0) {
-						log.log(Level.WARNING, String.format("Unable to open device: %s. " + "Continuing without device handle.", LibUsb.strError(result)));
-						handle = null;
-					}
-
-					// Dump the device descriptor
-					log.log(Level.INFO, descriptor.dump(handle));
-
-					// Dump all configuration descriptors
-					dumpConfigurationDescriptors(libUsbDevice, descriptor.bNumConfigurations());
-
-					// Close the device if it was opened
-					if (handle != null) {
-						LibUsb.close(handle);
-					}
-				}
+				DumpDevicesLibUsb.dumpDevice(libUsbDevice);
 			}
 		}
 		finally {
@@ -563,8 +544,7 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
 					fondUsbDevices.put(usbDeviceString, usbDevice);
 				}
 				catch (UnsupportedEncodingException | UsbDisconnectedException | UsbException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log.log(Level.SEVERE, e.getMessage(), e);
 				}
 			}
 			UsbDevice selUsbDevice = null;
@@ -603,7 +583,7 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
 		DeviceHandle libUsbDeviceHandle = new DeviceHandle();
 		byte ifaceId = activeDevice.getUsbInterface();
 
-		if (log.isLoggable(Level.FINE)) {
+		if (log.isLoggable(Level.INFO)) {
 			dumpLibUsbDevices();
 		}
 		
@@ -675,8 +655,8 @@ public class DeviceUsbPortImpl extends DeviceCommPort implements IDeviceCommPort
 		if (libUsbDevice == null) throw new UsbException(Messages.getString(gde.messages.MessageIds.GDE_MSGE0050));
 		result = LibUsb.open(libUsbDevice, libUsbDeviceHandle);
 		if (result < 0) {
-			LibUsb.close(libUsbDeviceHandle);
 			log.log(Level.SEVERE, String.format("Unable to open device: %s.", LibUsb.strError(result)));
+			LibUsb.close(libUsbDeviceHandle);
 			throw new UsbClaimException(new LibUsbException(result).getMessage());
 		}
 		
