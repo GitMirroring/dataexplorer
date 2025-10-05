@@ -1032,7 +1032,9 @@ public class GraphicsComposite extends Composite {
 				this.canvasImageGC = new GC(this.canvasImage); //SWTResourceManager.getGC(this.canvasImage);
 				this.canvasImageGC.setBackground(this.surroundingBackground);
 				this.canvasImageGC.fillRectangle(this.canvasBounds);
-				this.canvasImageGC.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+				//set font for all follow on GC text operations 
+				int deviceZoomFactor = GDE.IS_WINDOWS ? Integer.parseInt(System.getProperty("org.eclipse.swt.internal.deviceZoom", "100"))/100 : 1;
+				this.canvasImageGC.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE/deviceZoomFactor, SWT.NORMAL));
 
 				RecordSet recordSet = null;
 				switch (this.graphicsType) {
@@ -1959,7 +1961,9 @@ public class GraphicsComposite extends Composite {
 					this.canvasImageGC = new GC(this.canvasImage); //SWTResourceManager.getGC(this.canvasImage);
 					this.canvasImageGC.setBackground(this.surroundingBackground);
 					this.canvasImageGC.fillRectangle(this.canvasBounds);
-					this.canvasImageGC.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+					//set font for all follow on GC text operations 
+					int deviceZoomFactor = GDE.IS_WINDOWS ? Integer.parseInt(System.getProperty("org.eclipse.swt.internal.deviceZoom", "100"))/100 : 1;
+					this.canvasImageGC.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE/deviceZoomFactor, SWT.NORMAL));
 					drawCurves(activeRecordSet, this.canvasBounds, this.canvasImageGC);
 					graphicsImage = new Image(GDE.display, this.canvasBounds.width, graphicsHeight);
 					GC graphicsGC = new GC(graphicsImage);

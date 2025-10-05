@@ -175,7 +175,6 @@ public class GraphicsUtils {
 		Display display = Display.getCurrent();
 		if (display == null) SWT.error(SWT.ERROR_THREAD_INVALID_ACCESS);
 
-		gc.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 		Point pt = gc.textExtent(string); // string dimensions
 		Image stringImage = SWTResourceManager.getImage(pt.x, pt.y);
 		GC stringGc = new GC(stringImage); // SWTResourceManager.getGC(stringImage);

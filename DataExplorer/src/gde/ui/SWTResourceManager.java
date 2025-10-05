@@ -236,7 +236,7 @@ public class SWTResourceManager {
 	public static Font getFont(GC gc, int style) {
 		FontData[] fd = gc.getFont().getFontData();
 		fd[0].setStyle(style);
-		if (fd[0].getHeight() > 10) fd[0].setHeight(10); // limit default font size to 10
+		if (fd[0].getHeight() > GDE.WIDGET_FONT_SIZE) fd[0].setHeight(GDE.WIDGET_FONT_SIZE); // limit default font size to 10
 		return getFont(fd[0]);
 	}
 
