@@ -5,6 +5,7 @@ Generic changes/fixes
 	* enable device selection with identical USB VID/PID without product string using libUSB
 	* set location of USB HID selection dialog relative to main window
 	* correct SWT upscaling on Windows with screen scaling above 175%
+	* update swt.jar for Windows due to scaling behavior
 	
 Device specific changes/fixes
 	* MC3000* - change implementation to use libUSB instead of javax.USB

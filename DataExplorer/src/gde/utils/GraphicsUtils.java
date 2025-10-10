@@ -175,6 +175,9 @@ public class GraphicsUtils {
 		Display display = Display.getCurrent();
 		if (display == null) SWT.error(SWT.ERROR_THREAD_INVALID_ACCESS);
 
+		int deviceZoomFactor = GDE.IS_WINDOWS  && (style & SWT.HORIZONTAL) != SWT.HORIZONTAL
+				? Integer.parseInt(System.getProperty("org.eclipse.swt.internal.deviceZoom", "100"))/100 : 1;
+		gc.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE/deviceZoomFactor, SWT.NORMAL));
 		Point pt = gc.textExtent(string); // string dimensions
 		Image stringImage = SWTResourceManager.getImage(pt.x, pt.y);
 		GC stringGc = new GC(stringImage); // SWTResourceManager.getGC(stringImage);
@@ -188,7 +191,7 @@ public class GraphicsUtils {
 		if (isHorizontal) { // draw the horizontally image onto the original GC
 			gc.drawImage(stringImage, x - pt.x / 2, y - pt.y / 2);
 		}
-		else { // draw the image vertically onto the original GC
+		else { // draw the image vertically onto the original GC		
 			drawVerticalImage(stringImage, x, y - pt.x / 2, gc, style, String.format("%s_%s_%s", string, (gc.getBackground().toString()), (gc.getForeground().toString())));
 		}
 		stringGc.dispose();

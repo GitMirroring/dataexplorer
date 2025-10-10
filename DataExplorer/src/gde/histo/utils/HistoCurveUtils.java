@@ -183,12 +183,9 @@ public final class HistoCurveUtils {
 			gc.drawLine(xPosQ2, yPos - scaledHalfBoxHeight, xPosQ2, yPos + scaledHalfBoxHeight);
 			gc.drawRectangle(xPosQ1, drawStripBounds.y + boxOffset, xPosQ3 - xPosQ1, scaledHalfBoxHeight * 2);
 		}
-		//set font for all follow on GC text operations 
-		int deviceZoomFactor = GDE.IS_WINDOWS ? Integer.parseInt(System.getProperty("org.eclipse.swt.internal.deviceZoom", "100"))/100 : 1;
-
 		if (drawNumbers) {
 			DecimalFormat df = summary.getDecimalFormat();
-			gc.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, (GDE.WIDGET_FONT_SIZE-1)/deviceZoomFactor, SWT.NORMAL));
+			gc.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE - 1, SWT.NORMAL));
 			Color color = drawNumbersInRecordColor ? tmpColor : DataExplorer.getInstance().COLOR_BLACK;
 			gc.setForeground(color);
 			double[] tukeyBoxPlot = summary.getTrailRecord().getQuantile().getTukeyBoxPlot();
@@ -210,7 +207,7 @@ public final class HistoCurveUtils {
 				GraphicsUtils.drawTextCentered(q2Text, xPosQ2, scaleY0, gc, SWT.HORIZONTAL);
 			}
 
-			gc.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE/deviceZoomFactor, SWT.NORMAL));
+			gc.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 		}
 
 		{
@@ -226,7 +223,7 @@ public final class HistoCurveUtils {
 			gc.drawLine(xPosLowerWhisker, yPos - scaledHalfAntennaHeight, xPosLowerWhisker, yPos + scaledHalfAntennaHeight);
 			gc.drawLine(xPosUpperWhisker, yPos - scaledHalfAntennaHeight, xPosUpperWhisker, yPos + scaledHalfAntennaHeight);
 			if (drawNumbers) {
-				gc.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, (GDE.WIDGET_FONT_SIZE-1)/deviceZoomFactor, SWT.NORMAL));
+				gc.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE - 1, SWT.NORMAL));
 				Color color = drawNumbersInRecordColor ? tmpColor : DataExplorer.getInstance().COLOR_BLACK;
 				gc.setForeground(color);
 				double[] tukeyBoxPlot = summary.getTrailRecord().getQuantile().getTukeyBoxPlot();
@@ -250,7 +247,7 @@ public final class HistoCurveUtils {
 					}
 				}
 
-				gc.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE/deviceZoomFactor, SWT.NORMAL));
+				gc.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 			}
 		}
 	}

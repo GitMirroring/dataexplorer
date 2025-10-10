@@ -320,9 +320,7 @@ public abstract class AbstractChartComposite extends Composite {
 			this.canvasImageGC = new GC(this.canvasImage); // SWTResourceManager.getGC(this.canvasImage);
 			this.canvasImageGC.setBackground(this.surroundingBackground);
 			this.canvasImageGC.fillRectangle(this.canvasBounds);
-			//set font for all follow on GC text operations 
-			int deviceZoomFactor = GDE.IS_WINDOWS ? Integer.parseInt(System.getProperty("org.eclipse.swt.internal.deviceZoom", "100"))/100 : 1;
-			this.canvasImageGC.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE/deviceZoomFactor, SWT.NORMAL));
+			this.canvasImageGC.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 			drawCurves();
 			graphicsImage = new Image(GDE.display, this.canvasBounds.width, graphicsHeight);
 			GC graphicsGC = new GC(graphicsImage);
@@ -359,9 +357,7 @@ public abstract class AbstractChartComposite extends Composite {
 			this.canvasImageGC = new GC(this.canvasImage); // SWTResourceManager.getGC(this.canvasImage);
 			this.canvasImageGC.setBackground(this.surroundingBackground);
 			this.canvasImageGC.fillRectangle(this.canvasBounds);
-			//set font for all follow on GC text operations 
-			int deviceZoomFactor = GDE.IS_WINDOWS ? Integer.parseInt(System.getProperty("org.eclipse.swt.internal.deviceZoom", "100"))/100 : 1;
-			this.canvasImageGC.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE/deviceZoomFactor, SWT.NORMAL));
+			this.canvasImageGC.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 	
 			// changed curve selection may change the scale end values
 			windowActor.getTrailRecordSet().syncScaleOfSyncableRecords();
