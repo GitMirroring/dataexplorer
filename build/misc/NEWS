@@ -1,16 +1,24 @@
-GNU DataExplorer - News - comes with Version 3.9.8 - 24 Aug 2025
+GNU DataExplorer - News - comes with Version 3.9.9 - 15 Oct 2025
 
 Generic changes/fixes 
-	* enable correct SSL handshake for daily update check
+	* enable device selection with identical USB VID/PID without product string using libUSB
+	* set location of USB HID selection dialog relative to main window
+	* correct SWT upscaling on Windows with screen scaling above 175%
+	* update swt.jar for Windows due to scaling behavior
 	
 Device specific changes/fixes
-	* Core-Telemetrie - correct GPS coordinates handling, do not use transmitter coordinates anymore
+	* MC3000* - change implementation to use libUSB instead of javax.USB
+	* MC3000* - enable S/N selection while more than one device connected
 		
 Allgemeine Änderungen/Korrekturen
-	* ermögliche korrekte SSL Verbindung beim täglichen Update-Check
+	* Geräteauswahl mit identischer USB-VID/PID ohne Produktzeichenfolge unter Verwendung von libUSB ermöglicht
+    * Position des USB-HID-Auswahldialogs relativ zum Hauptfenster festgelegt
+    * Korrektur der SWT-Hochskalierung unter Windows bei einer Bildschirmskalierung von über 175 %.
+    * swt.jar für Windows aufgrund des Skalierungsverhaltens aktualisiert
 	
 Gerätespezifische Änderungen/Korrekturen
-	* Core-Telemetrie - GPS Koordinaten Verwendung korrigiert, verwendet nun keine Sender GPS Koordinaten mehr
+	* MC3000* – Änderung der Implementierung, um libUSB anstelle von javax.USB zu verwenden
+	* MC3000* – Aktivierung der S/N-Auswahl, wenn mehr als ein Gerät angeschlossen ist
 
 
 
