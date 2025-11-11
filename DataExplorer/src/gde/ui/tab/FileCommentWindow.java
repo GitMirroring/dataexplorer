@@ -92,6 +92,7 @@ public class FileCommentWindow extends CTabItem {
 	ControlEditor							editor;
 	Color											innerAreaBackground;
 	Color											surroundingBackground;
+	Color											headerTextColor;
 	Vector<Integer>						rowVector									= new Vector<Integer>(2);
 	Vector<Integer>						topindexVector						= new Vector<Integer>(2);
 
@@ -123,6 +124,7 @@ public class FileCommentWindow extends CTabItem {
 		this.contextMenu = new TabAreaContextMenu();
 		this.innerAreaBackground = Settings.getInstance().getFileCommentInnerAreaBackground();
 		this.surroundingBackground = Settings.getInstance().getFileCommentSurroundingAreaBackground();
+		this.headerTextColor = Settings.getInstance().getHeaderCommentColor();
 	}
 
 	/**
@@ -176,6 +178,7 @@ public class FileCommentWindow extends CTabItem {
 			this.infoLabel.setText(Messages.getString(MessageIds.GDE_MSGT0240));
 			this.infoLabel.setFont(SWTResourceManager.getFont(this.application, GDE.WIDGET_FONT_SIZE + 2, SWT.BOLD));
 			this.infoLabel.setBackground(this.surroundingBackground);
+			this.infoLabel.setForeground(this.headerTextColor);
 			this.infoLabel.setMenu(this.popupmenu);
 			this.infoLabel.setBounds(50, 10, 500, 26);
 			this.infoLabel.addPaintListener(new PaintListener() {

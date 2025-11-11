@@ -217,7 +217,7 @@ public final class HistoSummaryWindow extends AbstractChartWindow {
 	public void setCurveAreaBackground(Color curveAreaBackground) {
 		for (AbstractChartComposite c : getCharts()) {
 			c.curveAreaBackground = curveAreaBackground;
-			c.graphicCanvas.redraw();
+			c.doRedrawGraphics();
 		}
 	}
 
@@ -228,6 +228,25 @@ public final class HistoSummaryWindow extends AbstractChartWindow {
 			c.graphicCanvas.redraw();
 		}
 	}
+
+	@Override
+	public void setTimeLineColor(Color timeLineColor) {
+		for (AbstractChartComposite c : getCharts()) {
+			c.graphicCanvas.redraw();
+		}
+	}
+
+	@Override
+	public void setHeaderCommentColor(Color headerCommentColor) {
+		for (AbstractChartComposite c : getCharts()) {
+			c.headerCommentColor = headerCommentColor;
+			c.graphicsHeader.setForeground(headerCommentColor);
+			c.graphicsHeader.redraw();
+			c.recordSetComment.setForeground(headerCommentColor);
+			c.recordSetComment.redraw();
+		}
+	}
+
 
 	@Override
 	public void setSurroundingBackground(Color surroundingBackground) {

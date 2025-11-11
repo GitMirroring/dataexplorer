@@ -22,6 +22,7 @@ import java.util.Vector;
 import java.util.logging.Logger;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -29,6 +30,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 
 import gde.GDE;
+import gde.config.Settings;
 import gde.data.Record;
 import gde.data.RecordSet;
 import gde.log.Level;
@@ -61,8 +63,8 @@ public class GraphicsUtils {
 	 * @param isDrawNumbersInRecordColor
 	 */
 	public static void drawVerticalTickMarks(Record record, GC gc, int x0, int y0, int height, double minValue, double maxValue, int ticklength, int miniticks, int gap, boolean isPositionLeft, int numberTickmarks, boolean isDrawNumbersInRecordColor) {
-
-		gc.setForeground(DataExplorer.getInstance().COLOR_BLACK);
+		Color timeLineColor = Settings.getInstance().getTimeLineColor();
+		gc.setForeground(timeLineColor);
 
 		int yTop = y0 - height + 1;
 		double deltaScale = (maxValue - minValue);
@@ -136,9 +138,9 @@ public class GraphicsUtils {
 				}
 				// draw numbers to the scale
 				if (isDrawNumbersInRecordColor) gc.setForeground(SWTResourceManager.getColor(record.getRGB()));
-				else gc.setForeground(DataExplorer.getInstance().COLOR_BLACK);
+				else gc.setForeground(timeLineColor);
 				drawTextCentered(record.getFormattedScaleValue(minScaleValue + i * deltaMainTickValue), x0 - ticklength - gap - dist, yTickPosition, gc, SWT.HORIZONTAL);
-				gc.setForeground(DataExplorer.getInstance().COLOR_BLACK);
+				gc.setForeground(timeLineColor);
 			}
 			// draw mini ticks above first main tick
 			double yTickPositionMax = yTickPositionMin - numberTicks * deltaMainTickPixel;
@@ -153,7 +155,7 @@ public class GraphicsUtils {
 			int yTickPosition = (int) (y0 - height / 2.0);
 			gc.drawLine(x0, yTickPosition, x0 - ticklength, yTickPosition);
 			if (isDrawNumbersInRecordColor) gc.setForeground(SWTResourceManager.getColor(record.getRGB()));
-			else gc.setForeground(DataExplorer.getInstance().COLOR_BLACK);
+			else gc.setForeground(timeLineColor);
 			drawTextCentered(record.getFormattedScaleValue((minScaleValue + minScaleValue) / 2.0), x0 - ticklength - gap - dist, yTickPosition, gc, SWT.HORIZONTAL);
 			if (isBuildGridVector) horizontalGrid.add(yTickPosition);
 		}

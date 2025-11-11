@@ -4,6 +4,8 @@ Version 3.9.10 - xx yyy 2025
 Generic changes/fixes 
 	* make color changes in settings dialog visible by change event
 	* support color schema switch, if unchanged default color schema is used
+	* enable user color for header/comment/caption and time line
+	* enable user color change even if dark mode is used
 	
 Device specific changes/fixes
 	* 

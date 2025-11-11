@@ -25,6 +25,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 
 import gde.GDE;
+import gde.config.Settings;
 import gde.data.Record;
 import gde.data.RecordSet;
 import gde.device.IDevice;
@@ -167,7 +168,7 @@ public class CurveUtils {
 		if (isDrawScaleInRecordColor) {
 			String rgb = record.isScaleSyncMaster() ? record.getSyncMasterRGB() : record.getRGB();
 			gc.setForeground(SWTResourceManager.getColor(rgb)); // draw the main scale line in same color as the curve
-		}	else gc.setForeground(DataExplorer.getInstance().COLOR_BLACK);
+		}	else gc.setForeground(Settings.getInstance().getTimeLineColor());
 		if (isPositionLeft) {
 			int xPos = x0 - 1 - positionNumber * scaleWidthSpace;
 			gc.drawLine(xPos, y0+1, xPos, y0-height-1); //xPos = x0
@@ -177,8 +178,7 @@ public class CurveUtils {
 			if (!isCompareSet) {
 				if (isDrawNameInRecordColor) gc.setForeground(SWTResourceManager.getColor(record.getRGB()));
 				else {
-					DataExplorer.getInstance();
-					gc.setForeground(DataExplorer.getInstance().COLOR_BLACK);
+					gc.setForeground(Settings.getInstance().getTimeLineColor());
 				}
 				GraphicsUtils.drawTextCentered(graphText, (xPos - scaleWidthSpace + 3), y0 / 2 + (y0 - height), gc, SWT.UP);
 			}
@@ -191,8 +191,7 @@ public class CurveUtils {
 			if (!isCompareSet) {
 				if (isDrawNameInRecordColor) gc.setForeground(SWTResourceManager.getColor(record.getRGB()));
 				else {
-					DataExplorer.getInstance();
-					gc.setForeground(DataExplorer.getInstance().COLOR_BLACK);
+					gc.setForeground(Settings.getInstance().getTimeLineColor());
 				}
 				GraphicsUtils.drawTextCentered(graphText, (xPos + scaleWidthSpace - pt.y - 5), y0 / 2 + (y0 - height), gc, SWT.UP);
 			}

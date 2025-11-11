@@ -2880,6 +2880,48 @@ public class DataExplorer extends Composite {
 	}
 
 	/**
+	 * set the color for curve graphics the time line
+	 * @param tabItemIndex the current tabulator item index
+	 * @param timeLineColor the timeLineColor to set
+	 */
+	public void setTimeLineColor(int tabItemIndex, Color timeLineColor) {
+		if (tabItemIndex == 0) {
+			this.settings.setTimeLineColor(timeLineColor);
+			this.updateGraphicsWindow();
+		} else if (tabItemIndex > 0)
+			if ((this.displayTab.getItem(tabItemIndex) instanceof GraphicsWindow) && this.isWindowVisible(GraphicsType.COMPARE)) {
+				this.settings.setTimeLineColor(timeLineColor);
+				this.updateCompareWindow();
+			} else if ((this.displayTab.getItem(tabItemIndex) instanceof GraphicsWindow) && this.isWindowVisible(GraphicsType.UTIL)) {
+				this.settings.setTimeLineColor(timeLineColor);
+				this.updateGraphicsWindow();
+			} else {
+			this.histoExplorer.ifPresent(h -> h.setTimeLineColor(timeLineColor));
+			}
+	}
+
+	/**
+	 * set the color for graphics header and comment
+	 * @param tabItemIndex the current tabulator item index
+	 * @param headerCommentColor the color to set for graphics header and comment
+	 */
+	public void setHeaderCommmentColor(int tabItemIndex, Color headerCommentColor) {
+		if (tabItemIndex == 0) {
+			this.settings.setHeaderCommentColor(headerCommentColor);
+			this.graphicsTabItem.setHeaderCommentColor(headerCommentColor);
+		} else if (tabItemIndex > 0)
+			if ((this.displayTab.getItem(tabItemIndex) instanceof GraphicsWindow) && this.isWindowVisible(GraphicsType.COMPARE)) {
+				this.settings.setHeaderCommentColor(headerCommentColor);
+				this.compareTabItem.setHeaderCommentColor(headerCommentColor);
+			} else if ((this.displayTab.getItem(tabItemIndex) instanceof GraphicsWindow) && this.isWindowVisible(GraphicsType.UTIL)) {
+				this.settings.setHeaderCommentColor(headerCommentColor);
+				this.utilGraphicsTabItem.setHeaderCommentColor(headerCommentColor);
+			} else {
+			this.histoExplorer.ifPresent(h -> h.setHeaderCommentColor(headerCommentColor));
+			}
+	}
+
+	/**
 	 * set the tabulator specific font size, actually enabled for digital tab only
 	 * @param newFonSize in dots added to standard widget font size
 	 */

@@ -62,7 +62,7 @@ public final class ChartTabAreaContextMenu extends AbstractTabAreaContextMenu {
 	private MenuItem									warningCountItem, warningCountItem0, warningCountItem1, warningCountItem2, warningCountItem3;
 	private MenuItem									warningLevelItem, warningLevelNone, warningLevelItem0, warningLevelItem1, warningLevelItem2;
 	private MenuItem									isExclusiveWarning, clearExclusiveWarnings;
-	private MenuItem									outherAreaColorItem, innerAreaColorItem;
+	private MenuItem									outherAreaColorItem, innerAreaColorItem, timeLineColorItem, headerCommentColorItem;
 
 	private Optional<SummaryWarning>	warning;
 
@@ -445,6 +445,35 @@ public final class ChartTabAreaContextMenu extends AbstractTabAreaContextMenu {
 					}
 				}
 			});
+		}
+		{
+			timeLineColorItem = new MenuItem(popupMenu, SWT.PUSH);
+			timeLineColorItem.setText(Messages.getString(MessageIds.GDE_MSGT0986));
+			timeLineColorItem.addListener(SWT.Selection, new Listener() {
+				@Override
+				public void handleEvent(Event e) {
+					log.log(Level.FINEST, "timeLineColorItem action performed! " + e); //$NON-NLS-1$
+					RGB rgb = application.openColorDialog();
+					if (rgb != null) {
+						application.setTimeLineColor(application.getTabSelectionIndex(), SWTResourceManager.getColor(rgb.red, rgb.green, rgb.blue));
+					}
+				}
+			});
+		}
+		{
+			headerCommentColorItem = new MenuItem(popupMenu, SWT.PUSH);
+			headerCommentColorItem.setText(Messages.getString(MessageIds.GDE_MSGT0987));
+			headerCommentColorItem.addListener(SWT.Selection, new Listener() {
+				@Override
+				public void handleEvent(Event e) {
+					log.log(Level.FINEST, "headerCommentColorItem action performed! " + e); //$NON-NLS-1$
+					RGB rgb = application.openColorDialog();
+					if (rgb != null) {
+						application.setHeaderCommmentColor(application.getTabSelectionIndex(), SWTResourceManager.getColor(rgb.red, rgb.green, rgb.blue));
+					}
+				}
+			});
+
 		}
 	}
 

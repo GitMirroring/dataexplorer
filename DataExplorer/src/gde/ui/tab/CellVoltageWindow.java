@@ -94,7 +94,7 @@ public class CellVoltageWindow extends CTabItem {
 
 	RecordSet										oldRecordSet					= null;
 	Channel											oldChannel						= null;
-	Color												surroundingBackground;
+	Color												surroundingBackground, textColor;
 	String											info									= Messages.getString(MessageIds.GDE_MSGT0230);
 	Vector<CellVoltageDisplay>	displays							= new Vector<CellVoltageDisplay>();
 	int													voltageAvg						= 0;
@@ -155,6 +155,7 @@ public class CellVoltageWindow extends CTabItem {
 		this.popupmenu = new Menu(this.application.getShell(), SWT.POP_UP);
 		this.contextMenu = new TabAreaContextMenu();
 		this.surroundingBackground = Settings.getInstance().getCellVoltageSurroundingAreaBackground();
+		this.textColor = Settings.getInstance().getHeaderCommentColor();
 	}
 
 	public void create() {
@@ -217,6 +218,7 @@ public class CellVoltageWindow extends CTabItem {
 				this.liPoButton = new Button(this.voltageLimitsSelection, SWT.CHECK | SWT.CENTER);
 				this.liPoButton.setLayoutData(liPoButtonLData);
 				if (!GDE.IS_MAC) this.liPoButton.setBackground(this.surroundingBackground);
+				this.liPoButton.setForeground(this.textColor);
 				this.liPoButton.setText(Messages.getString(MessageIds.GDE_MSGT0371));
 				this.liPoButton.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0370));
 				this.liPoButton.setSelection(false);
@@ -244,6 +246,7 @@ public class CellVoltageWindow extends CTabItem {
 				this.liIoButton = new Button(this.voltageLimitsSelection, SWT.CHECK | SWT.CENTER);
 				this.liIoButton.setLayoutData(button1LData);
 				if (!GDE.IS_MAC) this.liIoButton.setBackground(this.surroundingBackground);
+				this.liIoButton.setForeground(this.textColor);
 				this.liIoButton.setText(Messages.getString(MessageIds.GDE_MSGT0372));
 				this.liIoButton.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0370));
 				this.liIoButton.setSelection(false);
@@ -271,6 +274,7 @@ public class CellVoltageWindow extends CTabItem {
 				this.liFeButton = new Button(this.voltageLimitsSelection, SWT.CHECK | SWT.CENTER);
 				this.liFeButton.setLayoutData(button2LData);
 				if (!GDE.IS_MAC) this.liFeButton.setBackground(this.surroundingBackground);
+				this.liFeButton.setForeground(this.textColor);
 				this.liFeButton.setText(Messages.getString(MessageIds.GDE_MSGT0373));
 				this.liFeButton.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0370));
 				this.liFeButton.setSelection(false);
@@ -298,6 +302,7 @@ public class CellVoltageWindow extends CTabItem {
 				this.niMhButton = new Button(this.voltageLimitsSelection, SWT.CHECK | SWT.CENTER);
 				this.niMhButton.setLayoutData(button2LData);
 				if (!GDE.IS_MAC) this.niMhButton.setBackground(this.surroundingBackground);
+				this.niMhButton.setForeground(this.textColor);
 				this.niMhButton.setText(Messages.getString(MessageIds.GDE_MSGT0377));
 				this.niMhButton.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0370));
 				this.niMhButton.setSelection(false);
@@ -325,6 +330,7 @@ public class CellVoltageWindow extends CTabItem {
 				this.individualButton = new Button(this.voltageLimitsSelection, SWT.CHECK | SWT.CENTER);
 				this.individualButton.setLayoutData(button1LData1);
 				if (!GDE.IS_MAC) this.individualButton.setBackground(this.surroundingBackground);
+				this.individualButton.setForeground(this.textColor);
 				this.individualButton.setText(Messages.getString(MessageIds.GDE_MSGT0375));
 				this.individualButton.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0370));
 				this.individualButton.setSelection(false);

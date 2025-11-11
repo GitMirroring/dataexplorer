@@ -58,6 +58,8 @@ public class TabAreaContextMenu {
 	MenuItem										outherAreaColorItem;
 	MenuItem										innerAreaColorItem;
 	MenuItem										borderColorItem;
+	MenuItem										timeLineColorItem;
+	MenuItem										headerCommentColorItem;
 	MenuItem										dateTimeItem;
 	MenuItem										partialTableItem;
 	MenuItem										editTableItem;
@@ -188,8 +190,6 @@ public class TabAreaContextMenu {
 				this.separatorCopy = new MenuItem(popupMenu, SWT.SEPARATOR);
 				this.outherAreaColorItem = new MenuItem(popupMenu, SWT.PUSH);
 				this.outherAreaColorItem.setText(Messages.getString(MessageIds.GDE_MSGT0462));
-				if (GDE.isSystemDarkTheme)
-					this.outherAreaColorItem.setEnabled(false);
 				this.outherAreaColorItem.addListener(SWT.Selection, new Listener() {
 					@Override
 					public void handleEvent(Event e) {
@@ -202,8 +202,6 @@ public class TabAreaContextMenu {
 				});
 				this.innerAreaColorItem = new MenuItem(popupMenu, SWT.PUSH);
 				this.innerAreaColorItem.setText(Messages.getString(MessageIds.GDE_MSGT0463));
-				if (GDE.isSystemDarkTheme)
-					this.innerAreaColorItem.setEnabled(false);
 				this.innerAreaColorItem.addListener(SWT.Selection, new Listener() {
 					@Override
 					public void handleEvent(Event e) {
@@ -219,8 +217,6 @@ public class TabAreaContextMenu {
 			if (type == TabMenuType.GRAPHICS || type == TabMenuType.COMPARE || type == TabMenuType.UTILITY) {
 				this.borderColorItem = new MenuItem(popupMenu, SWT.PUSH);
 				this.borderColorItem.setText(Messages.getString(MessageIds.GDE_MSGT0464));
-				if (GDE.isSystemDarkTheme)
-					this.borderColorItem.setEnabled(false);
 				this.borderColorItem.addListener(SWT.Selection, new Listener() {
 					@Override
 					public void handleEvent(Event e) {
@@ -282,6 +278,35 @@ public class TabAreaContextMenu {
 			this.isCreated = true;
 		}
 
+		if (type == TabMenuType.GRAPHICS || type == TabMenuType.COMPARE || type == TabMenuType.UTILITY) {
+			this.timeLineColorItem = new MenuItem(popupMenu, SWT.PUSH);
+			this.timeLineColorItem.setText(Messages.getString(MessageIds.GDE_MSGT0986));
+			this.timeLineColorItem.addListener(SWT.Selection, new Listener() {
+				@Override
+				public void handleEvent(Event e) {
+					TabAreaContextMenu.log.log(Level.FINEST, "timeLineColorItem action performed! " + e); //$NON-NLS-1$
+					RGB rgb = TabAreaContextMenu.this.application.openColorDialog();
+					if (rgb != null) {
+						TabAreaContextMenu.this.application.setTimeLineColor(TabAreaContextMenu.this.application.getTabSelectionIndex(), SWTResourceManager.getColor(rgb.red, rgb.green, rgb.blue));
+					}
+				}
+			});
+		}
+
+		if (type == TabMenuType.GRAPHICS || type == TabMenuType.COMPARE || type == TabMenuType.UTILITY) {
+			this.headerCommentColorItem = new MenuItem(popupMenu, SWT.PUSH);
+			this.headerCommentColorItem.setText(Messages.getString(MessageIds.GDE_MSGT0987));
+			this.headerCommentColorItem.addListener(SWT.Selection, new Listener() {
+				@Override
+				public void handleEvent(Event e) {
+					TabAreaContextMenu.log.log(Level.FINEST, "headerCommentColorItem action performed! " + e); //$NON-NLS-1$
+					RGB rgb = TabAreaContextMenu.this.application.openColorDialog();
+					if (rgb != null) {
+						TabAreaContextMenu.this.application.setHeaderCommmentColor(TabAreaContextMenu.this.application.getTabSelectionIndex(), SWTResourceManager.getColor(rgb.red, rgb.green, rgb.blue));
+					}
+				}
+			});
+		}
 	}
 
 }

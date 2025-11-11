@@ -150,6 +150,7 @@ public class ObjectDescriptionWindow extends CTabItem {
 	Image													image;
 	Color													innerAreaBackground;
 	Color													surroundingBackground;
+	Color													textColor;
 
 	public ObjectDescriptionWindow(CTabFolder currentDisplayTab, int style, int position) {
 		super(currentDisplayTab, style, position);
@@ -162,6 +163,7 @@ public class ObjectDescriptionWindow extends CTabItem {
 
 		this.innerAreaBackground = Settings.getInstance().getObjectDescriptionInnerAreaBackground();
 		this.surroundingBackground = Settings.getInstance().getObjectDescriptionSurroundingAreaBackground();
+		this.textColor = Settings.getInstance().getHeaderCommentColor();
 		this.setFont(SWTResourceManager.getFont(this.application, GDE.WIDGET_FONT_SIZE + (GDE.IS_LINUX ? 3 : 1), SWT.NORMAL));
 		this.setText(Messages.getString(MessageIds.GDE_MSGT0403));
 
@@ -280,6 +282,7 @@ public class ObjectDescriptionWindow extends CTabItem {
 				cLabel1LData.height = 26;
 				this.objectNameLabel.setLayoutData(cLabel1LData);
 				this.objectNameLabel.setBackground(this.surroundingBackground);
+				this.objectNameLabel.setForeground(this.textColor);
 				this.objectNameLabel.setMenu(this.popupmenu);
 			}
 			{
@@ -290,6 +293,7 @@ public class ObjectDescriptionWindow extends CTabItem {
 				cLabel1LData.height = 26;
 				this.objectName.setLayoutData(cLabel1LData);
 				this.objectName.setBackground(this.surroundingBackground);
+				this.objectName.setForeground(this.textColor);
 				this.objectName.setMenu(this.popupmenu);
 			}
 		}
@@ -306,6 +310,7 @@ public class ObjectDescriptionWindow extends CTabItem {
 			this.mainObjectCharacterisitcsGroup.setLayoutData(group2LData);
 			this.mainObjectCharacterisitcsGroup.setText(Messages.getString(MessageIds.GDE_MSGT0416));
 			if (!GDE.IS_MAC) this.mainObjectCharacterisitcsGroup.setBackground(this.surroundingBackground);
+			this.mainObjectCharacterisitcsGroup.setForeground(this.textColor);
 			this.mainObjectCharacterisitcsGroup.setMenu(this.popupmenu);
 			{
 				this.objectTypeComposite = new Composite(this.mainObjectCharacterisitcsGroup, SWT.NONE);
@@ -322,6 +327,7 @@ public class ObjectDescriptionWindow extends CTabItem {
 				{
 					this.objectTypeLabel = new CLabel(this.objectTypeComposite, SWT.NONE);
 					if (!GDE.IS_MAC) this.objectTypeLabel.setBackground(this.surroundingBackground);
+					this.objectTypeLabel.setForeground(this.textColor);
 					this.objectTypeLabel.setMenu(this.popupmenu);
 					this.objectTypeLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 					this.objectTypeLabel.setText(Messages.getString(MessageIds.GDE_MSGT0425));
@@ -374,6 +380,7 @@ public class ObjectDescriptionWindow extends CTabItem {
 					this.dateLabel.setText(Messages.getString(MessageIds.GDE_MSGT0406));
 					this.dateLabel.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0407));
 					if (!GDE.IS_MAC) this.dateLabel.setBackground(this.surroundingBackground);
+					this.dateLabel.setForeground(this.textColor);
 					this.dateLabel.setMenu(this.popupmenu);
 				}
 				{
@@ -411,6 +418,7 @@ public class ObjectDescriptionWindow extends CTabItem {
 				{
 					this.statusLabel = new CLabel(this.statusComposite, SWT.NONE);
 					if (!GDE.IS_MAC) this.statusLabel.setBackground(this.surroundingBackground);
+					this.statusLabel.setForeground(this.textColor);
 					this.statusLabel.setMenu(this.popupmenu);
 					this.statusLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 					RowData statusLabelLData = new RowData();
@@ -517,6 +525,7 @@ public class ObjectDescriptionWindow extends CTabItem {
 			this.editGroup.setLayout(new GridLayout());
 			this.editGroup.setText(Messages.getString(MessageIds.GDE_MSGT0414));
 			if (!GDE.IS_MAC) this.editGroup.setBackground(this.surroundingBackground);
+			this.editGroup.setForeground(this.textColor);
 			this.editGroup.setMenu(this.popupmenu);
 			{
 				this.editCoolBar = new CoolBar(this.editGroup, SWT.FLAT);
@@ -541,6 +550,7 @@ public class ObjectDescriptionWindow extends CTabItem {
 						{
 							this.fontSelect = new ToolItem(this.fontSelectToolBar, SWT.BORDER);
 							this.fontSelect.setImage(SWTResourceManager.getImage("gde/resource/Font.gif")); //$NON-NLS-1$
+							this.fontSelect.setBackground(this.textColor);
 							this.fontSelect.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0417));
 							this.fontSelect.addSelectionListener(new SelectionAdapter() {
 								@Override

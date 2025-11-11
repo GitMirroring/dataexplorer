@@ -126,6 +126,7 @@ public abstract class AbstractChartComposite extends Composite {
 	protected Color												curveAreaBackground;
 	protected Color												surroundingBackground;
 	protected Color												curveAreaBorderColor;
+	protected Color												headerCommentColor;
 
 	protected Text												graphicsHeader;
 	protected Text												recordSetComment;
@@ -214,6 +215,8 @@ public abstract class AbstractChartComposite extends Composite {
 		this.recordSetComment.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 		this.recordSetComment.setText(this.application.getPresentHistoExplorer().getHistoSet().getDirectoryScanStatistics());
 		this.recordSetComment.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0896));
+		this.recordSetComment.setForeground(headerCommentColor = Settings.getInstance().getHeaderCommentColor());
+		this.graphicsHeader.setForeground(headerCommentColor);
 	}
 
 	public void enableGraphicsHeader(boolean enabled) {
@@ -324,7 +327,7 @@ public abstract class AbstractChartComposite extends Composite {
 			drawCurves();
 			graphicsImage = new Image(GDE.display, this.canvasBounds.width, graphicsHeight);
 			GC graphicsGC = new GC(graphicsImage);
-			graphicsGC.setForeground(this.graphicsHeader.getForeground());
+			graphicsGC.setForeground(this.headerCommentColor);
 			graphicsGC.setBackground(this.surroundingBackground);
 			graphicsGC.setFont(this.graphicsHeader.getFont());
 			graphicsGC.fillRectangle(0, 0, this.canvasBounds.width, graphicsHeight);

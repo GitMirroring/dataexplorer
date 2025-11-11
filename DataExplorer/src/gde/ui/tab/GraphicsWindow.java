@@ -373,6 +373,18 @@ public class GraphicsWindow extends CTabItem {
 	}
 
 	/**
+	 * set the graphics header and comment text color
+	 * @param borderColor the curveAreaBackground to set
+	 */
+	public void setHeaderCommentColor(Color borderColor) {
+		this.graphicsComposite.headerCommentColor = borderColor;
+		this.graphicsComposite.graphicsHeader.setForeground(borderColor);
+		this.graphicsComposite.graphicsHeader.redraw();
+		this.graphicsComposite.recordSetComment.setForeground(Settings.getInstance().getHeaderCommentColor());
+		this.graphicsComposite.recordSetComment.redraw();
+	}
+
+	/**
 	 * @return the type (TYPE_NORMAL or TYPE_COMPARE)
 	 */
 	public GraphicsType getGraphicsType() {

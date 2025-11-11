@@ -363,6 +363,26 @@ public class HistoExplorer {
 	}
 
 	/**
+	 * Set the time line color (for curve graphics time line color, ...).
+	 */
+	public void setTimeLineColor(Color timeLineColor) {
+		settings.setTimeLineColor(timeLineColor);
+		for (AbstractChartWindow c : chartTabItems) {
+			c.setTimeLineColor(timeLineColor);
+		}
+	}
+
+	/**
+	 * Set the time line color (for curve graphics time line color, ...).
+	 */
+	public void setHeaderCommentColor(Color newColor) {
+		settings.setHeaderCommentColor(newColor);
+		for (AbstractChartWindow c : chartTabItems) {
+			c.setHeaderCommentColor(newColor);
+		}
+	}
+
+	/**
 	 * Set the surrounding area background color (for curve graphics, the area surrounding the curve area, ...).
 	 */
 	public void setSurroundingBackground(Color surroundingBackground) {

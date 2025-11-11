@@ -110,6 +110,7 @@ public class GraphicsComposite extends Composite {
 	Color											curveAreaBackground;
 	Color											surroundingBackground;
 	Color											curveAreaBorderColor;
+	Color											headerCommentColor;
 
 	// drawing canvas
 	Text											graphicsHeader;
@@ -262,6 +263,7 @@ public class GraphicsComposite extends Composite {
 			this.graphicsHeader = new Text(this, SWT.SINGLE | SWT.CENTER);
 			this.graphicsHeader.setFont(SWTResourceManager.getFont(this.application, GDE.WIDGET_FONT_SIZE + 3, SWT.BOLD));
 			this.graphicsHeader.setBackground(this.surroundingBackground);
+			this.graphicsHeader.setForeground(Settings.getInstance().getHeaderCommentColor());
 			this.graphicsHeader.setMenu(this.popupmenu);
 			this.graphicsHeader.addHelpListener(new HelpListener() {
 				@Override
@@ -707,6 +709,7 @@ public class GraphicsComposite extends Composite {
 			this.recordSetComment = new Text(this, SWT.MULTI | SWT.LEFT);
 			this.recordSetComment.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE + 1, SWT.NORMAL));
 			this.recordSetComment.setBackground(this.surroundingBackground);
+			this.recordSetComment.setForeground(Settings.getInstance().getHeaderCommentColor());
 			this.recordSetComment.setMenu(this.popupmenu);
 			this.recordSetComment.addPaintListener(new PaintListener() {
 				@Override
@@ -898,7 +901,7 @@ public class GraphicsComposite extends Composite {
 		startTimeFormated = TimeLine.convertTimeInFormatNumber(recordSet.getStartTime(), timeFormat);
 		endTimeFormated = startTimeFormated + maxTimeFormated;
 		if (log.isLoggable(Level.FINER)) log.log(Level.FINER, "startTime = " + startTimeFormated + " detaTime_ms = " + (long) totalDisplayDeltaTime_ms + " endTime = " + endTimeFormated);
-		this.timeLine.drawTimeLine(recordSet, gc, x0, y0 + 1, width, startTimeFormated, endTimeFormated, scaleFactor, timeFormat, (long) totalDisplayDeltaTime_ms, this.application.COLOR_BLACK);
+		this.timeLine.drawTimeLine(recordSet, gc, x0, y0 + 1, width, startTimeFormated, endTimeFormated, scaleFactor, timeFormat, (long) totalDisplayDeltaTime_ms, this.settings.getTimeLineColor());
 
 		// draw draw area bounding
 		gc.setForeground(this.curveAreaBorderColor);

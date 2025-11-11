@@ -275,6 +275,8 @@ public final class SummaryComposite extends AbstractChartComposite {
 		this.curveAreaBackground = this.settings.getGraphicsCurveAreaBackground();
 		this.surroundingBackground = this.settings.getGraphicsSurroundingBackground();
 		this.curveAreaBorderColor = this.settings.getGraphicsCurvesBorderColor();
+		// get the foreground colors
+		this.headerCommentColor = this.settings.getHeaderCommentColor();
 
 		this.popupmenu = new Menu(this.application.getShell(), SWT.POP_UP);
 		this.contextMenu = new ChartTabAreaContextMenu();

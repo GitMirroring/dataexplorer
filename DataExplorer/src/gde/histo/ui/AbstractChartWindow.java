@@ -337,6 +337,10 @@ public abstract class AbstractChartWindow extends CTabItem {
 
 	public abstract void setCurveAreaBorderColor(Color borderColor);
 
+	public abstract void setTimeLineColor(Color timeLineColor);
+
+	public abstract void setHeaderCommentColor(Color newColor);
+
 	public abstract void setSurroundingBackground(Color surroundingBackground);
 
 	/**

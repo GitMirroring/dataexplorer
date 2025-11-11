@@ -364,7 +364,7 @@ public final class HistoTimeLine {
 	public void drawTimeLine(GC gc) {
 		gc.setLineWidth(1);
 		gc.setLineStyle(SWT.LINE_SOLID);
-		gc.setForeground(DataExplorer.getInstance().COLOR_BLACK);
+		gc.setForeground(Settings.getInstance().getTimeLineColor());
 
 		int x0 = curveAreaBounds.x;
 		int y0 = curveAreaBounds.y + curveAreaBounds.height;

@@ -176,12 +176,26 @@ public final class HistoGraphicsWindow extends AbstractChartWindow {
 	@Override
 	public void setCurveAreaBackground(Color curveAreaBackground) {
 		this.graphicsComposite.curveAreaBackground = curveAreaBackground;
-		this.graphicsComposite.graphicCanvas.redraw();
+		this.graphicsComposite.doRedrawGraphics();
 	}
 
 	@Override
 	public void setCurveAreaBorderColor(Color borderColor) {
 		this.graphicsComposite.curveAreaBorderColor = borderColor;
+		this.graphicsComposite.graphicCanvas.redraw();
+	}
+
+	@Override
+	public void setHeaderCommentColor(Color headerCommentColor) {
+		this.graphicsComposite.headerCommentColor = headerCommentColor;
+		this.graphicsComposite.graphicsHeader.setForeground(headerCommentColor);
+		this.graphicsComposite.graphicsHeader.redraw();
+		this.graphicsComposite.recordSetComment.setForeground(headerCommentColor);
+		this.graphicsComposite.recordSetComment.redraw();
+	}
+
+	@Override
+	public void setTimeLineColor(Color timeLineColor) {
 		this.graphicsComposite.graphicCanvas.redraw();
 	}
 
