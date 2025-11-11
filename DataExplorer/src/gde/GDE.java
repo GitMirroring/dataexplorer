@@ -45,6 +45,7 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -62,6 +63,7 @@ import gde.log.LogFormatter;
 import gde.messages.MessageIds;
 import gde.messages.Messages;
 import gde.ui.DataExplorer;
+import gde.ui.SWTResourceManager;
 import gde.utils.FileUtils;
 import gde.utils.StringHelper;
 
@@ -793,6 +795,9 @@ public class GDE {
 	public static boolean isSystemDarkTheme() {
 		if (GDE.IS_OS_ARCH_ARM || GDE.IS_WINDOWS)
 			return false;
-		return Display.isSystemDarkTheme();
+		RGB backgroundRGB = SWTResourceManager.getColor(SWT.COLOR_WIDGET_BACKGROUND).getRGB();
+		int rgbSum = backgroundRGB.red + backgroundRGB.green + backgroundRGB.blue;
+		System.err.println(SWTResourceManager.getColor(SWT.COLOR_WIDGET_BACKGROUND).getRGB());
+		return rgbSum < 200;
 	}
 }
