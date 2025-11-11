@@ -106,10 +106,10 @@ public class GDE {
 	private static boolean									isWithUi													= false;
 
 	// ****** begin global constants section *******
-	public static final String							VERSION														= "Version 3.9.9"; // check device update list in settings getServiceUpdateList()																						//$NON-NLS-1$
+	public static final String							VERSION														= "Version 3.9.10 beta 1"; // check device update list in settings getServiceUpdateList()																						//$NON-NLS-1$
 	public static final int									VERSION_NUMBER										= GDE.VERSION.contains("beta") 
-															? Integer.parseInt(GDE.VERSION.substring(8, 8+5).replace(GDE.STRING_DOT, GDE.STRING_EMPTY)) - 1
-															: Integer.parseInt(GDE.VERSION.substring(8, 8+5).replace(GDE.STRING_DOT, GDE.STRING_EMPTY));
+															? Integer.parseInt(GDE.VERSION.substring(8, GDE.VERSION.indexOf("beta")-1).replace(GDE.STRING_DOT, GDE.STRING_EMPTY).trim()) - 1
+															: Integer.parseInt(GDE.VERSION.substring(8, GDE.VERSION.length()-1).replace(GDE.STRING_DOT, GDE.STRING_EMPTY).trim());
 	public static final String							NAME_SHORT												= "GDE";																																																										//$NON-NLS-1$
 	public static final String							NAME_LONG													= "DataExplorer";																																																						//$NON-NLS-1$
 	public final static String							DEVICE_PROPERTIES_XSD_VERSION			= "_V50";																																																										//$NON-NLS-1$
