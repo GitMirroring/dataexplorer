@@ -1,5 +1,12 @@
 Development history / change log, please read from bottom up
 
+Version 3.9.10 - xx yyy 2025
+Generic changes/fixes 
+	* make color changes in settings dialog visible by change event
+	
+Device specific changes/fixes
+	* 
+
 Version 3.9.9 - 15 Oct 2025
 Generic changes/fixes 
 	* enable device selection with identical USB VID/PID without product string using libUSB

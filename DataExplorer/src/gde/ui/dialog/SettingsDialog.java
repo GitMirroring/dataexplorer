@@ -1418,6 +1418,7 @@ public class SettingsDialog extends Dialog {
 									public void widgetSelected(SelectionEvent evt) {
 										SettingsDialog.log.log(Level.FINEST, "drawScaleInRecordColorButton.widgetSelected, event=" + evt); //$NON-NLS-1$
 										SettingsDialog.this.settings.setDrawScaleInRecordColor(SettingsDialog.this.drawScaleInRecordColorButton.getSelection());
+										SettingsDialog.this.application.updateAllTabs(true);
 										SettingsDialog.this.application.getHistoExplorer().ifPresent(h -> h.updateHistoTabs(false, false, true));
 									}
 								});
@@ -1437,6 +1438,7 @@ public class SettingsDialog extends Dialog {
 									public void widgetSelected(SelectionEvent evt) {
 										SettingsDialog.log.log(Level.FINEST, "drawNameInRecordColorButton.widgetSelected, event=" + evt); //$NON-NLS-1$
 										SettingsDialog.this.settings.setDrawNameInRecordColor(SettingsDialog.this.drawNameInRecordColorButton.getSelection());
+										SettingsDialog.this.application.updateAllTabs(true);
 										SettingsDialog.this.application.getHistoExplorer().ifPresent(h -> h.updateHistoTabs(false, false, true));
 									}
 								});
@@ -1456,6 +1458,7 @@ public class SettingsDialog extends Dialog {
 									public void widgetSelected(SelectionEvent evt) {
 										SettingsDialog.log.log(Level.FINEST, "drawNumbersInRecordColorButton.widgetSelected, event=" + evt); //$NON-NLS-1$
 										SettingsDialog.this.settings.setDrawNumbersInRecordColor(SettingsDialog.this.drawNumbersInRecordColorButton.getSelection());
+										SettingsDialog.this.application.updateAllTabs(true);
 										SettingsDialog.this.application.getHistoExplorer().ifPresent(h -> h.updateHistoTabs(false, false, true));
 									}
 								});
