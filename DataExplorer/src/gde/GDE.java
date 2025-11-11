@@ -793,11 +793,13 @@ public class GDE {
 	 * @return if dark theme is configured, ARM 32 swt.jar is to old and does not know dark theme 
 	 */
 	public static boolean isSystemDarkTheme() {
-		if (GDE.IS_OS_ARCH_ARM || GDE.IS_WINDOWS)
+		if (GDE.IS_OS_ARCH_ARM)
 			return false;
-		RGB backgroundRGB = SWTResourceManager.getColor(SWT.COLOR_WIDGET_BACKGROUND).getRGB();
-		int rgbSum = backgroundRGB.red + backgroundRGB.green + backgroundRGB.blue;
-		System.err.println(SWTResourceManager.getColor(SWT.COLOR_WIDGET_BACKGROUND).getRGB());
-		return rgbSum < 200;
+		else if (GDE.IS_LINUX) {
+			RGB backgroundRGB = SWTResourceManager.getColor(SWT.COLOR_WIDGET_BACKGROUND).getRGB();
+			int rgbSum = backgroundRGB.red + backgroundRGB.green + backgroundRGB.blue;
+			return rgbSum < 250;
+		}		
+		return Display.isSystemDarkTheme();
 	}
 }
