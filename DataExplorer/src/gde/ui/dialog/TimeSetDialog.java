@@ -111,8 +111,8 @@ public class TimeSetDialog extends Dialog {
 					TimeSetDialog.log.log(Level.FINEST, StringHelper.getFormatedTime("yyyy-MM-dd, HH:mm:ss", timeStamp)); //$NON-NLS-1$
 					if (activeRecordSet != null) {
 						String description = activeRecordSet.getRecordSetDescription();
-						description = description.substring(0, description.indexOf(GDE.CHAR_COLON) + 2) + StringHelper.getFormatedTime("yyyy-MM-dd, HH:mm:ss ", timeStamp) //$NON-NLS-1$
-								+ description.substring(description.indexOf(GDE.CHAR_BLANK, description.indexOf(GDE.CHAR_COLON) + 12)+1);
+						description = description.substring(0, description.indexOf(GDE.CHAR_COLON) + 2) + StringHelper.getFormatedTime("yyyy-MM-dd, HH:mm:ss", timeStamp) //$NON-NLS-1$
+								+ description.substring(description.indexOf(GDE.CHAR_BLANK, description.indexOf(GDE.CHAR_SEMICOLON))-1);
 						activeRecordSet.setRecordSetDescription(description);
 						activeRecordSet.setStartTimeStamp(timeStamp);
 						Channel activeChannel = TimeSetDialog.this.application.getActiveChannel();

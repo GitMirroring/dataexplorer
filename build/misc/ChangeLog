@@ -6,6 +6,7 @@ Generic changes/fixes
 	* support color schema switch, if unchanged default color schema is used
 	* enable user color for header/comment/caption and time line
 	* enable user color change even if dark mode is used
+	* correct active record set description update while changing record start time stamp
 	
 Device specific changes/fixes
 	* 
