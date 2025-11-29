@@ -549,8 +549,10 @@ public class ObjectDescriptionWindow extends CTabItem {
 						new ToolItem(this.fontSelectToolBar, SWT.SEPARATOR);
 						{
 							this.fontSelect = new ToolItem(this.fontSelectToolBar, SWT.BORDER);
-							this.fontSelect.setImage(SWTResourceManager.getImage("gde/resource/Font.gif")); //$NON-NLS-1$
-							//this.fontSelect.setBackground(this.textColor);
+							if (GDE.isSystemDarkTheme)
+								this.fontSelect.setImage(SWTResourceManager.getImage("gde/resource/FontDark.gif")); //$NON-NLS-1$
+							else
+								this.fontSelect.setImage(SWTResourceManager.getImage("gde/resource/Font.gif")); //$NON-NLS-1$
 							this.fontSelect.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0417));
 							this.fontSelect.addSelectionListener(new SelectionAdapter() {
 								@Override
