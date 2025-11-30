@@ -60,3 +60,6 @@ Below this directory also application configuration and trace log files are loca
 Starting with MAC OS Sequoia, applications that are not distributed via the Apple Store are classified as questionable. A corresponding dialog appears.
 Permission to run the application must be granted once via the "Privacy & Security" setting. You can check via Virustotal
 that no malicious code is contained.
+Provided kernel extensions (kext), to be used for USB HID devices, may installed using https://github.com/chris1111/Kext-Droplet-macOS. This may enable kext extensions on MacOS Sonoma and newer.
+
+

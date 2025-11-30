@@ -1,27 +1,27 @@
 ******** DataExplorer README ***********  14 May 2025
 
 Der GNU DataExplorer ist freie Software, siehe http://www.gnu.org/philosophy/free-sw.html. Sie wird kostenfrei und ohne Spende 
-zur Verfügung gestellt. Es gibt aber auch keinerlei Gewährleistung. Durch die Implementierung in Java auf der Basis von der freien Bibliotheken 
-jSerialComm, libjava4usb und SWT ist die Ausführung des Programms auf vielen populären Betriebssystemplattformen wie Windows, GNU/Linux 
-und MAC OS X möglich. Die einzige Voraussetzung dazu ist die Installation einer Java Run-time der Version 17 bis Java 21, wie z.B. IcedTea oder openJDK
+zur VerfÃ¼gung gestellt. Es gibt aber auch keinerlei GewÃ¤hrleistung. Durch die Implementierung in Java auf der Basis von der freien Bibliotheken 
+jSerialComm, libjava4usb und SWT ist die AusfÃ¼hrung des Programms auf vielen populÃ¤ren Betriebssystemplattformen wie Windows, GNU/Linux 
+und MAC OS X mÃ¶glich. Die einzige Voraussetzung dazu ist die Installation einer Java Run-time der Version 17 bis Java 21, wie z.B. IcedTea oder openJDK
 oder der SUN/Oracle Java Runtime, soweit die Runtime nicht Teil der Installation ist. Vorzugsweise Versionen mit Long Term Support (LTS) verwenden.
-Der Einfachheit halber werden die 64 Bit Versionen für Windows und MAC OS mit integrierter Java Laufzeit bereitgestellt. Eine Java Laufzeit muss für 
-diese Fälle nicht mehr installiert werden. Da die MAC OS Versionen auf Intel Code basieren läuft der DataExplorer in der Emulationsschicht Rosetta.
+Der Einfachheit halber werden die 64 Bit Versionen fÃ¼r Windows und MAC OS mit integrierter Java Laufzeit bereitgestellt. Eine Java Laufzeit muss fÃ¼r 
+diese FÃ¤lle nicht mehr installiert werden. Da die MAC OS Versionen auf Intel Code basieren lÃ¤uft der DataExplorer in der Emulationsschicht Rosetta.
 
-Der GNU DataExplorer nimmt Daten von angeschlossenen Geräten oder als Textdateiimport entgegen, zeigt diese für verschiedene Auswertungen an. 
-Die Liste der unterstützten Geräte findet man hier http://www.nongnu.org/dataexplorer/index.de.html.
+Der GNU DataExplorer nimmt Daten von angeschlossenen GerÃ¤ten oder als Textdateiimport entgegen, zeigt diese fÃ¼r verschiedene Auswertungen an. 
+Die Liste der unterstÃ¼tzten GerÃ¤te findet man hier http://www.nongnu.org/dataexplorer/index.de.html.
 											 
-Weitere Geräte sind in Arbeit. Hilfe bei der Einbindung von zusätzlichen Geräten ist herzlich willkommen.
+Weitere GerÃ¤te sind in Arbeit. Hilfe bei der Einbindung von zusÃ¤tzlichen GerÃ¤ten ist herzlich willkommen.
 
-Eine Geräte API (IDevice) wird zur Verfügung gestellt, die ein relativ einfaches Einbinden eigener Geräte ermöglichen soll. Gewisse Programmierkenntnisse
+Eine GerÃ¤te API (IDevice) wird zur VerfÃ¼gung gestellt, die ein relativ einfaches Einbinden eigener GerÃ¤te ermÃ¶glichen soll. Gewisse Programmierkenntnisse
 sind aber Voraussetzung.
 
-Für das Verzeichnis der Nutzerdaten (Logdateien) ist der Anwender selbst verantwortlich, es wird nach dem ersten Start des Programms
+FÃ¼r das Verzeichnis der Nutzerdaten (Logdateien) ist der Anwender selbst verantwortlich, es wird nach dem ersten Start des Programms
 in den Anwendungkonfigurationsdatei (DataExplorer.properties) hinterlegt.
 
 Hinweis: Soll der DataExplorer gleichzeitig auf mehreren Betriebssystemen verwendet werden, oder werden die Daten auf zentraler Stelle abgelegt,
 sind Umlaute in den Dateinamen und Objektnamen zu vermeiden. (Umwandlung ISO-8859-1 nach UTF-8 und umgekehrt). Dateilinks unterscheiden sich zwischen den 
-verschiedenen Betriebssystemen. Objekt bezogene Dateien werden nicht dupliziert, sondern über Dateilinks referenziert. Vor einem Umzug der gesammelten 
+verschiedenen Betriebssystemen. Objekt bezogene Dateien werden nicht dupliziert, sondern Ã¼ber Dateilinks referenziert. Vor einem Umzug der gesammelten 
 Daten auf ein anderes Betriebssystem sind die Objekt bezogenen Dateilinks zu entfernen und auf der Zielplatform wieder herzustellen. Dazu bitte den 
 Einstellungsdialog, "Wartung" Tabulator benutzen.
 
@@ -31,32 +31,34 @@ Um Fehler oder Anregungen zu melden, bitte eine e-Mail an die Adresse auf der Do
 
 Windows:
 
-Zur Installation sind Administratorrechte nötig.
-Achtung: Bitte keine Umlaute im Installationspfad benutzen, Java arbeitet standardmäßig mit UTF-8, da kann es Probleme mit der Konvertierung in der Laufzeitumgebung geben!
+Zur Installation sind Administratorrechte nÃ¶tig.
+Achtung: Bitte keine Umlaute im Installationspfad benutzen, Java arbeitet standardmÃ¤ÃŸig mit UTF-8, da kann es Probleme mit der Konvertierung in der Laufzeitumgebung geben!
 Beim ersten Start des Programms werden dann noch Anwendungkonfigurationsverzeichnisse unter %APPDATA%\DataExplorer angelegt. Hierunter werden 
 auch Anwendungkonfiguration und Tracelogdaten abgelegt.
 
-Je nach verwendeter Windows Version und Patchlevel kann es nötig sein das System mit dem 
-"Microsoft Visual C++ 2008 Redistributable Package" von www.microsoft.com/downloads nachzurüsten (Desktopicon, Objektlink).
+Je nach verwendeter Windows Version und Patchlevel kann es nÃ¶tig sein das System mit dem 
+"Microsoft Visual C++ 2008 Redistributable Package" von www.microsoft.com/downloads nachzurÃ¼sten (Desktopicon, Objektlink).
 
 
 GNU/Linux:
 
 Entsprechend der Prozessorarchitektur sollte die Java-Laufzeitumgebung installiert werden.
-Eine Installation ist nicht nötig, das im Archiv enthaltene Verzeichnis "DataExplorer" mit den darunter liegenden Verzeichnissen und Dateien
-einfach an einen Ort entpacken, wo Ausführungsrechte vorliegen. (tar -xzvf dataexplorer_..)
-Für den ersten Start des Programms über ein Kommando-Shell in das DataExplorer Verzeichnis wechseln und DataExplorer ausführen.
+Eine Installation ist nicht nÃ¶tig, das im Archiv enthaltene Verzeichnis "DataExplorer" mit den darunter liegenden Verzeichnissen und Dateien
+einfach an einen Ort entpacken, wo AusfÃ¼hrungsrechte vorliegen. (tar -xzvf dataexplorer_..)
+FÃ¼r den ersten Start des Programms Ã¼ber ein Kommando-Shell in das DataExplorer Verzeichnis wechseln und DataExplorer ausfÃ¼hren.
 Beim ersten Start des Programms werden dann noch Anwendungkonfigurationsverzeichnisse unter /home/<Benutzer>/.DataExplorer angelegt. Hierunter werden auch 
 Anwendungkonfiguration und Tracelogdaten abgelegt.
 
 
 MAC OS X:
 
-Die DMG Datei enthält eine Java-Laufzeitumgebung. Das funktiioniert auch mit einem ARM (M) Prozessor, dann unter Rosetta.
+Die DMG Datei enthÃ¤lt eine Java-Laufzeitumgebung. Das funktiioniert auch mit einem ARM (M) Prozessor, dann unter Rosetta.
 Die bereit gestellt DMG Datei zeigt die Anwendung DataExplorer.app, die einfach auf den Applications Ordner zu ziehen ist.
 Beim ersten Start des Programms werden dann noch Anwendungkonfigurationsverzeichnisse unter /User/<Benutzer>/Library/Application Support/DataExplorer
 angelegt. Hierunter werden auch Anwendungkonfiguration und Tracelogdaten abgelegt.
 
-Ab MAC OS Sequoia werden Anwendungen, die nicht über den Apple Store verteilt werden als fragwürdig eingestuft. Ein entsprechender Dialog erscheint.
-Über die Einstellung "Privatsphähre & Sicherheit" muss einmalig die Erlaubnis zur Ausführung erteilt werden. Über Virustotal kann man überprüfen
+Ab MAC OS Sequoia werden Anwendungen, die nicht Ã¼ber den Apple Store verteilt werden als fragwÃ¼rdig eingestuft. Ein entsprechender Dialog erscheint.
+Ãœber die Einstellung "PrivatsphÃ¤hre & Sicherheit" muss einmalig die Erlaubnis zur AusfÃ¼hrung erteilt werden. Ãœber Virustotal kann man Ã¼berprÃ¼fen
 das kein Schadcode enthalten ist.
+Die bereitgestellten Kernel-Erweiterungen (kext) fÃ¼r USB-HID-GerÃ¤te kÃ¶nnen mit â€žhttps://github.com/chris1111/Kext-Droplet-macOSâ€œ installiert werden. 
+Dadurch kÃ¶nnen kext-Erweiterungen unter MacOS Sonoma und neuer aktiviert werden.
