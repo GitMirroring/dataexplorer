@@ -3,7 +3,7 @@
 Der GNU DataExplorer ist freie Software, siehe http://www.gnu.org/philosophy/free-sw.html. Sie wird kostenfrei und ohne Spende 
 zur Verfügung gestellt. Es gibt aber auch keinerlei Gewährleistung. Durch die Implementierung in Java auf der Basis von der freien Bibliotheken 
 jSerialComm, libjava4usb und SWT ist die Ausführung des Programms auf vielen populären Betriebssystemplattformen wie Windows, GNU/Linux 
-und MAC OS X möglich. Die einzige Voraussetzung dazu ist die Installation einer Java Run-time der Version 17 bis Java 21, wie z.B. IcedTea oder openJDK
+und MAC OS X möglich. Die einzige Voraussetzung dazu ist die Installation einer Java Run-time der Version 19 bis Java 25, wie z.B. IcedTea/Adoptium/Temurin oder openJDK
 oder der SUN/Oracle Java Runtime, soweit die Runtime nicht Teil der Installation ist. Vorzugsweise Versionen mit Long Term Support (LTS) verwenden.
 Der Einfachheit halber werden die 64 Bit Versionen für Windows und MAC OS mit integrierter Java Laufzeit bereitgestellt. Eine Java Laufzeit muss für 
 diese Fälle nicht mehr installiert werden. Da die MAC OS Versionen auf Intel Code basieren läuft der DataExplorer in der Emulationsschicht Rosetta.

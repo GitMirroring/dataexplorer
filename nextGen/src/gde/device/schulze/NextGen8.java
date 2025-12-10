@@ -224,7 +224,7 @@ public class NextGen8 extends DeviceConfiguration implements IDevice {
 		int dataBufferSize = GDE.SIZE_BYTES_INTEGER * recordSet.getNoneCalculationRecordNames().length;
 		byte[] convertBuffer = new byte[dataBufferSize];
 		int[] points = new int[recordSet.size()];
-		String sThreadId = String.format("%06d", Thread.currentThread().getId()); //$NON-NLS-1$
+		String sThreadId = String.format("%06d", Thread.currentThread().threadId()); //$NON-NLS-1$
 		double capacity = 0.;
 		double timeStep_h = 1.0 / 3600.0;
 		int progressCycle = 0;
@@ -272,7 +272,7 @@ public class NextGen8 extends DeviceConfiguration implements IDevice {
 
 	@Override
 	public void addConvertedLovDataBufferAsRawDataPoints(RecordSet recordSet, byte[] dataBuffer, int recordDataSize, boolean doUpdateProgressBar) throws DataInconsitsentException {
-		String sThreadId = String.format("%06d", Thread.currentThread().getId()); //$NON-NLS-1$
+		String sThreadId = String.format("%06d", Thread.currentThread().threadId()); //$NON-NLS-1$
 		int deviceDataBufferSize = this.getLovDataByteSize();
 		int[] points = new int[this.getNumberOfMeasurements(1)];
 		int offset = 0;

@@ -76,7 +76,7 @@ public class JivePro extends JLog2 {
 	 */
 	@Override
 	public synchronized void addConvertedLovDataBufferAsRawDataPoints(RecordSet recordSet, byte[] dataBuffer, int recordDataSize, boolean doUpdateProgressBar) throws DataInconsitsentException {
-		String sThreadId = String.format("%06d", Thread.currentThread().getId()); //$NON-NLS-1$
+		String sThreadId = String.format("%06d", Thread.currentThread().threadId()); //$NON-NLS-1$
 		int deviceDataBufferSize = Math.abs(this.getDataBlockSize(InputTypes.FILE_IO)) * 6;
 		int[] points = new int[recordSet.size()];
 		int offset = 0;
@@ -172,7 +172,7 @@ public class JivePro extends JLog2 {
 		int dataBufferSize = GDE.SIZE_BYTES_INTEGER * recordSet.getNoneCalculationRecordNames().length;
 		byte[] convertBuffer = new byte[dataBufferSize];
 		int[] points = new int[recordSet.size()];
-		String sThreadId = String.format("%06d", Thread.currentThread().getId()); //$NON-NLS-1$
+		String sThreadId = String.format("%06d", Thread.currentThread().threadId()); //$NON-NLS-1$
 		int progressCycle = 0;
 		Vector<Integer> timeStamps = new Vector<Integer>(1, 1);
 		if (doUpdateProgressBar) this.application.setProgress(progressCycle, sThreadId);

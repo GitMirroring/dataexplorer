@@ -87,7 +87,7 @@ public class GDE {
 		}
 
 		public void setProgress(int percentage) {
-			String sThreadId = String.format("%06d", Thread.currentThread().getId()); //release >= 19 -> threadId()
+			String sThreadId = String.format("%06d", Thread.currentThread().threadId()); //release >= 19 -> threadId()
 			application.setProgress(percentage, sThreadId);
 		}
 
@@ -544,15 +544,8 @@ public class GDE {
 			int javaVmSpecificationVersion = Integer.parseInt(((String)props.get("java.vm.specification.version")).contains(GDE.STRING_DOT) 
 					? ((String)props.get("java.vm.specification.version")).substring(2) : ((String)props.get("java.vm.specification.version")));
 			
-			if (IS_ARCH_DATA_MODEL_64 || IS_OS_ARCH_ARM) {
-				if (javaVmSpecificationVersion < 17 || javaVmSpecificationVersion > 21) {
-					application.openMessageDialogAsync(Messages.getString(MessageIds.GDE_MSGW0050, new Integer[] { javaVmSpecificationVersion }));
-				}
-			}
-			else {
-				if (javaVmSpecificationVersion < 8 || javaVmSpecificationVersion > 21) {
-					application.openMessageDialogAsync(Messages.getString(MessageIds.GDE_MSGW0050, new Integer[] { javaVmSpecificationVersion }));
-				}
+			if (javaVmSpecificationVersion < 19 || javaVmSpecificationVersion > 25) {
+				application.openMessageDialogAsync(Messages.getString(MessageIds.GDE_MSGW0050, new Integer[] { javaVmSpecificationVersion }));
 			}
 			application.execute(inputFilePath);
 		}

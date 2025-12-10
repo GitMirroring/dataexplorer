@@ -67,7 +67,7 @@ public class iCharger208B extends iCharger {
 	 */
 	@Override
 	public synchronized void addConvertedLovDataBufferAsRawDataPoints(RecordSet recordSet, byte[] dataBuffer, int recordDataSize, boolean doUpdateProgressBar) throws DataInconsitsentException {
-		String sThreadId = String.format("%06d", Thread.currentThread().getId()); //$NON-NLS-1$
+		String sThreadId = String.format("%06d", Thread.currentThread().threadId()); //$NON-NLS-1$
 		int deviceDataBufferSize = this.getLovDataByteSize();
 		int[] points = new int[this.getNumberOfMeasurements(1)];
 		int offset = 0;
@@ -176,7 +176,7 @@ public class iCharger208B extends iCharger {
 		int dataBufferSize = GDE.SIZE_BYTES_INTEGER * recordSet.getNoneCalculationRecordNames().length;
 		byte[] convertBuffer = new byte[dataBufferSize];
 		int[] points = new int[recordSet.size()];
-		String sThreadId = String.format("%06d", Thread.currentThread().getId()); //$NON-NLS-1$
+		String sThreadId = String.format("%06d", Thread.currentThread().threadId()); //$NON-NLS-1$
 		int progressCycle = 0;
 		double energy = 0.0;
 		double timeStep_h = 2.0 / 3600.0;

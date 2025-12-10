@@ -515,7 +515,7 @@ public class EStationDialog extends DeviceDialog {
 	public void updateGlobalConfigData(HashMap<String, String> newConfigData) {
 		this.configData = newConfigData;
 		if (this.dialogShell != null && !this.dialogShell.isDisposed()) {
-			if (Thread.currentThread().getId() == this.application.getThreadId()) {
+			if (Thread.currentThread().threadId() == this.application.getThreadId()) {
 				this.inputLowPowerCutOffText.setText(this.inputLowPowerCutOff = this.configData.get(eStation.CONFIG_IN_VOLTAGE_CUT_OFF)); //$NON-NLS-1$
 				this.capacityCutOffText.setText(this.capacityCutOff = this.configData.get(eStation.CONFIG_SET_CAPASITY)); //$NON-NLS-1$
 				this.safetyTimerText.setText(this.safetyTimer = this.configData.get(eStation.CONFIG_SAFETY_TIME)); //$NON-NLS-1$

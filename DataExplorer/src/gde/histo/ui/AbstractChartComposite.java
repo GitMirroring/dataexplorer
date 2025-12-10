@@ -185,7 +185,7 @@ public abstract class AbstractChartComposite extends Composite {
 	 * Redraw the graphics canvas as well as the curve selector table.
 	 */
 	public void redrawGraphics() {
-		if (Thread.currentThread().getId() == this.application.getThreadId()) {
+		if (Thread.currentThread().threadId() == this.application.getThreadId()) {
 			doRedrawGraphics();
 		} else {
 			GDE.display.asyncExec(new Runnable() {

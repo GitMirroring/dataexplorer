@@ -598,7 +598,7 @@ public class Channel extends HashMap<String, RecordSet> {
 	 */
 	public synchronized void switchRecordSet(String recordSetName) {
 		if (!GDE.isWithUi()) throw new UnsupportedOperationException("for use with internal UI only");
-		if (log.isLoggable(Level.FINE)) log.log(Level.FINE, String.format("switching to record set threadId = %06d", Thread.currentThread().getId())); //$NON-NLS-1$
+		if (log.isLoggable(Level.FINE)) log.log(Level.FINE, String.format("switching to record set threadId = %06d", Thread.currentThread().threadId())); //$NON-NLS-1$
 		DataExplorer application = DataExplorer.getInstance();
 		int percentage = application.getProgressPercentage();
 		if (percentage > 99 || percentage == 0)
@@ -606,7 +606,7 @@ public class Channel extends HashMap<String, RecordSet> {
 
 		final String recordSetKey = recordSetName;
 		this.lastActiveRecordSet = this.get(recordSetKey);
-		if (Thread.currentThread().getId() == application.getThreadId()) {
+		if (Thread.currentThread().threadId() == application.getThreadId()) {
 			updateForSwitchRecordSet(application, recordSetKey);
 		}
 		else { // execute asynchronous

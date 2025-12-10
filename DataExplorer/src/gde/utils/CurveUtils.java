@@ -30,7 +30,6 @@ import gde.data.Record;
 import gde.data.RecordSet;
 import gde.device.IDevice;
 import gde.log.Level;
-import gde.ui.DataExplorer;
 import gde.ui.SWTResourceManager;
 
 /**

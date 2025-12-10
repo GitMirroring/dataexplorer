@@ -267,7 +267,7 @@ public class Pulsar3 extends DeviceConfiguration implements IDevice {
 	 */
 	@Override
 	public void addConvertedLovDataBufferAsRawDataPoints(RecordSet recordSet, byte[] dataBuffer, int recordDataSize, boolean doUpdateProgressBar) throws DataInconsitsentException {
-		String sThreadId = String.format("%06d", Thread.currentThread().getId()); //$NON-NLS-1$
+		String sThreadId = String.format("%06d", Thread.currentThread().threadId()); //$NON-NLS-1$
 		int deviceDataBufferSize = this.getLovDataByteSize();
 		int[] points = new int[this.getNumberOfMeasurements(1)];
 		int offset = 0;
@@ -326,7 +326,7 @@ public class Pulsar3 extends DeviceConfiguration implements IDevice {
 	public void addDataBufferAsRawDataPoints(RecordSet recordSet, byte[] dataBuffer, int recordDataSize, boolean doUpdateProgressBar) throws DataInconsitsentException {
 		int dataBufferSize = GDE.SIZE_BYTES_INTEGER * recordSet.getNoneCalculationRecordNames().length;
 		int[] points = new int[recordSet.getNoneCalculationRecordNames().length];
-		String sThreadId = String.format("%06d", Thread.currentThread().getId()); //$NON-NLS-1$
+		String sThreadId = String.format("%06d", Thread.currentThread().threadId()); //$NON-NLS-1$
 		int progressCycle = 1;
 		if (doUpdateProgressBar) this.application.setProgress(progressCycle, sThreadId);
 

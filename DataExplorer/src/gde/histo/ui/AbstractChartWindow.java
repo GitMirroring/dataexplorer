@@ -257,7 +257,7 @@ public abstract class AbstractChartWindow extends CTabItem {
 	 */
 	@Deprecated
 	public void updateCurveSelectorTable() {
-		if (Thread.currentThread().getId() == DataExplorer.getInstance().getThreadId()) {
+		if (Thread.currentThread().threadId() == DataExplorer.getInstance().getThreadId()) {
 			this.curveSelectorComposite.doUpdateCurveSelectorTable();
 		} else {
 			GDE.display.asyncExec(new Runnable() {

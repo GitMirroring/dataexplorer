@@ -57,7 +57,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Display;
 import org.xml.sax.SAXException;
 
 import gde.Analyzer;
@@ -1732,7 +1731,7 @@ public final class Settings extends Properties {
 	 */
 	public Locale getLocale() {
 		// get the locale from loaded properties or system default
-		Locale locale = new Locale(this.getProperty(Settings.LOCALE_IN_USE, Locale.getDefault().getLanguage()));
+		Locale locale = Locale.of(this.getProperty(Settings.LOCALE_IN_USE, Locale.getDefault().getLanguage()));
 		if (locale.getLanguage().equals(Locale.ENGLISH.getLanguage()) || locale.getLanguage().equals(Locale.GERMAN.getLanguage()) || locale.getLanguage().equals(Locale.ITALIAN.getLanguage())) {
 			this.setProperty(Settings.LOCALE_IN_USE, locale.getLanguage());
 		}

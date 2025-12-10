@@ -107,7 +107,7 @@ public class UtilGraphicsWindow extends CTabItem {
 	 * redraws the graphics canvas as well as the curve selector table
 	 */
 	public void redrawGraphics() {
-		if (Thread.currentThread().getId() == this.application.getThreadId()) {
+		if (Thread.currentThread().threadId() == this.application.getThreadId()) {
 			this.graphicsComposite.doRedrawGraphics();
 			this.curveSelectorComposite.doUpdateCurveSelectorTable();
 		}
@@ -125,7 +125,7 @@ public class UtilGraphicsWindow extends CTabItem {
 	 * method to update the curves displayed in the curve selector panel 
 	 */
 	public void updateCurveSelectorTable() {
-		if (Thread.currentThread().getId() == this.application.getThreadId()) {
+		if (Thread.currentThread().threadId() == this.application.getThreadId()) {
 			this.curveSelectorComposite.doUpdateCurveSelectorTable();
 		}
 		else {

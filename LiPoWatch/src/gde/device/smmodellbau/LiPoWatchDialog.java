@@ -1209,7 +1209,7 @@ public class LiPoWatchDialog extends DeviceDialog {
 	 * function to reset counter labels
 	 */
 	public void resetDataSetsLabel() {
-		if (Thread.currentThread().getId() == this.application.getThreadId()) {
+		if (Thread.currentThread().threadId() == this.application.getThreadId()) {
 			this.numberRedDataSetsText = "0"; //$NON-NLS-1$
 			this.numberActualDataSetsText = "0"; //$NON-NLS-1$
 			this.numberReadErrorText = "0"; //$NON-NLS-1$
@@ -1243,7 +1243,7 @@ public class LiPoWatchDialog extends DeviceDialog {
 	 * function to reset all the buttons, normally called after data gathering finished
 	 */
 	public void resetButtons() {
-		if (Thread.currentThread().getId() == this.application.getThreadId()) {
+		if (Thread.currentThread().threadId() == this.application.getThreadId()) {
 			this.readConfigButton.setEnabled(true);
 			this.storeConfigButton.setEnabled(false);
 

@@ -2391,7 +2391,7 @@ public class UltraDuoPlusDialog extends DeviceDialog {
 	 * @param enable
 	 */
 	public void setBackupRetoreButtons(final boolean enable) {
-		if (Thread.currentThread().getId() == this.application.getThreadId()) {
+		if (Thread.currentThread().threadId() == this.application.getThreadId()) {
 			if (!UltraDuoPlusDialog.this.dialogShell.isDisposed() && UltraDuoPlusDialog.this.restoreButton != null && UltraDuoPlusDialog.this.backupButton != null
 					&& !UltraDuoPlusDialog.this.restoreButton.isDisposed() && !UltraDuoPlusDialog.this.backupButton.isDisposed()) {
 				this.restoreButton.setEnabled(enable);
@@ -2562,7 +2562,7 @@ public class UltraDuoPlusDialog extends DeviceDialog {
 	 * @param percentage
 	 */
 	public void setGraphicsDataReadProgress(final int percentage) {
-		if (Thread.currentThread().getId() == this.application.getThreadId()) {
+		if (Thread.currentThread().threadId() == this.application.getThreadId()) {
 			if (!UltraDuoPlusDialog.this.dialogShell.isDisposed() && UltraDuoPlusDialog.this.graphicsDataProgressBar != null&& !UltraDuoPlusDialog.this.graphicsDataProgressBar.isDisposed()) {
 				this.graphicsDataProgressBar.setSelection(percentage);
 		}

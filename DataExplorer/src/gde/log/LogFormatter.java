@@ -61,7 +61,7 @@ public class LogFormatter extends Formatter {
 		// Minimize memory allocations here.
 		this.date.setTime(logRecord.getMillis());
 		this.args[0] = this.date;
-		this.args[1] = logRecord.getThreadID();
+		this.args[1] = logRecord.getLongThreadID();
 		this.args[2] = String.format("%-7s",logRecord.getLevel());
 		this.args[3] = logRecord.getLoggerName();
 		this.args[4] = logRecord.getSourceMethodName();

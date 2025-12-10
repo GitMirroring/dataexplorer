@@ -132,7 +132,7 @@ public final class HistoSummaryWindow extends AbstractChartWindow {
 	}
 
 	public void setChartWeights(int[] chartWeights) {
-		if (Thread.currentThread().getId() == DataExplorer.getInstance().getThreadId()) {
+		if (Thread.currentThread().threadId() == DataExplorer.getInstance().getThreadId()) {
 			resizeCompositeSashForm(chartWeights);
 		} else {
 			GDE.display.asyncExec(new Runnable() {
@@ -155,7 +155,7 @@ public final class HistoSummaryWindow extends AbstractChartWindow {
 	@Override
 	public void redrawGraphics(final boolean redrawCurveSelector) {
 
-		if (Thread.currentThread().getId() == DataExplorer.getInstance().getThreadId()) {
+		if (Thread.currentThread().threadId() == DataExplorer.getInstance().getThreadId()) {
 			if (redrawCurveSelector) curveSelectorComposite.doUpdateCurveSelectorTable();
 			if (windowActor.getTrailRecordSet() == null) return ;
 			if (!windowActor.getTrailRecordSet().isSmartStatistics()) setTemplateChart();
@@ -284,7 +284,7 @@ public final class HistoSummaryWindow extends AbstractChartWindow {
 	@Override
 	@Deprecated
 	public void updateCaptions() {
-		if (Thread.currentThread().getId() == DataExplorer.getInstance().getThreadId()) {
+		if (Thread.currentThread().threadId() == DataExplorer.getInstance().getThreadId()) {
 			for (AbstractChartComposite c : getCharts()) {
 				c.updateCaptions();
 			}

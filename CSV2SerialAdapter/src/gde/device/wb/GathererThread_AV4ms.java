@@ -325,7 +325,7 @@ public class GathererThread_AV4ms extends Thread {
 			if (recordSet != null) {
 				recordSet.clear();
 				this.channel.remove(recordSet.getName());
-				if (Thread.currentThread().getId() == this.application.getThreadId()) {
+				if (Thread.currentThread().threadId() == this.application.getThreadId()) {
 					this.application.getMenuToolBar().updateRecordSetSelectCombo();
 					this.application.updateStatisticsData();
 					this.application.updateDataTable(this.recordSetKey, true);

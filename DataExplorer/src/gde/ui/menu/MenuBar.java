@@ -1411,7 +1411,7 @@ public class MenuBar {
 	 */
 	public void updateAdditionalGPSMenuItems() {
 		final boolean isGPSData = this.application.getActiveDevice().isActualRecordSetWithGpsData();
-		if (Thread.currentThread().getId() == this.application.getThreadId()) {
+		if (Thread.currentThread().threadId() == this.application.getThreadId()) {
 			boolean isAdditionalExportItem = false;
 			for (MenuItem menuItem : this.exportMenu.getItems()) {
 				if (menuItem.getText().equals(Messages.getString(gde.messages.MessageIds.GDE_MSGT0732))) {
@@ -1445,7 +1445,7 @@ public class MenuBar {
 	 */
 	public void updateDevicePropertyEditorItem() {
 		final boolean isEnabled = this.application.getActiveDevice().getDeviceConfiguration().isEditable();
-		if (Thread.currentThread().getId() == this.application.getThreadId()) {
+		if (Thread.currentThread().threadId() == this.application.getThreadId()) {
 			this.devicePropertyFileEditMenuItem.setEnabled(isEnabled);
 		}
 		else {

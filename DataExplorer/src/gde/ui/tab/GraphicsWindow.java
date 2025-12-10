@@ -136,7 +136,7 @@ public class GraphicsWindow extends CTabItem {
 	 * redraws the graphics canvas as well as the curve selector table
 	 */
 	public void redrawGraphics(final boolean redrawCurveSelector) {
-		if (Thread.currentThread().getId() == this.application.getThreadId()) {
+		if (Thread.currentThread().threadId() == this.application.getThreadId()) {
 			this.graphicsComposite.doRedrawGraphics();
 			this.graphicsComposite.updateCaptions();
 			if (redrawCurveSelector) this.curveSelectorComposite.doUpdateCurveSelectorTable();
@@ -157,7 +157,7 @@ public class GraphicsWindow extends CTabItem {
 	 * update graphics window header and description
 	 */
 	public void updateCaptions() {
-		if (Thread.currentThread().getId() == this.application.getThreadId()) {
+		if (Thread.currentThread().threadId() == this.application.getThreadId()) {
 			this.graphicsComposite.updateCaptions();
 		}
 		else {
@@ -174,7 +174,7 @@ public class GraphicsWindow extends CTabItem {
 	 * method to update the curves displayed in the curve selector panel
 	 */
 	public void updateCurveSelectorTable() {
-		if (Thread.currentThread().getId() == this.application.getThreadId()) {
+		if (Thread.currentThread().threadId() == this.application.getThreadId()) {
 			this.curveSelectorComposite.doUpdateCurveSelectorTable();
 		}
 		else {

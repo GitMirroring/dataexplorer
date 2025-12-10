@@ -73,13 +73,13 @@ public class WebBrowser {
 	public static void openBrowser(String stringUrl) {
 		try {
 			if (GDE.IS_WINDOWS) {
-				Runtime.getRuntime().exec("rundll32.exe url.dll,FileProtocolHandler " + stringUrl); //$NON-NLS-1$
+				Runtime.getRuntime().exec(new String[] {"rundll32.exe url.dll,FileProtocolHandler " + stringUrl}); //$NON-NLS-1$
 			}
 			else if (GDE.IS_LINUX){				
-				Runtime.getRuntime().exec("xdg-open" + GDE.STRING_BLANK + stringUrl);
+				Runtime.getRuntime().exec(new String[] {"xdg-open" + GDE.STRING_BLANK + stringUrl});
 			}
 			else if (GDE.IS_MAC) {
-		 		Runtime.getRuntime().exec("open" + GDE.STRING_BLANK + stringUrl);
+		 		Runtime.getRuntime().exec(new String[] {"open" + GDE.STRING_BLANK + stringUrl});
 		 }
 			else {
 				throw new Exception(Messages.getString(MessageIds.GDE_MSGE0020, new Object[] {System.getProperty(GDE.STRING_OS_NAME)} )); 

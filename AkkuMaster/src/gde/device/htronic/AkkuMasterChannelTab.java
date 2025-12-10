@@ -817,7 +817,7 @@ public class AkkuMasterChannelTab {
 		this.isCollectData = false;
 		this.isCollectDataStopped = true;
 
-		if (Thread.currentThread().getId() == AkkuMasterChannelTab.this.application.getThreadId()) {
+		if (Thread.currentThread().threadId() == AkkuMasterChannelTab.this.application.getThreadId()) {
 			updateDialogAfterStop();
 		}
 		else {

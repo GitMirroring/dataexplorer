@@ -178,7 +178,7 @@ public class CSV2SerialAdapter extends DeviceConfiguration implements IDevice {
 				Math.abs(this.getDataBlockSize(InputTypes.FILE_IO)));
 		int[] startLength = new int[] { 0, 0 };
 		byte[] lineBuffer = null;
-		String sThreadId = String.format("%06d", Thread.currentThread().getId()); //$NON-NLS-1$
+		String sThreadId = String.format("%06d", Thread.currentThread().threadId()); //$NON-NLS-1$
 		int progressCycle = 0;
 		if (doUpdateProgressBar) this.application.setProgress(progressCycle, sThreadId);
 
@@ -256,7 +256,7 @@ public class CSV2SerialAdapter extends DeviceConfiguration implements IDevice {
 		byte[] convertBuffer = new byte[dataBufferSize];
 		int[] points = new int[recordSet.size()];
 		int timeStampBufferSize = 0;
-		String sThreadId = String.format("%06d", Thread.currentThread().getId()); //$NON-NLS-1$
+		String sThreadId = String.format("%06d", Thread.currentThread().threadId()); //$NON-NLS-1$
 		int progressCycle = 0;
 		Vector<Integer> timeStamps = new Vector<Integer>(1, 1);
 		if (doUpdateProgressBar) this.application.setProgress(progressCycle, sThreadId);

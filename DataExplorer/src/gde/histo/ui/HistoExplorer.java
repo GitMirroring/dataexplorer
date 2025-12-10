@@ -34,7 +34,6 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Control;
 
 import com.sun.istack.Nullable;
 
@@ -181,7 +180,7 @@ public class HistoExplorer {
 	 * @param redrawCurveSelector
 	 */
 	public void updateHistoChartWindow(boolean redrawCurveSelector) {
-		if (Thread.currentThread().getId() == application.getThreadId()) {
+		if (Thread.currentThread().threadId() == application.getThreadId()) {
 			CTabItem activeTab = displayTab.getSelection();
 			if (!(activeTab instanceof AbstractChartWindow)) return;
 			if (!((AbstractChartWindow) activeTab).isActiveCurveSelectorContextMenu()) {
@@ -233,7 +232,7 @@ public class HistoExplorer {
 	private void updateHistoTabs(RebuildStep rebuildStep) {
 		if (Analyzer.getInstance().getActiveChannel() == null) return;
 
-		if (Thread.currentThread().getId() == application.getThreadId()) {
+		if (Thread.currentThread().threadId() == application.getThreadId()) {
 			if (log.isLoggable(Level.FINER)) log.log(Level.FINER, "initial size=", getTrailRecordSet() != null
 					? getTrailRecordSet().getDisplayRecords().size() + "  " + getTrailRecordSet().getVisibleAndDisplayableRecords().size() : "0   0");
 			if (isHistoWindowVisible()) {
@@ -288,7 +287,7 @@ public class HistoExplorer {
 	 * Reset the window measurement pointer including table and header.
 	 */
 	private void resetWindowHeaderAndMeasuring(AbstractChartWindow tabItem) {
-		if (Thread.currentThread().getId() == application.getThreadId()) {
+		if (Thread.currentThread().threadId() == application.getThreadId()) {
 			tabItem.clearHeaderAndComment();
 			tabItem.cleanMeasuring();
 		} else {
@@ -479,7 +478,7 @@ public class HistoExplorer {
 		if (!hasRecords()) return;
 
 		final boolean isSmartStatistics = getTrailRecordSet().isSmartStatistics();
-		if (Thread.currentThread().getId() == this.application.getThreadId()) {
+		if (Thread.currentThread().threadId() == this.application.getThreadId()) {
 			this.application.getMenuBar().getSmartStatisticsItem().setSelection(isSmartStatistics);
 		} else {
 			GDE.display.asyncExec(new Runnable() {

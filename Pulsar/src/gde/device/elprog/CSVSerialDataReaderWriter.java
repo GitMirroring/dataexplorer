@@ -354,7 +354,7 @@ public class CSVSerialDataReaderWriter {
 //	 */
 //	public static void write(char separator, String recordSetKey, String filePath, boolean isRaw) throws Exception {
 //		BufferedWriter writer;
-//		String sThreadId = String.format("%06d", Thread.currentThread().getId());
+//		String sThreadId = String.format("%06d", Thread.currentThread().threadId());
 //
 //		try {
 //			if (application.getStatusBar() != null) application.setStatusMessage(Messages.getString(MessageIds.GDE_MSGT0138, new String[] {GDE.FILE_ENDING_CSV, filePath}));

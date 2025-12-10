@@ -94,7 +94,7 @@ public final class HistoGraphicsWindow extends AbstractChartWindow {
 	public void redrawGraphics(final boolean redrawCurveSelector) {
 		if (windowActor.getTrailRecordSet() == null) return ;
 
-		if (Thread.currentThread().getId() == DataExplorer.getInstance().getThreadId()) {
+		if (Thread.currentThread().threadId() == DataExplorer.getInstance().getThreadId()) {
 			if (redrawCurveSelector) this.curveSelectorComposite.doUpdateCurveSelectorTable();
 
 			this.graphicsComposite.doRedrawGraphics();
@@ -118,7 +118,7 @@ public final class HistoGraphicsWindow extends AbstractChartWindow {
 	@Override
 	@Deprecated
 	public void updateCaptions() {
-		if (Thread.currentThread().getId() == DataExplorer.getInstance().getThreadId()) {
+		if (Thread.currentThread().threadId() == DataExplorer.getInstance().getThreadId()) {
 			this.graphicsComposite.updateCaptions();
 		} else {
 			GDE.display.asyncExec(new Runnable() {

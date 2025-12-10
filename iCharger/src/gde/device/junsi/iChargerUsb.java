@@ -187,7 +187,7 @@ public abstract class iChargerUsb extends iCharger implements IDevice {
 	 */
 	@Override
 	public synchronized void addConvertedLovDataBufferAsRawDataPoints(RecordSet recordSet, byte[] dataBuffer, int recordDataSize, boolean doUpdateProgressBar) throws DataInconsitsentException {
-		String sThreadId = String.format("%06d", Thread.currentThread().getId()); //$NON-NLS-1$
+		String sThreadId = String.format("%06d", Thread.currentThread().threadId()); //$NON-NLS-1$
 		int deviceDataBufferSize = Math.abs(this.getDataBlockSize(InputTypes.SERIAL_IO));
 		int[] points = new int[this.getNumberOfMeasurements(1)];
 		int offset = 0;
@@ -507,7 +507,7 @@ public abstract class iChargerUsb extends iCharger implements IDevice {
 		int dataBufferSize = GDE.SIZE_BYTES_INTEGER * numberOfNoneCalculationRecords;
 		byte[] convertBuffer = new byte[dataBufferSize];
 		int[] points = new int[recordSet.size()];
-		String sThreadId = String.format("%06d", Thread.currentThread().getId()); //$NON-NLS-1$
+		String sThreadId = String.format("%06d", Thread.currentThread().threadId()); //$NON-NLS-1$
 		double energy = 0.0;
 		double timeStep_h = 1.0 / 3600.0; //use default time step 1000 ms
 		double lastTime_ms = 0, actualTime_ms = 0;

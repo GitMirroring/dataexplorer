@@ -381,7 +381,7 @@ public class PowerPeakGathererThread extends Thread {
 		if (activeRecordSet != null) {
 			activeRecordSet.clear();
 			this.channels.getActiveChannel().remove(recordSetKey);
-			if (Thread.currentThread().getId() == this.application.getThreadId()) {
+			if (Thread.currentThread().threadId() == this.application.getThreadId()) {
 				this.application.getMenuToolBar().updateRecordSetSelectCombo();
 				this.application.updateStatisticsData();
 				this.application.updateDataTable(recordSetKey, true);

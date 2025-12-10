@@ -1858,7 +1858,7 @@ public class UniLogDialog extends DeviceDialog {
 	 * function to reset counter labels
 	 */
 	public void resetDataSetsLabel() {
-		if (Thread.currentThread().getId() == this.application.getThreadId()) {
+		if (Thread.currentThread().threadId() == this.application.getThreadId()) {
 			this.numberRedDataSetsText = "0"; //$NON-NLS-1$
 			this.numberActualDataSetsText = "0"; //$NON-NLS-1$
 			this.numberReadErrorText = "0"; //$NON-NLS-1$
@@ -1893,7 +1893,7 @@ public class UniLogDialog extends DeviceDialog {
 	 */
 	public void resetButtons() {
 		if (this.dialogShell != null && !this.dialogShell.isDisposed()) {
-			if (Thread.currentThread().getId() == this.application.getThreadId()) {
+			if (Thread.currentThread().threadId() == this.application.getThreadId()) {
 				this.setButtonStateLiveGatherer(true);
 				this.startLoggingButton.setEnabled(true);
 				this.stopLoggingButton.setEnabled(false);

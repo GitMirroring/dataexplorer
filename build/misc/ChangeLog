@@ -8,6 +8,7 @@ Generic changes/fixes
 	* enable user color change even if dark mode is used
 	* correct active record set description update while changing record start time stamp
 	* update Readme's to provide info about macOS kernel extension for USB-HID connected devices
+	* update supported Java versions 19 to 25
 	
 Device specific changes/fixes
 	* 

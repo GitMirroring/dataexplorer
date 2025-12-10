@@ -20,6 +20,7 @@
 package gde.ui;
 
 import java.io.File;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -69,7 +70,6 @@ import org.eclipse.swt.widgets.ColorDialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Listener;
@@ -239,7 +239,7 @@ public class DataExplorer extends Composite {
 	 */
 	private DataExplorer() {
 		super(GDE.shell, SWT.NONE);
-		this.threadId = Thread.currentThread().getId();
+		this.threadId = Thread.currentThread().threadId();
 
 		SWTResourceManager.registerResourceUser(this);
 		boolean isDarkTheme = GDE.isSystemDarkTheme;
@@ -594,7 +594,7 @@ public class DataExplorer extends Composite {
 				}
 			});
 			this.addDisposeListener(new DisposeListener() {
-				@SuppressWarnings("deprecation")
+				@SuppressWarnings("removal")
 				@Override
 				public void widgetDisposed(DisposeEvent evt) {
 					if (log.isLoggable(Level.FINE)) log.logp(Level.FINE, $CLASS_NAME, "widgetDisposed", GDE.shell.getLocation().toString() + "event = " + evt); //$NON-NLS-1$ //$NON-NLS-2$
@@ -967,7 +967,7 @@ public class DataExplorer extends Composite {
 	 */
 	public void updateStatisticsData() {
 		if (this.statisticsTabItem != null && !this.statisticsTabItem.isDisposed()) {
-			if (Thread.currentThread().getId() == DataExplorer.application.getThreadId()) {
+			if (Thread.currentThread().threadId() == DataExplorer.application.getThreadId()) {
 				this.statisticsTabItem.updateStatisticsData(true);
 			} else {
 				GDE.display.asyncExec(new Runnable() {
@@ -997,7 +997,7 @@ public class DataExplorer extends Composite {
 		final RecordSet activeRecordSet = activeChannel != null ? activeChannel.getActiveRecordSet() : null;
 
 		if (activeRecordSet != null && activeRecordSet.getRecordDataSize(true) > 0 && this.dataTableTabItem != null && !this.dataTableTabItem.isDisposed() && activeRecordSet.getName().equals(requestingRecordSetName) && activeRecordSet.getDevice().isTableTabRequested()) {
-			if (Thread.currentThread().getId() == DataExplorer.application.getThreadId()) {
+			if (Thread.currentThread().threadId() == DataExplorer.application.getThreadId()) {
 				if (forceClean) {
 					// DataExplorer.this.dataTableTabItem.setAbsoluteDateTime(false);
 					DataExplorer.this.dataTableTabItem.setHeader();
@@ -1019,7 +1019,7 @@ public class DataExplorer extends Composite {
 			}
 		} else {
 			if (activeRecordSet == null || requestingRecordSetName.equals(GDE.STRING_EMPTY)) {
-				if (Thread.currentThread().getId() == DataExplorer.application.getThreadId()) {
+				if (Thread.currentThread().threadId() == DataExplorer.application.getThreadId()) {
 					if (this.dataTableTabItem != null) {
 						// this.dataTableTabItem.setHeader();
 						this.dataTableTabItem.cleanTable();
@@ -1046,7 +1046,7 @@ public class DataExplorer extends Composite {
 	 */
 	public void updateDigitalWindow() {
 		if (this.digitalTabItem != null && !this.digitalTabItem.isDisposed()) {
-			if (Thread.currentThread().getId() == DataExplorer.application.getThreadId()) {
+			if (Thread.currentThread().threadId() == DataExplorer.application.getThreadId()) {
 				this.digitalTabItem.update(true);
 			} else {
 				GDE.display.asyncExec(new Runnable() {
@@ -1064,7 +1064,7 @@ public class DataExplorer extends Composite {
 	 */
 	public void updateDigitalWindowChilds() {
 		if (this.digitalTabItem != null && !this.digitalTabItem.isDisposed()) {
-			if (Thread.currentThread().getId() == DataExplorer.application.getThreadId()) {
+			if (Thread.currentThread().threadId() == DataExplorer.application.getThreadId()) {
 				this.digitalTabItem.updateChilds();
 			} else {
 				GDE.display.asyncExec(new Runnable() {
@@ -1082,7 +1082,7 @@ public class DataExplorer extends Composite {
 	 */
 	public void updateAnalogWindow() {
 		if (this.analogTabItem != null && !this.analogTabItem.isDisposed()) {
-			if (Thread.currentThread().getId() == DataExplorer.application.getThreadId()) {
+			if (Thread.currentThread().threadId() == DataExplorer.application.getThreadId()) {
 				this.analogTabItem.update(true);
 			} else {
 				GDE.display.asyncExec(new Runnable() {
@@ -1100,7 +1100,7 @@ public class DataExplorer extends Composite {
 	 */
 	public void updateAnalogWindowChilds() {
 		if (this.analogTabItem != null && !this.analogTabItem.isDisposed()) {
-			if (Thread.currentThread().getId() == DataExplorer.application.getThreadId()) {
+			if (Thread.currentThread().threadId() == DataExplorer.application.getThreadId()) {
 				this.analogTabItem.updateChilds();
 			} else {
 				GDE.display.asyncExec(new Runnable() {
@@ -1126,7 +1126,7 @@ public class DataExplorer extends Composite {
 	 */
 	public void updateCellVoltageWindow() {
 		if (this.cellVoltageTabItem != null && !this.cellVoltageTabItem.isDisposed()) {
-			if (Thread.currentThread().getId() == DataExplorer.application.getThreadId()) {
+			if (Thread.currentThread().threadId() == DataExplorer.application.getThreadId()) {
 				this.cellVoltageTabItem.getCellVoltageMainComposite().redraw();
 			} else {
 				GDE.display.asyncExec(new Runnable() {
@@ -1144,7 +1144,7 @@ public class DataExplorer extends Composite {
 	 */
 	public void updateCellVoltageChilds() {
 		if (this.cellVoltageTabItem != null && !this.cellVoltageTabItem.isDisposed()) {
-			if (Thread.currentThread().getId() == DataExplorer.application.getThreadId()) {
+			if (Thread.currentThread().threadId() == DataExplorer.application.getThreadId()) {
 				this.cellVoltageTabItem.updateChilds();
 			} else {
 				GDE.display.asyncExec(new Runnable() {
@@ -1162,7 +1162,7 @@ public class DataExplorer extends Composite {
 	 */
 	public void updateCellVoltageLimitsSelector() {
 		if (this.cellVoltageTabItem != null && !this.cellVoltageTabItem.isDisposed()) {
-			if (Thread.currentThread().getId() == DataExplorer.application.getThreadId()) {
+			if (Thread.currentThread().threadId() == DataExplorer.application.getThreadId()) {
 				this.cellVoltageTabItem.updateVoltageLimitsSelection();
 			} else {
 				GDE.display.asyncExec(new Runnable() {
@@ -1180,7 +1180,7 @@ public class DataExplorer extends Composite {
 	 */
 	public void updateFileCommentWindow() {
 		if (this.fileCommentTabItem != null) {
-			if (Thread.currentThread().getId() == DataExplorer.application.getThreadId()) {
+			if (Thread.currentThread().threadId() == DataExplorer.application.getThreadId()) {
 				this.fileCommentTabItem.update();
 			} else {
 				GDE.display.asyncExec(new Runnable() {
@@ -1198,7 +1198,7 @@ public class DataExplorer extends Composite {
 	 */
 	public void updateObjectDescriptionWindow() {
 		if (this.objectDescriptionTabItem != null && !this.objectDescriptionTabItem.isDisposed()) {
-			if (Thread.currentThread().getId() == DataExplorer.application.getThreadId()) {
+			if (Thread.currentThread().threadId() == DataExplorer.application.getThreadId()) {
 				this.objectDescriptionTabItem.update();
 			} else {
 				GDE.display.asyncExec(new Runnable() {
@@ -1215,7 +1215,7 @@ public class DataExplorer extends Composite {
 	 * updates the analog window children displays with current record set data
 	 */
 	public void cleanHeaderAndCommentInGraphicsWindow() {
-		if (Thread.currentThread().getId() == DataExplorer.application.getThreadId()) {
+		if (Thread.currentThread().threadId() == DataExplorer.application.getThreadId()) {
 			this.graphicsTabItem.clearHeaderAndComment();
 		} else {
 			GDE.display.asyncExec(new Runnable() {
@@ -1233,7 +1233,7 @@ public class DataExplorer extends Composite {
 
 	public void setStatusMessage(final String message, final int swtColor) {
 		if (this.statusBar != null) {
-			if (Thread.currentThread().getId() == DataExplorer.application.getThreadId()) {
+			if (Thread.currentThread().threadId() == DataExplorer.application.getThreadId()) {
 				this.statusBar.setMessage(message, swtColor);
 			} else {
 				GDE.display.asyncExec(new Runnable() {
@@ -1248,7 +1248,7 @@ public class DataExplorer extends Composite {
 
 	public void setStatusMessage(final String message) {
 		if (this.statusBar != null) {
-			if (Thread.currentThread().getId() == DataExplorer.application.getThreadId()) {
+			if (Thread.currentThread().threadId() == DataExplorer.application.getThreadId()) {
 				this.statusBar.setMessage(message);
 			} else {
 				GDE.display.asyncExec(new Runnable() {
@@ -1276,7 +1276,7 @@ public class DataExplorer extends Composite {
 				else
 					this.progressBarUser = user;
 
-				if (Thread.currentThread().getId() == DataExplorer.application.getThreadId()) {
+				if (Thread.currentThread().threadId() == DataExplorer.application.getThreadId()) {
 					this.statusBar.setProgress(percentage);
 					if (this.taskBarItem != null) {
 						if (user == null)
@@ -1322,7 +1322,7 @@ public class DataExplorer extends Composite {
 	}
 
 	public int getProgressPercentage() {
-		if (Thread.currentThread().getId() == DataExplorer.application.getThreadId()) {
+		if (Thread.currentThread().threadId() == DataExplorer.application.getThreadId()) {
 			this.progessPercentage = this.statusBar.getProgressPercentage();
 		} else { // if the percentage is not up to date it will updated later
 			GDE.display.asyncExec(new Runnable() {
@@ -1467,7 +1467,7 @@ public class DataExplorer extends Composite {
 		if (devicePort != null && devicePort.length() > 0) sb.append(separator).append(devicePort);
 		final String headerText = sb.toString();
 
-		if (Thread.currentThread().getId() == DataExplorer.application.getThreadId()) {
+		if (Thread.currentThread().threadId() == DataExplorer.application.getThreadId()) {
 			GDE.shell.setText(headerText);
 		} else {
 			GDE.display.asyncExec(new Runnable() {
@@ -1482,7 +1482,7 @@ public class DataExplorer extends Composite {
 	public void updateTitleBar() {
 		final IDevice actualDevice = this.getActiveDevice();
 		if (actualDevice != null) {
-			if (Thread.currentThread().getId() == DataExplorer.application.getThreadId()) {
+			if (Thread.currentThread().threadId() == DataExplorer.application.getThreadId()) {
 				updateTitleBar(this.getObjectKey(), actualDevice.getName(), actualDevice.getPort());
 			} else {
 				GDE.display.asyncExec(new Runnable() {
@@ -1496,7 +1496,7 @@ public class DataExplorer extends Composite {
 	}
 
 	public void openMessageDialog(final String message) {
-		if (Thread.currentThread().getId() == DataExplorer.application.getThreadId()) {
+		if (Thread.currentThread().threadId() == DataExplorer.application.getThreadId()) {
 			MessageBox messageDialog = new MessageBox(GDE.shell, SWT.OK | SWT.ICON_WARNING);
 			messageDialog.setText(GDE.NAME_LONG);
 			messageDialog.setMessage(message);
@@ -1515,7 +1515,7 @@ public class DataExplorer extends Composite {
 	}
 
 	public void openMessageDialog(final Shell parent, final String message) {
-		if (Thread.currentThread().getId() == DataExplorer.application.getThreadId()) {
+		if (Thread.currentThread().threadId() == DataExplorer.application.getThreadId()) {
 			Shell useParent = (parent != null && !parent.isDisposed()) ? parent : GDE.shell;
 			MessageBox messageDialog = new MessageBox(useParent, SWT.OK | SWT.ICON_WARNING);
 			messageDialog.setText(GDE.NAME_LONG);
@@ -1686,7 +1686,7 @@ public class DataExplorer extends Composite {
 			for (int searchSelectionIndex = 0; searchSelectionIndex < objectKeys.length; ++searchSelectionIndex) {
 				if (newObjectKey.equals(objectKeys[searchSelectionIndex])) {
 					log.fine(() -> String.format("channel number %d - actual object key %s", this.analyzer.getChannels().getActiveChannel().getNumber(), this.analyzer.getChannels().getActiveChannel().getObjectKey()));
-					if (Thread.currentThread().getId() == DataExplorer.application.getThreadId()) {
+					if (Thread.currentThread().threadId() == DataExplorer.application.getThreadId()) {
 						this.menuToolBar.selectObjectKey(searchSelectionIndex);
 						this.analyzer.getActiveChannel().setObjectKey(newObjectKey);
 					} else {
@@ -1725,7 +1725,7 @@ public class DataExplorer extends Composite {
 	 * set a new object key list from outside (object key scanner)
 	 */
 	public void setObjectList(final String[] newObjectKeyList, final String newObjectKey) {
-		if (Thread.currentThread().getId() == DataExplorer.application.getThreadId()) {
+		if (Thread.currentThread().threadId() == DataExplorer.application.getThreadId()) {
 			this.menuToolBar.setObjectList(newObjectKeyList, newObjectKey);
 		} else {
 			GDE.display.asyncExec(new Runnable() {
@@ -1741,7 +1741,7 @@ public class DataExplorer extends Composite {
 	 * set the object list elements synchronously
 	 */
 	public void setObjectListElements() {
-		if (Thread.currentThread().getId() == DataExplorer.application.getThreadId()) {
+		if (Thread.currentThread().threadId() == DataExplorer.application.getThreadId()) {
 			this.menuToolBar.setObjectListElements();
 		} else {
 			GDE.display.syncExec(new Runnable() {
@@ -1755,7 +1755,7 @@ public class DataExplorer extends Composite {
 
 	public boolean isObjectSelectorEditable() {
 		boolean objectSelectorEditable = true;
-		if (Thread.currentThread().getId() == DataExplorer.application.getThreadId()) {
+		if (Thread.currentThread().threadId() == DataExplorer.application.getThreadId()) {
 			objectSelectorEditable = DataExplorer.getInstance().getMenuToolBar().isObjectSelectorEditable();
 		} else { // if the percentage is not up to date it will updated later
 			boolean[] isObjectSelectorEditable = new boolean[] { true };
@@ -1793,7 +1793,7 @@ public class DataExplorer extends Composite {
 	 * sample: while loading file content, disable device switch or record set deletion
 	 */
 	public void enableMenuActions(final boolean enabled) {
-		if (Thread.currentThread().getId() == DataExplorer.application.getThreadId()) {
+		if (Thread.currentThread().threadId() == DataExplorer.application.getThreadId()) {
 			this.menuToolBar.enableDeviceSwitchButtons(enabled);
 			this.menuBar.enableDeviceSwitchButtons(enabled);
 
@@ -2026,7 +2026,7 @@ public class DataExplorer extends Composite {
 		// log.log(Level.OFF, "updateAllTabs entry " + this.isUpdateAllTabs[0]);
 		if (this.isUpdateAllTabs) {
 			this.isUpdateAllTabs = false;
-			if (Thread.currentThread().getId() == DataExplorer.application.getThreadId()) {
+			if (Thread.currentThread().threadId() == DataExplorer.application.getThreadId()) {
 				this.doUpdateAllTabs(force, redrawCurveSelector);
 			} else {
 				GDE.display.asyncExec(new Runnable() {
@@ -2074,7 +2074,7 @@ public class DataExplorer extends Composite {
 	 * update the graphicsWindow
 	 */
 	public void updateGraphicsWindow(final boolean refreshCurveSelector) {
-		if (Thread.currentThread().getId() == DataExplorer.application.getThreadId()) {
+		if (Thread.currentThread().threadId() == DataExplorer.application.getThreadId()) {
 			if (!this.graphicsTabItem.isActiveCurveSelectorContextMenu()) {
 				int tabSelectionIndex = this.displayTab.getSelectionIndex();
 				if (tabSelectionIndex == 0) { // graphics tab is always the first one
@@ -2121,7 +2121,7 @@ public class DataExplorer extends Composite {
 	 * update the graphics window curve selector table only (after calculating values to make records displayable)
 	 */
 	public void updateCurveSelectorTable() {
-		if (Thread.currentThread().getId() == DataExplorer.application.getThreadId()) {
+		if (Thread.currentThread().threadId() == DataExplorer.application.getThreadId()) {
 			this.graphicsTabItem.updateCurveSelectorTable();
 			if (this.compareTabItem != null && !this.compareTabItem.isDisposed()) this.compareTabItem.updateCurveSelectorTable();
 		} else {
@@ -2257,7 +2257,7 @@ public class DataExplorer extends Composite {
 	 * reset the graphicsWindow zoom mode and measurement pointer
 	 */
 	public void resetGraphicsWindowZoomAndMeasurement() {
-		if (Thread.currentThread().getId() == DataExplorer.application.getThreadId()) {
+		if (Thread.currentThread().threadId() == DataExplorer.application.getThreadId()) {
 			this.graphicsTabItem.setModeState(GraphicsMode.RESET);
 		} else {
 			GDE.display.asyncExec(new Runnable() {
@@ -2477,7 +2477,7 @@ public class DataExplorer extends Composite {
 
 	@Override
 	public void setCursor(final Cursor newCursor) {
-		if (Thread.currentThread().getId() == DataExplorer.application.getThreadId()) {
+		if (Thread.currentThread().threadId() == DataExplorer.application.getThreadId()) {
 			DataExplorer.application.getParent().setCursor(newCursor);
 		} else {
 			GDE.display.asyncExec(new Runnable() {
@@ -2494,7 +2494,7 @@ public class DataExplorer extends Composite {
 	}
 
 	public void setPortConnected(final boolean isOpenStatus) {
-		if (Thread.currentThread().getId() == DataExplorer.application.getThreadId()) {
+		if (Thread.currentThread().threadId() == DataExplorer.application.getThreadId()) {
 			this.menuBar.setPortConnected(isOpenStatus);
 			this.menuToolBar.setPortConnected(isOpenStatus);
 			if (this.statusBar != null) {
@@ -2624,7 +2624,7 @@ public class DataExplorer extends Composite {
 	 * check if file comment has pending change and update if required
 	 */
 	public void checkUpdateFileComment() {
-		if (Thread.currentThread().getId() == DataExplorer.application.getThreadId()) {
+		if (Thread.currentThread().threadId() == DataExplorer.application.getThreadId()) {
 			if (this.fileCommentTabItem != null && this.fileCommentTabItem.isFileCommentChanged()) this.fileCommentTabItem.setFileComment();
 		} else { // if the percentage is not up to date it will updated later
 			GDE.display.asyncExec(new Runnable() {
@@ -2648,7 +2648,7 @@ public class DataExplorer extends Composite {
 	 * check if file comment has pending change and update if required
 	 */
 	public void checkUpdateRecordSetComment() {
-		if (Thread.currentThread().getId() == DataExplorer.application.getThreadId()) {
+		if (Thread.currentThread().threadId() == DataExplorer.application.getThreadId()) {
 			if (this.graphicsTabItem != null && this.graphicsTabItem.getGraphicsComposite().isRecordCommentChanged())
 				this.graphicsTabItem.getGraphicsComposite().updateRecordSetComment();
 		} else { // if the percentage is not up to date it will updated later
@@ -3085,7 +3085,7 @@ public class DataExplorer extends Composite {
 	 * @param visible boolean value to set the object description tabulator visible
 	 */
 	public void setObjectDescriptionTabVisible(boolean visible) {
-		if (Thread.currentThread().getId() == DataExplorer.application.getThreadId()) {
+		if (Thread.currentThread().threadId() == DataExplorer.application.getThreadId()) {
 			if (visible) {
 				if (this.objectDescriptionTabItem == null || this.objectDescriptionTabItem.isDisposed()) {
 					for (int i = 0; i < this.displayTab.getItemCount(); ++i) {
@@ -3344,7 +3344,7 @@ public class DataExplorer extends Composite {
 
 							final String targetFilePath = GDE.JAVA_IO_TMPDIR + GDE.STRING_FILE_SEPARATOR_UNIX + filename;
 
-							if (!new File(targetFilePath).exists()) FileUtils.downloadFile(new URL(downloadUrl + filename), targetFilePath);
+							if (!new File(targetFilePath).exists()) FileUtils.downloadFile(new URI(downloadUrl + filename).toURL(), targetFilePath);
 
 							GDE.display.syncExec(new Runnable() {
 								@Override

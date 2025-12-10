@@ -337,7 +337,7 @@ public class OperatingSystemHelper {
 						//check if registration was successful
 						command = "cmd /C assoc .osd"; //$NON-NLS-1$
 						if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "executing \"" + command + "\" to check association"); //$NON-NLS-1$ //$NON-NLS-2$
-						process = Runtime.getRuntime().exec(command);
+						process = Runtime.getRuntime().exec(new String[] {command});
 						process.waitFor();
 						bisr = new BufferedReader(new InputStreamReader(process.getInputStream()));
 						besr = new BufferedReader(new InputStreamReader(process.getErrorStream()));
@@ -390,7 +390,7 @@ public class OperatingSystemHelper {
 					}
 
 					//check if xdg-utls are installed, this is the prerequisite for the registration process
-					if (Runtime.getRuntime().exec("which xdg-mime").waitFor() != 0) { //$NON-NLS-1$
+					if (Runtime.getRuntime().exec(new String[] {"which xdg-mime"}).waitFor() != 0) { //$NON-NLS-1$
 						if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "DataExplorer program can not registered until xdg-utils are installed and in path"); //$NON-NLS-1$
 						DataExplorer.getInstance().openMessageDialog(Messages.getString(MessageIds.GDE_MSGI0030));
 						rc = 0;
@@ -401,10 +401,10 @@ public class OperatingSystemHelper {
 						// all files extracted, exec register command
 						command = "chmod +x " + targetDir + "/register.sh"; //$NON-NLS-1$ //$NON-NLS-2$
 						if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "executing: " + command); //$NON-NLS-1$
-						Runtime.getRuntime().exec(command).waitFor();
+						Runtime.getRuntime().exec(new String[] {command}).waitFor();
 						command = targetDir + "/register.sh"; //$NON-NLS-1$
 						if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "executing: " + command); //$NON-NLS-1$
-						rc = Runtime.getRuntime().exec(command).waitFor();
+						rc = Runtime.getRuntime().exec(new String[] {command}).waitFor();
 
 					}
 				}
@@ -506,7 +506,7 @@ public class OperatingSystemHelper {
 				besr.close();
 
 				//check if deregistration was successful
-				process = Runtime.getRuntime().exec("cmd /C assoc .osd"); //$NON-NLS-1$
+				process = Runtime.getRuntime().exec(new String[] {"cmd /C assoc .osd"}); //$NON-NLS-1$
 				process.waitFor();
 				bisr = new BufferedReader(new InputStreamReader(process.getInputStream()));
 				besr = new BufferedReader(new InputStreamReader(process.getErrorStream()));
@@ -556,7 +556,7 @@ public class OperatingSystemHelper {
 				}
 
 				//check if xdg-utls are installed, this is the prerequisite for the registration process
-				if (Runtime.getRuntime().exec("which xdg-mime").waitFor() != 0) { //$NON-NLS-1$
+				if (Runtime.getRuntime().exec(new String[] {"which xdg-mime"}).waitFor() != 0) { //$NON-NLS-1$
 					if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "DataExplorer program can not registered until xdg-utils are installed and in path"); //$NON-NLS-1$
 					DataExplorer.getInstance().openMessageDialog(Messages.getString(MessageIds.GDE_MSGI0030));
 					rc = 0;
@@ -566,10 +566,10 @@ public class OperatingSystemHelper {
 
 					command = "chmod +x " + targetDir + "/unregister.sh"; //$NON-NLS-1$ //$NON-NLS-2$
 					if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "executing: " + command); //$NON-NLS-1$
-					Runtime.getRuntime().exec(command).waitFor();
+					Runtime.getRuntime().exec(new String[] {command}).waitFor();
 					command = targetDir + "/unregister.sh"; //$NON-NLS-1$
 					if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "executing: " + command); //$NON-NLS-1$
-					rc = Runtime.getRuntime().exec(command).waitFor();
+					rc = Runtime.getRuntime().exec(new String[] {command}).waitFor();
 				}
 			}
 			else {

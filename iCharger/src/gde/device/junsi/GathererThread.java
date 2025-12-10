@@ -303,7 +303,7 @@ public class GathererThread extends Thread {
 		if (this.channel.get(this.recordSetKey) != null) {
 			this.channel.get(this.recordSetKey).clear();
 			this.channel.remove(this.recordSetKey);
-			if (Thread.currentThread().getId() == this.application.getThreadId()) {
+			if (Thread.currentThread().threadId() == this.application.getThreadId()) {
 				this.application.getMenuToolBar().updateRecordSetSelectCombo();
 				this.application.updateStatisticsData();
 				this.application.updateDataTable(this.recordSetKey, true);

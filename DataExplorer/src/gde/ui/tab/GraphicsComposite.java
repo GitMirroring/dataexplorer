@@ -1004,7 +1004,7 @@ public class GraphicsComposite extends Composite {
 	 * redraws the graphics canvas as well as the curve selector table
 	 */
 	public void redrawGraphics() {
-		if (Thread.currentThread().getId() == this.application.getThreadId()) {
+		if (Thread.currentThread().threadId() == this.application.getThreadId()) {
 			doRedrawGraphics();
 		}
 		else {

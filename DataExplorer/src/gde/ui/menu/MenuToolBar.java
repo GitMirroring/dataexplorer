@@ -1335,7 +1335,7 @@ public class MenuToolBar {
 	 * updates the channel select combo according the active channel
 	 */
 	public void updateChannelSelector() {
-		if (Thread.currentThread().getId() == this.application.getThreadId()) {
+		if (Thread.currentThread().threadId() == this.application.getThreadId()) {
 			doUpdateChannelSelector();
 		}
 		else {
@@ -1375,7 +1375,7 @@ public class MenuToolBar {
 	 */
 	public String[] updateRecordSetSelectCombo() {
 		final String[] recordSetNames = this.channels.getActiveChannel().getRecordSetNames();
-		if (Thread.currentThread().getId() == this.application.getThreadId()) {
+		if (Thread.currentThread().threadId() == this.application.getThreadId()) {
 			doUpdateRecordSetSelectCombo(recordSetNames);
 		}
 		else {
@@ -1489,7 +1489,7 @@ public class MenuToolBar {
 	 * updates the netxtChannel , prevChannel tool items
 	 */
 	public void updateChannelToolItems() {
-		if (Thread.currentThread().getId() == this.application.getThreadId()) {
+		if (Thread.currentThread().threadId() == this.application.getThreadId()) {
 			doUpdateChannelToolItems();
 		}
 		else {
@@ -1852,7 +1852,7 @@ public class MenuToolBar {
 	 * this functions queries the actual device with actual record set for GPS data
 	 */
 	public void updateGoogleEarthToolItem() {
-		if (Thread.currentThread().getId() == this.application.getThreadId()) {
+		if (Thread.currentThread().threadId() == this.application.getThreadId()) {
 			this.googleEarthToolItem.setEnabled(this.application.getActiveDevice().isActualRecordSetWithGpsData());
 			this.googleEarthConfigToolItem.setEnabled(this.application.getActiveDevice().isActualRecordSetWithGpsData() && this.application.getActiveDevice().getGPS2KMZMeasurementOrdinal() >= 0);
 		}

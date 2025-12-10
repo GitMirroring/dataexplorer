@@ -498,7 +498,7 @@ public class PicolarioDialog extends DeviceDialog {
 	 * function to enable all the read data read buttons, normally called after data gathering finished
 	 */
 	public void enableReadButtons() {
-		if (Thread.currentThread().getId() == this.application.getThreadId()) {
+		if (Thread.currentThread().threadId() == this.application.getThreadId()) {
 			this.queryAvailableRecordSetButton.setEnabled(true);
 			this.readSingle.setEnabled(true);
 			this.readAllRecords.setEnabled(true);
@@ -533,7 +533,7 @@ public class PicolarioDialog extends DeviceDialog {
 	 */
 	public void resetButtons() {
 		if (this.dialogShell != null && !this.dialogShell.isDisposed()) {
-			if (Thread.currentThread().getId() == this.application.getThreadId()) {
+			if (Thread.currentThread().threadId() == this.application.getThreadId()) {
 				PicolarioDialog.this.setClosePossible(true);
 				PicolarioDialog.this.queryAvailableRecordSetButton.setEnabled(true);
 				PicolarioDialog.this.readSingle.setEnabled(true);

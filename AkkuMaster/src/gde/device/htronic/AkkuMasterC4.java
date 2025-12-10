@@ -128,7 +128,7 @@ public class AkkuMasterC4 extends DeviceConfiguration implements IDevice {
 		int lovDataSize = this.getLovDataByteSize();
 		byte[] convertDataBuffer = new byte[14 + 16];
 		int[] points = new int[this.getNumberOfMeasurements(1)];
-		String sThreadId = String.format("%06d", Thread.currentThread().getId());
+		String sThreadId = String.format("%06d", Thread.currentThread().threadId());
 		int progressCycle = 0;
 		if (doUpdateProgressBar) this.application.setProgress(progressCycle, sThreadId);
 		
@@ -202,7 +202,7 @@ public class AkkuMasterC4 extends DeviceConfiguration implements IDevice {
 		int dataBufferSize = GDE.SIZE_BYTES_INTEGER * recordSet.getNoneCalculationRecordNames().length;
 		byte[] convertBuffer = new byte[dataBufferSize];
 		int[] points = new int[recordSet.size()];
-		String sThreadId = String.format("%06d", Thread.currentThread().getId());
+		String sThreadId = String.format("%06d", Thread.currentThread().threadId());
 		int progressCycle = 0;
 		if (doUpdateProgressBar) this.application.setProgress(progressCycle, sThreadId);
 		
