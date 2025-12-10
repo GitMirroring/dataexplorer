@@ -9,6 +9,7 @@ Generic changes/fixes
 	* correct active record set description update while changing record start time stamp
 	* update Readme's to provide info about macOS kernel extension for USB-HID connected devices
 	* update supported Java versions 19 to 25
+	* update Java runtime if packaged with installable to Java 25 LTS
 	
 Device specific changes/fixes
 	* 

@@ -159,7 +159,7 @@ public class AboutDialog extends org.eclipse.swt.widgets.Dialog {
 				aboutTextLData.right =  new FormAttachment(1000, 1000, -20);
 				this.aboutText = new Label(this.dialogShell, SWT.CENTER);
 				this.aboutText.setLayoutData(aboutTextLData);
-				this.aboutText.setFont(SWTResourceManager.getFont(this.application, GDE.WIDGET_FONT_SIZE + 8, 2));
+				this.aboutText.setFont(SWTResourceManager.getFont(this.application, GDE.WIDGET_FONT_SIZE + 8, SWT.NORMAL));
 				this.aboutText.setText("DataExplorer"); //$NON-NLS-1$
 				this.aboutText.setText(DataExplorer.getInstance().getClass().getSimpleName());
 			}

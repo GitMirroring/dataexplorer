@@ -11,7 +11,7 @@
 	<classpathentry kind="lib" path="/build/lib/jaxb-runtime.jar"/>
 	<classpathentry kind="lib" path="/build/lib/istack-commons-runtime.jar"/>
 	<classpathentry kind="lib" path="/build/lib/activation.jar"/>
-	<classpathentry kind="var" path="SWT_JAR_PATH" sourcepath="/SWT_SOURCE_PATH"/>
+	<classpathentry kind="var" path="SWT_JAR_PATH" sourcepath="/SWT_SOURCE_PATH/src.zip"/>
 	<classpathentry kind="lib" path="/build/lib/jSerialComm.jar" sourcepath="/jSerialComm"/>
 	<classpathentry kind="lib" path="/build/lib/usb4java.jar"/>
 	<classpathentry kind="lib" path="/build/lib/commons-lang3.jar"/>
