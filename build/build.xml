@@ -890,7 +890,7 @@
 
 	<!-- build java runtime using jlink MAC OS Intel -->
 	<target name="jlink_lnx_intel" depends="init-linux">
-		<exec executable="jlink" dir="${output.armLnx64.program}">
+		<exec executable="jlink" dir="${output.gnulinux64.program}">
 			<arg value="--compress=zip-6" />
 			<arg value="--no-header-files" />
 			<arg value="--no-man-pages" />
