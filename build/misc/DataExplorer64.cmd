@@ -4,5 +4,5 @@
 @set PATH=%cd%\runtime\bin;%PATH%
 @echo %PATH%
 
-@echo java -Dfile.encoding=UTF-8 -jar -Xms64m -Xmx3092m ./DataExplorer.jar
-@java -Dfile.encoding=UTF-8 -jar -Xms64m -Xmx3092m ./DataExplorer.jar
+@echo java --enable-native-access=ALL-UNNAMED -jar -Xms64m -Xmx3092m ./DataExplorer.jar
+@java --enable-native-access=ALL-UNNAMED -jar -Xms64m -Xmx3092m ./DataExplorer.jar

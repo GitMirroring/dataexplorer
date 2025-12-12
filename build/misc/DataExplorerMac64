@@ -8,6 +8,6 @@ cd ${GDE_DIR}
 export PATH="${GDE_DIR}"/runtime/bin:$PATH
 echo $PATH
 
-echo java -XstartOnFirstThread -Xdock:name=DataExplorer -jar -Xms64m -Xmx3092m ./DataExplorer.jar "$@"
-java -XstartOnFirstThread -Xdock:name=DataExplorer -jar -Xms64m -Xmx3092m ./DataExplorer.jar "$@"
+echo java -XstartOnFirstThread -Xdock:name=DataExplorer --enable-native-access=ALL-UNNAMED -jar -Xms64m -Xmx3092m ./DataExplorer.jar "$@"
+java -XstartOnFirstThread -Xdock:name=DataExplorer --enable-native-access=ALL-UNNAMED -jar -Xms64m -Xmx3092m ./DataExplorer.jar "$@"
 

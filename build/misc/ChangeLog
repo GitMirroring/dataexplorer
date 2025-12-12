@@ -1,6 +1,6 @@
 Development history / change log, please read from bottom up
 
-Version 3.9.10 - xx yyy 2025
+Version 4.0.0 - xx yyy 2025
 Generic changes/fixes 
 	* make color changes in settings dialog visible by change event
 	* support color schema switch, if unchanged default color schema is used
@@ -9,6 +9,7 @@ Generic changes/fixes
 	* correct active record set description update while changing record start time stamp
 	* update Readme's to provide info about macOS kernel extension for USB-HID connected devices
 	* update supported Java versions 19 to 25
+	* package Java runtime to Linux builds as well
 	* update Java runtime if packaged with installable to Java 25 LTS
 	
 Device specific changes/fixes
