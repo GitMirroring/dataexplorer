@@ -28,6 +28,7 @@
     <runtimeBits>64</runtimeBits>
     <initialHeapSize>64</initialHeapSize>
     <maxHeapSize>3092</maxHeapSize>
+    <opt>--enable-native-access=ALL-UNNAMED</opt>
   </jre>
   <messages>
     <startupErr>An error occurred while starting the application.</startupErr>
