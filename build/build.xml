@@ -763,7 +763,7 @@
 		</exec>
 	</target>
 
-	<target name="copy-files-linux" depends="init-linux,jlink_lnx_intel">
+	<target name="copy-files-linux" depends="init-linux">
 		<copy file="build/misc/DataExplorer64" tofile="${output.gnulinux64.program}/DataExplorer" />
 		<copy todir="${output.gnulinux64.program}" flatten="yes">
 			<fileset file="DataExplorer/build/*.jar" />
@@ -964,7 +964,7 @@
 		</tar>
 	</target>
 
-	<target name="binary_package-linux" depends="init-linux">
+	<target name="binary_package-linux" depends="init-linux,jlink_lnx_intel">
 		<echo message="tar GNULinux 64 bit files" />
 		<tar destfile="${build.target.dir}/dataexplorer-${version.num}-bin_GNULinux_x86_64.tar.gz" compression="gzip">
 			<tarfileset dir="${output.gnulinux64}" casesensitive="true" mode="775">
