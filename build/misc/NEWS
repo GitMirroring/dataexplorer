@@ -1,24 +1,26 @@
-GNU DataExplorer - News - comes with Version 3.9.9 - 15 Oct 2025
+GNU DataExplorer - News - comes with Version 4.0.0 - 15 Dec 2025
 
 Generic changes/fixes 
-	* enable device selection with identical USB VID/PID without product string using libUSB
-	* set location of USB HID selection dialog relative to main window
-	* correct SWT upscaling on Windows with screen scaling above 175%
-	* update swt.jar for Windows due to scaling behavior
-	
-Device specific changes/fixes
-	* MC3000* - change implementation to use libUSB instead of javax.USB
-	* MC3000* - enable S/N selection while more than one device connected
+	* make color changes in settings dialog visible by change event
+	* support color schema switch, if unchanged default color schema is used
+	* enable user color for header/comment/caption and time line
+	* enable user color change even if dark mode is used
+	* correct active record set description update while changing record start time stamp
+	* update Readme's to provide info about macOS kernel extension for USB-HID connected devices
+	* lowest supported Java versions 19
+	* package Java runtime to Linux builds as well
+	* update to Java 25 LTS runtime if packaged with installable
 		
 Allgemeine Änderungen/Korrekturen
-	* Geräteauswahl mit identischer USB-VID/PID ohne Produktzeichenfolge unter Verwendung von libUSB ermöglicht
-    * Position des USB-HID-Auswahldialogs relativ zum Hauptfenster festgelegt
-    * Korrektur der SWT-Hochskalierung unter Windows bei einer Bildschirmskalierung von über 175 %.
-    * swt.jar für Windows aufgrund des Skalierungsverhaltens aktualisiert
-	
-Gerätespezifische Änderungen/Korrekturen
-	* MC3000* – Änderung der Implementierung, um libUSB anstelle von javax.USB zu verwenden
-	* MC3000* – Aktivierung der S/N-Auswahl, wenn mehr als ein Gerät angeschlossen ist
+	* Farbänderungen im Einstellungsdialog werden sofort sichtbar
+	* Unterstützung für Farbschema-Wechsel, wenn unverändertes Standardfarbschema verwendet wird
+	* Benutzerfarben für Kopfzeile/Kommentar/Beschriftung und Zeitleiste aktiviert
+	* Benutzerfarbenänderung auch bei Verwendung des Dunkelmodus möglich
+	* Korrektur der Beschreibung des aktiven Datensatzes beim Ändern des Startzeitstempels des Datensatzes
+	* Aktualisierung der Readme-Dateien mit Informationen zur macOS-Kernel-Erweiterung für USB-HID-verbundene Geräte
+	* älteste unterstützten Java-Versionen 19
+	* Java-Laufzeitumgebung auch in Linux-Builds integriert
+	* integrierte Java-Laufzeitumgebung auf Java 25 LTS aktualisiert
 
 
 

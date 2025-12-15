@@ -1454,7 +1454,7 @@ public class FileUtils {
 		// else if (GDE.IS_MAC)
 		//			FileUtils.cleanFiles(GDE.JAVA_IO_TMPDIR, new String[] {"bootstrap.log.lck", "GDE", GDE.FILE_ENDING_STAR_KMZ}); //$NON-NLS-1$ //$NON-NLS-2$
 
-		System.out.println("isUpdateAvailable = " + isUpdateAvailable()); //$NON-NLS-1$
+		System.out.println("isUpdateAvailable = " + isUpdateAvailable()[0]); //$NON-NLS-1$
 	}
 
 	/**
