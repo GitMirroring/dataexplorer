@@ -275,7 +275,7 @@ public class OperatingSystemHelper {
 	public static boolean registerApplication() {
 		int rc = -1;
 		String targetDir = GDE.JAVA_IO_TMPDIR;
-		String command = GDE.STRING_BLANK;
+		String[] command = new String[0];
 
 		BufferedReader besr = null;
 		BufferedReader bisr = null;
@@ -305,9 +305,9 @@ public class OperatingSystemHelper {
 						String targetBasePath = jarBasePath.replace(GDE.CHAR_FILE_SEPARATOR_UNIX, GDE.CHAR_FILE_SEPARATOR_WINDOWS);
 						targetBasePath = targetBasePath.startsWith(GDE.STRING_FILE_SEPARATOR_WINDOWS) ? targetBasePath.substring(1) : targetBasePath;
 						targetBasePath = targetBasePath.endsWith(GDE.STRING_FILE_SEPARATOR_WINDOWS) ? targetBasePath.substring(0, targetBasePath.length() - 1) : targetBasePath;
-						command = "cmd /C " + targetDir + regExe + GDE.STRING_BLANK + targetBasePath; //$NON-NLS-1$
-						if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "executing: " + command); //$NON-NLS-1$
-						Process process = new ProcessBuilder("cmd", "/C", targetDir + regExe, targetBasePath).start(); //$NON-NLS-1$ //$NON-NLS-2$
+						command = new String[] {"cmd", "/C", targetDir, regExe, targetBasePath}; //$NON-NLS-1$
+						if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "executing: " + StringHelper.arrayToString(command)); //$NON-NLS-1$
+						Process process = new ProcessBuilder("cmd", "/C", targetDir, regExe, targetBasePath).start(); //$NON-NLS-1$ //$NON-NLS-2$
 						process.waitFor();
 						bisr = new BufferedReader(new InputStreamReader(process.getInputStream()));
 						besr = new BufferedReader(new InputStreamReader(process.getErrorStream()));
@@ -335,9 +335,9 @@ public class OperatingSystemHelper {
 						besr.close();
 		
 						//check if registration was successful
-						command = "cmd /C assoc .osd"; //$NON-NLS-1$
+						command = new String[] {"cmd", "/C", "assoc",  ".osd"}; //$NON-NLS-1$
 						if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "executing \"" + command + "\" to check association"); //$NON-NLS-1$ //$NON-NLS-2$
-						process = Runtime.getRuntime().exec(new String[] {command});
+						process = Runtime.getRuntime().exec(command);
 						process.waitFor();
 						bisr = new BufferedReader(new InputStreamReader(process.getInputStream()));
 						besr = new BufferedReader(new InputStreamReader(process.getErrorStream()));
@@ -399,12 +399,12 @@ public class OperatingSystemHelper {
 						FileUtils.extract(jarFile, "register.sh", GDE.STRING_EMPTY, targetDir, "555"); //$NON-NLS-1$ //$NON-NLS-2$ 
 
 						// all files extracted, exec register command
-						command = "chmod +x " + targetDir + "/register.sh"; //$NON-NLS-1$ //$NON-NLS-2$
-						if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "executing: " + command); //$NON-NLS-1$
-						Runtime.getRuntime().exec(new String[] {command}).waitFor();
-						command = targetDir + "/register.sh"; //$NON-NLS-1$
-						if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "executing: " + command); //$NON-NLS-1$
-						rc = Runtime.getRuntime().exec(new String[] {command}).waitFor();
+						command = new String[] {"chmod", "+x",  targetDir, "/register.sh"}; //$NON-NLS-1$ //$NON-NLS-2$
+						if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "executing: " + StringHelper.arrayToString(command)); //$NON-NLS-1$
+						Runtime.getRuntime().exec(command).waitFor();
+						command = new String[] {targetDir, "/register.sh"}; //$NON-NLS-1$
+						if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "executing: " + StringHelper.arrayToString(command)); //$NON-NLS-1$
+						rc = Runtime.getRuntime().exec(command).waitFor();
 
 					}
 				}
@@ -453,7 +453,7 @@ public class OperatingSystemHelper {
 	public static boolean deregisterApplication() {
 		int rc = -1;
 		String targetDir = GDE.JAVA_IO_TMPDIR;
-		String command = GDE.STRING_BLANK;
+		String[] command = new String[0];
 
 		String jarBasePath = FileUtils.getJarBasePath();
 		String jarFilePath = jarBasePath + "/DataExplorer.jar"; //$NON-NLS-1$
@@ -476,9 +476,9 @@ public class OperatingSystemHelper {
 				if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "register exe = " + regExe); //$NON-NLS-1$
 
 				FileUtils.extract(jarFile, regExe, GDE.STRING_EMPTY, targetDir, "WIN"); //$NON-NLS-1$
-				command = "cmd /C " + targetDir + regExe; //$NON-NLS-1$
-				if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "executing: " + command); //$NON-NLS-1$
-				Process process = new ProcessBuilder("cmd", "/C", targetDir + regExe).start(); //$NON-NLS-1$ //$NON-NLS-2$
+				command = new String[] {"cmd", "/C", targetDir, regExe}; //$NON-NLS-1$
+				if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "executing: " + StringHelper.arrayToString(command)); //$NON-NLS-1$
+				Process process = new ProcessBuilder("cmd", "/C", targetDir, regExe).start(); //$NON-NLS-1$ //$NON-NLS-2$
 				process.waitFor();
 				bisr = new BufferedReader(new InputStreamReader(process.getInputStream()));
 				besr = new BufferedReader(new InputStreamReader(process.getErrorStream()));
@@ -546,12 +546,12 @@ public class OperatingSystemHelper {
 						FileUtils.extractWhileReplace("@GDE_DIR@", jarBasePath, jarFilePath, desktopFileName, extractTargetFilePath, "UTF-8", "UTF-8"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$);
 					}
 					else {
-						// package error, must not occur in a deliverd driver
+						// package error, must not occur in a delivered driver
 						log.log(Level.WARNING, extractTargetFilePath + " does not exist or does not have write (755) pernission, the DataExplorer MIME-type can not registered"); //$NON-NLS-1$
 					}
 				}
 				else {
-					// package error, must not occur in a deliverd driver
+					// package error, must not occur in a delivered driver
 					log.log(Level.WARNING, extractTargetFilePath + " does not exist or does not have write (755) pernission, the DataExplorer MIME-type can not registered"); //$NON-NLS-1$
 				}
 
@@ -564,12 +564,12 @@ public class OperatingSystemHelper {
 				else {
 					FileUtils.extract(jarFile, "unregister.sh", GDE.STRING_EMPTY, targetDir, "555"); //$NON-NLS-1$ //$NON-NLS-2$ 
 
-					command = "chmod +x " + targetDir + "/unregister.sh"; //$NON-NLS-1$ //$NON-NLS-2$
-					if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "executing: " + command); //$NON-NLS-1$
-					Runtime.getRuntime().exec(new String[] {command}).waitFor();
-					command = targetDir + "/unregister.sh"; //$NON-NLS-1$
-					if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "executing: " + command); //$NON-NLS-1$
-					rc = Runtime.getRuntime().exec(new String[] {command}).waitFor();
+					command = new String[] {"chmod",  "+x", targetDir, "/unregister.sh"}; //$NON-NLS-1$ //$NON-NLS-2$
+					if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "executing: " + StringHelper.arrayToString(command)); //$NON-NLS-1$
+					Runtime.getRuntime().exec(command).waitFor();
+					command = new String[] {targetDir, "/unregister.sh"}; //$NON-NLS-1$
+					if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "executing: " + StringHelper.arrayToString(command)); //$NON-NLS-1$
+					rc = Runtime.getRuntime().exec(command).waitFor();
 				}
 			}
 			else {
@@ -935,7 +935,7 @@ public class OperatingSystemHelper {
 	public static String dereferenceLink(String directory, String grepChunk) {
 		String result = grepChunk;
 		try {
-			String[] command = { "/bin/sh", "-c", "ls -l " + directory + " | grep " + grepChunk }; //$NON-NLS-1$ //$NON-NLS-2$
+			String[] command = { "/bin/sh", "-c", "ls -l", directory, "|",  "grep", grepChunk }; //$NON-NLS-1$ //$NON-NLS-2$
 			if (log.isLoggable(Level.FINE)) log.log(Level.FINE, "executing: ls -l " + directory + " | grep " + grepChunk);//$NON-NLS-1$ //$NON-NLS-2$
 			Process process = new ProcessBuilder(command).start();
 			process.waitFor();
