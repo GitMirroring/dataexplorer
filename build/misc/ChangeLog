@@ -5,6 +5,7 @@ Version 4.0.1 - xx yyy 2026
 Generic changes/fixes 
 	* repair open web browser to display update web page
 	* repair several operating system calls
+	* correct info regarding C++ redistributable for Windows
 	
 Version 4.0.0 - 15 Dec 2025
 Generic changes/fixes 
