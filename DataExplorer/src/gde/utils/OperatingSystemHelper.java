@@ -305,9 +305,9 @@ public class OperatingSystemHelper {
 						String targetBasePath = jarBasePath.replace(GDE.CHAR_FILE_SEPARATOR_UNIX, GDE.CHAR_FILE_SEPARATOR_WINDOWS);
 						targetBasePath = targetBasePath.startsWith(GDE.STRING_FILE_SEPARATOR_WINDOWS) ? targetBasePath.substring(1) : targetBasePath;
 						targetBasePath = targetBasePath.endsWith(GDE.STRING_FILE_SEPARATOR_WINDOWS) ? targetBasePath.substring(0, targetBasePath.length() - 1) : targetBasePath;
-						command = new String[] {"cmd", "/C", targetDir, regExe, targetBasePath}; //$NON-NLS-1$
+						command = new String[] {"cmd", "/C", targetDir + regExe, targetBasePath}; //$NON-NLS-1$
 						if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "executing: " + StringHelper.arrayToString(command)); //$NON-NLS-1$
-						Process process = new ProcessBuilder("cmd", "/C", targetDir, regExe, targetBasePath).start(); //$NON-NLS-1$ //$NON-NLS-2$
+						Process process = new ProcessBuilder("cmd", "/C", targetDir + regExe, targetBasePath).start(); //$NON-NLS-1$ //$NON-NLS-2$
 						process.waitFor();
 						bisr = new BufferedReader(new InputStreamReader(process.getInputStream()));
 						besr = new BufferedReader(new InputStreamReader(process.getErrorStream()));
@@ -476,9 +476,9 @@ public class OperatingSystemHelper {
 				if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "register exe = " + regExe); //$NON-NLS-1$
 
 				FileUtils.extract(jarFile, regExe, GDE.STRING_EMPTY, targetDir, "WIN"); //$NON-NLS-1$
-				command = new String[] {"cmd", "/C", targetDir, regExe}; //$NON-NLS-1$
+				command = new String[] {"cmd", "/C", targetDir + regExe}; //$NON-NLS-1$
 				if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "executing: " + StringHelper.arrayToString(command)); //$NON-NLS-1$
-				Process process = new ProcessBuilder("cmd", "/C", targetDir, regExe).start(); //$NON-NLS-1$ //$NON-NLS-2$
+				Process process = new ProcessBuilder("cmd", "/C", targetDir + regExe).start(); //$NON-NLS-1$ //$NON-NLS-2$
 				process.waitFor();
 				bisr = new BufferedReader(new InputStreamReader(process.getInputStream()));
 				besr = new BufferedReader(new InputStreamReader(process.getErrorStream()));
@@ -495,18 +495,16 @@ public class OperatingSystemHelper {
 				}
 				if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "std.err = " + sb.toString()); //$NON-NLS-1$
 				if (process.exitValue() != 0) {
-					String msg = "failed to execute \"" + command + "\" rc = " + process.exitValue(); //$NON-NLS-1$ //$NON-NLS-2$
+					String msg = "failed to execute \"" + StringHelper.arrayToString(command) + "\" rc = " + process.exitValue(); //$NON-NLS-1$ //$NON-NLS-2$
 					log.log(Level.SEVERE, msg);
 					if (msg.contains("740")) //$NON-NLS-1$
 						throw new IOException("error=740"); //$NON-NLS-1$
-
-					throw new UnsatisfiedLinkError(msg);
 				}
 				bisr.close();
 				besr.close();
 
 				//check if deregistration was successful
-				process = Runtime.getRuntime().exec(new String[] {"cmd /C assoc .osd"}); //$NON-NLS-1$
+				process = Runtime.getRuntime().exec(new String[] {"cmd", "/C", "assoc", ".osd"}); //$NON-NLS-1$
 				process.waitFor();
 				bisr = new BufferedReader(new InputStreamReader(process.getInputStream()));
 				besr = new BufferedReader(new InputStreamReader(process.getErrorStream()));
