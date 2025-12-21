@@ -108,7 +108,7 @@ public class GDE {
 	private static boolean									isWithUi													= false;
 
 	// ****** begin global constants section *******
-	public static final String							VERSION														= "Version 4.0.0"; // do not use more than 3 digits, check device update list in settings getServiceUpdateList()																						//$NON-NLS-1$
+	public static final String							VERSION														= "Version 4.0.1 beta 1"; // do not use more than 3 digits, check device update list in settings getServiceUpdateList()																						//$NON-NLS-1$
 	public static final int									VERSION_NUMBER										= GDE.VERSION.contains("beta") 
 															? Integer.parseInt(GDE.VERSION.substring(8, GDE.VERSION.indexOf("beta")-1).replace(GDE.STRING_DOT, GDE.STRING_EMPTY).trim()) - 1
 															: Integer.parseInt(GDE.VERSION.substring(8, GDE.VERSION.length()).replace(GDE.STRING_DOT, GDE.STRING_EMPTY).trim());

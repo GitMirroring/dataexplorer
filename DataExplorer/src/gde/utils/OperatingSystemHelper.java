@@ -336,7 +336,7 @@ public class OperatingSystemHelper {
 		
 						//check if registration was successful
 						command = new String[] {"cmd", "/C", "assoc",  ".osd"}; //$NON-NLS-1$
-						if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "executing \"" + command + "\" to check association"); //$NON-NLS-1$ //$NON-NLS-2$
+						if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "executing \"" + StringHelper.arrayToString(command) + "\" to check association"); //$NON-NLS-1$ //$NON-NLS-2$
 						process = Runtime.getRuntime().exec(command);
 						process.waitFor();
 						bisr = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -380,17 +380,17 @@ public class OperatingSystemHelper {
 							FileUtils.extractWhileReplace("@GDE_DIR@", jarBasePath, jarFilePath, desktopFileName, extractTargetFilePath, "UTF-8", "UTF-8"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$);
 						}
 						else {
-							// package error, must not occur in a deliverd driver
+							// package error, must not occur in a delivered driver
 							log.log(Level.WARNING, extractTargetFilePath + " does not exist or does not have write (755) pernission, the DataExplorer MIME-type can not registered"); //$NON-NLS-1$
 						}
 					}
 					else {
-						// package error, must not occur in a deliverd driver
+						// package error, must not occur in a delivered driver
 						log.log(Level.WARNING, extractTargetFilePath + " does not exist or does not have write (755) pernission, the DataExplorer MIME-type can not registered"); //$NON-NLS-1$
 					}
 
 					//check if xdg-utls are installed, this is the prerequisite for the registration process
-					if (Runtime.getRuntime().exec(new String[] {"which xdg-mime"}).waitFor() != 0) { //$NON-NLS-1$
+					if (Runtime.getRuntime().exec(new String[] {"which", "xdg-mime"}).waitFor() != 0) { //$NON-NLS-1$
 						if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "DataExplorer program can not registered until xdg-utils are installed and in path"); //$NON-NLS-1$
 						DataExplorer.getInstance().openMessageDialog(Messages.getString(MessageIds.GDE_MSGI0030));
 						rc = 0;
@@ -399,10 +399,10 @@ public class OperatingSystemHelper {
 						FileUtils.extract(jarFile, "register.sh", GDE.STRING_EMPTY, targetDir, "555"); //$NON-NLS-1$ //$NON-NLS-2$ 
 
 						// all files extracted, exec register command
-						command = new String[] {"chmod", "+x",  targetDir, "/register.sh"}; //$NON-NLS-1$ //$NON-NLS-2$
+						command = new String[] {"chmod", "+x",  targetDir + "/register.sh"}; //$NON-NLS-1$ //$NON-NLS-2$
 						if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "executing: " + StringHelper.arrayToString(command)); //$NON-NLS-1$
 						Runtime.getRuntime().exec(command).waitFor();
-						command = new String[] {targetDir, "/register.sh"}; //$NON-NLS-1$
+						command = new String[] {targetDir + "/register.sh"}; //$NON-NLS-1$
 						if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "executing: " + StringHelper.arrayToString(command)); //$NON-NLS-1$
 						rc = Runtime.getRuntime().exec(command).waitFor();
 
@@ -422,7 +422,7 @@ public class OperatingSystemHelper {
 		catch (Throwable e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
 			if (e.getMessage().contains("error=740") || e instanceof IOException) { //permission access exception //$NON-NLS-1$
-				DataExplorer.getInstance().openMessageDialog(Messages.getString(MessageIds.GDE_MSGW0023, new Object[] { command }));
+				DataExplorer.getInstance().openMessageDialog(Messages.getString(MessageIds.GDE_MSGW0023, command));
 				rc = 0;
 			}
 			else if (e instanceof UnsatisfiedLinkError) {
@@ -554,7 +554,7 @@ public class OperatingSystemHelper {
 				}
 
 				//check if xdg-utls are installed, this is the prerequisite for the registration process
-				if (Runtime.getRuntime().exec(new String[] {"which xdg-mime"}).waitFor() != 0) { //$NON-NLS-1$
+				if (Runtime.getRuntime().exec(new String[] {"which", "xdg-mime"}).waitFor() != 0) { //$NON-NLS-1$
 					if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "DataExplorer program can not registered until xdg-utils are installed and in path"); //$NON-NLS-1$
 					DataExplorer.getInstance().openMessageDialog(Messages.getString(MessageIds.GDE_MSGI0030));
 					rc = 0;
@@ -562,10 +562,10 @@ public class OperatingSystemHelper {
 				else {
 					FileUtils.extract(jarFile, "unregister.sh", GDE.STRING_EMPTY, targetDir, "555"); //$NON-NLS-1$ //$NON-NLS-2$ 
 
-					command = new String[] {"chmod",  "+x", targetDir, "/unregister.sh"}; //$NON-NLS-1$ //$NON-NLS-2$
+					command = new String[] {"chmod",  "+x", targetDir + "/unregister.sh"}; //$NON-NLS-1$ //$NON-NLS-2$
 					if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "executing: " + StringHelper.arrayToString(command)); //$NON-NLS-1$
 					Runtime.getRuntime().exec(command).waitFor();
-					command = new String[] {targetDir, "/unregister.sh"}; //$NON-NLS-1$
+					command = new String[] {targetDir + "/unregister.sh"}; //$NON-NLS-1$
 					if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "executing: " + StringHelper.arrayToString(command)); //$NON-NLS-1$
 					rc = Runtime.getRuntime().exec(command).waitFor();
 				}
@@ -577,7 +577,7 @@ public class OperatingSystemHelper {
 		catch (Throwable e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
 			if (e.getMessage().contains("error=740") || e instanceof IOException) { //permission access exception //$NON-NLS-1$
-				DataExplorer.getInstance().openMessageDialog(Messages.getString(MessageIds.GDE_MSGW0023, new Object[] { command }));
+				DataExplorer.getInstance().openMessageDialog(Messages.getString(MessageIds.GDE_MSGW0023, command));
 				rc = 0;
 			}
 			else if (e instanceof UnsatisfiedLinkError) {
