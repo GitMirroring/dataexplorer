@@ -87,7 +87,7 @@ public class GDE {
 		}
 
 		public void setProgress(int percentage) {
-			String sThreadId = String.format("%06d", Thread.currentThread().threadId()); //release >= 19 -> threadId()
+			String sThreadId = String.format("%06d", Thread.currentThread().threadId());
 			application.setProgress(percentage, sThreadId);
 		}
 
