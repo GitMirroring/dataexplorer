@@ -6,6 +6,7 @@ Generic changes/fixes
 	* repair open web browser to display update web page
 	* repair several operating system calls
 	* correct info regarding C++ redistributable for Windows
+	* limit read count during update check to reduce blocking time if a banner at year end are displayed
 	
 Device specific changes/fixes
 	* MC3000* - update getData implementation to check if request match responds in viewpoint of slot number

@@ -1607,7 +1607,9 @@ public class FileUtils {
 			in = new BufferedReader(new InputStreamReader(gdeDownload.openStream()));
 
 			String inputLine;
-			while ((inputLine = in.readLine()) != null) {
+			int readCount = 0; // limiting read count will help to reduce blocking time if a banner at year end are displayed
+			while (readCount++ < 300 && (inputLine = in.readLine()) != null) {
+				//System.out.println(readCount + " - " + inputLine); //$NON-NLS-1$
 				if (inputLine.toLowerCase().contains("version") && inputLine.toLowerCase().contains("released")) { //$NON-NLS-1$
 					String versionString = inputLine.toLowerCase().substring(inputLine.lastIndexOf("<b>") + 3, inputLine.lastIndexOf("</b>")); //$NON-NLS-1$ //$NON-NLS-2$
 					versionString = versionString.substring(versionString.indexOf(" ")+1, versionString.lastIndexOf(" ")); //$NON-NLS-1$ //$NON-NLS-2$
