@@ -7,6 +7,9 @@ Generic changes/fixes
 	* repair several operating system calls
 	* correct info regarding C++ redistributable for Windows
 	
+Device specific changes/fixes
+	* MC3000* - update getData implementation to check if request match responds in viewpoint of slot number
+	
 Version 4.0.0 - 15 Dec 2025
 Generic changes/fixes 
 	* make color changes in settings dialog visible by change event
