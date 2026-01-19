@@ -1,261 +1,276 @@
-/**************************************************************************************
-  	This file is part of GNU DataExplorer.
-
-    GNU DataExplorer is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    DataExplorer is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with GNU DataExplorer.  If not, see <https://www.gnu.org/licenses/>.
-
-    Copyright (c) 2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025 Winfried Bruegmann
-    							2016,2017,2018,2019 Thomas Eickert
-****************************************************************************************/
-package gde.ui.dialog;
-
-import java.io.File;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Set;
-import java.util.Vector;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CCombo;
-import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.HelpEvent;
-import org.eclipse.swt.events.HelpListener;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.VerifyEvent;
-import org.eclipse.swt.events.VerifyListener;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowData;
-import org.eclipse.swt.layout.RowLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Dialog;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Slider;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
-
-import gde.DataAccess;
-import gde.DataAccess.LocalAccess;
-import gde.GDE;
-import gde.config.DeviceConfigurations;
-import gde.config.Settings;
-import gde.device.CommaSeparatorTypes;
-import gde.device.DecimalSeparatorTypes;
-import gde.histo.ui.HistoExplorer;
-import gde.histo.ui.datasources.SupplementObjectFolder;
-import gde.log.Level;
-import gde.messages.MessageIds;
-import gde.messages.Messages;
-import gde.ui.DataExplorer;
-import gde.ui.ParameterConfigControl;
-import gde.ui.SWTResourceManager;
-import gde.ui.menu.LogLevelSelectionContextMenu;
-import gde.utils.ObjectKeyCompliance;
-import gde.utils.ObjectKeyScanner;
-import gde.utils.OperatingSystemHelper;
-import gde.utils.StringHelper;
-
-/**
- * Dialog class to adjust application wide properties
- * @author Winfried Brügmann
- */
-public class SettingsDialog extends Dialog {
-	final static Logger									log											= Logger.getLogger(SettingsDialog.class.getName());
-	static final String									DEFAULT_LOG_LEVEL				= "WARNING";																																															//$NON-NLS-1$
-
-	public static final String					LOGGER_NAME							= "logger_name";																																													//$NON-NLS-1$
-	public static final String					LOG_LEVEL								= "log_level";																																														//$NON-NLS-1$
-
-	CCombo															configLevelCombo;
-	CLabel															utilsLevelLabel;
-	CCombo															utilsLevelCombo;
-	CLabel															serialIOLevelLabel;
-	CCombo															serialIOLevelCombo;
-	CLabel															configLevelLabel;
-	Button															okButton;
-	Button															globalLogLevel;
-	CLabel															commonLevelLabel;
-	CCombo															commonLevelCombo;
-	CLabel															deviceLevelLabel;
-	CCombo															deviceLevelCombo;
-	CCombo															uiLevelCombo;
-	CLabel															uiLevelLabel;
-	Composite														individualLoggingComosite;
-	Composite														globalLoggingComposite;
-	Shell																dialogShell;
-	CLabel															defaultDataPathLabel;
-	Group																defaultDataPathGroup;
-	CLabel															localLabel, timeFormatLabel;
-	CCombo															localCombo, timeFormatCombo;
-	Group																groupLocale, groupTimeFormat;
-	Button															skipBluetoothDevices, doPortAvailabilityCheck;
-	Button															enableBlackListButton, enableWhiteListButton;
-	Text																serialPortBlackList, serialPortWhiteList;
-	Button															suggestObjectKey, writeTmpFiles;
-	Composite														generalTabComposite;
-	Composite														analysisComposite;
-	CTabItem														generalTabItem;
-	CTabItem														testTabItem;
-	CTabItem														histoTabItem;
-	Button															histoActive;
-	Group																histoScreening;
-	Group																histoDisplay;
-	Button															histoDisplaySettlements;
-	Button															histoDisplayScores;
-	Button															histoDisplayTags;
-	Group																histoBoxplot;
-	CLabel															histoBoxplotScaleLabel;
-	CCombo															histoBoxplotScale;
-	CLabel															histoBoxplotSizeAdaptationLabel;
-	CCombo															histoBoxplotSizeAdaptation;
-	CLabel															histoRetrospectLabel;
-	Text																histoRetrospectMonths;
-	Button															histoSearchDataPathImports;
-	Button															histoChannelMix;
-	Group																histoDisplayOption;
-	Group																histoXAxis;
-	CLabel															histoSpreadLabel;
-	CCombo															histoSpreadGrade;
-	Button															histoReversed;
-	Button															histoLogarithmicDistance;
-	Group																histoFileContents;
-	CLabel															histoMaxDurationLabel;
-	Text																histoMaxDuration;
-	CLabel															histoSamplingLabel;
-	CCombo															histoSamplingTimespan_ms;
-	Group																histoForceObject;
-	Button															histoIgnoreLogObjectKey;
-	CCombo															histoSubdirectoryLevel;
-	CLabel															histoSubdirectoryLevelLabel;
-	Group																timeZone;
-	Button															dateTimeUtcButton;
-	Group																fileOpenGroup;
-	Button															firstRecordSet, histoObjectQuery;
-	CTabItem														analysisTabItem;
-	CTabFolder													settingsTabFolder;
-	Slider															alphaSlider;
-	Button															suggestDate;
-	Group																fileOpenSaveDialogGroup;
-	Group																objectKeyGroup;
-	Button															scanObjectKeysButton;
-	Button															cleanObjectReferecesButton;
-	Button															removeMimeAssocButton;
-	Button															createObjectsFromDirectoriesButton, importLogsButton;
-	Group																histoToolsGroup;
-	Button															clearHistoCacheButton, clearSupplementFoldersButton;
-	Group																miscDiagGroup;
-	Button															resourceConsumptionButton, cleanSettingsButton;
-	Button															assocMimeTypeButton;
-	Button															removeLauncherButton;
-	Button															createLauncherButton;
-	Button															partialDataTableButton, blankChargeDischargeButton, continiousRecordSetButton, startCommunicationAfterStartupButton;
-	Button															drawScaleInRecordColorButton, drawNameInRecordColorButton, drawNumbersInRecordColorButton, useMeasurementPopUpButton, draw10TicksPerRecordButton, addChannelConfigNameCurveCompareButton;
-	ParameterConfigControl							fontSizeCorrectionSlider, kmzExportTimeStepSlider;
-	int[]																fontCorrection					= new int[1];
-	int[]																exportTimeStep_ms				= new int[1];
-	Composite														osMiscComposite;
-	Composite														histoComposite, miscComposite;
-	Group																shellMimeType;
-	Group																desktopLauncher;
-	Group																fontSizeGroup, kmzExportGroup, dataTableGroup, chargerSpecials, graphicsView;
-	CTabItem														osMiscTabItem;
-	CTabItem														miscTabItem;
-	CLabel															fileIOLevelLabel;
-	CCombo															fileIOLevelCombo;
-	Button															deviceDialogModalButton;
-	Button															deviceDialogOnTopButton;
-	Button															deviceDialogAlphaButton;
-	Button															deviceImportDialogButton;
-	Group																deviceDialogGroup;
-	Group																serialPortGroup;
-	Group																separatorGroup;
-	CCombo															listSeparator;
-	CLabel															listSeparatorLabel;
-	CCombo															decimalSeparator;
-	CLabel															decimalSeparatorLabel;
-	Button															defaultDataPathAdjustButton;
-	Text																defaultDataPath;
-	CCombo															globalLoggingCombo;
-	Group																loggingGroup;
-	Group																classSelectionGroup;
-	Label																classBasedLabel;
-	Tree																tree;
-	Group 															skinColorSchemaGroup;
-	Button															osSchema, lightSchema, darkSchema;
-
-	Thread															listPortsThread;
-	Vector<String>											availablePorts					= new Vector<String>();
-	final Settings											settings;
-	final DataExplorer									application;
-	final String[]											supportedLocals					= { "en", "de" };																																													//$NON-NLS-1$ //$NON-NLS-2$
-	boolean															isLocaleLanguageChanged	= false;
-
-	final LogLevelSelectionContextMenu	logLevelMenu						= new LogLevelSelectionContextMenu();
-	Menu																popupmenu;
-	
-	public SettingsDialog(Shell parent, int style) {
-		super(parent, style);
-		this.application = DataExplorer.getInstance();
-		this.settings = Settings.getInstance();
-	}
-
-	public void open() {
-		int shellWidth =  500;
-		int shellHeight =  GDE.IS_LINUX ? 620 : 620;
-		try {
-			Shell parent = getParent();
-			this.dialogShell = new Shell(parent, SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL);
-			SWTResourceManager.registerResourceUser(this.dialogShell);
-			this.dialogShell.setLayout(new FormLayout());
-			this.dialogShell.setSize(shellWidth, shellHeight);
-			this.dialogShell.layout();
-			this.dialogShell.setText(GDE.NAME_LONG + Messages.getString(MessageIds.GDE_MSGT0300));
-			this.dialogShell.setImage(SWTResourceManager.getImage("gde/resource/DataExplorer.png")); //$NON-NLS-1$
-			this.dialogShell.addListener(SWT.Traverse, new Listener() {
-				@Override
-				public void handleEvent(Event event) {
-					switch (event.detail) {
-					case SWT.TRAVERSE_ESCAPE:
-						SettingsDialog.this.dialogShell.close();
-						event.detail = SWT.TRAVERSE_NONE;
-						event.doit = false;
-						break;
-					}
+		/**************************************************************************************
+		  	This file is part of GNU DataExplorer.
+		
+		    GNU DataExplorer is free software: you can redistribute it and/or modify
+		    it under the terms of the GNU General Public License as published by
+		    the Free Software Foundation, either version 3 of the License, or
+		    (at your option) any later version.
+		
+		    DataExplorer is distributed in the hope that it will be useful,
+		    but WITHOUT ANY WARRANTY; without even the implied warranty of
+		    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+		    GNU General Public License for more details.
+		
+		    You should have received a copy of the GNU General Public License
+		    along with GNU DataExplorer.  If not, see <https://www.gnu.org/licenses/>.
+		
+		    Copyright (c) 2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025 Winfried Bruegmann
+		    							2016,2017,2018,2019 Thomas Eickert
+		****************************************************************************************/
+		package gde.ui.dialog;
+		
+		import java.io.File;
+		import java.nio.file.Paths;
+		import java.util.Arrays;
+		import java.util.Enumeration;
+		import java.util.Set;
+		import java.util.Vector;
+		import java.util.logging.LogManager;
+		import java.util.logging.Logger;
+		import java.util.stream.Collectors;
+		
+		import org.eclipse.swt.SWT;
+		import org.eclipse.swt.custom.CCombo;
+		import org.eclipse.swt.custom.CLabel;
+		import org.eclipse.swt.custom.CTabFolder;
+		import org.eclipse.swt.custom.CTabItem;
+		import org.eclipse.swt.events.ControlEvent;
+		import org.eclipse.swt.events.ControlListener;
+		import org.eclipse.swt.events.DisposeEvent;
+		import org.eclipse.swt.events.DisposeListener;
+		import org.eclipse.swt.events.FocusEvent;
+		import org.eclipse.swt.events.FocusListener;
+		import org.eclipse.swt.events.HelpEvent;
+		import org.eclipse.swt.events.HelpListener;
+		import org.eclipse.swt.events.KeyAdapter;
+		import org.eclipse.swt.events.KeyEvent;
+		import org.eclipse.swt.events.SelectionAdapter;
+		import org.eclipse.swt.events.SelectionEvent;
+		import org.eclipse.swt.events.VerifyEvent;
+		import org.eclipse.swt.events.VerifyListener;
+		import org.eclipse.swt.layout.FillLayout;
+		import org.eclipse.swt.layout.FormAttachment;
+		import org.eclipse.swt.layout.FormData;
+		import org.eclipse.swt.layout.FormLayout;
+		import org.eclipse.swt.layout.GridData;
+		import org.eclipse.swt.layout.GridLayout;
+		import org.eclipse.swt.layout.RowData;
+		import org.eclipse.swt.layout.RowLayout;
+		import org.eclipse.swt.widgets.Button;
+		import org.eclipse.swt.widgets.Composite;
+		import org.eclipse.swt.widgets.Dialog;
+		import org.eclipse.swt.widgets.Display;
+		import org.eclipse.swt.widgets.Event;
+		import org.eclipse.swt.widgets.Group;
+		import org.eclipse.swt.widgets.Label;
+		import org.eclipse.swt.widgets.Listener;
+		import org.eclipse.swt.widgets.Menu;
+		import org.eclipse.swt.widgets.Shell;
+		import org.eclipse.swt.widgets.Slider;
+		import org.eclipse.swt.widgets.Text;
+		import org.eclipse.swt.widgets.Tree;
+		import org.eclipse.swt.widgets.TreeItem;
+		
+		import gde.DataAccess;
+		import gde.DataAccess.LocalAccess;
+		import gde.GDE;
+		import gde.config.DeviceConfigurations;
+		import gde.config.Settings;
+		import gde.device.CommaSeparatorTypes;
+		import gde.device.DecimalSeparatorTypes;
+		import gde.histo.ui.HistoExplorer;
+		import gde.histo.ui.datasources.SupplementObjectFolder;
+		import gde.log.Level;
+		import gde.messages.MessageIds;
+		import gde.messages.Messages;
+		import gde.ui.DataExplorer;
+		import gde.ui.ParameterConfigControl;
+		import gde.ui.SWTResourceManager;
+		import gde.ui.menu.LogLevelSelectionContextMenu;
+		import gde.utils.ObjectKeyCompliance;
+		import gde.utils.ObjectKeyScanner;
+		import gde.utils.OperatingSystemHelper;
+		import gde.utils.StringHelper;
+		
+		/**
+		 * Dialog class to adjust application wide properties
+		 * @author Winfried Brügmann
+		 */
+		public class SettingsDialog extends Dialog {
+			final static Logger									log											= Logger.getLogger(SettingsDialog.class.getName());
+			static final String									DEFAULT_LOG_LEVEL				= "WARNING";																																															//$NON-NLS-1$
+		
+			public static final String					LOGGER_NAME							= "logger_name";																																													//$NON-NLS-1$
+			public static final String					LOG_LEVEL								= "log_level";																																														//$NON-NLS-1$
+		
+			CCombo															configLevelCombo;
+			CLabel															utilsLevelLabel;
+			CCombo															utilsLevelCombo;
+			CLabel															serialIOLevelLabel;
+			CCombo															serialIOLevelCombo;
+			CLabel															configLevelLabel;
+			Button															okButton;
+			Button															globalLogLevel;
+			CLabel															commonLevelLabel;
+			CCombo															commonLevelCombo;
+			CLabel															deviceLevelLabel;
+			CCombo															deviceLevelCombo;
+			CCombo															uiLevelCombo;
+			CLabel															uiLevelLabel;
+			Composite														individualLoggingComosite;
+			Composite														globalLoggingComposite;
+			Shell																dialogShell;
+			CLabel															defaultDataPathLabel;
+			Group																defaultDataPathGroup;
+			CLabel															localLabel, timeFormatLabel;
+			CCombo															localCombo, timeFormatCombo;
+			Group																groupLocale, groupTimeFormat;
+			Button															skipBluetoothDevices, doPortAvailabilityCheck;
+			Button															enableBlackListButton, enableWhiteListButton;
+			Text																serialPortBlackList, serialPortWhiteList;
+			Button															suggestObjectKey, writeTmpFiles;
+			Composite														generalTabComposite;
+			Composite														analysisComposite;
+			CTabItem														generalTabItem;
+			CTabItem														testTabItem;
+			CTabItem														histoTabItem;
+			Button															histoActive;
+			Group																histoScreening;
+			Group																histoDisplay;
+			Button															histoDisplaySettlements;
+			Button															histoDisplayScores;
+			Button															histoDisplayTags;
+			Group																histoBoxplot;
+			CLabel															histoBoxplotScaleLabel;
+			CCombo															histoBoxplotScale;
+			CLabel															histoBoxplotSizeAdaptationLabel;
+			CCombo															histoBoxplotSizeAdaptation;
+			CLabel															histoRetrospectLabel;
+			Text																histoRetrospectMonths;
+			Button															histoSearchDataPathImports;
+			Button															histoChannelMix;
+			Group																histoDisplayOption;
+			Group																histoXAxis;
+			CLabel															histoSpreadLabel;
+			CCombo															histoSpreadGrade;
+			Button															histoReversed;
+			Button															histoLogarithmicDistance;
+			Group																histoFileContents;
+			CLabel															histoMaxDurationLabel;
+			Text																histoMaxDuration;
+			CLabel															histoSamplingLabel;
+			CCombo															histoSamplingTimespan_ms;
+			Group																histoForceObject;
+			Button															histoIgnoreLogObjectKey;
+			CCombo															histoSubdirectoryLevel;
+			CLabel															histoSubdirectoryLevelLabel;
+			Group																timeZone;
+			Button															dateTimeUtcButton;
+			Group																fileOpenGroup;
+			Button															firstRecordSet, histoObjectQuery;
+			CTabItem														analysisTabItem;
+			CTabFolder													settingsTabFolder;
+			Slider															alphaSlider;
+			Button															suggestDate;
+			Group																fileOpenSaveDialogGroup;
+			Group																objectKeyGroup;
+			Button															scanObjectKeysButton;
+			Button															cleanObjectReferecesButton;
+			Button															removeMimeAssocButton;
+			Button															createObjectsFromDirectoriesButton, importLogsButton;
+			Group																histoToolsGroup;
+			Button															clearHistoCacheButton, clearSupplementFoldersButton;
+			Group																miscDiagGroup;
+			Button															resourceConsumptionButton, cleanSettingsButton;
+			Button															assocMimeTypeButton;
+			Button															removeLauncherButton;
+			Button															createLauncherButton;
+			Button															partialDataTableButton, blankChargeDischargeButton, continiousRecordSetButton, startCommunicationAfterStartupButton;
+			Button															drawScaleInRecordColorButton, drawNameInRecordColorButton, drawNumbersInRecordColorButton, useMeasurementPopUpButton, draw10TicksPerRecordButton, addChannelConfigNameCurveCompareButton;
+			ParameterConfigControl							fontSizeCorrectionSlider, kmzExportTimeStepSlider;
+			int[]																fontCorrection					= new int[1];
+			int[]																exportTimeStep_ms				= new int[1];
+			Composite														osMiscComposite;
+			Composite														histoComposite, miscComposite;
+			Group																shellMimeType;
+			Group																desktopLauncher;
+			Group																fontSizeGroup, kmzExportGroup, dataTableGroup, chargerSpecials, graphicsView;
+			CTabItem														osMiscTabItem;
+			CTabItem														miscTabItem;
+			CLabel															fileIOLevelLabel;
+			CCombo															fileIOLevelCombo;
+			Button															deviceDialogModalButton;
+			Button															deviceDialogOnTopButton;
+			Button															deviceDialogAlphaButton;
+			Button															deviceImportDialogButton;
+			Group																deviceDialogGroup;
+			Group																serialPortGroup;
+			Group																separatorGroup;
+			CCombo															listSeparator;
+			CLabel															listSeparatorLabel;
+			CCombo															decimalSeparator;
+			CLabel															decimalSeparatorLabel;
+			Button															defaultDataPathAdjustButton;
+			Text																defaultDataPath;
+			CCombo															globalLoggingCombo;
+			Group																loggingGroup;
+			Group																classSelectionGroup;
+			Label																classBasedLabel;
+			Tree																tree;
+			Group 															skinColorSchemaGroup;
+			Button															osSchema, lightSchema, darkSchema;
+		
+			Thread															listPortsThread;
+			Vector<String>											availablePorts					= new Vector<String>();
+			final Settings											settings;
+			final DataExplorer									application;
+			final String[]											supportedLocals					= { "en", "de" };																																													//$NON-NLS-1$ //$NON-NLS-2$
+			boolean															isLocaleLanguageChanged	= false;
+		
+			final LogLevelSelectionContextMenu	logLevelMenu						= new LogLevelSelectionContextMenu();
+			Menu																popupmenu;
+			
+			public SettingsDialog(Shell parent, int style) {
+				super(parent, style);
+				this.application = DataExplorer.getInstance();
+				this.settings = Settings.getInstance();
+			}
+		
+			public void open() {
+				int shellWidth =  500;
+				int shellHeight =  GDE.IS_LINUX ? 620 : 620;
+				try {
+					Shell parent = getParent();
+					this.dialogShell = new Shell(parent, SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL);
+					SWTResourceManager.registerResourceUser(this.dialogShell);
+					this.dialogShell.setLayout(new FormLayout());
+					this.dialogShell.setSize(shellWidth, shellHeight);
+					this.dialogShell.layout();
+					this.dialogShell.setText(GDE.NAME_LONG + Messages.getString(MessageIds.GDE_MSGT0300));
+					this.dialogShell.setImage(SWTResourceManager.getImage("gde/resource/DataExplorer.png")); //$NON-NLS-1$
+					this.dialogShell.addListener(SWT.Traverse, new Listener() {
+						@Override
+						public void handleEvent(Event event) {
+							switch (event.detail) {
+							case SWT.TRAVERSE_ESCAPE:
+								SettingsDialog.this.dialogShell.close();
+								event.detail = SWT.TRAVERSE_NONE;
+								event.doit = false;
+								break;
+							}
+						}
+					});
+					this.dialogShell.addControlListener(new ControlListener() {
+						
+						@Override
+						public void controlMoved(ControlEvent e) {
+							// nothing to do
+						}
+		
+						@Override
+						public void controlResized(ControlEvent e) {
+							dialogShell.setSize(shellWidth, shellHeight);
+							System.out.println("controlResized");
 				}
 			});
 			{ // begin tab folder
