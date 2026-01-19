@@ -1,28 +1,22 @@
-GNU DataExplorer - News - comes with Version 4.0.0 - 15 Dec 2025
+GNU DataExplorer - News - comes with Version 4.0.1 - 19 Jan 2026
 
 Generic changes/fixes 
-	* make color changes in settings dialog visible by change event
-	* support color schema switch, if unchanged default color schema is used
-	* enable user color for header/comment/caption and time line
-	* enable user color change even if dark mode is used
-	* correct active record set description update while changing record start time stamp
-	* update Readme's to provide info about macOS kernel extension for USB-HID connected devices
-	* lowest supported Java versions 19
-	* package Java runtime to Linux builds as well
-	* update to Java 25 LTS runtime if packaged with installable
+	* repair opening web browser to display update web page
+	* repair several operating system calls
+	* correct info regarding C++ redistributable for Windows
+	* limit read count during update check to reduce blocking time if a banner at year end are displayed
+	* fix settings dialog resize problem, especially on ARM64 
+	
+Device specific changes/fixes
+	* MC3000* - getData implementation, checking slot number request match slot number responds, updated
 		
 Allgemeine Änderungen/Korrekturen
-	* Farbänderungen im Einstellungsdialog werden sofort sichtbar
-	* Unterstützung für Farbschema-Wechsel, wenn unverändertes Standardfarbschema verwendet wird
-	* Benutzerfarben für Kopfzeile/Kommentar/Beschriftung und Zeitleiste aktiviert
-	* Benutzerfarbenänderung auch bei Verwendung des Dunkelmodus möglich
-	* Korrektur der Beschreibung des aktiven Datensatzes beim Ändern des Startzeitstempels des Datensatzes
-	* Aktualisierung der Readme-Dateien mit Informationen zur macOS-Kernel-Erweiterung für USB-HID-verbundene Geräte
-	* älteste unterstützten Java-Versionen 19
-	* Java-Laufzeitumgebung auch in Linux-Builds integriert
-	* integrierte Java-Laufzeitumgebung auf Java 25 LTS aktualisiert
+	* Korrektur des Webbrowsers, um die Update-Webseite anzuzeigen
+	* Korrektur mehrerer Betriebssystemaufrufe
+	* Korrektur der Informationen zu C++ Redistributable für Windows
+	* Begrenzung der Anzahl der gelesenen Zeilen während der Update-Prüfung, um die Blockierungszeit zu reduzieren, wenn ein Banner angezeigt wird
+	* Behebung des Problems mit der Größenänderung des Einstellungsdialogs, insbesondere auf ARM64
 
-
-
-
+Geräte spezifische Änderungen
+	* MC3000* - getData-Implementierung, zur Überprüfung der Übereinstimmung zwischen angeforderter Slot-Nummer und zurückgegebener Slot-Nummer, aktualisiert
 	  

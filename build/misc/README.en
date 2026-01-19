@@ -4,8 +4,8 @@ The GNU DataExplorer is free software, please see http://www.gnu.org/philosophy/
 cost, but without any warranty. Since the implementation is based on Java using the free available libraries jSerialComm, 
 libjava4usb and SWT the execution of this program is possible under a number of popular operating systems like Windows, GNU/Linux 
 and MAC OS.
-For simplicity, all 64 bit versions are provided with built-in Java run-time. There is no need to 
-install a Java runtime for these cases. Since the MAC OS versions are based on Intel code, DataExplorer runs in the Rosetta 
+For simplicity, all versions are provided with built-in Java run-time. There is no need to 
+install a Java runtime. Since the MAC OS versions are based on Intel code, DataExplorer runs in the Rosetta 
 emulation layer.
 
 The GNU DataExplorer read data from connected devices or text file import and display this data for a 
@@ -35,7 +35,7 @@ During the first execution of the program the application configuration director
 Below this directory also application configuration and trace log files are located.
 
 Depending of the used Windows version and patch level it might be required to install the latest 
-"Microsoft Visual C++ 2008 Redistributable Package" from www.microsoft.com/downloads (desktop icon, object link creation).
+"Microsoft Visual C++ Redistributable Package" from www.microsoft.com/downloads (desktop icon, object link creation).
 
 
 
@@ -51,7 +51,7 @@ Below this directory also application configuration and trace log files are loca
 
 MAC OS X:
 
-The DMG contains a Java runtime environment. A separate Java installation is not required. This will work as well using an ARM (M) processor.
+The DMG contains a Intel based Java runtime environment. A separate Java installation is not required. This will work as well using an ARM (M) processor.
 The download and opened DMG file show up DataExplorer.app which need simply drag to the Applications folder.
 During the first execution of the program the application configuration directories are created /User/<user>/Library/Application Support/DataExplorer.
 Below this directory also application configuration and trace log files are located.

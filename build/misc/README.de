@@ -1,13 +1,13 @@
-******** DataExplorer README ***********  14 May 2025
+******** DataExplorer README ***********  19 Jan 2026
 
 Der GNU DataExplorer ist freie Software, siehe http://www.gnu.org/philosophy/free-sw.html. Sie wird kostenfrei und ohne Spende 
 zur Verfügung gestellt. Es gibt aber auch keinerlei Gewährleistung. Durch die Implementierung in Java auf der Basis von der freien Bibliotheken 
 jSerialComm, libjava4usb und SWT ist die Ausführung des Programms auf vielen populären Betriebssystemplattformen wie Windows, GNU/Linux 
 und MAC OS X möglich.
-Der Einfachheit halber werden die 64 Bit Versionen mit integrierter Java Laufzeit bereitgestellt. Eine Java Laufzeit muss für 
-diese Fälle nicht mehr installiert werden. Da die MAC OS Versionen auf Intel Code basieren läuft der DataExplorer in der Emulationsschicht Rosetta.
+Der Einfachheit halber werden alle Versionen mit integrierter Java Laufzeit bereitgestellt. Eine Java Laufzeit muss nicht mehr installiert 
+werden. Da die MAC OS Versionen auf Intel Code basieren läuft der DataExplorer in der Emulationsschicht Rosetta.
 
-Der GNU DataExplorer nimmt Daten von angeschlossenen Geräten oder als Textdateiimport entgegen, zeigt diese für verschiedene Auswertungen an. 
+Der GNU DataExplorer nimmt Daten von angeschlossenen Geräten entgegen oder importiert Dateien und zeigt diese für verschiedene Auswertungen an. 
 Die Liste der unterstützten Geräte findet man hier http://www.nongnu.org/dataexplorer/index.de.html.
 											 
 Weitere Geräte sind in Arbeit. Hilfe bei der Einbindung von zusätzlichen Geräten ist herzlich willkommen.
@@ -36,7 +36,7 @@ Beim ersten Start des Programms werden dann noch Anwendungkonfigurationsverzeich
 auch Anwendungkonfiguration und Tracelogdaten abgelegt.
 
 Je nach verwendeter Windows Version und Patchlevel kann es nötig sein das System mit dem 
-"Microsoft Visual C++ 2008 Redistributable Package" von www.microsoft.com/downloads nachzurüsten (Desktopicon, Objektlink).
+"Microsoft Visual C++ Redistributable Package" von www.microsoft.com/downloads nachzurüsten (Desktopicon, Objektlink).
 
 
 GNU/Linux:
