@@ -21,6 +21,8 @@ package gde.ui.dialog;
 import java.util.logging.Logger;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -85,7 +87,7 @@ public class AboutDialog extends org.eclipse.swt.widgets.Dialog {
 			this.dialogShell.setImage(SWTResourceManager.getImage("gde/resource/DataExplorer.png")); //$NON-NLS-1$
 			SWTResourceManager.registerResourceUser(this.dialogShell);
 			this.dialogShell.setLayout(new FormLayout());
-			this.dialogShell.setSize(650, 430);
+			this.dialogShell.setSize(650, GDE.IS_LINUX ? 450 : 430);
 			this.dialogShell.setText(Messages.getString(MessageIds.GDE_MSGT0146));
 			this.dialogShell.addListener(SWT.Traverse, new Listener() {
 	      @Override
@@ -99,10 +101,23 @@ public class AboutDialog extends org.eclipse.swt.widgets.Dialog {
 	        }
 	      }
 	    });
+			this.dialogShell.addControlListener(new ControlListener() {
+
+				@Override
+				public void controlMoved(ControlEvent e) {
+					// nothing to d
+				}
+
+				@Override
+				public void controlResized(ControlEvent e) {
+					dialogShell.setSize(650, GDE.IS_LINUX ? 450 : 430);
+				}
+				
+			});
 			{
 				FormData infoTextLData = new FormData();
 				infoTextLData.width = 610;
-				infoTextLData.height = 260;
+				infoTextLData.height = GDE.IS_LINUX ? 280 : 260;
 				infoTextLData.left =  new FormAttachment(0, 1000, 20);
 				infoTextLData.top =  new FormAttachment(0, 1000, 90);
 				infoTextLData.right =  new FormAttachment(1000, 1000, -20);
