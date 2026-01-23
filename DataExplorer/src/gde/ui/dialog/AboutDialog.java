@@ -117,7 +117,7 @@ public class AboutDialog extends org.eclipse.swt.widgets.Dialog {
 			{
 				FormData infoTextLData = new FormData();
 				infoTextLData.width = 610;
-				infoTextLData.height = GDE.IS_LINUX ? 280 : 260;
+				infoTextLData.bottom =  new FormAttachment(1000, 1000, -50);
 				infoTextLData.left =  new FormAttachment(0, 1000, 20);
 				infoTextLData.top =  new FormAttachment(0, 1000, 90);
 				infoTextLData.right =  new FormAttachment(1000, 1000, -20);
