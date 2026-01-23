@@ -72,7 +72,7 @@ public class FontSizeDialog extends org.eclipse.swt.widgets.Dialog {
 			{
 				fontSizeCombo = new Combo(dialogShell, SWT.BORDER);
 				RowData fontSizeComboLData = new RowData();
-				fontSizeComboLData.width = 50;
+				fontSizeComboLData.width = 80;
 				//fontSizeComboLData.height = 20;
 				fontSizeCombo.setLayoutData(fontSizeComboLData);
 				fontSizeCombo.setItems(sizeValues);

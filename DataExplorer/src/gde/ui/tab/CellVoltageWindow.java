@@ -186,7 +186,7 @@ public class CellVoltageWindow extends CTabItem {
 			this.voltageLimitsSelection.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0370));
 			RowLayout thisLayout = new RowLayout(org.eclipse.swt.SWT.HORIZONTAL);
 			this.voltageLimitsSelection.setLayout(thisLayout);
-			this.voltageLimitsSelection.setBounds(0, 0, 420, GDE.IS_WINDOWS ? 40 : 45);
+			this.voltageLimitsSelection.setBounds(0, 0, 420, GDE.IS_WINDOWS ? 40 : 60);
 			this.voltageLimitsSelection.addHelpListener(new HelpListener() {
 				@Override
 				public void helpRequested(HelpEvent evt) {
