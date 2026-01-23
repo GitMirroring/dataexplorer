@@ -182,6 +182,7 @@ public class CellVoltageWindow extends CTabItem {
 
 			this.voltageLimitsSelection = new Group(this.cellVoltageMainComposite, SWT.NONE);
 			if (!GDE.IS_MAC) this.voltageLimitsSelection.setBackground(this.surroundingBackground);
+			this.voltageLimitsSelection.setForeground(this.textColor);
 			this.voltageLimitsSelection.setText(Messages.getString(MessageIds.GDE_MSGT0369));
 			this.voltageLimitsSelection.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0370));
 			RowLayout thisLayout = new RowLayout(org.eclipse.swt.SWT.HORIZONTAL);
