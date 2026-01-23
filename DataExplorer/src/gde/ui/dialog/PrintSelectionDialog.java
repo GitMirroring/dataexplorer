@@ -43,6 +43,8 @@ import javax.print.attribute.standard.JobName;
 import javax.print.attribute.standard.OrientationRequested;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.PaintEvent;
@@ -156,6 +158,19 @@ public class PrintSelectionDialog extends org.eclipse.swt.widgets.Dialog {
 					PrintSelectionDialog.this.application.resetShellIcon();
 				}
 			});
+			this.dialogShell.addControlListener(new ControlListener() {
+				
+				@Override
+				public void controlResized(ControlEvent e) {
+					dialogShell.setSize(400, 400);
+				}
+				
+				@Override
+				public void controlMoved(ControlEvent e) {
+					// nothing to do
+				}
+			});
+
 			{
 				this.headerButton = new Button(this.dialogShell, SWT.CHECK | SWT.LEFT);
 				this.headerButton.setText(Messages.getString(MessageIds.GDE_MSGT0456));

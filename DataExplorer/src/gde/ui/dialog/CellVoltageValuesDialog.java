@@ -24,6 +24,8 @@ import java.util.logging.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.HelpEvent;
@@ -148,6 +150,18 @@ public class CellVoltageValuesDialog extends org.eclipse.swt.widgets.Dialog {
 						//{upperLimitVoltage=0,  upperLimitColorRed=1, lowerLimitColorGreen=2, beginSpreadVoltage=3, lowerLimitColorRed=4, lowerLimitVoltage=5};
 					}
 					CellVoltageValuesDialog.this.application.updateCellVoltageLimitsSelector();
+				}
+			});
+			this.dialogShell.addControlListener(new ControlListener() {
+				
+				@Override
+				public void controlResized(ControlEvent e) {
+					CellVoltageValuesDialog.this.dialogShell.setSize(380, 380);
+				}
+				
+				@Override
+				public void controlMoved(ControlEvent e) {
+					// nothing to do
 				}
 			});
 			{
