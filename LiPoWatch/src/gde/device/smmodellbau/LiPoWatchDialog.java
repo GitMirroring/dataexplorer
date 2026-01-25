@@ -287,7 +287,7 @@ public class LiPoWatchDialog extends DeviceDialog {
 								this.statusGroup.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 								this.statusGroup.setLayout(new RowLayout(SWT.HORIZONTAL));
 								this.statusGroup.setText(Messages.getString(MessageIds.GDE_MSGT1610));
-								this.statusGroup.setBounds(12, 4, 473, 45);
+								this.statusGroup.setBounds(12, 4, 473, 50);
 								this.statusGroup.addMouseTrackListener(this.mouseTrackerEnterFadeOut);
 								{
 									this.serialNumberText = new CLabel(this.statusGroup, SWT.NONE);
@@ -340,7 +340,7 @@ public class LiPoWatchDialog extends DeviceDialog {
 								this.autoStartGroup = new Group(this.configMainComosite, SWT.NONE);
 								this.autoStartGroup.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 								this.autoStartGroup.setText(Messages.getString(MessageIds.GDE_MSGT1617));
-								this.autoStartGroup.setBounds(12, 136, 232, 107);
+								this.autoStartGroup.setBounds(12, 143, 232, 107);
 								this.autoStartGroup.addMouseTrackListener(this.mouseTrackerEnterFadeOut);
 								this.autoStartGroup.setLayout(new RowLayout(SWT.HORIZONTAL));
 								{
@@ -349,7 +349,7 @@ public class LiPoWatchDialog extends DeviceDialog {
 									this.voltageDropTriggerButton.setText(Messages.getString(MessageIds.GDE_MSGT1618));
 									this.voltageDropTriggerButton.setToolTipText(Messages.getString(MessageIds.GDE_MSGT1619));
 									this.voltageDropTriggerButton.setSelection(this.isAutoStartVoltageDrop);
-									this.voltageDropTriggerButton.setLayoutData(new RowData(139, 20));
+									this.voltageDropTriggerButton.setLayoutData(new RowData(150, 20));
 									this.voltageDropTriggerButton.addSelectionListener(new SelectionAdapter() {
 
 										@Override
@@ -463,7 +463,7 @@ public class LiPoWatchDialog extends DeviceDialog {
 								this.dataRateGroup = new Group(this.configMainComosite, SWT.NONE);
 								this.dataRateGroup.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 								this.dataRateGroup.setText(Messages.getString(MessageIds.GDE_MSGT1624));
-								this.dataRateGroup.setBounds(14, 89, 232, 45);
+								this.dataRateGroup.setBounds(14, 89, 232, 50);
 								this.dataRateGroup.setToolTipText(Messages.getString(MessageIds.GDE_MSGT1625));
 								this.dataRateGroup.addMouseTrackListener(this.mouseTrackerEnterFadeOut);
 								this.dataRateGroup.setLayout(new GridLayout(1, true));
@@ -549,7 +549,7 @@ public class LiPoWatchDialog extends DeviceDialog {
 								this.impuleRegulationGroup.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 								this.impuleRegulationGroup.setLayout(null);
 								this.impuleRegulationGroup.setText(Messages.getString(MessageIds.GDE_MSGT1631));
-								this.impuleRegulationGroup.setBounds(252, 136, 232, 107);
+								this.impuleRegulationGroup.setBounds(252, 143, 232, 107);
 								this.impuleRegulationGroup.addMouseTrackListener(this.mouseTrackerEnterFadeOut);
 								this.impuleRegulationGroup.setLayout(new RowLayout(SWT.VERTICAL));
 								{
@@ -621,7 +621,7 @@ public class LiPoWatchDialog extends DeviceDialog {
 								this.measurementTypeGroup.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 								this.measurementTypeGroup.setLayout(null);
 								this.measurementTypeGroup.setText(Messages.getString(MessageIds.GDE_MSGT1642));
-								this.measurementTypeGroup.setBounds(252, 89, 232, 45);
+								this.measurementTypeGroup.setBounds(252, 89, 232, 50);
 								this.measurementTypeGroup.setToolTipText(Messages.getString(MessageIds.GDE_MSGT1643));
 								this.measurementTypeGroup.addMouseTrackListener(this.mouseTrackerEnterFadeOut);
 								this.measurementTypeGroup.setLayout(new GridLayout(2, true));

@@ -1042,7 +1042,7 @@ public class StringHelper {
 		for (Object object : inputArray) {
 			sb.append(object).append(GDE.STRING_COMMA_BLANK);
 		}
-		sb.deleteCharAt(sb.length()-2);
+		if (inputArray.length > 2) sb.deleteCharAt(sb.length()-2);
 		return sb.toString();
 	}
 	

@@ -463,7 +463,7 @@ public class GDE {
 	 */
 	public static void main(String[] args) {
 		final String $METHOD_NAME = "main"; //$NON-NLS-1$
-		log.log(Level.FINER, "main    start");
+		
 		try {
 			System.setProperty("https.protocols", "SSLv3,TLSv1,TLSv1.1,TLSv1.2");
 			System.setProperty("file.encoding", "UTF-8");
@@ -479,8 +479,8 @@ public class GDE {
 				}
 			};
 			GDE.settingsThread.start();
-			
-			log.log(Level.INFO, "main start");
+
+			log.log(Level.INFO, "main start " + StringHelper.arrayToString(args));
 			String inputFilePath = GDE.STRING_EMPTY;
 
 			Display.setAppName(GDE.NAME_LONG);
