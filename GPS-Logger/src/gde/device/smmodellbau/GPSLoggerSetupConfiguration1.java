@@ -167,7 +167,6 @@ public class GPSLoggerSetupConfiguration1 extends Composite {
 		this.robbeTBoxButton.setSelection(this.configuration.robbe_T_Box == 1 ? true : false);
 		this.tekCompensationCombo.select(this.configuration.tekCompensation + 20);
 
-
 		this.heightMaxAlarmButton.setSelection((this.configuration.telemetryAlarms & SetupReaderWriter.TEL_ALARM_HEIGHT) > 0);
 		this.heightMaxAlarmCombo.setText(String.format("%5d", this.configuration.heightAlarm)); //$NON-NLS-1$
 		this.speedMaxAlarmButton.setSelection((this.configuration.telemetryAlarms & SetupReaderWriter.TEL_ALARM_SPEED_MAX) > 0);
@@ -270,7 +269,7 @@ public class GPSLoggerSetupConfiguration1 extends Composite {
 				gpsLoggerGroupLData.left = new FormAttachment(0, 1000, 10);
 				gpsLoggerGroupLData.top = new FormAttachment(0, 1000, 5);
 				gpsLoggerGroupLData.width = 290;
-				gpsLoggerGroupLData.height = GDE.IS_MAC ? 450 : 470;
+				gpsLoggerGroupLData.height = GDE.IS_MAC ? 450 : 495;
 				RowLayout gpsLoggerGroupLayout = new RowLayout(org.eclipse.swt.SWT.HORIZONTAL);
 				this.gpsLoggerGroup.setLayout(gpsLoggerGroupLayout);
 				this.gpsLoggerGroup.setLayoutData(gpsLoggerGroupLData);
@@ -1013,7 +1012,7 @@ public class GPSLoggerSetupConfiguration1 extends Composite {
 				this.gpsTelemertieAlarmGroup = new Group(this, SWT.NONE);
 				FormData gpsTelemertieGroupLData = new FormData();
 				gpsTelemertieGroupLData.left = new FormAttachment(0, 1000, 10);
-				gpsTelemertieGroupLData.top = new FormAttachment(0, 1000, 490);
+				gpsTelemertieGroupLData.top = new FormAttachment(0, 1000, GDE.IS_MAC ? 490 : 520);
 				gpsTelemertieGroupLData.width = 290;
 				gpsTelemertieGroupLData.height = 170;
 				this.gpsTelemertieAlarmGroup.setLayoutData(gpsTelemertieGroupLData);
