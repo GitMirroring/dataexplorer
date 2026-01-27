@@ -75,11 +75,11 @@ public class GPSLoggerSetupConfiguration1 extends Composite {
 	CCombo									heightMaxAlarmCombo, speedMaxAlarmCombo, speedMinAlarmCombo, distanceMaxCombo, distanceMinCombo, tripLengthCombo, voltageRxCombo;
 	CLabel									heightMaxAlarmLabel, speedAlarmLabel, distanceMaxLabel, distanceMinLabel, tripLengthLabel, voltageRxLabel;
 
-	CLabel									frskyIdLabel;
+	CLabel									frskyIdLabel, tekCompensationLabel, tekCompensationUnitLabel;
 	Button									fixSerialNumberButton, fixStartPositionButton;
 	Button									hottDeadBandButton;
 	Button									robbeTBoxButton;
-	CCombo									frskyIdCombo;
+	CCombo									frskyIdCombo, tekCompensationCombo;
 
 	final SetupReaderWriter	configuration;
 	final String[]					languageValues	= {"Deutsch", "English"};
@@ -112,6 +112,8 @@ public class GPSLoggerSetupConfiguration1 extends Composite {
 	final String[]					varioFilters		= Messages.getString(MessageIds.GDE_MSGT2019).split(GDE.STRING_COMMA);
 	final String[]					frskyIDs				= { " 0x00", " 0xA1", " 0x22", " 0x83", " 0xE4", " 0x45", " 0xC6", " 0x67", " 0x48", " 0xE9", " 0x6A", " 0xCB", " 0xAC", " 0x0D", " 0x8E",
 			" 0x2F", " 0xD0", " 0x71", " 0xF2", " 0x53", " 0x34", " 0x95", " 0x16", " 0xB7", " 0x98", " 0x39", " 0xBA", " 0x1B" };
+	final String[] 					tekCompensationValues = new String[41];
+	
 
 	/**
 	 * constructor configuration panel 1
@@ -131,6 +133,10 @@ public class GPSLoggerSetupConfiguration1 extends Composite {
 			sb.append(String.format(Locale.ENGLISH, " %2.1f ,", 1 + i / 10.0));
 		}
 		this.varioFactors = sb.toString().split(GDE.STRING_COMMA);
+		int factor = 80;
+		for (int i=0; i<41; ++i) {
+			this.tekCompensationValues[i] = ""+(factor + i);
+		}
 		initGUI();
 		updateValues();
 	}
@@ -159,6 +165,8 @@ public class GPSLoggerSetupConfiguration1 extends Composite {
 		this.fixSerialNumberButton.setSelection(this.configuration.serialNumberFix == 1 ? true : false);
 		this.hottDeadBandButton.setSelection(this.configuration.isHottDeadBand == 0 ? true : false);
 		this.robbeTBoxButton.setSelection(this.configuration.robbe_T_Box == 1 ? true : false);
+		this.tekCompensationCombo.select(this.configuration.tekCompensation + 20);
+
 
 		this.heightMaxAlarmButton.setSelection((this.configuration.telemetryAlarms & SetupReaderWriter.TEL_ALARM_HEIGHT) > 0);
 		this.heightMaxAlarmCombo.setText(String.format("%5d", this.configuration.heightAlarm)); //$NON-NLS-1$
@@ -262,7 +270,7 @@ public class GPSLoggerSetupConfiguration1 extends Composite {
 				gpsLoggerGroupLData.left = new FormAttachment(0, 1000, 10);
 				gpsLoggerGroupLData.top = new FormAttachment(0, 1000, 5);
 				gpsLoggerGroupLData.width = 290;
-				gpsLoggerGroupLData.height = GDE.IS_MAC ? 440 : 470;
+				gpsLoggerGroupLData.height = GDE.IS_MAC ? 450 : 470;
 				RowLayout gpsLoggerGroupLayout = new RowLayout(org.eclipse.swt.SWT.HORIZONTAL);
 				this.gpsLoggerGroup.setLayout(gpsLoggerGroupLayout);
 				this.gpsLoggerGroup.setLayoutData(gpsLoggerGroupLData);
@@ -961,6 +969,45 @@ public class GPSLoggerSetupConfiguration1 extends Composite {
 						}
 					});
 				}
+				{
+					this.tekCompensationLabel = new CLabel(this.gpsLoggerGroup, SWT.RIGHT);
+					RowData tekCompensationLData = new RowData();
+					tekCompensationLData.width = 130;
+					tekCompensationLData.height = 18;
+					this.tekCompensationLabel.setLayoutData(tekCompensationLData);
+					this.tekCompensationLabel.setText(Messages.getString(MessageIds.GDE_MSGI2006));
+					this.tekCompensationLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+					this.tekCompensationLabel.setToolTipText(Messages.getString(MessageIds.GDE_MSGI2007));
+				}
+				{
+					this.tekCompensationCombo = new CCombo(this.gpsLoggerGroup, SWT.BORDER);
+					RowData minMaxRxComboLData = new RowData();
+					minMaxRxComboLData.width = COMBO_WIDTH;
+					minMaxRxComboLData.height = COMBO_HEIGHT;
+					this.tekCompensationCombo.setLayoutData(minMaxRxComboLData);
+					this.tekCompensationCombo.setItems(this.tekCompensationValues);
+					this.tekCompensationCombo.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+					this.tekCompensationCombo.setEditable(false);
+					this.tekCompensationCombo.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+					this.tekCompensationCombo.addSelectionListener(new SelectionAdapter() {
+						@Override
+						public void widgetSelected(SelectionEvent evt) {
+							GPSLoggerSetupConfiguration1.log.log(Level.FINEST, "tekCompensationCombo.widgetSelected, event=" + evt); //$NON-NLS-1$
+							GPSLoggerSetupConfiguration1.this.configuration.tekCompensation = (byte) (Byte.parseByte(GPSLoggerSetupConfiguration1.this.tekCompensationCombo.getText())-100);
+							GPSLoggerSetupConfiguration1.this.dialog.enableSaveConfigurationButton(true);
+						}
+					});
+				}
+				{
+					this.tekCompensationUnitLabel = new CLabel(this.gpsLoggerGroup, SWT.CENTER);
+					RowData timeZoneUnitLabelLData = new RowData();
+					timeZoneUnitLabelLData.width = 79;
+					timeZoneUnitLabelLData.height = 18;
+					this.tekCompensationUnitLabel.setLayoutData(timeZoneUnitLabelLData);
+					this.tekCompensationUnitLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+					this.tekCompensationUnitLabel.setText("[%]");
+				}
+
 			}
 			{
 				this.gpsTelemertieAlarmGroup = new Group(this, SWT.NONE);

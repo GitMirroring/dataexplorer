@@ -6,7 +6,8 @@ Generic changes/fixes
 	
 	Device specific changes/fixes
 	* LiPoWatch - fine tune dialog widget positions
-	* GPS-Logger - add IGC modus 'extended'  
+	* GPS-Logger3 - add IGC modus 'extended'  
+	* GPS-Logger3 - add TEK compensation factor
 
 Version 4.0.1 - 19 Jan 2026
 Generic changes/fixes 
