@@ -270,7 +270,6 @@
 						@Override
 						public void controlResized(ControlEvent e) {
 							dialogShell.setSize(shellWidth, shellHeight);
-							System.out.println("controlResized");
 				}
 			});
 			{ // begin tab folder
