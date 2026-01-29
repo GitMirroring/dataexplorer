@@ -147,6 +147,7 @@ public class NMEAReaderWriter {
 
 				reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "ISO-8859-1")); //$NON-NLS-1$
 				Vector<String> lines = new Vector<String>();
+				String airSpeedFactor = GDE.STRING_BLANK;
 				//skip SM GPS-Logger setup sentence
 				while ((line = reader.readLine()) != null &&
 						(line.startsWith(device.getDataBlockLeader() + NMEA.SETUP.name())
@@ -159,7 +160,23 @@ public class NMEAReaderWriter {
 							|| line.startsWith(device.getDataBlockLeader() + NMEA.UL2SETUP.name()))) {
 						Vector<String> setupLine = new Vector<String>();
 						setupLine.add(line);
-						log.log(Level.INFO, line);
+						log.log(Level.INFO, line);			
+//						String[] splitLine = line.split(",");
+//						StringBuilder sb = new StringBuilder();
+//						for(int i=1; i<splitLine.length-2; ++i) {
+//							sb.append(i-1).append(GDE.STRING_COLON);
+//							int value = Integer.parseInt(splitLine[i], 16);
+//			        if (value > 256)
+//			        	sb.append(value);
+//							else
+//								sb.append((byte)value);
+//							sb.append(GDE.STRING_COMMA_BLANK);
+//						}
+//						log.log(Level.INFO, sb.toString());
+						if (line.split(",").length > 36) {
+							byte value = (byte)Integer.parseInt(line.split(",")[36],16);				
+							airSpeedFactor = String.format(Messages.getString(MessageIds.GDE_MSGT0988), (value > 0 ? "+"+value : value)) + "%";
+						}
 						data.parse(setupLine, lineNumber);
 					}
 					else if (line != null && line.startsWith(device.getDataBlockLeader()) && !data.isSupportedSentence(line.substring(1, line.indexOf(device.getDataBlockSeparator().value(), 2)))) {
@@ -286,15 +303,16 @@ public class NMEAReaderWriter {
 				activeChannel.get(recordSetName).descriptionAppendFilename(filePath.substring(filePath.lastIndexOf(GDE.CHAR_FILE_SEPARATOR_UNIX)+1));
 				if (data.airPressures.getMaxEntryCount() > 0) {
 					log.log(Level.INFO, data.airPressures.listValues());
-					StringBuilder sb = new StringBuilder();
-						sb.append(String.format("\n%s - offset = %.3f (%2d); count = %4d, %4d, %4d; avgAirSpeed = %3.1f, %3.1f, %3.1f; avgPressure ∆TEK = %3.2f, %3.2f, %3.2f",
-								filePath.substring(filePath.lastIndexOf(GDE.FILE_SEPARATOR) + 1), data.airPressures.getAvgDiffMaxCount() / 1000., data.airPressures.getMaxEntryCount(),
+					String descriptionUpdate = String.format(Messages.getString(MessageIds.GDE_MSGT0989),
+								filePath.substring(filePath.lastIndexOf(GDE.FILE_SEPARATOR) + 1), 
+								airSpeedFactor,
+								data.airPressures.getAvgDiffMaxCount() / 1000., data.airPressures.getMaxEntryCount(),
 								data.vcAirSpeed40.getCount(), data.vcAirSpeedDp1.getCount(), data.vcAirSpeed70.getCount(),
 								data.vcAirSpeed40.getAvgValuesA() / 1000., data.vcAirSpeedDp1.getAvgValuesA() / 1000., data.vcAirSpeed70.getAvgValuesA() / 1000.,
-								data.vcAirSpeed40.getAvgValuesB() / 1000., data.vcAirSpeedDp1.getAvgValuesB() / 1000., data.vcAirSpeed70.getAvgValuesB() / 1000.));
-						log.log(Level.INFO, sb.toString());
-					if (sb.length() > 5 && sb.toString().contains(GDE.FILE_ENDING_NMEA)) activeChannel.get(recordSetName)
-							.setRecordSetDescription(activeChannel.get(recordSetName).getRecordSetDescription() + sb.toString().substring(sb.toString().indexOf(GDE.FILE_ENDING_NMEA) + 5));
+								data.vcAirSpeed40.getAvgValuesB() / 1000., data.vcAirSpeedDp1.getAvgValuesB() / 1000., data.vcAirSpeed70.getAvgValuesB() / 1000.);
+						log.log(Level.INFO, descriptionUpdate);
+					if (descriptionUpdate.length() > 5 && descriptionUpdate.contains(GDE.FILE_ENDING_NMEA)) activeChannel.get(recordSetName)
+							.setRecordSetDescription(activeChannel.get(recordSetName).getRecordSetDescription() + descriptionUpdate.substring(descriptionUpdate.indexOf(GDE.FILE_ENDING_NMEA) + 5));
 				}
 			}
 		}
