@@ -175,7 +175,7 @@ public class NMEAReaderWriter {
 //						log.log(Level.INFO, sb.toString());
 						if (line.split(",").length > 36) {
 							byte value = (byte)Integer.parseInt(line.split(",")[36],16);				
-							airSpeedFactor = String.format(Messages.getString(MessageIds.GDE_MSGT0988), (value > 0 ? "+"+value : value)) + "%";
+							airSpeedFactor = String.format(Messages.getString(MessageIds.GDE_MSGT0988), 100 + (value > 0 ? value : value)) + "%";
 						}
 						data.parse(setupLine, lineNumber);
 					}
