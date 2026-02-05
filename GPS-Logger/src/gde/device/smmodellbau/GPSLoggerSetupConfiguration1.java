@@ -164,7 +164,7 @@ public class GPSLoggerSetupConfiguration1 extends Composite {
 		this.telemetryTypeCombo.select(this.configuration.telemetryType);
 		this.minMaxRxCombo.select(this.configuration.rxControl);
 		this.frskyTxIdCombo.select(this.configuration.frskySensorAddr - 1);
-		this.frskyInstanceIdCombo.select(this.configuration.frSkyInstanceId);
+		this.frskyInstanceIdCombo.select(this.configuration.frskyInstanceId);
 		this.fixSerialNumberButton.setSelection(this.configuration.serialNumberFix == 1 ? true : false);
 		this.hottDeadBandButton.setSelection(this.configuration.isHottDeadBand == 0 ? true : false);
 		this.robbeTBoxButton.setSelection(this.configuration.robbe_T_Box == 1 ? true : false);
@@ -510,7 +510,7 @@ public class GPSLoggerSetupConfiguration1 extends Composite {
 								@Override
 								public void widgetSelected(SelectionEvent evt) {
 									GPSLoggerSetupConfiguration1.log.log(Level.FINEST, "instanceCombo.widgetSelected, event=" + evt); //$NON-NLS-1$
-									GPSLoggerSetupConfiguration1.this.configuration.frskySensorAddr = (short) (GPSLoggerSetupConfiguration1.this.frskyInstanceIdCombo.getSelectionIndex());
+									GPSLoggerSetupConfiguration1.this.configuration.frskyInstanceId = (byte) (GPSLoggerSetupConfiguration1.this.frskyInstanceIdCombo.getSelectionIndex());
 									GPSLoggerSetupConfiguration1.this.dialog.enableSaveConfigurationButton(true);
 								}
 							});
