@@ -76,7 +76,7 @@ public class SetupReaderWriter {
 	short								rxControl										= 0;																										// 13 0=OFF, 1=Min/Live/Max 2=StartPoint
 	int									jetiExMask									= 0xFFFFFFFF;																						// 14,15 bit0=undefined, bit1=time bit*=refer to converter
 	short								varioFactor									= 0;																										// 16 1 + factor/10
-	short								frskyAddr 									= 0; 																										// 17 0x00 -> 0x1B
+	short								frskySensorAddr 						= 7; 																										// 17 0x00 -> 0x1B
 	short								telemetryAlarms							= 0x0013;																								// 18 
 	short								heightAlarm									= 200;																									// 19 10m --> 4000m step 50
 	short								speedMaxAlarm								= 200;																									// 20 10km/h --> 1000km/h
@@ -95,6 +95,7 @@ public class SetupReaderWriter {
 	byte								language										= 0;																										// 32..
 	byte 								hottSpeedType								= 0;																										// ..32 //0=auto, 1=GPS-Speed 2=AirSpeed
 	short								jetiExMask_UL								= 0;																										// 33
+	byte 								frSkyInstanceId							= 0;																										// 34 	//0x0 - 0xF
 	//short[] B = new short[4]; // 34-37
 	byte								mLinkAddressVarioTec				= 0;																										// 38.. 0 - 15, "--"
 	byte								mLinkAddressVoltageRx				= 16;																										// ..38 0 - 15, "--"
@@ -182,7 +183,7 @@ public class SetupReaderWriter {
 				this.rxControl							= DataParser.parse2Short(buffer, 24);
 				this.jetiExMask							= DataParser.parse2Int(buffer, 26);
 				this.varioFactor 						= DataParser.parse2Short(buffer, 30);
-				this.frskyAddr							= DataParser.parse2Short(buffer, 32);
+				this.frskySensorAddr							= DataParser.parse2Short(buffer, 32);
 				this.telemetryAlarms 				= DataParser.parse2Short(buffer, 34);
 				this.heightAlarm 						= DataParser.parse2Short(buffer, 36);
 				this.speedMaxAlarm 					= DataParser.parse2Short(buffer, 38);
@@ -201,8 +202,9 @@ public class SetupReaderWriter {
 				this.language								= buffer[62];													// 32.. 0= german, 1=english
 				this.hottSpeedType					= buffer[63];													// ..32 speed type 0=auto, 1=GPS, 2=AirSpeed
 				this.jetiExMask_UL					= DataParser.parse2Short(buffer, 64);	// 33
-				this.isHottDeadBand					= buffer[67];													// 34
-				this.tekCompensation				= buffer[70];													// 35
+				this.frSkyInstanceId				= buffer[66];													// 34
+				this.isHottDeadBand					= buffer[67];													// 35
+				this.tekCompensation				= buffer[70];													// 36
 				//B[4]
 				this.mLinkAddressVarioTec			= buffer[74];		// 38..
 				this.mLinkAddressVoltageRx		= buffer[75];		// ..38
@@ -294,8 +296,8 @@ public class SetupReaderWriter {
 				buffer[29] = (byte) ((this.jetiExMask & 0xFF000000) >> 24);
 				buffer[30] = (byte) (this.varioFactor & 0x00FF);
 				buffer[31] = (byte) ((this.varioFactor & 0xFF00) >> 8);
-				buffer[32] = (byte) (this.frskyAddr & 0x00FF);									// 17 0x00 -> 0x1B
-				buffer[33] = (byte) ((this.frskyAddr & 0xFF00) >> 8);
+				buffer[32] = (byte) (this.frskySensorAddr & 0x00FF);									// 17 0x00 -> 0x1B
+				buffer[33] = (byte) ((this.frskySensorAddr & 0xFF00) >> 8);
 				buffer[34] = (byte) (this.telemetryAlarms & 0x00FF);
 				buffer[35] = (byte) ((this.telemetryAlarms & 0xFF00) >> 8);
 				buffer[36] = (byte) (this.heightAlarm & 0x00FF);
@@ -424,7 +426,7 @@ public class SetupReaderWriter {
 		this.rxControl							= Short.parseShort(data[13], 16);
 		this.jetiExMask							= Short.parseShort(data[14], 16);
 		this.varioFactor 						= Short.parseShort(data[15], 16);
-		this.frskyAddr							= Short.parseShort(data[16], 16);
+		this.frskySensorAddr							= Short.parseShort(data[16], 16);
 		this.telemetryAlarms 				= Short.parseShort(data[17], 16);
 		this.heightAlarm 						= Short.parseShort(data[18], 16);
 		this.speedMaxAlarm 					= Short.parseShort(data[19], 16);

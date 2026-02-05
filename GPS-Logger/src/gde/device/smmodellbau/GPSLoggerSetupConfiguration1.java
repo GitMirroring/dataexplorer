@@ -75,11 +75,11 @@ public class GPSLoggerSetupConfiguration1 extends Composite {
 	CCombo									heightMaxAlarmCombo, speedMaxAlarmCombo, speedMinAlarmCombo, distanceMaxCombo, distanceMinCombo, tripLengthCombo, voltageRxCombo;
 	CLabel									heightMaxAlarmLabel, speedAlarmLabel, distanceMaxLabel, distanceMinLabel, tripLengthLabel, voltageRxLabel;
 
-	CLabel									frskyIdLabel, tekCompensationLabel, tekCompensationUnitLabel;
+	CLabel									frskyTxIdLabel, frskyInstanceIdLabel, tekCompensationLabel, tekCompensationUnitLabel;
 	Button									fixSerialNumberButton, fixStartPositionButton;
 	Button									hottDeadBandButton;
 	Button									robbeTBoxButton;
-	CCombo									frskyIdCombo, tekCompensationCombo;
+	CCombo									frskyTxIdCombo, frskyInstanceIdCombo, tekCompensationCombo;
 
 	final SetupReaderWriter	configuration;
 	final String[]					languageValues	= {"Deutsch", "English"};
@@ -110,8 +110,10 @@ public class GPSLoggerSetupConfiguration1 extends Composite {
 	final String[]					telemetrieTypes	= { " - - - ", " Futaba", " JR DMSS", " HoTT", " JetiDuplex", " M-Link", " FrSky", " Spektrum", " P2Bus" };
 	final String[]					varioFactors;
 	final String[]					varioFilters		= Messages.getString(MessageIds.GDE_MSGT2019).split(GDE.STRING_COMMA);
-	final String[]					frskyIDs				= { " 0x00", " 0xA1", " 0x22", " 0x83", " 0xE4", " 0x45", " 0xC6", " 0x67", " 0x48", " 0xE9", " 0x6A", " 0xCB", " 0xAC", " 0x0D", " 0x8E",
-			" 0x2F", " 0xD0", " 0x71", " 0xF2", " 0x53", " 0x34", " 0x95", " 0x16", " 0xB7", " 0x98", " 0x39", " 0xBA", " 0x1B" };
+	//SensorID 0x01-1B, instance 0x0-0xF; ID am Sender = (SensorID-1 | AppID | instance)
+	final String[]					frskySensorIDs	= { " 0x00", " 0x01", " 0x02", " 0x03", " 0x04", " 0x05", " 0x06", " 0x07", " 0x08", " 0x09", " 0x0A", " 0x0B", " 0x0C", " 0x0D", " 0x0E",
+			" 0x0F", " 0x10", " 0x11", " 0x12", " 0x13", " 0x14", " 0x15", " 0x16", " 0x17", " 0x18", " 0x19", " 0x1A", " 0x1B" };
+	final String[]					frskyInstanceIDs= { " 0x00", " 0x01", " 0x02", " 0x03", " 0x04", " 0x05", " 0x06", " 0x07", " 0x08", " 0x09", " 0x0A", " 0x0B", " 0x0C", " 0x0D", " 0x0E", "0x0F"};
 	final String[] 					tekCompensationValues = new String[41];
 	
 
@@ -161,7 +163,8 @@ public class GPSLoggerSetupConfiguration1 extends Composite {
 		this.modusDistanceCombo.select(this.configuration.modusDistance);
 		this.telemetryTypeCombo.select(this.configuration.telemetryType);
 		this.minMaxRxCombo.select(this.configuration.rxControl);
-		this.frskyIdCombo.select(this.configuration.frskyAddr - 1);
+		this.frskyTxIdCombo.select(this.configuration.frskySensorAddr - 1);
+		this.frskyInstanceIdCombo.select(this.configuration.frSkyInstanceId);
 		this.fixSerialNumberButton.setSelection(this.configuration.serialNumberFix == 1 ? true : false);
 		this.hottDeadBandButton.setSelection(this.configuration.isHottDeadBand == 0 ? true : false);
 		this.robbeTBoxButton.setSelection(this.configuration.robbe_T_Box == 1 ? true : false);
@@ -185,8 +188,10 @@ public class GPSLoggerSetupConfiguration1 extends Composite {
 	}
 
 	public void changeVisibility() {
-		this.frskyIdLabel.setVisible(false);
-		this.frskyIdCombo.setVisible(false);
+		this.frskyTxIdLabel.setVisible(false);
+		this.frskyTxIdCombo.setVisible(false);
+		this.frskyInstanceIdLabel.setVisible(false);
+		this.frskyInstanceIdCombo.setVisible(false);
 		this.hottDeadBandButton.setVisible(false);
 		this.hottSpeedTypeLabel.setVisible(false);
 		this.hottSpeedTypeCombo.setVisible(false);
@@ -224,8 +229,10 @@ public class GPSLoggerSetupConfiguration1 extends Composite {
 				}
 				break;
 			case 6: //FrSky
-				this.frskyIdLabel.setVisible(true);
-				this.frskyIdCombo.setVisible(true);
+				this.frskyTxIdLabel.setVisible(true);
+				this.frskyTxIdCombo.setVisible(true);
+				this.frskyInstanceIdLabel.setVisible(true);
+				this.frskyInstanceIdCombo.setVisible(true);
 				break;
 			case 5: //M-Link
 				if (GPSLoggerSetupConfiguration2.mLinkGroupStatic != null) {
@@ -446,36 +453,68 @@ public class GPSLoggerSetupConfiguration1 extends Composite {
 						});
 					}
 					{
-						this.frskyIdLabel = new CLabel(this.addonComposite, SWT.RIGHT);
+						this.frskyTxIdLabel = new CLabel(this.addonComposite, SWT.RIGHT);
 						FormData frskyIdLabelLData = new FormData();
 						frskyIdLabelLData.width = 130;
 						frskyIdLabelLData.height = 18;
 						frskyIdLabelLData.left = new FormAttachment(0, 1000, 0);
 						frskyIdLabelLData.top = new FormAttachment(0, 1000, 0);
-						this.frskyIdLabel.setLayoutData(frskyIdLabelLData);
-						this.frskyIdLabel.setText(Messages.getString(MessageIds.GDE_MSGT2079));
-						this.frskyIdLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+						this.frskyTxIdLabel.setLayoutData(frskyIdLabelLData);
+						this.frskyTxIdLabel.setText("Sensor ID");
+						this.frskyTxIdLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 					}
 					{
-						this.frskyIdCombo = new CCombo(this.addonComposite, SWT.BORDER);
+						this.frskyTxIdCombo = new CCombo(this.addonComposite, SWT.BORDER);
 						FormData sensorTypeComboLData = new FormData();
 						sensorTypeComboLData.width = COMBO_WIDTH;
 						sensorTypeComboLData.height = COMBO_HEIGHT;
 						sensorTypeComboLData.left = new FormAttachment(0, 1000, 133);
 						sensorTypeComboLData.top = new FormAttachment(0, 1000, 0);
-						this.frskyIdCombo.setLayoutData(sensorTypeComboLData);
-						this.frskyIdCombo.setItems(this.frskyIDs);
-						this.frskyIdCombo.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
-						this.frskyIdCombo.setEditable(false);
-						this.frskyIdCombo.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-						this.frskyIdCombo.addSelectionListener(new SelectionAdapter() {
+						this.frskyTxIdCombo.setLayoutData(sensorTypeComboLData);
+						this.frskyTxIdCombo.setItems(this.frskySensorIDs);
+						this.frskyTxIdCombo.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+						this.frskyTxIdCombo.setEditable(false);
+						this.frskyTxIdCombo.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+						this.frskyTxIdCombo.addSelectionListener(new SelectionAdapter() {
 							@Override
 							public void widgetSelected(SelectionEvent evt) {
 								GPSLoggerSetupConfiguration1.log.log(Level.FINEST, "sensorTypeCombo.widgetSelected, event=" + evt); //$NON-NLS-1$
-								GPSLoggerSetupConfiguration1.this.configuration.frskyAddr = (short) (GPSLoggerSetupConfiguration1.this.frskyIdCombo.getSelectionIndex() + 1);
+								GPSLoggerSetupConfiguration1.this.configuration.frskySensorAddr = (short) (GPSLoggerSetupConfiguration1.this.frskyTxIdCombo.getSelectionIndex() + 1);
 								GPSLoggerSetupConfiguration1.this.dialog.enableSaveConfigurationButton(true);
 							}
 						});
+						{
+							this.frskyInstanceIdLabel = new CLabel(this.addonComposite, SWT.RIGHT);
+							FormData instanceIdLabelLData = new FormData();
+							instanceIdLabelLData.width = 130;
+							instanceIdLabelLData.height = 18;
+							instanceIdLabelLData.left = new FormAttachment(0, 1000, 0);
+							instanceIdLabelLData.top = new FormAttachment(0, 1000, 22);
+							this.frskyInstanceIdLabel.setLayoutData(instanceIdLabelLData);
+							this.frskyInstanceIdLabel.setText(Messages.getString(MessageIds.GDE_MSGT2079));
+							this.frskyInstanceIdLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+						}
+						{
+							this.frskyInstanceIdCombo = new CCombo(this.addonComposite, SWT.BORDER);
+							FormData instanceTypeComboLData = new FormData();
+							instanceTypeComboLData.width = COMBO_WIDTH;
+							instanceTypeComboLData.height = COMBO_HEIGHT;
+							instanceTypeComboLData.left = new FormAttachment(0, 1000, 133);
+							instanceTypeComboLData.top = new FormAttachment(0, 1000, 22);
+							this.frskyInstanceIdCombo.setLayoutData(instanceTypeComboLData);
+							this.frskyInstanceIdCombo.setItems(this.frskyInstanceIDs);
+							this.frskyInstanceIdCombo.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+							this.frskyInstanceIdCombo.setEditable(false);
+							this.frskyInstanceIdCombo.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+							this.frskyInstanceIdCombo.addSelectionListener(new SelectionAdapter() {
+								@Override
+								public void widgetSelected(SelectionEvent evt) {
+									GPSLoggerSetupConfiguration1.log.log(Level.FINEST, "instanceCombo.widgetSelected, event=" + evt); //$NON-NLS-1$
+									GPSLoggerSetupConfiguration1.this.configuration.frskySensorAddr = (short) (GPSLoggerSetupConfiguration1.this.frskyInstanceIdCombo.getSelectionIndex());
+									GPSLoggerSetupConfiguration1.this.dialog.enableSaveConfigurationButton(true);
+								}
+							});
+						}
 					}
 					this.addonComposite.layout();
 				}
