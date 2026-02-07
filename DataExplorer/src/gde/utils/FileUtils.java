@@ -1603,20 +1603,29 @@ public class FileUtils {
 		BufferedReader in = null;
 		String[] versionCheck = new String[] { "false", GDE.VERSION.substring(8) }; //$NON-NLS-1$
 		try {
-			URL gdeDownload = new URI("https://savannah.nongnu.org/news/?group=dataexplorer").toURL(); //$NON-NLS-1$
+			URL gdeDownload = new URI("https://download-mirror.savannah.gnu.org/releases/dataexplorer/").toURL(); //$NON-NLS-1$
 			in = new BufferedReader(new InputStreamReader(gdeDownload.openStream()));
 
 			String inputLine;
 			int readCount = 0; // limiting read count will help to reduce blocking time if a banner at year end are displayed
-			while (readCount++ < 300 && (inputLine = in.readLine()) != null) {
-				//System.out.println(readCount + " - " + inputLine); //$NON-NLS-1$
-				if (inputLine.toLowerCase().contains("version") && inputLine.toLowerCase().contains("released")) { //$NON-NLS-1$
-					String versionString = inputLine.toLowerCase().substring(inputLine.lastIndexOf("<b>") + 3, inputLine.lastIndexOf("</b>")); //$NON-NLS-1$ //$NON-NLS-2$
-					versionString = versionString.substring(versionString.indexOf(" ")+1, versionString.lastIndexOf(" ")); //$NON-NLS-1$ //$NON-NLS-2$
-					int availableVersion = Integer.parseInt(versionString.replace(GDE.STRING_DOT, GDE.STRING_EMPTY));
-					log.log(Level.OFF, "actualVersion = " + GDE.VERSION_NUMBER + " - availableVersion = " + availableVersion); //$NON-NLS-1$ //$NON-NLS-2$
-					versionCheck = new String[] { Boolean.valueOf(GDE.VERSION_NUMBER < availableVersion).toString(), versionString };
-					break;
+			while (readCount++ < 200 && (inputLine = in.readLine()) != null) {
+				if (inputLine.toLowerCase().contains("dataexplorer-") && inputLine.toLowerCase().contains("_mac")) { //$NON-NLS-1$
+					log.log(Level.INFO, readCount + " - " + inputLine); //$NON-NLS-1$
+					int index = inputLine.toLowerCase().indexOf("dataexplorer-")+13;
+					log.log(Level.INFO, inputLine.substring(index, index+5)); //$NON-NLS-1$
+					int availableVersion = 0;
+					try {
+						availableVersion = Integer.parseInt(inputLine.substring(index, index+5).replace(".", ""));
+					}
+					catch (Exception e) {
+						log.log(Level.WARNING, "availableVersion = " + inputLine.substring(index, index+5).replace(".", "")); //$NON-NLS-1$
+						break;
+					}
+					if (availableVersion > GDE.VERSION_NUMBER) {
+						log.log(Level.OFF, "actualVersion = " + GDE.VERSION_NUMBER + " - availableVersion = " + availableVersion); //$NON-NLS-1$ //$NON-NLS-2$
+						versionCheck = new String[] { Boolean.valueOf(GDE.VERSION_NUMBER < availableVersion).toString(), inputLine.substring(index, index+5) };
+						break;
+					}
 				}
 			}
 

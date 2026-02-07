@@ -594,7 +594,6 @@ public class DataExplorer extends Composite {
 				}
 			});
 			this.addDisposeListener(new DisposeListener() {
-				@SuppressWarnings("removal")
 				@Override
 				public void widgetDisposed(DisposeEvent evt) {
 					if (log.isLoggable(Level.FINE)) log.logp(Level.FINE, $CLASS_NAME, "widgetDisposed", GDE.shell.getLocation().toString() + "event = " + evt); //$NON-NLS-1$ //$NON-NLS-2$
@@ -604,7 +603,8 @@ public class DataExplorer extends Composite {
 					for (Thread thread : Thread.getAllStackTraces().keySet()) {
 						if (thread != null && !thread.isDaemon() && thread.isAlive() && thread.getClass().getName().startsWith("gde.device")) {
 							try {
-								thread.stop();
+								thread.interrupt();
+								thread.join(500);
 							}
 							catch (Throwable e) {
 								log.log(Level.SEVERE, "thread.getClass().getName() killed brute force while shutdown");
