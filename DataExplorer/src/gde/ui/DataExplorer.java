@@ -3329,7 +3329,7 @@ public class DataExplorer extends Composite {
 					@Override
 					public void run() {
 						try {
-							String downloadUrl = "https://download.savannah.gnu.org/releases/dataexplorer/";
+							String downloadUrl = "https://download-mirror.savannah.gnu.org/releases/dataexplorer/";
 							String arch = System.getProperty("sun.arch.data.model");
 							String version = versionCheck[1];
 							String filename = GDE.STRING_EMPTY;
