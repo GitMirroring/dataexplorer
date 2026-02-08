@@ -20,77 +20,76 @@
 		package gde.ui.dialog;
 		
 		import java.io.File;
-		import java.nio.file.Paths;
-		import java.util.Arrays;
-		import java.util.Enumeration;
-		import java.util.Set;
-		import java.util.Vector;
-		import java.util.logging.LogManager;
-		import java.util.logging.Logger;
-		import java.util.stream.Collectors;
-		
-		import org.eclipse.swt.SWT;
-		import org.eclipse.swt.custom.CCombo;
-		import org.eclipse.swt.custom.CLabel;
-		import org.eclipse.swt.custom.CTabFolder;
-		import org.eclipse.swt.custom.CTabItem;
-		import org.eclipse.swt.events.ControlEvent;
-		import org.eclipse.swt.events.ControlListener;
-		import org.eclipse.swt.events.DisposeEvent;
-		import org.eclipse.swt.events.DisposeListener;
-		import org.eclipse.swt.events.FocusEvent;
-		import org.eclipse.swt.events.FocusListener;
-		import org.eclipse.swt.events.HelpEvent;
-		import org.eclipse.swt.events.HelpListener;
-		import org.eclipse.swt.events.KeyAdapter;
-		import org.eclipse.swt.events.KeyEvent;
-		import org.eclipse.swt.events.SelectionAdapter;
-		import org.eclipse.swt.events.SelectionEvent;
-		import org.eclipse.swt.events.VerifyEvent;
-		import org.eclipse.swt.events.VerifyListener;
-		import org.eclipse.swt.layout.FillLayout;
-		import org.eclipse.swt.layout.FormAttachment;
-		import org.eclipse.swt.layout.FormData;
-		import org.eclipse.swt.layout.FormLayout;
-		import org.eclipse.swt.layout.GridData;
-		import org.eclipse.swt.layout.GridLayout;
-		import org.eclipse.swt.layout.RowData;
-		import org.eclipse.swt.layout.RowLayout;
-		import org.eclipse.swt.widgets.Button;
-		import org.eclipse.swt.widgets.Composite;
-		import org.eclipse.swt.widgets.Dialog;
-		import org.eclipse.swt.widgets.Display;
-		import org.eclipse.swt.widgets.Event;
-		import org.eclipse.swt.widgets.Group;
-		import org.eclipse.swt.widgets.Label;
-		import org.eclipse.swt.widgets.Listener;
-		import org.eclipse.swt.widgets.Menu;
-		import org.eclipse.swt.widgets.Shell;
-		import org.eclipse.swt.widgets.Slider;
-		import org.eclipse.swt.widgets.Text;
-		import org.eclipse.swt.widgets.Tree;
-		import org.eclipse.swt.widgets.TreeItem;
-		
-		import gde.DataAccess;
-		import gde.DataAccess.LocalAccess;
-		import gde.GDE;
-		import gde.config.DeviceConfigurations;
-		import gde.config.Settings;
-		import gde.device.CommaSeparatorTypes;
-		import gde.device.DecimalSeparatorTypes;
-		import gde.histo.ui.HistoExplorer;
-		import gde.histo.ui.datasources.SupplementObjectFolder;
-		import gde.log.Level;
-		import gde.messages.MessageIds;
-		import gde.messages.Messages;
-		import gde.ui.DataExplorer;
-		import gde.ui.ParameterConfigControl;
-		import gde.ui.SWTResourceManager;
-		import gde.ui.menu.LogLevelSelectionContextMenu;
-		import gde.utils.ObjectKeyCompliance;
-		import gde.utils.ObjectKeyScanner;
-		import gde.utils.OperatingSystemHelper;
-		import gde.utils.StringHelper;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.Set;
+import java.util.Vector;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.HelpEvent;
+import org.eclipse.swt.events.HelpListener;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.events.VerifyListener;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowData;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Dialog;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Slider;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
+
+import gde.DataAccess;
+import gde.DataAccess.LocalAccess;
+import gde.GDE;
+import gde.config.DeviceConfigurations;
+import gde.config.Settings;
+import gde.device.CommaSeparatorTypes;
+import gde.device.DecimalSeparatorTypes;
+import gde.histo.ui.HistoExplorer;
+import gde.histo.ui.datasources.SupplementObjectFolder;
+import gde.log.Level;
+import gde.messages.MessageIds;
+import gde.messages.Messages;
+import gde.ui.DataExplorer;
+import gde.ui.ParameterConfigControl;
+import gde.ui.SWTResourceManager;
+import gde.ui.menu.LogLevelSelectionContextMenu;
+import gde.utils.ObjectKeyCompliance;
+import gde.utils.ObjectKeyScanner;
+import gde.utils.OperatingSystemHelper;
+import gde.utils.StringHelper;
 		
 		/**
 		 * Dialog class to adjust application wide properties
@@ -226,6 +225,8 @@
 			final DataExplorer									application;
 			final String[]											supportedLocals					= { "en", "de" };																																													//$NON-NLS-1$ //$NON-NLS-2$
 			boolean															isLocaleLanguageChanged	= false;
+			
+			final String[] 											updateInterval 					=	{" 0", " 1", " 7", " 30"};
 		
 			final LogLevelSelectionContextMenu	logLevelMenu						= new LogLevelSelectionContextMenu();
 			Menu																popupmenu;
@@ -234,6 +235,15 @@
 				super(parent, style);
 				this.application = DataExplorer.getInstance();
 				this.settings = Settings.getInstance();
+			}
+			
+			private int getIndexOf(String value) {
+				int index = 0;
+				for(; index < updateInterval.length; ++index) {
+					if (updateInterval[index].trim().equals(value))
+						return index;
+				}
+				return 1;
 			}
 		
 			public void open() {
@@ -1376,7 +1386,6 @@
 							this.fontSizeGroup.setLayout(fontSizeGroupLayout);
 							RowData fontSizeGroupLData = new RowData();
 							fontSizeGroupLData.width = 478;
-							//fontSizeGroupLData.height = 70;
 							this.fontSizeGroup.setLayoutData(fontSizeGroupLData);
 							this.fontSizeGroup.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 							this.fontSizeGroup.setText(Messages.getString(MessageIds.GDE_MSGT0727));
@@ -1707,14 +1716,14 @@
 					{
 						this.osMiscComposite = new Composite(this.settingsTabFolder, SWT.NONE);
 						this.osMiscTabItem.setControl(this.osMiscComposite);
-						FillLayout composite1Layout = new FillLayout(org.eclipse.swt.SWT.VERTICAL);
+						RowLayout composite1Layout = new RowLayout(SWT.HORIZONTAL);
 						this.osMiscComposite.setLayout(composite1Layout);
 						{
 							this.desktopLauncher = new Group(this.osMiscComposite, SWT.NONE);
 							RowLayout desktopLauncherLayout = new RowLayout(SWT.HORIZONTAL);
-							desktopLauncherLayout.center = true;
-							desktopLauncherLayout.marginTop = 20;
-							desktopLauncherLayout.marginLeft = 55;
+							desktopLauncherLayout.marginTop = 10;
+							desktopLauncherLayout.marginBottom = GDE.IS_LINUX ? 15 : 8;
+							desktopLauncherLayout.marginWidth = 50;
 							desktopLauncherLayout.spacing = 10;
 							this.desktopLauncher.setLayout(desktopLauncherLayout);
 							this.desktopLauncher.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
@@ -1759,9 +1768,9 @@
 						{
 							this.shellMimeType = new Group(this.osMiscComposite, SWT.NONE);
 							RowLayout shellMimeTypeLayout = new RowLayout(SWT.HORIZONTAL);
-							shellMimeTypeLayout.center = true;
-							shellMimeTypeLayout.marginTop = 20;
-							shellMimeTypeLayout.marginLeft = 55;
+							shellMimeTypeLayout.marginTop = 10;
+							shellMimeTypeLayout.marginBottom = GDE.IS_LINUX ? 15 : 8;
+							shellMimeTypeLayout.marginWidth = 50;
 							shellMimeTypeLayout.spacing = 10;
 							this.shellMimeType.setLayout(shellMimeTypeLayout);
 							this.shellMimeType.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
@@ -1806,11 +1815,12 @@
 						{
 							this.objectKeyGroup = new Group(this.osMiscComposite, SWT.NONE);
 							RowLayout objectKeyGroupLayout = new RowLayout(SWT.HORIZONTAL);
-							objectKeyGroupLayout.center = true;
-							objectKeyGroupLayout.marginTop = 5;
-							objectKeyGroupLayout.marginLeft = 55;
+							objectKeyGroupLayout.marginTop = 10;
+							objectKeyGroupLayout.marginBottom = GDE.IS_LINUX ? 15 : 8;
+							objectKeyGroupLayout.marginWidth = 50;
 							objectKeyGroupLayout.spacing = 10;
 							this.objectKeyGroup.setLayout(objectKeyGroupLayout);
+							this.objectKeyGroup.setLayoutData(new RowData(478,  GDE.IS_LINUX ? 97 : 83));
 							this.objectKeyGroup.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 							this.objectKeyGroup.setText(Messages.getString(MessageIds.GDE_MSGT0206));
 							{
@@ -1900,9 +1910,9 @@
 						{
 							this.histoToolsGroup = new Group(this.osMiscComposite, SWT.NONE);
 							RowLayout histoToolsGroupLayout = new RowLayout(SWT.HORIZONTAL);
-							histoToolsGroupLayout.center = true;
-							histoToolsGroupLayout.marginTop = 20;
-							histoToolsGroupLayout.marginLeft = 55;
+							histoToolsGroupLayout.marginTop = 10;
+							histoToolsGroupLayout.marginBottom = GDE.IS_LINUX ? 15 : 8;
+							histoToolsGroupLayout.marginWidth = 50;
 							histoToolsGroupLayout.spacing = 10;
 							this.histoToolsGroup.setLayout(histoToolsGroupLayout);
 							this.histoToolsGroup.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
@@ -1944,11 +1954,63 @@
 							}
 						}
 						{
+							Group updateGroup = new Group(this.osMiscComposite, SWT.NONE);
+							RowLayout updateGroupLayout = new RowLayout(SWT.HORIZONTAL);
+							updateGroupLayout.marginTop = 10;
+							updateGroupLayout.marginBottom = GDE.IS_LINUX ? 15 : 8;
+							updateGroupLayout.spacing = 15;
+							updateGroup.setLayout(updateGroupLayout);
+							updateGroup.setLayoutData(new RowData(478, 40));
+							updateGroup.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+							updateGroup.setText("Update-Check");
+							{
+								CLabel updateIntervalLabel = new CLabel(updateGroup, SWT.RIGHT);
+								RowData languageLabelLData = new RowData();
+								languageLabelLData.width = 180;
+								languageLabelLData.height = 18;
+								updateIntervalLabel.setLayoutData(languageLabelLData);
+								updateIntervalLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+								updateIntervalLabel.setText(Messages.getString(MessageIds.GDE_MSGI0079));
+								updateIntervalLabel.setToolTipText(Messages.getString(MessageIds.GDE_MSGI0080));
+							}
+							{
+								CCombo intervalCombo = new CCombo(updateGroup, SWT.BORDER);
+								RowData intervalComboLData = new RowData();
+								intervalComboLData.width = 70;
+								intervalComboLData.height = 20;
+								intervalCombo.setLayoutData(intervalComboLData);
+								intervalCombo.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+								intervalCombo.setItems(updateInterval);
+								intervalCombo.select(getIndexOf(settings.getUpdateCheckInterval()));
+								intervalCombo.setEditable(false);
+								intervalCombo.setToolTipText(Messages.getString(MessageIds.GDE_MSGI0080));
+								intervalCombo.setBackground(this.application.COLOR_WHITE);
+								intervalCombo.addSelectionListener(new SelectionAdapter() {
+									@Override
+									public void widgetSelected(SelectionEvent evt) {
+										log.log(Level.FINEST, "languageCombo.widgetSelected, event=" + evt); //$NON-NLS-1$
+										settings.setUpdateCheckInterval(intervalCombo.getText().trim());
+									}
+								});
+							}
+							{
+								CLabel updateIntervalLabel = new CLabel(updateGroup, SWT.RIGHT);
+								RowData languageLabelLData = new RowData();
+								languageLabelLData.width = 130;
+								languageLabelLData.height = 18;
+								updateIntervalLabel.setLayoutData(languageLabelLData);
+								updateIntervalLabel.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+								updateIntervalLabel.setText(Messages.getString(MessageIds.GDE_MSGI0081));
+								updateIntervalLabel.setToolTipText(Messages.getString(MessageIds.GDE_MSGI0080));
+							}
+
+						}
+						{
 							this.miscDiagGroup = new Group(this.osMiscComposite, SWT.NONE);
 							RowLayout miscDiagGroupLayout = new RowLayout(SWT.HORIZONTAL);
-							miscDiagGroupLayout.center = true;
-							miscDiagGroupLayout.marginTop = 20;
-							miscDiagGroupLayout.marginLeft = 55;
+							miscDiagGroupLayout.marginTop = 10;
+							miscDiagGroupLayout.marginBottom = GDE.IS_LINUX ? 15 : 8;
+							miscDiagGroupLayout.marginWidth = 50;
 							miscDiagGroupLayout.spacing = 10;
 							this.miscDiagGroup.setLayout(miscDiagGroupLayout);
 							this.miscDiagGroup.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));

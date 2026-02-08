@@ -127,7 +127,8 @@ public class GDE {
 	public static final boolean							IS_MAC_COCOA											= GDE.IS_MAC && System.getProperty("DO_NOT_USE_COCOA") == null && SWT.getPlatform().toLowerCase().startsWith("cocoa");			//$NON-NLS-1$ //$NON-NLS-2$
 	public static final boolean							IS_ARCH_DATA_MODEL_64							= System.getProperty("sun.arch.data.model").equals("64");																																		//$NON-NLS-1$ //$NON-NLS-2$
 	public static final boolean							IS_OS_ARCH_ARM										= System.getProperty("os.arch").toLowerCase().startsWith("arm") || System.getProperty("os.arch").toLowerCase().startsWith("aarch");	//$NON-NLS-1$ //$NON-NLS-2$
-	public static final boolean							isSystemDarkTheme									= GDE.isSystemDarkTheme();
+	public static final boolean							IS_SYSTEM_DARK_THEME							= GDE.isSystemDarkTheme();
+	public static final String							DOWNLOAD_UPDATE_URL								= "https://download-mirror.savannah.gnu.org/releases/dataexplorer/";
 
 	/** Depends on the Operating System type. Is empty if no valid OS. */
 	public static final String							APPL_HOME_PATH										= GDE.IS_WINDOWS

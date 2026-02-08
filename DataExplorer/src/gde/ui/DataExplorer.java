@@ -242,18 +242,17 @@ public class DataExplorer extends Composite {
 		this.threadId = Thread.currentThread().threadId();
 
 		SWTResourceManager.registerResourceUser(this);
-		boolean isDarkTheme = GDE.isSystemDarkTheme;
-		COLOR_WHITE = isDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_BLACK) : SWTResourceManager.getColor(SWT.COLOR_WHITE);
-		COLOR_LIGHT_GREY = isDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY) : SWTResourceManager.getColor(SWT.COLOR_WIDGET_BACKGROUND);
-		COLOR_GREY = isDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY) : SWTResourceManager.getColor(SWT.COLOR_GRAY);
-		COLOR_CANVAS_YELLOW = isDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_BLACK) : SWTResourceManager.getColor(250, 249, 211);
-		COLOR_BLUE = isDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_DARK_BLUE) : SWTResourceManager.getColor(SWT.COLOR_BLUE);
-		COLOR_LIGHT_BLUE = isDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_BLACK) : SWTResourceManager.getColor(239, 239, 255);
-		COLOR_DARK_GREEN = isDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_GREEN) : SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN);
-		COLOR_BLACK = isDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_WHITE) : SWTResourceManager.getColor(SWT.COLOR_BLACK);
-		COLOR_RED = isDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_DARK_RED) : SWTResourceManager.getColor(SWT.COLOR_RED);
-		COLOR_BACKGROUND = isDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY) : SWTResourceManager.getColor(SWT.COLOR_WIDGET_BACKGROUND);
-		COLOR_FOREGROUND = isDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY) : SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROUND);
+		COLOR_WHITE = GDE.IS_SYSTEM_DARK_THEME ? SWTResourceManager.getColor(SWT.COLOR_BLACK) : SWTResourceManager.getColor(SWT.COLOR_WHITE);
+		COLOR_LIGHT_GREY = GDE.IS_SYSTEM_DARK_THEME ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY) : SWTResourceManager.getColor(SWT.COLOR_WIDGET_BACKGROUND);
+		COLOR_GREY = GDE.IS_SYSTEM_DARK_THEME ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY) : SWTResourceManager.getColor(SWT.COLOR_GRAY);
+		COLOR_CANVAS_YELLOW = GDE.IS_SYSTEM_DARK_THEME ? SWTResourceManager.getColor(SWT.COLOR_BLACK) : SWTResourceManager.getColor(250, 249, 211);
+		COLOR_BLUE = GDE.IS_SYSTEM_DARK_THEME ? SWTResourceManager.getColor(SWT.COLOR_DARK_BLUE) : SWTResourceManager.getColor(SWT.COLOR_BLUE);
+		COLOR_LIGHT_BLUE = GDE.IS_SYSTEM_DARK_THEME ? SWTResourceManager.getColor(SWT.COLOR_BLACK) : SWTResourceManager.getColor(239, 239, 255);
+		COLOR_DARK_GREEN = GDE.IS_SYSTEM_DARK_THEME ? SWTResourceManager.getColor(SWT.COLOR_GREEN) : SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN);
+		COLOR_BLACK = GDE.IS_SYSTEM_DARK_THEME ? SWTResourceManager.getColor(SWT.COLOR_WHITE) : SWTResourceManager.getColor(SWT.COLOR_BLACK);
+		COLOR_RED = GDE.IS_SYSTEM_DARK_THEME ? SWTResourceManager.getColor(SWT.COLOR_DARK_RED) : SWTResourceManager.getColor(SWT.COLOR_RED);
+		COLOR_BACKGROUND = GDE.IS_SYSTEM_DARK_THEME ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY) : SWTResourceManager.getColor(SWT.COLOR_WIDGET_BACKGROUND);
+		COLOR_FOREGROUND = GDE.IS_SYSTEM_DARK_THEME ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY) : SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROUND);
 
 	}
 
@@ -490,7 +489,7 @@ public class DataExplorer extends Composite {
 				}
 			});
 
-			if (!this.settings.isUpdateChecked()) {
+			if (this.settings.isUpdateCheckedRequired()) {
 				//use extra thread since GDE.display.asyncExec seam blocking UI
 				new Thread(new Runnable() {
 					@Override
@@ -3323,13 +3322,14 @@ public class DataExplorer extends Composite {
 	 */
 	public void check4update() {
 		final String[] versionCheck = FileUtils.isUpdateAvailable();
+		this.settings.setLastUpdateCheckDate(StringHelper.getDate());
 		if (Boolean.valueOf(versionCheck[0])) {
 			if (openUpdateMessageDialogSync()) {
 				new Thread("Download") {
 					@Override
 					public void run() {
 						try {
-							String downloadUrl = "https://download-mirror.savannah.gnu.org/releases/dataexplorer/";
+							String downloadUrl = GDE.DOWNLOAD_UPDATE_URL;
 							String arch = System.getProperty("sun.arch.data.model");
 							String version = versionCheck[1];
 							String filename = GDE.STRING_EMPTY;

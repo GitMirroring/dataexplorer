@@ -248,6 +248,8 @@ public final class Settings extends Properties {
 	public static final String			IS_APPL_REGISTERED							= "is_GDE_registered";																																						//$NON-NLS-1$
 	public static final String			IS_LOCK_UUCP_HINTED							= "is_lock_uucp_hinted";																																					//$NON-NLS-1$
 	public static final String			LAST_UPDATE_CHECK								= "last_update_check";																																						//$NON-NLS-1$
+	public static final String			NEXT_UPDATE_CHECK								= "next_update_check";																																						//$NON-NLS-1$
+	public static final String			UPDATE_CHECK_INTERVAL						= "update_check_interval";																																						//$NON-NLS-1$
 	public final static String			IS_OBJECT_TEMPLATES_ACTIVE			= "is_object_templates_active";																																		//$NON-NLS-1$
 
 	public final static String			GRID_DASH_STYLE									= "grid_dash_style";																																							//$NON-NLS-1$
@@ -852,7 +854,9 @@ public final class Settings extends Properties {
 			writer.write(String.format("%-40s \t=\t %s\n", Settings.IS_DESKTOP_SHORTCUT_CREATED, this.isDesktopShortcutCreated())); //$NON-NLS-1$
 			writer.write(String.format("%-40s \t=\t %s\n", Settings.IS_APPL_REGISTERED, this.isApplicationRegistered())); //$NON-NLS-1$
 			writer.write(String.format("%-40s \t=\t %s\n", Settings.IS_LOCK_UUCP_HINTED, this.isLockUucpHinted())); //$NON-NLS-1$
-			writer.write(String.format("%-40s \t=\t %s\n", Settings.LAST_UPDATE_CHECK, StringHelper.getDate())); //$NON-NLS-1$
+			writer.write(String.format("%-40s \t=\t %s\n", Settings.LAST_UPDATE_CHECK, this.getLastUpdateCheckDate())); //$NON-NLS-1$
+			writer.write(String.format("%-40s \t=\t %s\n", Settings.NEXT_UPDATE_CHECK, this.getNextUpdateCheckDate())); //$NON-NLS-1$
+			writer.write(String.format("%-40s \t=\t %s\n", Settings.UPDATE_CHECK_INTERVAL, this.getUpdateCheckInterval())); //$NON-NLS-1$
 			writer.write(String.format("%-40s \t=\t %s\n", Settings.IS_OBJECT_TEMPLATES_ACTIVE, isObjectTemplatesActive())); //$NON-NLS-1$
 			writer.write(String.format("%-40s \t=\t %s\n", Settings.IS_MAC_TOUCHBAR, isMacTouchbarEnabled())); //$NON-NLS-1$
 			// charger specials
@@ -1516,7 +1520,7 @@ public final class Settings extends Properties {
 	 * @return the grid horizontal color of the compare window (r,g,b)
 	 */
 	public Color getGridCompareWindowHorizontalColor() {
-		return GDE.isSystemDarkTheme && getGridCompareWindowHorizontalColorStr().equals("200,200,200")? SWTResourceManager.getColor(SWT.COLOR_WHITE)
+		return GDE.IS_SYSTEM_DARK_THEME && getGridCompareWindowHorizontalColorStr().equals("200,200,200")? SWTResourceManager.getColor(SWT.COLOR_WHITE)
 				: getColor(Settings.GRID_COMPARE_WINDOW_HOR_COLOR, "200,200,200"); //$NON-NLS-1$
 	}
 
@@ -1555,7 +1559,7 @@ public final class Settings extends Properties {
 	 * @return the grid vertical color of the compare window (r,g,b)
 	 */
 	public Color getGridCompareWindowVerticalColor() {
-		return GDE.isSystemDarkTheme && getGridCompareWindowVerticalColorStr().equals("200,200,200") ? SWTResourceManager.getColor(SWT.COLOR_WHITE)
+		return GDE.IS_SYSTEM_DARK_THEME && getGridCompareWindowVerticalColorStr().equals("200,200,200") ? SWTResourceManager.getColor(SWT.COLOR_WHITE)
 				: getColor(Settings.GRID_COMPARE_WINDOW_VER_COLOR, "200,200,200"); //$NON-NLS-1$
 	}
 
@@ -1858,10 +1862,64 @@ public final class Settings extends Properties {
 	}
 
 	/**
-	 * query value if a hint was displayed to enable uucp locking used on UNIX based systems with serial comm
+	 * query value for scheduled update check
 	 */
-	public boolean isUpdateChecked() {
-		return this.getProperty(Settings.LAST_UPDATE_CHECK, "2000-01-01").equals(StringHelper.getDate()); //$NON-NLS-1$
+	public boolean isUpdateCheckedRequired() {
+		try {
+			return Integer.parseInt(this.getNextUpdateCheckDate().replace(GDE.STRING_MINUS, GDE.STRING_EMPTY)) <= Integer.parseInt(StringHelper.getDate().replace(GDE.STRING_MINUS, GDE.STRING_EMPTY)); //$NON-NLS-1$
+		}
+		catch (NumberFormatException e) {
+			return false;
+		}
+	}
+	
+	/**
+	 * query value of last update check
+	 */
+	public String getNextUpdateCheckDate() {
+		return this.getProperty(Settings.NEXT_UPDATE_CHECK, StringHelper.getDate()); //$NON-NLS-1$
+	}
+
+	/**
+	 * set value for next update check
+	 */
+	public void setNextUpdateCheckDate() {
+		String interval = getUpdateCheckInterval();
+		Date lastCheckDate = StringHelper.getDate(this.getLastUpdateCheckDate()); 
+		long nextUpdate = lastCheckDate.getTime() + (Long.parseLong(interval.trim()) > 0 ? Long.parseLong(interval.trim()) * 3600000L * 24 : 3600000L * 24 * 365);
+		String nextUpdateDate = StringHelper.getFormatedTime("yyyy-MM-dd", nextUpdate);
+		log.log(Level.OFF, "next update " + nextUpdateDate);
+		this.setProperty(Settings.NEXT_UPDATE_CHECK, nextUpdateDate); //$NON-NLS-1$
+	}
+	
+	/**
+	 * query value of last update check
+	 */
+	public String getLastUpdateCheckDate() {
+		return this.getProperty(Settings.LAST_UPDATE_CHECK, StringHelper.getDate()); //$NON-NLS-1$
+	}
+
+	/**
+	 * set value of last update check
+	 */
+	public void setLastUpdateCheckDate(String lastCHeckDate) {
+		this.setProperty(Settings.LAST_UPDATE_CHECK, lastCHeckDate); //$NON-NLS-1$
+		this.setNextUpdateCheckDate();
+	}
+	
+	/**
+	 * query interval in days for update check
+	 */
+	public String getUpdateCheckInterval() {
+		return this.getProperty(Settings.UPDATE_CHECK_INTERVAL, "1"); //$NON-NLS-1$
+	}
+
+	/**
+	 * set interval value for update check in days
+	 */
+	public void setUpdateCheckInterval(String interval) {
+		this.setProperty(Settings.UPDATE_CHECK_INTERVAL, interval);
+		this.setNextUpdateCheckDate();
 	}
 
 	/**
@@ -1877,7 +1935,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getGraphicsCurveAreaBackground() {
-		return GDE.isSystemDarkTheme && getGraphicsCurveAreaBackgroundStr().equals("250,249,211") ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY)
+		return GDE.IS_SYSTEM_DARK_THEME && getGraphicsCurveAreaBackgroundStr().equals("250,249,211") ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY)
 				: getColor(Settings.GRAPHICS_AREA_BACKGROUND, "250,249,211"); // COLOR_CANVAS_YELLOW //$NON-NLS-1$
 	}
 
@@ -1901,7 +1959,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getCompareCurveAreaBackground() {
-		return GDE.isSystemDarkTheme && getCompareCurveAreaBackgroundStr().equals("250,249,211") ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY)
+		return GDE.IS_SYSTEM_DARK_THEME && getCompareCurveAreaBackgroundStr().equals("250,249,211") ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY)
 				: getColor(Settings.COMPARE_AREA_BACKGROUND, "250,249,211"); // COLOR_CANVAS_YELLOW //$NON-NLS-1$
 	}
 
@@ -1925,7 +1983,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getUtilityCurveAreaBackground() {
-		return GDE.isSystemDarkTheme && getUtilityCurveAreaBackgroundStr().equals("250,249,211") ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY)
+		return GDE.IS_SYSTEM_DARK_THEME && getUtilityCurveAreaBackgroundStr().equals("250,249,211") ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY)
 				: getColor(Settings.UTILITY_AREA_BACKGROUND, "250,249,211"); // COLOR_CANVAS_YELLOW //$NON-NLS-1$
 	}
 
@@ -1949,7 +2007,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getGraphicsSurroundingBackground() {
-		return GDE.isSystemDarkTheme && getGraphicsSurroundingBackgroundStr().equals("250,249,230") ? SWTResourceManager.getColor(SWT.COLOR_BLACK)
+		return GDE.IS_SYSTEM_DARK_THEME && getGraphicsSurroundingBackgroundStr().equals("250,249,230") ? SWTResourceManager.getColor(SWT.COLOR_BLACK)
 				: getColor(Settings.GRAPHICS_SURROUND_BACKGRD, "250,249,230"); // COLOR_VERY_LIGHT_YELLOW //$NON-NLS-1$
 	}
 
@@ -1973,7 +2031,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getCompareSurroundingBackground() {
-		return GDE.isSystemDarkTheme && getCompareSurroundingBackgroundStr().equals("250,249,230") ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY)
+		return GDE.IS_SYSTEM_DARK_THEME && getCompareSurroundingBackgroundStr().equals("250,249,230") ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY)
 				: getColor(Settings.COMPARE_SURROUND_BACKGRD, "250,249,230"); // COLOR_VERY_LIGHT_YELLOW //$NON-NLS-1$
 	}
 
@@ -1997,7 +2055,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getUtilitySurroundingBackground() {
-		return GDE.isSystemDarkTheme && getUtilitySurroundingBackgroundStr().equals("250,249,230") ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY)
+		return GDE.IS_SYSTEM_DARK_THEME && getUtilitySurroundingBackgroundStr().equals("250,249,230") ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY)
 				: getColor(Settings.UTILITY_SURROUND_BACKGRD, "250,249,230"); // COLOR_VERY_LIGHT_YELLOW //$NON-NLS-1$
 	}
 
@@ -2021,7 +2079,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getGraphicsCurvesBorderColor() {
-		return GDE.isSystemDarkTheme && getGraphicsCurvesBorderColorStr().equals("180,180,180") ? SWTResourceManager.getColor(SWT.COLOR_WHITE)
+		return GDE.IS_SYSTEM_DARK_THEME && getGraphicsCurvesBorderColorStr().equals("180,180,180") ? SWTResourceManager.getColor(SWT.COLOR_WHITE)
 				: getColor(Settings.GRAPHICS_BORDER_COLOR, "180,180,180"); // COLOR_GREY //$NON-NLS-1$
 	}
 
@@ -2045,7 +2103,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getTimeLineColor() {
-		return GDE.isSystemDarkTheme && getTimeLineColorStr().equals("0,0,0") ? SWTResourceManager.getColor(SWT.COLOR_WHITE)
+		return GDE.IS_SYSTEM_DARK_THEME && getTimeLineColorStr().equals("0,0,0") ? SWTResourceManager.getColor(SWT.COLOR_WHITE)
 				: getColor(Settings.GRAPHICS_TIMELINE_COLOR, "0,0,0"); // COLOR_BLACK //$NON-NLS-1$
 	}
 
@@ -2069,7 +2127,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getHeaderCommentColor() {
-		return GDE.isSystemDarkTheme && getHeaderCommentColorStr().equals("0,0,0") ? SWTResourceManager.getColor(SWT.COLOR_WHITE)
+		return GDE.IS_SYSTEM_DARK_THEME && getHeaderCommentColorStr().equals("0,0,0") ? SWTResourceManager.getColor(SWT.COLOR_WHITE)
 				: getColor(Settings.GRAPHICS_HEADER_COMMENT_COLOR, "0,0,0"); // COLOR_BLACK //$NON-NLS-1$
 	}
 
@@ -2093,7 +2151,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getCurveCompareBorderColor() {
-		return GDE.isSystemDarkTheme && getCurveCompareBorderColorStr().equals("180,180,180") ? SWTResourceManager.getColor(SWT.COLOR_WHITE)
+		return GDE.IS_SYSTEM_DARK_THEME && getCurveCompareBorderColorStr().equals("180,180,180") ? SWTResourceManager.getColor(SWT.COLOR_WHITE)
 				: getColor(Settings.COMPARE_BORDER_COLOR, "180,180,180"); // COLOR_GREY //$NON-NLS-1$
 	}
 
@@ -2117,7 +2175,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getUtilityCurvesBorderColor() {
-		return GDE.isSystemDarkTheme && getUtilityCurvesBorderColorStr().equals("180,180,180") ? SWTResourceManager.getColor(SWT.COLOR_WHITE)
+		return GDE.IS_SYSTEM_DARK_THEME && getUtilityCurvesBorderColorStr().equals("180,180,180") ? SWTResourceManager.getColor(SWT.COLOR_WHITE)
 				: getColor(Settings.UTILITY_BORDER_COLOR, "180,180,180"); // COLOR_GREY //$NON-NLS-1$
 	}
 
@@ -2141,7 +2199,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getStatisticsSurroundingAreaBackground() {
-		return GDE.isSystemDarkTheme && getStatisticsSurroundingAreaBackgroundStr().equals("250,249,230") ? SWTResourceManager.getColor(SWT.COLOR_BLACK)
+		return GDE.IS_SYSTEM_DARK_THEME && getStatisticsSurroundingAreaBackgroundStr().equals("250,249,230") ? SWTResourceManager.getColor(SWT.COLOR_BLACK)
 				: getColor(Settings.STATISTICS_SURROUND_BACKGRD, "250,249,230"); // COLOR_VERY_LIGHT_YELLOW //$NON-NLS-1$
 	}
 
@@ -2165,7 +2223,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getStatisticsInnerAreaBackground() {
-		return GDE.isSystemDarkTheme && getStatisticsInnerAreaBackgroundStr().equals("255,255,255") ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY)
+		return GDE.IS_SYSTEM_DARK_THEME && getStatisticsInnerAreaBackgroundStr().equals("255,255,255") ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY)
 				: getColor(Settings.STATISTICS_INNER_BACKGROUND, "255,255,255"); // COLOR_WHITE //$NON-NLS-1$
 	}
 
@@ -2189,7 +2247,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getAnalogSurroundingAreaBackground() {
-		return GDE.isSystemDarkTheme && getAnalogSurroundingAreaBackgroundStr().equals("250,249,230") ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY)
+		return GDE.IS_SYSTEM_DARK_THEME && getAnalogSurroundingAreaBackgroundStr().equals("250,249,230") ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY)
 				: getColor(Settings.ANALOG_SURROUND_BACKGRD, "250,249,230"); // COLOR_VERY_LIGHT_YELLOW //$NON-NLS-1$
 	}
 
@@ -2213,7 +2271,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getAnalogInnerAreaBackground() {
-		return GDE.isSystemDarkTheme && getAnalogInnerAreaBackgroundStr().equals("250,249,211") ? SWTResourceManager.getColor(SWT.COLOR_GRAY)
+		return GDE.IS_SYSTEM_DARK_THEME && getAnalogInnerAreaBackgroundStr().equals("250,249,211") ? SWTResourceManager.getColor(SWT.COLOR_GRAY)
 				: getColor(Settings.ANALOG_INNER_BACKGROUND, "250,249,211"); // COLOR_CANVAS_YELLOW //$NON-NLS-1$
 	}
 
@@ -2237,7 +2295,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getDigitalSurroundingAreaBackground() {
-		return GDE.isSystemDarkTheme && getDigitalSurroundingAreaBackgroundStr().equals("250,249,230") ? SWTResourceManager.getColor(SWT.COLOR_BLACK)
+		return GDE.IS_SYSTEM_DARK_THEME && getDigitalSurroundingAreaBackgroundStr().equals("250,249,230") ? SWTResourceManager.getColor(SWT.COLOR_BLACK)
 				: getColor(Settings.DIGITAL_SURROUND_BACKGRD, "250,249,230"); // COLOR_VERY_LIGHT_YELLOW //$NON-NLS-1$
 	}
 
@@ -2261,7 +2319,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getDigitalInnerAreaBackground() {
-		return GDE.isSystemDarkTheme && getDigitalInnerAreaBackgroundStr().equals("250,249,211") ? SWTResourceManager.getColor(SWT.COLOR_BLACK)
+		return GDE.IS_SYSTEM_DARK_THEME && getDigitalInnerAreaBackgroundStr().equals("250,249,211") ? SWTResourceManager.getColor(SWT.COLOR_BLACK)
 				: getColor(Settings.DIGITAL_INNER_BACKGROUND, "250,249,211"); // COLOR_CANVAS_YELLOW //$NON-NLS-1$
 	}
 
@@ -2285,7 +2343,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getCellVoltageSurroundingAreaBackground() {
-		return GDE.isSystemDarkTheme && getCellVoltageSurroundingAreaBackgroundStr().equals("250,249,230") ? SWTResourceManager.getColor(SWT.COLOR_BLACK)
+		return GDE.IS_SYSTEM_DARK_THEME && getCellVoltageSurroundingAreaBackgroundStr().equals("250,249,230") ? SWTResourceManager.getColor(SWT.COLOR_BLACK)
 				: getColor(Settings.CELL_VOLTAGE_SURROUND_BACKGRD, "250,249,230"); // COLOR_VERY_LIGHT_YELLOW //$NON-NLS-1$
 	}
 
@@ -2309,7 +2367,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getCellVoltageInnerAreaBackground() {
-		return GDE.isSystemDarkTheme && getCellVoltageInnerAreaBackgroundStr().equals("250,249,211") ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY)
+		return GDE.IS_SYSTEM_DARK_THEME && getCellVoltageInnerAreaBackgroundStr().equals("250,249,211") ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY)
 				: getColor(Settings.CELL_VOLTAGE_INNER_BACKGROUND, "250,249,211"); // COLOR_CANVAS_YELLOW //$NON-NLS-1$
 	}
 
@@ -2333,7 +2391,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getFileCommentSurroundingAreaBackground() {
-		return GDE.isSystemDarkTheme && getFileCommentSurroundingAreaBackgroundStr().equals("250,249,230") ? SWTResourceManager.getColor(SWT.COLOR_BLACK)
+		return GDE.IS_SYSTEM_DARK_THEME && getFileCommentSurroundingAreaBackgroundStr().equals("250,249,230") ? SWTResourceManager.getColor(SWT.COLOR_BLACK)
 				: getColor(Settings.FILE_COMMENT_SURROUND_BACKGRD, "250,249,230"); // COLOR_VERY_LIGHT_YELLOW //$NON-NLS-1$
 	}
 
@@ -2357,7 +2415,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getFileCommentInnerAreaBackground() {
-		return GDE.isSystemDarkTheme && getFileCommentInnerAreaBackgroundStr().equals("255,255,255") ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY)
+		return GDE.IS_SYSTEM_DARK_THEME && getFileCommentInnerAreaBackgroundStr().equals("255,255,255") ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY)
 				: getColor(Settings.FILE_COMMENT_INNER_BACKGROUND, "255,255,255"); // COLOR_WHITE //$NON-NLS-1$
 	}
 
@@ -2381,7 +2439,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getObjectDescriptionSurroundingAreaBackground() {
-		return GDE.isSystemDarkTheme && getObjectDescriptionSurroundingAreaBackgroundStr().equals("250,249,230") ? SWTResourceManager.getColor(SWT.COLOR_BLACK)
+		return GDE.IS_SYSTEM_DARK_THEME && getObjectDescriptionSurroundingAreaBackgroundStr().equals("250,249,230") ? SWTResourceManager.getColor(SWT.COLOR_BLACK)
 				: getColor(Settings.OBJECT_DESC_SURROUND_BACKGRD, "250,249,230"); // COLOR_VERY_LIGHT_YELLOW //$NON-NLS-1$
 	}
 
@@ -2405,7 +2463,7 @@ public final class Settings extends Properties {
 	 * @return requested color
 	 */
 	public Color getObjectDescriptionInnerAreaBackground() {
-		return GDE.isSystemDarkTheme && getObjectDescriptionInnerAreaBackgroundStr().equals("255,255,255") ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY)
+		return GDE.IS_SYSTEM_DARK_THEME && getObjectDescriptionInnerAreaBackgroundStr().equals("255,255,255") ? SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY)
 				: getColor(Settings.OBJECT_DESC_INNER_BACKGROUND, "255,255,255"); // COLOR_WHITE //$NON-NLS-1$
 	}
 

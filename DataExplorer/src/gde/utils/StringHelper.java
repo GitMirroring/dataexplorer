@@ -18,6 +18,7 @@
 ****************************************************************************************/
 package gde.utils;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -142,6 +143,17 @@ public class StringHelper {
 		return new SimpleDateFormat("yyyy-MM-dd").format(new Date()); //$NON-NLS-1$
 	}
 
+	/**
+	 * method to get date from given formated date string
+	 */
+	public static Date getDate(String dateString) {
+		try {
+			return new SimpleDateFormat("yyyy-MM-dd").parse(dateString);
+		}
+		catch (ParseException e) {
+			return new Date();
+		}
+	}
 	/**
 	 * method to get formated time by given format string and time in millis seconds
 	 */

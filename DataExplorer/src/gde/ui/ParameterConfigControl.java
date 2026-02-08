@@ -47,7 +47,7 @@ public class ParameterConfigControl {
 	final Composite			baseComposite;
 	final CLabel				nameLabel, descriptionLabel;
 	final Text					text;
-	final Color					textColor					= GDE.isSystemDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_WHITE) : SWTResourceManager.getColor(SWT.COLOR_BLACK);
+	final Color					textColor					= GDE.IS_SYSTEM_DARK_THEME ? SWTResourceManager.getColor(SWT.COLOR_WHITE) : SWTResourceManager.getColor(SWT.COLOR_BLACK);
 	final Color					textWarningColor	= SWTResourceManager.getColor(SWT.COLOR_RED);
 	final Slider				slider;
 
@@ -130,7 +130,7 @@ public class ParameterConfigControl {
 			this.text.setLayoutData(textLData);
 			this.text.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 			this.text.setEditable(isTextValueEditable);
-			this.text.setBackground(GDE.isSystemDarkTheme ? SWTResourceManager.getColor(isTextValueEditable ? SWT.COLOR_GRAY : SWT.COLOR_WIDGET_DARK_SHADOW) 
+			this.text.setBackground(GDE.IS_SYSTEM_DARK_THEME ? SWTResourceManager.getColor(isTextValueEditable ? SWT.COLOR_GRAY : SWT.COLOR_WIDGET_DARK_SHADOW) 
 			: SWTResourceManager.getColor(isTextValueEditable ? SWT.COLOR_WHITE : SWT.COLOR_WIDGET_LIGHT_SHADOW));
 			if (isTextValueEditable) {
 				this.text.addVerifyListener(new VerifyListener() {
@@ -294,7 +294,7 @@ public class ParameterConfigControl {
 			this.text.setLayoutData(textLData);
 			this.text.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 			this.text.setEditable(isTextValueEditable);
-			this.text.setBackground(GDE.isSystemDarkTheme ? SWTResourceManager.getColor(isTextValueEditable ? SWT.COLOR_GRAY : SWT.COLOR_WIDGET_DARK_SHADOW)
+			this.text.setBackground(GDE.IS_SYSTEM_DARK_THEME ? SWTResourceManager.getColor(isTextValueEditable ? SWT.COLOR_GRAY : SWT.COLOR_WIDGET_DARK_SHADOW)
 				:	SWTResourceManager.getColor(isTextValueEditable ? SWT.COLOR_WHITE : SWT.COLOR_WIDGET_LIGHT_SHADOW));
 			this.text.setForeground(textColor);
 			if (isTextValueEditable) {
@@ -447,7 +447,7 @@ public class ParameterConfigControl {
 			this.text.setLayoutData(textLData);
 			this.text.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 			this.text.setEditable(isTextValueEditable);
-			this.text.setBackground(GDE.isSystemDarkTheme ? SWTResourceManager.getColor(isTextValueEditable ? SWT.COLOR_GRAY : SWT.COLOR_WIDGET_DARK_SHADOW)
+			this.text.setBackground(GDE.IS_SYSTEM_DARK_THEME ? SWTResourceManager.getColor(isTextValueEditable ? SWT.COLOR_GRAY : SWT.COLOR_WIDGET_DARK_SHADOW)
 				: SWTResourceManager.getColor(isTextValueEditable ? SWT.COLOR_WHITE : SWT.COLOR_WIDGET_LIGHT_SHADOW));
 			if (isTextValueEditable) {
 				this.text.addVerifyListener(new VerifyListener() {
@@ -565,7 +565,7 @@ public class ParameterConfigControl {
 			this.text.setLayoutData(textLData);
 			this.text.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 			this.text.setEditable(false);
-			this.text.setBackground(GDE.isSystemDarkTheme ? SWTResourceManager.getColor(SWT.COLOR_WIDGET_DARK_SHADOW)
+			this.text.setBackground(GDE.IS_SYSTEM_DARK_THEME ? SWTResourceManager.getColor(SWT.COLOR_WIDGET_DARK_SHADOW)
 			: SWTResourceManager.getColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
 		}
 		{

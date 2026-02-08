@@ -4,6 +4,7 @@ Version 4.0.2 - xx yyy 2026
 Generic changes/fixes 
 	* fix about dialog resize problem (ARM 64)
 	* refine update check for newer release version
+	* enable update check interval
 	
 	Device specific changes/fixes
 	* LiPoWatch - fine tune dialog widget positions

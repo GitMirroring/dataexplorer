@@ -1603,7 +1603,7 @@ public class FileUtils {
 		BufferedReader in = null;
 		String[] versionCheck = new String[] { "false", GDE.VERSION.substring(8) }; //$NON-NLS-1$
 		try {
-			URL gdeDownload = new URI("https://download-mirror.savannah.gnu.org/releases/dataexplorer/").toURL(); //$NON-NLS-1$
+			URL gdeDownload = new URI(GDE.DOWNLOAD_UPDATE_URL).toURL(); //$NON-NLS-1$
 			in = new BufferedReader(new InputStreamReader(gdeDownload.openStream()));
 
 			String inputLine;
