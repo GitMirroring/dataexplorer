@@ -1866,6 +1866,8 @@ public final class Settings extends Properties {
 	 */
 	public boolean isUpdateCheckedRequired() {
 		try {
+			if (this.getUpdateCheckInterval().trim().equals("0"))
+				return false;
 			return Integer.parseInt(this.getNextUpdateCheckDate().replace(GDE.STRING_MINUS, GDE.STRING_EMPTY)) <= Integer.parseInt(StringHelper.getDate().replace(GDE.STRING_MINUS, GDE.STRING_EMPTY)); //$NON-NLS-1$
 		}
 		catch (NumberFormatException e) {
