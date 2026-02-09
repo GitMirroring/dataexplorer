@@ -872,7 +872,7 @@
 		</exec>
 	</target>
 
-	<!-- build java runtime using jlink MAC OS Intel -->
+	<!-- build java runtime using jlink Windows OS Intel -->
 	<target name="jlink_win_intel" depends="init-windows">
 		<exec executable="jlink" dir="${output.windows64.program}">
 			<arg value="--compress=zip-6" />
@@ -882,13 +882,13 @@
 			<arg value="--output" />
 			<arg value="runtime" />
 			<arg value="--module-path" />
-			<arg value="C:\Program Files\Java\jdk-25\jmods" />
+			<arg value="C:\Program Files\Java\latest\jdk-25\jmods" />
 			<arg value="--add-modules" />
 			<arg value="java.se,jdk.xml.dom,jdk.crypto.cryptoki" />
 		</exec>
 	</target>
 
-	<!-- build java runtime using jlink MAC OS Intel -->
+	<!-- build java runtime using jlink Linux OS Intel -->
 	<target name="jlink_lnx_intel" depends="init-linux">
 		<exec executable="jlink" dir="${output.gnulinux64.program}">
 			<arg value="--compress=zip-6" />
