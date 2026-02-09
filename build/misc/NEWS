@@ -1,22 +1,26 @@
-GNU DataExplorer - News - comes with Version 4.0.1 - 19 Jan 2026
+GNU DataExplorer - News - comes with Version 4.0.2 - 11 Feb 2026
 
 Generic changes/fixes 
-	* repair opening web browser to display update web page
-	* repair several operating system calls
-	* correct info regarding C++ redistributable for Windows
-	* limit read count during update check to reduce blocking time if a banner at year end are displayed
-	* fix settings dialog resize problem, especially on ARM64 
+	* fix about dialog resize problem (ARM 64)
+	* refine update check for newer release version
+	* enable update check interval
 	
 Device specific changes/fixes
-	* MC3000* - getData implementation, checking slot number request match slot number responds, updated
+	* LiPoWatch - fine tune dialog widget positions
+	* GPS-Logger2/3 - add IGC modus 'extended'  
+	* GPS-Logger3 - add TEC compensation factor  (FW 1.32)
+	* GPS-Logger3 - enhance record set description with TEC compensation factor and TEC pressure statistics
+	* GPS-Logger2/3 - correct sensor ID and instance ID setup for FrSKY
 		
 Allgemeine Änderungen/Korrekturen
-	* Korrektur des Webbrowsers, um die Update-Webseite anzuzeigen
-	* Korrektur mehrerer Betriebssystemaufrufe
-	* Korrektur der Informationen zu C++ Redistributable für Windows
-	* Begrenzung der Anzahl der gelesenen Zeilen während der Update-Prüfung, um die Blockierungszeit zu reduzieren, wenn ein Banner angezeigt wird
-	* Behebung des Problems mit der Größenänderung des Einstellungsdialogs, insbesondere auf ARM64
+	* Korrektur von Dialog Größenproblem (ARM 64)
+	* Update-Check verbessert
+	* Update-Check Intervall anpassbar
 
 Geräte spezifische Änderungen
-	* MC3000* - getData-Implementierung, zur Überprüfung der Übereinstimmung zwischen angeforderter Slot-Nummer und zurückgegebener Slot-Nummer, aktualisiert
+	* LiPoWatch - Neuanordnung von Widgets innerhalb der Gerätedialoges
+	* GPS-Logger2/3 - IGC Modus 'extended' hinzugefügt  
+	* GPS-Logger3 - TEK Kompensationsfaktor hinzugefügt (FW 1.32)
+	* GPS-Logger3 - Datensatzbeschreibung an TEK Kompensationsfaktor und Druckstatistik angepasst
+	* GPS-Logger2/3 - Korrektur von Sensor ID und Instanz ID im FrSKY Setup
 	  
