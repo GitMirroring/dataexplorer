@@ -15,7 +15,7 @@
     along with GNU DataExplorer.  If not, see <https://www.gnu.org/licenses/>.
 
 		Copyright 2017 Google Inc. (Guava Cache)
-    Copyright (c) 2016,2017,2018,2019 Thomas Eickert
+    Copyright (c) 2016-2019 Thomas Eickert
 ****************************************************************************************/
 /*
  * Copyright (C) 2017 The Guava Authors

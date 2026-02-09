@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with GNU DataExplorer.  If not, see <https://www.gnu.org/licenses/>.
 
-    Copyright (c) 2016,2017,2018,2019 Thomas Eickert
+    Copyright (c) 2016-2019 Thomas Eickert
 ****************************************************************************************/
 package gde.histo.device;
 
