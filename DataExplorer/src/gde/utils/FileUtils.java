@@ -48,6 +48,8 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.jar.JarEntry;
@@ -1602,6 +1604,10 @@ public class FileUtils {
 	public static String[] isUpdateAvailable() {
 		BufferedReader in = null;
 		String[] versionCheck = new String[] { "false", GDE.VERSION.substring(8) }; //$NON-NLS-1$
+		SortedMap<Integer,String> newerVersionNumbers = new TreeMap<>();
+		int actualVersionNumber = GDE.VERSION_NUMBER;
+		int newerVersionNumber = 0;
+
 		try {
 			URL gdeDownload = new URI(GDE.DOWNLOAD_UPDATE_URL).toURL(); //$NON-NLS-1$
 			in = new BufferedReader(new InputStreamReader(gdeDownload.openStream()));
@@ -1609,22 +1615,19 @@ public class FileUtils {
 			String inputLine;
 			int readCount = 0; // limiting read count will help to reduce blocking time if a banner at year end are displayed
 			while (readCount++ < 200 && (inputLine = in.readLine()) != null) {
-				if (inputLine.toLowerCase().contains("dataexplorer-") && inputLine.toLowerCase().contains("_mac")) { //$NON-NLS-1$
+				if (inputLine.toLowerCase().contains("dataexplorer-") && inputLine.toLowerCase().contains("_mac_64.dmg\"")) { //$NON-NLS-1$
 					log.log(Level.INFO, readCount + " - " + inputLine); //$NON-NLS-1$
 					int index = inputLine.toLowerCase().indexOf("dataexplorer-")+13;
 					log.log(Level.INFO, inputLine.substring(index, index+5)); //$NON-NLS-1$
-					int availableVersion = 0;
 					try {
-						availableVersion = Integer.parseInt(inputLine.substring(index, index+5).replace(".", ""));
+						newerVersionNumber = Integer.parseInt(inputLine.substring(index, index+5).replace(".", ""));
 					}
 					catch (Exception e) {
 						log.log(Level.WARNING, "availableVersion = " + inputLine.substring(index, index+5).replace(".", "")); //$NON-NLS-1$
 						break;
 					}
-					if (availableVersion > GDE.VERSION_NUMBER) {
-						log.log(Level.OFF, "actualVersion = " + GDE.VERSION_NUMBER + " - availableVersion = " + availableVersion); //$NON-NLS-1$ //$NON-NLS-2$
-						versionCheck = new String[] { Boolean.valueOf(GDE.VERSION_NUMBER < availableVersion).toString(), inputLine.substring(index, index+5) };
-						break;
+					if (newerVersionNumber > actualVersionNumber) {
+						newerVersionNumbers.put(newerVersionNumber, inputLine.substring(index, index+5));
 					}
 				}
 			}
@@ -1643,6 +1646,14 @@ public class FileUtils {
 				// ignore
 			}
 		}
+
+		//log.log(Level.OFF, "versionNumbers = " + versionNumbers.keySet());
+		if (newerVersionNumbers.size() > 0) {
+			log.log(Level.OFF, "actualVersion = " + actualVersionNumber + " - newestAvailableVersion = " + newerVersionNumbers.lastKey()); //$NON-NLS-1$ //$NON-NLS-2$
+			versionCheck = new String[] { Boolean.valueOf(actualVersionNumber < newerVersionNumbers.lastKey()).toString(), newerVersionNumbers.get(newerVersionNumbers.lastKey()) };
+		}
+		
+		//log.log(Level.OFF, "versionCheck = " + versionCheck[0] + " - " + versionCheck[1]); 
 		return versionCheck;
 	}
 

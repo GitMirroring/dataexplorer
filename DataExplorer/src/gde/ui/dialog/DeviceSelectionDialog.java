@@ -761,6 +761,7 @@ public class DeviceSelectionDialog extends org.eclipse.swt.widgets.Dialog {
 			}
 			initializeUI(); // update all the entries according active device configuration
 			updateAvailablePorts();
+			this.dialogShell.setSize(566, 644);
 			this.dialogShell.setLocation(getParent().toDisplay(100, 10));
 			this.dialogShell.open();
 			Display display = this.dialogShell.getDisplay();

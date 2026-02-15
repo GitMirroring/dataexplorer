@@ -1,5 +1,13 @@
 Development history / change log, please read from bottom up
 
+Version 4.0.3 - xx yyy 2026
+Generic changes/fixes 
+	* refine update check for latest release version
+	* fix device selection dialog resize problem (ARM 64)
+	
+Device specific changes/fixes
+	* 
+
 Version 4.0.2 - 11 Feb 2026
 Generic changes/fixes 
 	* fix about dialog resize problem (ARM 64)
