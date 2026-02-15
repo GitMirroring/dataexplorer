@@ -32,6 +32,8 @@ import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.HelpEvent;
@@ -225,6 +227,18 @@ public class DeviceSelectionDialog extends org.eclipse.swt.widgets.Dialog {
 					DeviceSelectionDialog.this.application.resetShellIcon();
 					log.log(Level.FINE, "disposed"); //$NON-NLS-1$
 				}
+			});
+			this.dialogShell.addControlListener(new ControlListener() {
+
+				@Override
+				public void controlMoved(ControlEvent e) {
+					// nothing to d
+				}
+
+				@Override
+				public void controlResized(ControlEvent e) {
+					dialogShell.setSize(566, 644);
+				}			
 			});
 			{
 				FormData composite1LData = new FormData();
@@ -761,7 +775,6 @@ public class DeviceSelectionDialog extends org.eclipse.swt.widgets.Dialog {
 			}
 			initializeUI(); // update all the entries according active device configuration
 			updateAvailablePorts();
-			this.dialogShell.setSize(566, 644);
 			this.dialogShell.setLocation(getParent().toDisplay(100, 10));
 			this.dialogShell.open();
 			Display display = this.dialogShell.getDisplay();
