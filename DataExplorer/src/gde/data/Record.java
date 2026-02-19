@@ -1050,8 +1050,16 @@ public class Record extends AbstractRecord implements IRecord {
 				for (TriggerRange range : this.triggerRanges) {
 					for (int i = range.in; i < range.out; i++) {
 						int point = this.realGet(i);
-						if (point > this.maxValueTriggered) this.maxValueTriggered = point;
-						if (point < this.minValueTriggered) this.minValueTriggered = point;
+						if (point > this.maxValueTriggered) {
+							this.maxValueTriggered = point;
+							this.maxValueTimeStampIndex = i;
+							log.log(Level.FINE, this.name + " max at index = " + i);
+						}
+						if (point < this.minValueTriggered) {
+							this.minValueTriggered = point;
+							this.minValueTimeStampIndex = i;
+							log.log(Level.FINE, this.name + " min at index = " + i);
+						}
 					}
 				}
 			}
@@ -2734,7 +2742,6 @@ public class Record extends AbstractRecord implements IRecord {
 	public Vector<TriggerRange> getTriggerRanges() {
 		synchronized (this) {
 			if (this.triggerRanges == null && this.isDisplayable && this.triggerIsGreater != null && this.triggerLevel != null) {
-				log.log(Level.FINE, this.name);
 				int deviceTriggerlevel = Double.valueOf(this.device.reverseTranslateValue(this, this.triggerLevel / 1000.0) * 1000).intValue();
 				for (int i = 0; i < this.realSize(); ++i) {
 					int point = this.realGet(i);
