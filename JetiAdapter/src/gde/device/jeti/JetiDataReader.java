@@ -138,13 +138,9 @@ public class JetiDataReader {
 							for (TelemetryData.TelemetryVar dataVar : telemetrySensor.getVariables()) {
 								int dataItemsSize = dataVar.getItems().size();
 								if (JetiDataReader.log.isLoggable(Level.INFO)) JetiDataReader.log.log(Level.INFO, dataVar.getName() + " data items size = " + dataItemsSize);
-								if (dataVar.getItems().size() > 3) { //Alarm has 3 values start time, alarm time , end time
+								if (dataItemsSize > 3) {
 										if (!isTimeStepEvaluated && dataVar.getTimeSteps().size() > 0) {
-											int nameLength = telemetrySensor.getName().length();
-											if (nameLength <= 5)
-												reverseChannelStatistics.append(String.format(Locale.getDefault(), "%-8s\t\tmin %.3fsec avg %.3fsec max %.3fsec at %s", telemetrySensor.getName(), dataVar.getTimeSteps().getMinValue()/1000., dataVar.getTimeSteps().getAvgValue()/1000., dataVar.getTimeSteps().getMaxValue()/1000., TimeLine.getFomatedTimeWithUnit(dataVar.getTimeSteps().getMaxValueTimeStamp()))).append(GDE.CHAR_NEW_LINE);
-											else
-												reverseChannelStatistics.append(String.format(Locale.getDefault(), "%-8s\tmin %.3fsec avg %.3fsec max %.3fsec at %s", telemetrySensor.getName(), dataVar.getTimeSteps().getMinValue()/1000., dataVar.getTimeSteps().getAvgValue()/1000., dataVar.getTimeSteps().getMaxValue()/1000., TimeLine.getFomatedTimeWithUnit(dataVar.getTimeSteps().getMaxValueTimeStamp()))).append(GDE.CHAR_NEW_LINE);
+											reverseChannelStatistics.append(String.format(Locale.getDefault(), "%-5s - min %.3fsec avg %.3fsec max %.3fsec at %s", telemetrySensor.getName(), dataVar.getTimeSteps().getMinValue()/1000., dataVar.getTimeSteps().getAvgValue()/1000., dataVar.getTimeSteps().getMaxValue()/1000., TimeLine.getFomatedTimeWithUnit(dataVar.getTimeSteps().getMaxValueTimeStamp()))).append(GDE.CHAR_NEW_LINE);
 											if (JetiDataReader.log.isLoggable(Level.INFO)) JetiDataReader.log.log(Level.INFO, String.format(Locale.getDefault(), "%10s: min %.3fsec avg %.3fsec max %.3fsec at %s", telemetrySensor.getName(), dataVar.getTimeSteps().getMinValue()/1000., dataVar.getTimeSteps().getAvgValue()/1000., dataVar.getTimeSteps().getMaxValue()/1000., TimeLine.getFomatedTimeWithUnit(dataVar.getTimeSteps().getMaxValueTimeStamp())));
 											isTimeStepEvaluated = true;
 										}

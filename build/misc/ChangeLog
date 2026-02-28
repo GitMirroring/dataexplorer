@@ -7,7 +7,7 @@ Generic changes/fixes
 	* correct min/max time step value for min/max records referencing trigger
 	
 Device specific changes/fixes
-	* 
+	* JetiAdapter - refine formating of reverse channel statistics
 
 Version 4.0.2 - 11 Feb 2026
 Generic changes/fixes 
