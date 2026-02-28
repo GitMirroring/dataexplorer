@@ -288,7 +288,10 @@ public class FileCommentWindow extends CTabItem {
 	          String text = item.getText(event.index);
 	          Point size = event.gc.textExtent(text);
 	          int offset2 = event.index == 0 ? Math.max(0, (event.height - size.y) / 2) : 0;
-	          event.gc.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+	          if (text.contains("Task"))
+		          event.gc.setFont(SWTResourceManager.getFont("Courier", GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
+	          else
+		          event.gc.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE, SWT.NORMAL));
 	          event.gc.drawText(text, event.x, event.y + offset2, true);
 	          break;
 	        }

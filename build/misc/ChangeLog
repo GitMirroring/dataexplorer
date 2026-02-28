@@ -5,9 +5,11 @@ Generic changes/fixes
 	* refine update check for latest release version
 	* fix device selection dialog resize problem (ARM 64)
 	* correct min/max time step value for min/max records referencing trigger
+	* refine font selection of record set description while key "Task" occurs  
 	
 Device specific changes/fixes
 	* JetiAdapter - refine formating of reverse channel statistics
+	* IGCAdapter - use mono space font if description contains triangle task analyze
 
 Version 4.0.2 - 11 Feb 2026
 Generic changes/fixes 
