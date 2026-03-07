@@ -10,6 +10,7 @@ Generic changes/fixes
 Device specific changes/fixes
 	* JetiAdapter - refine formating of reverse channel statistics
 	* IGCAdapter - use mono space font if description contains triangle task analyze
+	* IGCAdapter - change input stream reader encoding to UTF-8
 
 Version 4.0.2 - 11 Feb 2026
 Generic changes/fixes 

@@ -171,7 +171,7 @@ public class IGCReaderWriter {
 				}
 
 				long approximateLines = inputFile.length() / 35; //B sentence is the most used one and has 35 bytes
-				reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "ISO-8859-1")); //$NON-NLS-1$
+				reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "UTF-8")); //$NON-NLS-1$
 
 				//skip all lines before A-Record appears, max 10
 				while ((line = reader.readLine()) != null && !line.startsWith("A") && lineNumber < 10) 
