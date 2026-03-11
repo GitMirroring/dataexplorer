@@ -1,26 +1,24 @@
-GNU DataExplorer - News - comes with Version 4.0.2 - 11 Feb 2026
+GNU DataExplorer - News - comes with Version 4.0.3 - 12 Mar 2026
 
 Generic changes/fixes 
-	* fix about dialog resize problem (ARM 64)
-	* refine update check for newer release version
-	* enable update check interval
+	* refine update check for latest release version
+	* fix device selection dialog resize problem (ARM 64)
+	* correct min/max time step value for min/max records referencing trigger
+	* refine font selection of record set description while key "Task" occurs  
 	
 Device specific changes/fixes
-	* LiPoWatch - fine tune dialog widget positions
-	* GPS-Logger2/3 - add IGC modus 'extended'  
-	* GPS-Logger3 - add TEC compensation factor  (FW 1.32)
-	* GPS-Logger3 - enhance record set description with TEC compensation factor and TEC pressure statistics
-	* GPS-Logger2/3 - correct sensor ID and instance ID setup for FrSKY
+	* JetiAdapter - refined formatting of reverse channel statistics
+	* IGCAdapter - use mono space font if description contains triangle task analyze
+	* IGCAdapter - changed input stream reader encoding to UTF-8
 		
 Allgemeine Änderungen/Korrekturen
-	* Korrektur von Dialog Größenproblem (ARM 64)
-	* Update-Check verbessert
-	* Update-Check Intervall anpassbar
+	* Aktualisierungsprüfung für neueste Release-Version verfeinert
+	* Problem bei der Größenanpassung des Geräteauswahldialogs behoben (ARM 64)
+	* Min./Max.-Zeitschrittwert für Min./Max.-Datensätze, die sich auf Trigger beziehen, korrigiert
+	* Schriftartauswahl für Datensatzbeschreibung bei Auftreten der Taste „Task“ verfeinert
 
 Geräte spezifische Änderungen
-	* LiPoWatch - Neuanordnung von Widgets innerhalb der Gerätedialoges
-	* GPS-Logger2/3 - IGC Modus 'extended' hinzugefügt  
-	* GPS-Logger3 - TEK Kompensationsfaktor hinzugefügt (FW 1.32)
-	* GPS-Logger3 - Datensatzbeschreibung an TEK Kompensationsfaktor und Druckstatistik angepasst
-	* GPS-Logger2/3 - Korrektur von Sensor ID und Instanz ID im FrSKY Setup
+	* JetiAdapter – Verfeinerung der Formatierung der Rückkanalstatistiken
+	* IGCAdapter – Verwendung einer Monospace-Schriftart, wenn die Beschreibung eine Dreiecksaufgabeanalyse enthält
+	* IGCAdapter – Änderung der Kodierung des Eingabestream-Readers auf UTF-8
 	  

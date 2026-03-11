@@ -1,6 +1,6 @@
 Development history / change log, please read from bottom up
 
-Version 4.0.3 - xx yyy 2026
+Version 4.0.3 - 12 Mar 2026
 Generic changes/fixes 
 	* refine update check for latest release version
 	* fix device selection dialog resize problem (ARM 64)
@@ -8,9 +8,9 @@ Generic changes/fixes
 	* refine font selection of record set description while key "Task" occurs  
 	
 Device specific changes/fixes
-	* JetiAdapter - refine formating of reverse channel statistics
+	* JetiAdapter - refined formatting of reverse channel statistics
 	* IGCAdapter - use mono space font if description contains triangle task analyze
-	* IGCAdapter - change input stream reader encoding to UTF-8
+	* IGCAdapter - changed input stream reader encoding to UTF-8
 
 Version 4.0.2 - 11 Feb 2026
 Generic changes/fixes 
