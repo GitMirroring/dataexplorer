@@ -1,7 +1,8 @@
 #!/bin/bash
 # ***** script to launch DataExplorer ** 22 Nov 2023 WB *****
 #fix Ubuntu Unity problem not displaying sliders set LIBOVERLAY_SCROLLBAR to 0
-#export LIBOVERLAY_SCROLLBAR=0
+export SWT_GTK4=0
+export GDK_BACKEND=x11
 #use packaged Java runtime
 export PATH=$(dirname $0)/runtime/bin:$PATH
 echo $PATH

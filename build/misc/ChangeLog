@@ -1,5 +1,12 @@
 Development history / change log, please read from bottom up
 
+Version 4.0.4 - xx yyy 2026
+Generic changes/fixes 
+	* use GDK_BACKEND variable to correct UI behavior on Linux
+	
+Device specific changes/fixes
+	* 
+
 Version 4.0.3 - 12 Mar 2026
 Generic changes/fixes 
 	* refine update check for latest release version
