@@ -3,6 +3,7 @@ Development history / change log, please read from bottom up
 Version 4.0.4 - xx yyy 2026
 Generic changes/fixes 
 	* use GDK_BACKEND variable to correct UI behavior on Linux
+	* fix Windows serial port not fount issue, updating jSerialComm library
 	
 Device specific changes/fixes
 	* 
