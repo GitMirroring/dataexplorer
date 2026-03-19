@@ -1,24 +1,10 @@
-GNU DataExplorer - News - comes with Version 4.0.3 - 12 Mar 2026
+GNU DataExplorer - News - comes with Version 4.0.4 - 20 Mar 2026
 
 Generic changes/fixes 
-	* refine update check for latest release version
-	* fix device selection dialog resize problem (ARM 64)
-	* correct min/max time step value for min/max records referencing trigger
-	* refine font selection of record set description while key "Task" occurs  
-	
-Device specific changes/fixes
-	* JetiAdapter - refined formatting of reverse channel statistics
-	* IGCAdapter - use mono space font if description contains triangle task analyze
-	* IGCAdapter - changed input stream reader encoding to UTF-8
+	* use GDK_BACKEND variable to correct UI behavior on Linux
+	* fix Windows serial port not fount issue, updating jSerialComm library to 2.11.4
 		
 Allgemeine Änderungen/Korrekturen
-	* Aktualisierungsprüfung für neueste Release-Version verfeinert
-	* Problem bei der Größenanpassung des Geräteauswahldialogs behoben (ARM 64)
-	* Min./Max.-Zeitschrittwert für Min./Max.-Datensätze, die sich auf Trigger beziehen, korrigiert
-	* Schriftartauswahl für Datensatzbeschreibung bei Auftreten der Taste „Task“ verfeinert
-
-Geräte spezifische Änderungen
-	* JetiAdapter – Verfeinerung der Formatierung der Rückkanalstatistiken
-	* IGCAdapter – Verwendung einer Monospace-Schriftart, wenn die Beschreibung eine Dreiecksaufgabeanalyse enthält
-	* IGCAdapter – Änderung der Kodierung des Eingabestream-Readers auf UTF-8
+	* Verwendung der GDK_BACKEND Variable, um das User-Interface Verhalten auf Linux Systemen anzupassen
+	* löse das Problem "kein serieller Port" auf Windows durch Upgrade der jSerialComm Bibliothek auf 2.11.4
 	  
