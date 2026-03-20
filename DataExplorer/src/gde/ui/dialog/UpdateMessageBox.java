@@ -19,8 +19,11 @@
 package gde.ui.dialog;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
@@ -78,6 +81,18 @@ public class UpdateMessageBox extends Dialog {
 		shell.open();
 		//shell.layout();
 		shell.pack();
+		Point size = shell.getSize();
+		shell.addControlListener(new ControlListener() {
+
+			public void controlMoved(ControlEvent arg0) {
+				shell.setSize(size);
+			}
+
+			public void controlResized(ControlEvent arg0) {
+				shell.setSize(size);
+			}
+			
+		});
 		shell.setLocation(500, 300);
 		Display display = getParent().getDisplay();
 		while (!shell.isDisposed()) {

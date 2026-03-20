@@ -1,5 +1,12 @@
 Development history / change log, please read from bottom up
 
+Version 4.0.5 - xx yyy 2026
+Generic changes/fixes 
+	* fix upgrade dialog resize problem (ARM 64)
+	
+Device specific changes/fixes
+	* 
+
 Version 4.0.4 - 20 Mar 2026
 Generic changes/fixes 
 	* use GDK_BACKEND variable to correct UI behavior on Linux
