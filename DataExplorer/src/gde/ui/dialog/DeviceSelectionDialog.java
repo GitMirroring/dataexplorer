@@ -1215,7 +1215,7 @@ public class DeviceSelectionDialog extends org.eclipse.swt.widgets.Dialog {
 				}
 				catch (Throwable t) {
 					DeviceSelectionDialog.log.log(Level.SEVERE, t.getMessage(), t);
-					DataExplorer.getInstance().openMessageDialogAsync(t.getMessage());
+					DataExplorer.getInstance().openMessageDialogAsync(Messages.getString(MessageIds.GDE_MSGE0038, new String[] {t.getClass().getSimpleName()}));
 				}
 				log.log(Level.TIME, "updateAvailablePortsThread time =", StringHelper.getFormatedTime("ss:SSS", (new Date().getTime() - GDE.StartTime)));
 			}
