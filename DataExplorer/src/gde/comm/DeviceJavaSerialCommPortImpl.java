@@ -211,7 +211,8 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 			}
 		}
 		catch (Throwable t) {
-			log.log(Level.WARNING, t.getMessage(), t);
+			log.log(Level.SEVERE, t.getMessage(), t);
+			throw t;
 		}
 
 		if (log.isLoggable(Level.FINE)) log.logp(Level.FINE, DeviceJavaSerialCommPortImpl.$CLASS_NAME, $METHOD_NAME, "exit"); //$NON-NLS-1$

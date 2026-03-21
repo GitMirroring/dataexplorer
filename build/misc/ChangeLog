@@ -3,6 +3,7 @@ Development history / change log, please read from bottom up
 Version 4.0.5 - xx yyy 2026
 Generic changes/fixes 
 	* fix upgrade dialog resize problem (ARM 64)
+	* enable error message box while detecting error from jSerialComm
 	
 Device specific changes/fixes
 	* 
