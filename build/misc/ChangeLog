@@ -6,7 +6,7 @@ Generic changes/fixes
 	* enable error message box while detecting error from jSerialComm
 	
 Device specific changes/fixes
-	* 
+	* UT71D - add initial support
 
 Version 4.0.4 - 20 Mar 2026
 Generic changes/fixes 

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>-- DataExplorer GraphicsTemplate --</comment>
+<entry key="0_isPositionLeft">true</entry>
+<entry key="RecordSet_horizontalGridColor">192,192,192</entry>
+<entry key="RecordSet_horizontalGridRecordOrdinal">0</entry>
+<entry key="0_lineStyle">1</entry>
+<entry key="0_numberFormat">3</entry>
+<entry key="RecordSet_horizontalGridType">0</entry>
+<entry key="RecordSet_timeGridType">0</entry>
+<entry key="RecordSet_timeGridLineStyle">3</entry>
+<entry key="0_defMinValue">0.01</entry>
+<entry key="RecordSet_horizontalGridLineStyle">2</entry>
+<entry key="0_isStartpointZero">false</entry>
+<entry key="RecordSet_smoothVoltageCurve">false</entry>
+<entry key="0_isStartEndDefined">false</entry>
+<entry key="0_defMaxValue">0.163</entry>
+<entry key="RecordSet_timeGridColor">192,192,192</entry>
+<entry key="0_color">0,0,255</entry>
+<entry key="0_isRoundOut">false</entry>
+<entry key="0_isVisible">true</entry>
+<entry key="0_lineWidth">1</entry>
+<entry key="RecordSet_smoothAtCurrentDrop">false</entry>
+</properties>

@@ -28,15 +28,11 @@ import javax.xml.bind.JAXBException;
 import gde.GDE;
 import gde.comm.DeviceCommPort;
 import gde.config.Settings;
-import gde.data.Channel;
-import gde.data.Channels;
 import gde.data.Record;
 import gde.data.RecordSet;
 import gde.device.DeviceConfiguration;
 import gde.device.IDevice;
-import gde.exception.ApplicationConfigurationException;
 import gde.exception.DataInconsitsentException;
-import gde.exception.SerialPortException;
 import gde.log.Level;
 import gde.messages.Messages;
 import gde.ui.DataExplorer;
@@ -153,7 +149,7 @@ public class UniTrend extends DeviceConfiguration implements IDevice {
 	 * convert the device bytes into raw values, no calculation will take place here, see translateValue reverseTranslateValue
 	 * inactive or to be calculated data point are filled with 0 and needs to be handles after words
 	 * @param points pointer to integer array to be filled with converted data
-	 * @param dataBuffer byte arrax with the data to be converted
+	 * @param dataBuffer byte array with the data to be converted
 	 */
 	@Override
 	public int[] convertDataBytes(int[] points, byte[] dataBuffer) {
@@ -173,6 +169,9 @@ public class UniTrend extends DeviceConfiguration implements IDevice {
 			case 48:
 				points[0] /= 10;
 				break;
+			case 49:
+			default:
+				break;
 			case 50:
 				points[0] *= 10;
 				break;
@@ -181,9 +180,6 @@ public class UniTrend extends DeviceConfiguration implements IDevice {
 				break;
 			case 52:
 				points[0] *= 10;
-				break;
-			case 49:
-			default:
 				break;
 			}
 			break;
@@ -301,12 +297,10 @@ public class UniTrend extends DeviceConfiguration implements IDevice {
 				if (doUpdateProgressBar && i % 50 == 0) this.application.setProgress(((++progressCycle * 2500) / recordDataSize), sThreadId);
 			}
 		}
-		if (log.isLoggable(Level.FINE))
-			log.log(Level.FINE, timeStamps.size() + " timeStamps = " + timeStamps.toString());
+		if (log.isLoggable(Level.FINE)) log.log(Level.FINE, timeStamps.size() + " timeStamps = " + timeStamps.toString());
 
 		for (int i = 0; i < recordDataSize; i++) {
-			if (log.isLoggable(Level.FINER))
-				log.log(Level.FINER, i + " i*dataBufferSize+timeStampBufferSize = " + i * dataBufferSize + timeStampBufferSize);
+			if (log.isLoggable(Level.FINER)) log.log(Level.FINER, i + " i*dataBufferSize+timeStampBufferSize = " + i * dataBufferSize + timeStampBufferSize);
 			System.arraycopy(dataBuffer, i * dataBufferSize + timeStampBufferSize, convertBuffer, 0, dataBufferSize);
 			points[0] = (((convertBuffer[0] & 0xff) << 24) + ((convertBuffer[1] & 0xff) << 16) + ((convertBuffer[2] & 0xff) << 8) + ((convertBuffer[3] & 0xff) << 0));
 
@@ -337,7 +331,7 @@ public class UniTrend extends DeviceConfiguration implements IDevice {
 	/**
 	 * query battery voltage level
 	 * @param buffer
-	 * @return true if battey voltage level detected as low
+	 * @return true if battery voltage level detected as low
 	 */
 	public boolean isBatteryLevelLow(byte[] buffer) {
 		return (buffer[7] & 0x02) != 1;
@@ -486,9 +480,9 @@ public class UniTrend extends DeviceConfiguration implements IDevice {
 	public String getMode(byte[] buffer) {
 		String mode;
 		if ((buffer[10] & 0x02) > 0)
-			mode = Messages.getString(MessageIds.GDE_MSGT1511);
+			mode = Messages.getString(MessageIds.GDE_MSGT1511); //AUTO
 		else
-			mode = Messages.getString(MessageIds.GDE_MSGT1510);
+			mode = Messages.getString(MessageIds.GDE_MSGT1510); //Manual
 
 		if ((buffer[10] & 0x08) > 0)
 			mode += Messages.getString(MessageIds.GDE_MSGT1512); //AC
@@ -578,41 +572,6 @@ public class UniTrend extends DeviceConfiguration implements IDevice {
 	 */
 	@Override
 	public void open_closeCommPort() {
-		if (this.serialPort != null) {
-			if (!this.serialPort.isConnected()) {
-				try {
-					Channel activChannel = Channels.getInstance().getActiveChannel();
-					if (activChannel != null) {
-						this.getDialog().dataGatherThread = new GathererThread(this.application, this, this.serialPort, activChannel.getNumber(), this.getDialog());
-						try {
-							if (this.serialPort.isConnected()) {
-								this.getDialog().dataGatherThread.start();
-							}
-						}
-						catch (RuntimeException e) {
-							log.log(Level.WARNING, e.getMessage(), e);
-						}
-						if (this.getDialog().boundsComposite != null && !this.getDialog().isDisposed()) this.getDialog().boundsComposite.redraw();
-					}
-				}
-				catch (SerialPortException e) {
-					log.log(Level.SEVERE, e.getMessage(), e);
-					this.application.openMessageDialog(this.dialog.getDialogShell(),
-							Messages.getString(gde.messages.MessageIds.GDE_MSGE0015, new Object[] { e.getClass().getSimpleName() + GDE.STRING_BLANK_COLON_BLANK + e.getMessage() }));
-				}
-				catch (ApplicationConfigurationException e) {
-					log.log(Level.SEVERE, e.getMessage(), e);
-					this.application.openMessageDialog(this.dialog.getDialogShell(), Messages.getString(gde.messages.MessageIds.GDE_MSGE0010));
-					this.application.getDeviceSelectionDialog().open();
-				}
-			}
-			else {
-				if (this.getDialog().dataGatherThread != null) {
-					this.getDialog().dataGatherThread.stopDataGatheringThread(false);
-				}
-				if (this.getDialog().boundsComposite != null && !this.getDialog().isDisposed()) this.getDialog().boundsComposite.redraw();
-				this.serialPort.close();
-			}
-		}
+		return;
 	}
 }
