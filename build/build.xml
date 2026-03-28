@@ -71,11 +71,30 @@
 			<!-- Windows 8 -->
 		</condition>
 
-		<condition property="build.os.shortname" value="MAC">
-			<os name="Mac OS" />
+		<condition property="build.os.shortname" value="MAC_ARM">
+			<and>
+				<os name="Mac OS" />
+				<os arch="aarch64" />
+			</and>
 		</condition>
-		<condition property="build.os.shortname" value="MAC">
-			<os name="Mac OS X" />
+		<condition property="build.os.shortname" value="MAC_ARM">
+			<and>
+				<os name="Mac OS X" />
+				<os arch="aarch64" />
+			</and>
+		</condition>
+
+		<condition property="build.os.shortname" value="MAC_X86">
+			<and>
+				<os name="Mac OS" />
+				<os arch="X86_64" />
+			</and>
+		</condition>
+		<condition property="build.os.shortname" value="MAC_X86">
+			<and>
+				<os name="Mac OS X" />
+				<os arch="X86_64" />
+			</and>
 		</condition>
 
 		<echo message="OS short name = ${build.os.shortname}" />
@@ -86,8 +105,11 @@
 		<condition property="isLinux">
 			<equals arg1="${build.os.shortname}" arg2="GNULinux" />
 		</condition>
-		<condition property="isMac">
-			<equals arg1="${build.os.shortname}" arg2="MAC" />
+		<condition property="isMac_X86">
+			<equals arg1="${build.os.shortname}" arg2="MAC_X86" />
+		</condition>
+		<condition property="isMac_ARM">
+			<equals arg1="${build.os.shortname}" arg2="MAC_ARM" />
 		</condition>
 	</target>
 
@@ -120,7 +142,8 @@
 		<antcall target="init-windows" if:set="isWindows" />
 		<antcall target="init-armLnx" unless:set="isWindows" />
 		<antcall target="init-linux" if:set="isLinux" />
-		<antcall target="init-mac" if:set="isMac" />
+		<antcall target="init-mac-x64" if:set="isMac_X64" />
+		<antcall target="init-mac-arm" if:set="isMac_ARM" />
 	</target>
 
 	<target name="init-windows">
@@ -175,23 +198,42 @@
 		<mkdir dir="${output.gnulinux64.java.ext}" />
 	</target>
 
-	<target name="init-mac">
+	<target name="init-mac-x64">
 		<!-- output directories -->
-		<property name="output.mac64" location="${output.dir}/Mac_64" />
-		<property name="output.mac64.app" location="${output.mac64}/DataExplorer.app" />
-		<property name="output.mac64.bundle" location="${output.mac64}/DataExplorer.app/Contents" />
-		<property name="output.mac64.bundle.bin" location="${output.mac64.bundle}/MacOS" />
-		<property name="output.mac64.program" location="${output.mac64.bundle}/Resources" />
-		<property name="output.mac64.program.devices" location="${output.mac64.program}/devices" />
-		<property name="output.mac64.java.ext" location="${output.mac64.program}/java/ext" />
+		<property name="output.macX64" location="${output.dir}/Mac_X64" />
+		<property name="output.macX64.app" location="${output.macX64}/DataExplorer.app" />
+		<property name="output.macX64.bundle" location="${output.macX64}/DataExplorer.app/Contents" />
+		<property name="output.macX64.bundle.bin" location="${output.macX64.bundle}/MacOS" />
+		<property name="output.macX64.program" location="${output.macX64.bundle}/Resources" />
+		<property name="output.macX64.program.devices" location="${output.macX64.program}/devices" />
+		<property name="output.macX64.java.ext" location="${output.macX64.program}/java/ext" />
 
 		<!-- create output directory structure -->
-		<mkdir dir="${output.mac64}" />
-		<mkdir dir="${output.mac64.bundle}" />
-		<mkdir dir="${output.mac64.bundle.bin}" />
-		<mkdir dir="${output.mac64.program}" />
-		<mkdir dir="${output.mac64.program.devices}" />
-		<mkdir dir="${output.mac64.java.ext}" />
+		<mkdir dir="${output.macX64}" />
+		<mkdir dir="${output.macX64.bundle}" />
+		<mkdir dir="${output.macX64.bundle.bin}" />
+		<mkdir dir="${output.macX64.program}" />
+		<mkdir dir="${output.macX64.program.devices}" />
+		<mkdir dir="${output.macX64.java.ext}" />
+	</target>
+
+	<target name="init-mac-arm">
+		<!-- output directories -->
+		<property name="output.macARM" location="${output.dir}/Mac_ARM" />
+		<property name="output.macARM.app" location="${output.macARM}/DataExplorer.app" />
+		<property name="output.macARM.bundle" location="${output.macARM}/DataExplorer.app/Contents" />
+		<property name="output.macARM.bundle.bin" location="${output.macARM.bundle}/MacOS" />
+		<property name="output.macARM.program" location="${output.macARM.bundle}/Resources" />
+		<property name="output.macARM.program.devices" location="${output.macARM.program}/devices" />
+		<property name="output.macARM.java.ext" location="${output.macARM.program}/java/ext" />
+
+		<!-- create output directory structure -->
+		<mkdir dir="${output.macARM}" />
+		<mkdir dir="${output.macARM.bundle}" />
+		<mkdir dir="${output.macARM.bundle.bin}" />
+		<mkdir dir="${output.macARM.program}" />
+		<mkdir dir="${output.macARM.program.devices}" />
+		<mkdir dir="${output.macARM.java.ext}" />
 	</target>
 
 	<!-- cleanup -->
@@ -279,13 +321,34 @@
 			<!-- Windows 8 -->
 		</condition>
 		<antcall target="Windows" />
-		<condition property="isMAC">
-			<os name="Mac OS" />
+		
+		<condition property="isMAC_X86">
+			<and>
+				<os name="Mac OS" />
+				<os arch="X86_64" />
+			</and>
 		</condition>
-		<condition property="isMAC">
-			<os name="Mac OS X" />
+		<condition property="isMAC_X86">
+			<and>
+				<os name="Mac OS X" />
+				<os arch="X86_64" />
+			</and>
 		</condition>
-		<antcall target="MAC" />
+		<antcall target="MAC_X86" />
+		
+		<condition property="isMAC_ARM">
+			<and>
+				<os name="Mac OS" />
+				<os arch="aarch64" />
+			</and>
+		</condition>
+		<condition property="isMAC_ARM">
+			<and>
+				<os name="Mac OS X" />
+				<os arch="aarch64" />
+			</and>
+		</condition>
+		<antcall target="MAC_ARM" />
 
 		<echo message="OS short name = ${build.os.shortname}" />
 	</target>
@@ -346,46 +409,89 @@
 		</copy>
 	</target>
 
-	<target name="MAC" if="isMAC">
+	<target name="MAC_X86" if="isMAC_X86">
 		<echo message="${os.name} ${os.arch} ${sun.arch.data.model}" />
-		<antcall target="MacDefault" />
-		<antcall target="MacPrefix" />
+		<antcall target="MacX86Default" />
+		<antcall target="MacX86Prefix" />
 	</target>
-	<target name="MacDefault" unless="prefix">
+	<target name="MacX86Default" unless="prefix">
 		<echo message="installing to ${install.dir.mac}" />
 		<!-- unzip src="${build.target.dir}/dataexplorer-${version.num}-bin_${build.os.shortname}_${sun.arch.data.model}_cocoa.zip" dest="${install.dir.mac}" overwrite="true" / -->
 		<exec executable="chmod" os="Mac OS X" failonerror="true">
 			<arg value="+x"/>
-			<arg value="${output.dir}/Mac_${sun.arch.data.model}/${app.name}.app/Contents/MacOS/DataExplorerMac64"/>
+			<arg value="${output.dir}/Mac_X${sun.arch.data.model}/${app.name}.app/Contents/MacOS/DataExplorerMac64"/>
 		</exec>
 		<!-- exec executable="chmod" os="Mac OS X" failonerror="true">
 	      <arg value="+x"/>
-	      <arg value="${output.dir}/Mac_${sun.arch.data.model}/${app.name}.app/Contents/MacOS/DevicePropertiesEditorMac64"/>
+	      <arg value="${output.dir}/Mac_X${sun.arch.data.model}/${app.name}.app/Contents/MacOS/DevicePropertiesEditorMac64"/>
 	    </exec -->
 		<copy toDir="${install.dir.mac}/${app.name}.app">
-			<fileset file="${output.dir}/Mac_${sun.arch.data.model}/${app.name}.app/**" />
+			<fileset file="${output.dir}/Mac_X${sun.arch.data.model}/${app.name}.app/**" />
 		</copy>
 		<echo message="chmod ${install.dir.mac}/${app.name}.app/Contents/Resources/runtime/bin" />
 		<chmod perm="+x" failonerror="true">
 			<fileset dir="${install.dir.mac}/${app.name}.app/Contents/Resources/runtime/bin" />
 		</chmod>
 	</target>
-	<target name="MacPrefix" if="prefix">
+	<target name="MacX86Prefix" if="prefix">
 		<echo message="installing to ${prefix}" />
 		<!-- unzip src="${build.target.dir}/dataexplorer-${version.num}-bin_${build.os.shortname}_${sun.arch.data.model}_cocoa.zip" dest="${prefix}" overwrite="true" / -->
 		<exec executable="chmod" os="Mac OS X" failonerror="true">
 			<arg value="+x"/>
-			<arg value="${output.dir}/Mac_${sun.arch.data.model}/${app.name}.app/Contents/MacOS/DataExplorerMac64"/>
+			<arg value="${output.dir}/Mac_X${sun.arch.data.model}/${app.name}.app/Contents/MacOS/DataExplorerMac64"/>
 		</exec>
 		<!-- exec executable="chmod" os="Mac OS X" failonerror="true">
 	      <arg value="+x"/>
-	      <arg value="${output.dir}/Mac_${sun.arch.data.model}/${app.name}.app/Contents/MacOS/DevicePropertiesEditorMac64"/>
+	      <arg value="${output.dir}/Mac_X${sun.arch.data.model}/${app.name}.app/Contents/MacOS/DevicePropertiesEditorMac64"/>
 	    </exec -->
 		<copy toDir="${prefix}">
-			<fileset file="${output.dir}/Mac_${sun.arch.data.model}/**" />
+			<fileset file="${output.dir}/Mac_X${sun.arch.data.model}/**" />
 		</copy>
 		<chmod perm="+x" failonerror="true">
-			<fileset dir="${prefix}/${output.dir}/Mac_${sun.arch.data.model}/${app.name}.app/Contents/Resources/runtime/bin" />
+			<fileset dir="${prefix}/${output.dir}/Mac_X${sun.arch.data.model}/${app.name}.app/Contents/Resources/runtime/bin" />
+		</chmod>
+	</target>
+
+	<target name="MAC_ARM" if="isMAC_ARM">
+		<echo message="${os.name} ${os.arch} ${sun.arch.data.model}" />
+		<antcall target="MacARMDefault" />
+		<antcall target="MacARMPrefix" />
+	</target>
+	<target name="MacARMDefault" unless="prefix">
+		<echo message="installing to ${install.dir.mac}" />
+		<!-- unzip src="${build.target.dir}/dataexplorer-${version.num}-bin_${build.os.shortname}_${sun.arch.data.model}_cocoa.zip" dest="${install.dir.mac}" overwrite="true" / -->
+		<exec executable="chmod" os="Mac OS X" failonerror="true">
+			<arg value="+x"/>
+			<arg value="${output.dir}/Mac_ARM/${app.name}.app/Contents/MacOS/DataExplorerMac64"/>
+		</exec>
+		<!-- exec executable="chmod" os="Mac OS X" failonerror="true">
+	      <arg value="+x"/>
+	      <arg value="${output.dir}/Mac_ARM/${app.name}.app/Contents/MacOS/DevicePropertiesEditorMac64"/>
+	    </exec -->
+		<copy toDir="${install.dir.mac}/${app.name}.app">
+			<fileset file="${output.dir}/Mac_ARM/${app.name}.app/**" />
+		</copy>
+		<echo message="chmod ${install.dir.mac}/${app.name}.app/Contents/Resources/runtime/bin" />
+		<chmod perm="+x" failonerror="true">
+			<fileset dir="${install.dir.mac}/${app.name}.app/Contents/Resources/runtime/bin" />
+		</chmod>
+	</target>
+	<target name="MacARMPrefix" if="prefix">
+		<echo message="installing to ${prefix}" />
+		<!-- unzip src="${build.target.dir}/dataexplorer-${version.num}-bin_${build.os.shortname}_${sun.arch.data.model}_cocoa.zip" dest="${prefix}" overwrite="true" / -->
+		<exec executable="chmod" os="Mac OS X" failonerror="true">
+			<arg value="+x"/>
+			<arg value="${output.dir}/Mac_ARM/${app.name}.app/Contents/MacOS/DataExplorerMac64"/>
+		</exec>
+		<!-- exec executable="chmod" os="Mac OS X" failonerror="true">
+	      <arg value="+x"/>
+	      <arg value="${output.dir}/Mac_ARM/${app.name}.app/Contents/MacOS/DevicePropertiesEditorMac64"/>
+	    </exec -->
+		<copy toDir="${prefix}">
+			<fileset file="${output.dir}/Mac_ARM/**" />
+		</copy>
+		<chmod perm="+x" failonerror="true">
+			<fileset dir="${prefix}/${output.dir}/Mac_ARM/${app.name}.app/Contents/Resources/runtime/bin" />
 		</chmod>
 	</target>
 
@@ -608,7 +714,8 @@
 		<antcall target="copy-files-windows" if:set="isWindows" />
 		<antcall target="copy-files-armLnx" unless:set="isWindows" />
 		<antcall target="copy-files-linux" if:set="isLinux" />
-		<antcall target="copy-files-mac" if:set="isMac" />
+		<antcall target="copy-files-mac-x64" if:set="isMac_X64" />
+		<antcall target="copy-files-mac-arm" if:set="isMac_ARM" />
 	</target>
 
 	<target name="copy-files-windows" depends="init-windows">
@@ -811,31 +918,31 @@
 		</copy>
 	</target>
 
-	<target name="copy-files-mac" depends="init-mac">
-		<copy todir="${output.mac64.program}" flatten="yes">
+	<target name="copy-files-mac-x64" depends="init-mac-x64">
+		<copy todir="${output.macX64.program}" flatten="yes">
 			<fileset file="DataExplorer/build/*.jar" />
 			<fileset file="build/misc/DataExplorer.icns" />
 			<!-- fileset file="build/misc/DevicePropertiesEditor.icns" / -->
 		</copy>
-		<copy todir="${output.mac64.bundle}" flatten="yes">
+		<copy todir="${output.macX64.bundle}" flatten="yes">
 			<fileset file="build/lib/MAC/64/Info.plist" />
 			<fileset file="build/misc/PkgInfo" />
 			<fileset file="build/misc/version.plist" />
 		</copy>
-		<copy todir="${output.mac64.bundle.bin}" flatten="yes">
+		<copy todir="${output.macX64.bundle.bin}" flatten="yes">
 			<fileset file="build/misc/DataExplorerMac64" />
 			<!-- fileset file="build/misc/DevicePropertiesEditorMac64" / -->
 		</copy>
-		<copy todir="${output.mac64.program.devices}" flatten="yes">
+		<copy todir="${output.macX64.program.devices}" flatten="yes">
 			<fileset dir="${basedir}">
 				<patternset refid="DE_PLUGIN_JARS" />
 			</fileset>
 		</copy>
 
 		<!-- java extenssions -->
-		<copy todir="${output.mac64.java.ext}" flatten="yes">
+		<copy todir="${output.macX64.java.ext}" flatten="yes">
 			<fileset file="build/lib/jSerialComm.jar" />
-			<fileset file="build/lib/MAC/64/swt.jar" />
+			<fileset file="build/lib/MAC_X86/64/swt.jar" />
 			<fileset file="build/misc/*.LICENSE" />
 			<fileset file="${basedir}/HoTTMdlViewer/lib/HoTTMdlViewer.jar" />
 			<fileset file="build/lib/gson.jar" />
@@ -852,13 +959,74 @@
 			<fileset file="build/lib/jtouchbar.jar" />
 			<fileset file="build/lib/jtouchbar-swt.jar" />
 			<fileset file="build/lib/tlmreader.jar" />
-			<fileset file="build/lib/MAC/64/libusb4java.jar" />
+			<fileset file="build/lib/MAC_X86/64/libusb4java.jar" />
+		</copy>
+	</target>
+
+	<target name="copy-files-mac-arm" depends="init-mac-arm">
+		<copy todir="${output.macARM.program}" flatten="yes">
+			<fileset file="DataExplorer/build/*.jar" />
+			<fileset file="build/misc/DataExplorer.icns" />
+			<!-- fileset file="build/misc/DevicePropertiesEditor.icns" / -->
+		</copy>
+		<copy todir="${output.macARM.bundle}" flatten="yes">
+			<fileset file="build/lib/MAC_ARM/64/Info.plist" />
+			<fileset file="build/misc/PkgInfo" />
+			<fileset file="build/misc/version.plist" />
+		</copy>
+		<copy todir="${output.macARM.bundle.bin}" flatten="yes">
+			<fileset file="build/misc/DataExplorerMac64" />
+			<!-- fileset file="build/misc/DevicePropertiesEditorMac64" / -->
+		</copy>
+		<copy todir="${output.macARM.program.devices}" flatten="yes">
+			<fileset dir="${basedir}">
+				<patternset refid="DE_PLUGIN_JARS" />
+			</fileset>
+		</copy>
+
+		<!-- java extenssions -->
+		<copy todir="${output.macARM.java.ext}" flatten="yes">
+			<fileset file="build/lib/jSerialComm.jar" />
+			<fileset file="build/lib/MAC_ARM/64/swt.jar" />
+			<fileset file="build/misc/*.LICENSE" />
+			<fileset file="${basedir}/HoTTMdlViewer/lib/HoTTMdlViewer.jar" />
+			<fileset file="build/lib/gson.jar" />
+			<fileset file="build/lib/juniversalchardet.jar" />
+			<fileset file="build/lib/jaxb-api.jar" />
+			<fileset file="build/lib/jaxb-core.jar" />
+			<fileset file="build/lib/jaxb-runtime.jar" />
+			<fileset file="build/lib/istack-commons-runtime.jar" />
+			<fileset file="build/lib/activation.jar" />
+			<fileset file="build/lib/usb4java.jar" />
+			<fileset file="build/lib/usb-api.jar" />
+			<fileset file="build/lib/usb4java-javax.jar" />
+			<fileset file="build/lib/commons-lang3.jar" />
+			<fileset file="build/lib/jtouchbar.jar" />
+			<fileset file="build/lib/jtouchbar-swt.jar" />
+			<fileset file="build/lib/tlmreader.jar" />
+			<fileset file="build/lib/MAC_ARM/64/libusb4java.jar" />
 		</copy>
 	</target>
 
 	<!-- build java runtime using jlink MAC OS Intel -->
-	<target name="jlink_mac_intel" depends="init-mac">
-		<exec executable="jlink" dir="${output.mac64.program}">
+	<target name="jlink_mac_intel" depends="init-mac-x64">
+		<exec executable="jlink" dir="${output.macX64.program}">
+			<arg value="--compress=zip-6" />
+			<arg value="--no-header-files" />
+			<arg value="--no-man-pages" />
+			<arg value="--strip-debug" />
+			<arg value="--output" />
+			<arg value="runtime" />
+			<arg value="--module-path" />
+			<arg value="/Library/Java/JavaVirtualMachines/jdk-25.jdk/Contents/Home/jmods" />
+			<arg value="--add-modules" />
+			<arg value="java.se,jdk.xml.dom,jdk.crypto.cryptoki" />
+		</exec>
+	</target>
+
+	<!-- build java runtime using jlink MAC OS ARM -->
+	<target name="jlink_mac_arm" depends="init-mac-arm">
+		<exec executable="jlink" dir="${output.macARM.program}">
 			<arg value="--compress=zip-6" />
 			<arg value="--no-header-files" />
 			<arg value="--no-man-pages" />
@@ -909,7 +1077,8 @@
 		<antcall target="build_Windows_NSIS_installer" description="building NSIS Windows installer" if:set="isWindows" />
 		<antcall target="binary_package-armLnx" description="build armLnx tarball" unless:set="isWindows" />
 		<antcall target="binary_package-linux" description="build Linux tarball" if:set="isLinux" />
-		<antcall target="build_Mac_install_dmg" description="build Mac disk images, replaces building zip archives" if:set="isMac" />
+		<antcall target="build_Mac_X_install_dmg" description="build Mac disk images, replaces building zip archives" if:set="isMac_X86" />
+		<antcall target="build_Mac_ARM_install_dmg" description="build Mac disk images, replaces building zip archives" if:set="isMac_ARM" />
 	</target>
 
 	<target name="binary_package-armLnx" depends="init-armLnx">
@@ -1279,23 +1448,23 @@
 	</target>
 
 	<!-- build MAC OS disk image - this only works on MacOSX (requires hdiutil)  -->
-	<target name="build_Mac_install_dmg" description="creates MAC OS disk image for install purpose">
-		<antcall target="build_dmg_64"/>
+	<target name="build_Mac_X_install_dmg" description="creates MAC OS disk image for install purpose">
+		<antcall target="build_dmg_X64"/>
 	</target>
 
-	<target name="build_dmg_64" depends="init-mac" description="creates MAC OS disk image 64 bit">
+	<target name="build_dmg_X64" depends="init-mac-x64" description="creates MAC OS disk image 64 bit">
 		<!-- temporary call jlink to build self contained JRE -->
 		<antcall target="jlink_mac_intel" description="building java runtime" />
-		<echo message="chmod ${output.mac64.program}/runtime/bin" />
+		<echo message="chmod ${output.macX64.program}/runtime/bin" />
 		<chmod perm="+x" failonerror="true">
-			<fileset dir="${output.mac64.program}/runtime/bin" />
+			<fileset dir="${output.macX64.program}/runtime/bin" />
 		</chmod>
 
 		<!-- Set this property value to your application name -->
 		<property name="app.name" value="DataExplorer"/>
 
 		<property name="mountdir" value="${build.target.dir}"/>
-		<property name="targetDmgPath" value="${build.target.dir}/${app.name}-${version.num}_Mac_64.dmg"/>
+		<property name="targetDmgPath" value="${build.target.dir}/${app.name}-${version.num}_Mac_X64.dmg"/>
 		<property name="tmpDmgPath" value="${mountdir}/${app.name}_64-tmp.dmg"/>
 
 		<!-- Delete previously created DMG -->
@@ -1310,7 +1479,7 @@
 			<arg value="D9D82CX2Z9"/>
 			<arg value="--timestamp"/>
 			<arg value="--verbose"/>
-			<arg value="${output.mac64}/${app.name}.app"/>
+			<arg value="${output.macX64}/${app.name}.app"/>
 		</exec>
 		<exec executable="/usr/bin/codesign" os="Mac OS X" failonerror="true">
 			<arg value="-vvv"/>
@@ -1319,7 +1488,7 @@
 			<arg value="--display"/>
 			<arg value="--entitlements"/>
 			<arg value=":-"/>
-			<arg value="${output.mac64}/${app.name}.app"/>
+			<arg value="${output.macX64}/${app.name}.app"/>
 		</exec>
 
 		<!-- Create a temporary Disk Image -->
@@ -1328,7 +1497,7 @@
 			<arg value="-fs"/>
 			<arg value="HFS+"/>
 			<arg value="-srcfolder"/>
-			<arg value="${output.mac64}/${app.name}.app"/>
+			<arg value="${output.macX64}/${app.name}.app"/>
 			<arg value="-volname"/>
 			<arg value="${app.name}"/>
 			<arg value="-ov"/>
@@ -1422,6 +1591,153 @@
 			<arg value="${targetDmgPath}"/>
 		</exec>
 
+		<!-- Delete the temporary image -->
+		<delete file="${tmpDmgPath}" quiet="yes" failonerror="false"/>
+	</target>
+	
+	<target name="build_Mac_ARM_install_dmg" description="creates MAC OS disk image for install purpose">
+		<antcall target="build_dmg_ARM"/>
+	</target>
+
+	<target name="build_dmg_ARM" depends="init-mac-arm" description="creates MAC OS disk image 64 bit">
+		<!-- temporary call jlink to build self contained JRE -->
+		<antcall target="jlink_mac_arm" description="building java runtime" />
+		<echo message="chmod ${output.macARM.program}/runtime/bin" />
+		<chmod perm="+x" failonerror="true">
+			<fileset dir="${output.macARM.program}/runtime/bin" />
+		</chmod>
+
+		<!-- Set this property value to your application name -->
+		<property name="app.name" value="DataExplorer"/>
+
+		<property name="mountdir" value="${build.target.dir}"/>
+		<property name="targetDmgPath" value="${build.target.dir}/${app.name}-${version.num}_Mac_ARM.dmg"/>
+		<property name="tmpDmgPath" value="${mountdir}/${app.name}_64-tmp.dmg"/>
+
+		<!-- Delete previously created DMG -->
+		<delete file="${targetDmgPath}" quiet="yes" failonerror="false"/>
+		<!-- Delete the temporary image -->
+		<delete file="${mountdir}/${app.name}-tmp.dmg" quiet="yes" failonerror="false"/>
+
+		<!-- sign app 
+		<exec executable="/usr/bin/codesign" os="Mac OS X" failonerror="true">
+			<arg value="-f"/>
+			<arg value="-s"/>
+			<arg value="D9D82CX2Z9"/>
+			<arg value="-timestamp"/>
+			<arg value="-verbose"/>
+			<arg value="${output.macARM}/${app.name}.app"/>
+		</exec>
+		<exec executable="/usr/bin/codesign" os="Mac OS X" failonerror="true">
+			<arg value="-vvv"/>
+			<arg value="-deep"/>
+			<arg value="-strict"/>
+			<arg value="-display"/>
+			<arg value="-entitlements"/>
+			<arg value=":-"/>
+			<arg value="${output.macARM}/${app.name}.app"/>
+		</exec>
+		-->
+		<!-- Create a temporary Disk Image -->
+		<exec executable="/usr/bin/hdiutil" os="Mac OS X" failonerror="true">
+			<arg value="create"/>
+			<arg value="-fs"/>
+			<arg value="HFS+"/>
+			<arg value="-srcfolder"/>
+			<arg value="${output.macARM}/${app.name}.app"/>
+			<arg value="-volname"/>
+			<arg value="${app.name}"/>
+			<arg value="-ov"/>
+			<arg value="${tmpDmgPath}"/>
+			<arg value="-format"/>
+			<arg value="UDRW"/>
+		</exec>
+
+		<!-- Attach the temporary image -->
+		<exec executable="/usr/bin/hdiutil" os="Mac OS X" failonerror="true">
+			<arg value="attach"/>
+			<arg value="${tmpDmgPath}"/>
+			<arg value="-mountroot"/>
+			<arg value="${mountdir}/"/>
+		</exec>
+
+		<!-- make starter scripts executable -->
+		<exec executable="chmod" os="Mac OS X" failonerror="true">
+			<arg value="+x"/>
+			<arg value="${mountdir}/${app.name}/${app.name}.app/Contents/MacOS/DataExplorerMac64"/>
+		</exec>
+		<!-- exec executable="chmod" os="Mac OS X" failonerror="true">
+	      <arg value="+x"/>
+	      <arg value="${mountdir}/${app.name}/${app.name}.app/Contents/MacOS/DevicePropertiesEditorMac64"/>
+	    </exec -->
+
+		<!-- Copy the background, the volume icon and DS_Store files -->
+		<copy file="${basedir}/build/misc/DS_Store"
+	          tofile="${mountdir}/${app.name}/.DS_Store"
+	          overwrite="true"/>
+		<mkdir dir="${mountdir}/${app.name}/.background"/>
+		<copy file="${basedir}/build/misc/dmg_background.png"
+	          tofile="${mountdir}/${app.name}/.background/background.png"
+	          overwrite="true"/>
+		<copy file="${basedir}/build/misc/DataExplorerDmg.icns"
+	          tofile="${mountdir}/${app.name}/.VolumeIcon.icns"
+	          overwrite="true"/>
+
+		<!-- Indicate that we want a custom icon -->
+		<exec executable="/usr/bin/SetFile" os="Mac OS X">
+			<arg value="-a"/>
+			<arg value="C"/>
+			<arg value="${mountdir}/${app.name}"/>
+		</exec>
+
+		<!-- Add a symbolic link to the Applications directory -->
+		<symlink link="${mountdir}/${app.name}/Applications" resource="/Applications/"/>
+
+		<!-- Add a readme files to the Applications directory -->
+		<copy file="${basedir}/build/misc/README.de"
+	          tofile="${mountdir}/${app.name}/README_de.txt"
+	          overwrite="true"/>
+		<copy file="${basedir}/build/misc/README.en"
+	          tofile="${mountdir}/${app.name}/README_en.txt"
+	          overwrite="true"/>
+
+
+		<!-- Detach the temporary image -->
+		<exec executable="/usr/bin/hdiutil" os="Mac OS X" failonerror="true">
+			<arg value="detach"/>
+			<arg value="${mountdir}/${app.name}"/>
+		</exec>
+
+		<!-- Compress it to a new image -->
+		<exec executable="/usr/bin/hdiutil" os="Mac OS X" failonerror="true">
+			<arg value="convert"/>
+			<arg value="${tmpDmgPath}"/>
+			<arg value="-format"/>
+			<arg value="UDZO"/>
+			<arg value="-o"/>
+			<arg value="${targetDmgPath}"/>
+		</exec>
+		<!-- sign dmg 
+		<exec executable="/usr/bin/codesign" os="Mac OS X" failonerror="true">
+			<arg value="-f"/>
+			<arg value="-s"/>
+			<arg value="D9D82CX2Z9"/>
+			<arg value="-i"/>
+			<arg value="gde.DataExplorer"/>
+			<arg value="-timestamp"/>
+			<arg value="-verbose"/>
+			<arg value="${targetDmgPath}"/>
+		</exec>
+		<exec executable="/usr/bin/codesign" os="Mac OS X" failonerror="true">
+			<arg value="-vvv"/>
+			<arg value="-deep"/>
+			<arg value="-strict"/>
+			<arg value="-display"/>
+			<arg value="-entitlements"/>
+			<arg value=":-"/>
+			<arg value="${targetDmgPath}"/>
+		</exec>
+		-->
 		<!-- Delete the temporary image -->
 		<delete file="${tmpDmgPath}" quiet="yes" failonerror="false"/>
 	</target>

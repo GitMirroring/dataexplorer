@@ -4,6 +4,7 @@ Version 4.0.5 - xx yyy 2026
 Generic changes/fixes 
 	* fix upgrade dialog resize problem (ARM 64)
 	* enable error message box while detecting error from jSerialComm
+	* enable MacOS ARM build
 	
 Device specific changes/fixes
 	* UT71D - add initial support
