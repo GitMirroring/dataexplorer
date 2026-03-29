@@ -87,13 +87,13 @@
 		<condition property="build.os.shortname" value="MAC_X86">
 			<and>
 				<os name="Mac OS" />
-				<os arch="X86_64" />
+				<os arch="x86_64" />
 			</and>
 		</condition>
 		<condition property="build.os.shortname" value="MAC_X86">
 			<and>
 				<os name="Mac OS X" />
-				<os arch="X86_64" />
+				<os arch="x86_64" />
 			</and>
 		</condition>
 
@@ -118,7 +118,8 @@
 		<echo if:set="isWindows">running on Windows</echo>
 		<echo unless:set="isWindows">not running on Windows</echo>
 		<echo if:set="isLinux">running on Linux</echo>
-		<echo if:set="isMac">running on MacOS</echo>
+		<echo if:set="isMac_X86">running on MacOS Intel</echo>
+		<echo if:set="isMac_ARM">running on MacOS M</echo>
 
 		<property name="build.properties" location="build/build.properties" />
 		<property file="${build.properties}" />
@@ -142,7 +143,7 @@
 		<antcall target="init-windows" if:set="isWindows" />
 		<antcall target="init-armLnx" unless:set="isWindows" />
 		<antcall target="init-linux" if:set="isLinux" />
-		<antcall target="init-mac-x64" if:set="isMac_X64" />
+		<antcall target="init-mac-x86" if:set="isMac_X86" />
 		<antcall target="init-mac-arm" if:set="isMac_ARM" />
 	</target>
 
@@ -198,7 +199,7 @@
 		<mkdir dir="${output.gnulinux64.java.ext}" />
 	</target>
 
-	<target name="init-mac-x64">
+	<target name="init-mac-x86">
 		<!-- output directories -->
 		<property name="output.macX64" location="${output.dir}/Mac_X64" />
 		<property name="output.macX64.app" location="${output.macX64}/DataExplorer.app" />
@@ -325,16 +326,16 @@
 		<condition property="isMAC_X86">
 			<and>
 				<os name="Mac OS" />
-				<os arch="X86_64" />
+				<os arch="x86_64" />
 			</and>
 		</condition>
 		<condition property="isMAC_X86">
 			<and>
 				<os name="Mac OS X" />
-				<os arch="X86_64" />
+				<os arch="x86_64" />
 			</and>
 		</condition>
-		<antcall target="MAC_X86" />
+		<antcall target="MAC_X64" />
 		
 		<condition property="isMAC_ARM">
 			<and>
@@ -409,12 +410,12 @@
 		</copy>
 	</target>
 
-	<target name="MAC_X86" if="isMAC_X86">
+	<target name="MAC_X64" if="isMAC_X64">
 		<echo message="${os.name} ${os.arch} ${sun.arch.data.model}" />
-		<antcall target="MacX86Default" />
-		<antcall target="MacX86Prefix" />
+		<antcall target="MacX64Default" />
+		<antcall target="MacX64Prefix" />
 	</target>
-	<target name="MacX86Default" unless="prefix">
+	<target name="MacX64Default" unless="prefix">
 		<echo message="installing to ${install.dir.mac}" />
 		<!-- unzip src="${build.target.dir}/dataexplorer-${version.num}-bin_${build.os.shortname}_${sun.arch.data.model}_cocoa.zip" dest="${install.dir.mac}" overwrite="true" / -->
 		<exec executable="chmod" os="Mac OS X" failonerror="true">
@@ -433,7 +434,7 @@
 			<fileset dir="${install.dir.mac}/${app.name}.app/Contents/Resources/runtime/bin" />
 		</chmod>
 	</target>
-	<target name="MacX86Prefix" if="prefix">
+	<target name="MacX64Prefix" if="prefix">
 		<echo message="installing to ${prefix}" />
 		<!-- unzip src="${build.target.dir}/dataexplorer-${version.num}-bin_${build.os.shortname}_${sun.arch.data.model}_cocoa.zip" dest="${prefix}" overwrite="true" / -->
 		<exec executable="chmod" os="Mac OS X" failonerror="true">
@@ -714,7 +715,7 @@
 		<antcall target="copy-files-windows" if:set="isWindows" />
 		<antcall target="copy-files-armLnx" unless:set="isWindows" />
 		<antcall target="copy-files-linux" if:set="isLinux" />
-		<antcall target="copy-files-mac-x64" if:set="isMac_X64" />
+		<antcall target="copy-files-mac-x86" if:set="isMac_X86" />
 		<antcall target="copy-files-mac-arm" if:set="isMac_ARM" />
 	</target>
 
@@ -918,14 +919,14 @@
 		</copy>
 	</target>
 
-	<target name="copy-files-mac-x64" depends="init-mac-x64">
+	<target name="copy-files-mac-x86" depends="init-mac-x86">
 		<copy todir="${output.macX64.program}" flatten="yes">
 			<fileset file="DataExplorer/build/*.jar" />
 			<fileset file="build/misc/DataExplorer.icns" />
 			<!-- fileset file="build/misc/DevicePropertiesEditor.icns" / -->
 		</copy>
 		<copy todir="${output.macX64.bundle}" flatten="yes">
-			<fileset file="build/lib/MAC/64/Info.plist" />
+			<fileset file="build/lib/MAC_X86/64/Info.plist" />
 			<fileset file="build/misc/PkgInfo" />
 			<fileset file="build/misc/version.plist" />
 		</copy>
@@ -1009,7 +1010,7 @@
 	</target>
 
 	<!-- build java runtime using jlink MAC OS Intel -->
-	<target name="jlink_mac_intel" depends="init-mac-x64">
+	<target name="jlink_mac_intel" depends="init-mac-x86">
 		<exec executable="jlink" dir="${output.macX64.program}">
 			<arg value="--compress=zip-6" />
 			<arg value="--no-header-files" />
@@ -1077,7 +1078,7 @@
 		<antcall target="build_Windows_NSIS_installer" description="building NSIS Windows installer" if:set="isWindows" />
 		<antcall target="binary_package-armLnx" description="build armLnx tarball" unless:set="isWindows" />
 		<antcall target="binary_package-linux" description="build Linux tarball" if:set="isLinux" />
-		<antcall target="build_Mac_X_install_dmg" description="build Mac disk images, replaces building zip archives" if:set="isMac_X86" />
+		<antcall target="build_Mac_X64_install_dmg" description="build Mac disk images, replaces building zip archives" if:set="isMac_X86" />
 		<antcall target="build_Mac_ARM_install_dmg" description="build Mac disk images, replaces building zip archives" if:set="isMac_ARM" />
 	</target>
 
@@ -1448,11 +1449,11 @@
 	</target>
 
 	<!-- build MAC OS disk image - this only works on MacOSX (requires hdiutil)  -->
-	<target name="build_Mac_X_install_dmg" description="creates MAC OS disk image for install purpose">
+	<target name="build_Mac_X64_install_dmg" description="creates MAC OS disk image for install purpose">
 		<antcall target="build_dmg_X64"/>
 	</target>
 
-	<target name="build_dmg_X64" depends="init-mac-x64" description="creates MAC OS disk image 64 bit">
+	<target name="build_dmg_X64" depends="init-mac-x86" description="creates MAC OS disk image 64 bit">
 		<!-- temporary call jlink to build self contained JRE -->
 		<antcall target="jlink_mac_intel" description="building java runtime" />
 		<echo message="chmod ${output.macX64.program}/runtime/bin" />
