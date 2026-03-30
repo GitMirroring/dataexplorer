@@ -13,6 +13,7 @@ Version 4.0.4 - 20 Mar 2026
 Generic changes/fixes 
 	* use GDK_BACKEND variable to correct UI behavior on Linux
 	* fix Windows serial port not fount issue, updating jSerialComm library to 2.11.4
+	* add libusb4java for Apple M silicon support
 	
 Device specific changes/fixes
 	* 
