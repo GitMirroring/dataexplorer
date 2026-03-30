@@ -1095,7 +1095,9 @@ public class FileUtils {
 				//jarPath = basePath + "build" + GDE.STRING_FILE_SEPARATOR_UNIX + "target" + GDE.STRING_FILE_SEPARATOR_UNIX + Settings.DEVICE_PROPERTIES_DIR_NAME; //$NON-NLS-1$ //$NON-NLS-2$
 				// targetDirectory this.applHomePath + GDE.STRING_FILE_SEPARATOR_UNIX + Settings.DEVICE_PROPERTIES_DIR_NAME);
 				jarPath = basePath + "build" + "/target/" //$NON-NLS-1$ //$NON-NLS-2$
-						+ (GDE.IS_LINUX ? "GNU" : GDE.STRING_EMPTY) + System.getProperty("os.name").split(GDE.STRING_BLANK)[0] + GDE.STRING_UNDER_BAR + GDE.BIT_MODE //$NON-NLS-1$ //$NON-NLS-2$
+						+ (GDE.IS_LINUX ? "GNU" : GDE.STRING_EMPTY) + System.getProperty("os.name").split(GDE.STRING_BLANK)[0] 
+						+ (GDE.IS_MAC && System.getProperty("os.arch").equals("aarch64") ? "_ARM" : GDE.IS_MAC && System.getProperty("os.arch").startsWith("X86") ? "_X86" : GDE.STRING_EMPTY)
+						+ (GDE.IS_MAC ? GDE.STRING_EMPTY : GDE.STRING_UNDER_BAR + GDE.BIT_MODE) //$NON-NLS-1$ //$NON-NLS-2$
 						+ GDE.STRING_FILE_SEPARATOR_UNIX + GDE.NAME_LONG + (GDE.IS_MAC ? GDE.STRING_MAC_DOT_APP + GDE.STRING_MAC_APP_RES_PATH : GDE.STRING_EMPTY) + "/devices"; //$NON-NLS-1$
 			}
 			catch (Exception e) {
@@ -1758,10 +1760,9 @@ public class FileUtils {
 		ZipInputStream zipInputStream = new ZipInputStream(markableStream);
 		if (zipInputStream.getNextEntry() != null) {
 			return zipInputStream;
-		} else {
-			markableStream.reset();
-			return markableStream;
 		}
+		markableStream.reset();
+		return markableStream;
 	}
 
 	/**
