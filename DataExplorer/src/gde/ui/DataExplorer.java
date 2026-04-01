@@ -3335,12 +3335,18 @@ public class DataExplorer extends Composite {
 							String filename = GDE.STRING_EMPTY;
 							if (GDE.IS_WINDOWS) // DataExplorer_Setup_3.0.8_win64.exe
 								filename = "DataExplorer_Setup_" + version + "_win" + arch + GDE.FILE_ENDING_DOT_EXE;
-							else if (GDE.IS_LINUX && GDE.IS_OS_ARCH_ARM) // dataexplorer-3.0.8-bin_GNULinux_x86_64.tar.gz
+							else if (GDE.IS_LINUX && GDE.IS_OS_ARCH_ARM) // dataexplorer-3.0.8-bin_Linux_ARM_64.tar.gz
 								filename = "dataexplorer-" + version + "-bin_Linux_ARM_" + arch + ".tar.gz";
 							else if (GDE.IS_LINUX && !GDE.IS_OS_ARCH_ARM) // dataexplorer-3.0.8-bin_GNULinux_x86_64.tar.gz
 								filename = "dataexplorer-" + version + "-bin_GNULinux_x86_" + arch + ".tar.gz";
-							else if (GDE.IS_MAC) // DataExplorer-3.0.8_Mac_64.dmg
-								filename = "DataExplorer-" + version + "_Mac_" + arch + ".dmg";
+							else if (GDE.IS_MAC && System.getProperty("os.arch").startsWith("x86")) 
+								filename = "DataExplorer-" + version + "_Mac_X64.dmg";// DataExplorer-4.0.5_Mac_X64.dmg
+							else if (GDE.IS_MAC && System.getProperty("os.arch").equals("aarch64"))
+								filename = "DataExplorer-" + version + "_Mac_ARM.dmg";// DataExplorer-4.0.5_Mac_ARM.dmg
+							else {
+								DataExplorer.getInstance().openMessageDialogAsync(Messages.getString(MessageIds.GDE_MSGW0051, new String[] {System.getProperty("os.name"), System.getProperty("os.arch")}));
+								return;
+							}
 
 							final String targetFilePath = GDE.JAVA_IO_TMPDIR + GDE.STRING_FILE_SEPARATOR_UNIX + filename;
 

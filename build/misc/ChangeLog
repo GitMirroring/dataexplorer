@@ -15,6 +15,7 @@ Generic changes/fixes
 	* fix Windows serial port not fount issue, updating jSerialComm library to 2.11.4
 	* add libusb4java for Apple M silicon support
 	* update build for Apple M silicon support
+	* update update download file names accordingly
 	
 Device specific changes/fixes
 	* 

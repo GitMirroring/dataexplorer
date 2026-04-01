@@ -1620,25 +1620,25 @@
 		<!-- Delete the temporary image -->
 		<delete file="${mountdir}/${app.name}-tmp.dmg" quiet="yes" failonerror="false"/>
 
-		<!-- sign app 
+		<!-- sign app -->
 		<exec executable="/usr/bin/codesign" os="Mac OS X" failonerror="true">
 			<arg value="-f"/>
 			<arg value="-s"/>
 			<arg value="D9D82CX2Z9"/>
-			<arg value="-timestamp"/>
-			<arg value="-verbose"/>
+			<arg value="--timestamp"/>
+			<arg value="--verbose"/>
 			<arg value="${output.macARM}/${app.name}.app"/>
 		</exec>
 		<exec executable="/usr/bin/codesign" os="Mac OS X" failonerror="true">
 			<arg value="-vvv"/>
-			<arg value="-deep"/>
-			<arg value="-strict"/>
-			<arg value="-display"/>
-			<arg value="-entitlements"/>
+			<arg value="--deep"/>
+			<arg value="--strict"/>
+			<arg value="--display"/>
+			<arg value="--entitlements"/>
 			<arg value=":-"/>
 			<arg value="${output.macARM}/${app.name}.app"/>
 		</exec>
-		-->
+		
 		<!-- Create a temporary Disk Image -->
 		<exec executable="/usr/bin/hdiutil" os="Mac OS X" failonerror="true">
 			<arg value="create"/>
@@ -1718,27 +1718,27 @@
 			<arg value="-o"/>
 			<arg value="${targetDmgPath}"/>
 		</exec>
-		<!-- sign dmg 
+		<!-- sign dmg -->
 		<exec executable="/usr/bin/codesign" os="Mac OS X" failonerror="true">
 			<arg value="-f"/>
 			<arg value="-s"/>
 			<arg value="D9D82CX2Z9"/>
 			<arg value="-i"/>
 			<arg value="gde.DataExplorer"/>
-			<arg value="-timestamp"/>
-			<arg value="-verbose"/>
+			<arg value="--timestamp"/>
+			<arg value="--verbose"/>
 			<arg value="${targetDmgPath}"/>
 		</exec>
 		<exec executable="/usr/bin/codesign" os="Mac OS X" failonerror="true">
 			<arg value="-vvv"/>
-			<arg value="-deep"/>
-			<arg value="-strict"/>
-			<arg value="-display"/>
-			<arg value="-entitlements"/>
+			<arg value="--deep"/>
+			<arg value="--strict"/>
+			<arg value="--display"/>
+			<arg value="--entitlements"/>
 			<arg value=":-"/>
 			<arg value="${targetDmgPath}"/>
 		</exec>
-		-->
+		
 		<!-- Delete the temporary image -->
 		<delete file="${tmpDmgPath}" quiet="yes" failonerror="false"/>
 	</target>
