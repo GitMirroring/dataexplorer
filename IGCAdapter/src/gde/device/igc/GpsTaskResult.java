@@ -190,11 +190,11 @@ public class GpsTaskResult extends HashMap<String, String> {
 		return 0;
 	}
 
-	public int getTimeElapsedSeconds() {
+	public double getTimeElapsedSeconds() {
 		if (this.get("timeElapsedSeconds") != null)
-			return Integer.parseInt(this.get("timeElapsedSeconds"));
+			return Double.parseDouble(this.get("timeElapsedSeconds"));
 		else if (this.get("flightTime") != null)
-			return Integer.parseInt(this.get("flightTime"));
+			return Double.parseDouble(this.get("flightTime"));
 		else 
 			return 0;
 	}
@@ -211,30 +211,35 @@ public class GpsTaskResult extends HashMap<String, String> {
 		return false;
 	}
 	
-	public String getFormatedTime(int time) {
-		int minutes = time/60;
-		return String.format("%2d:%02d", minutes, (time - (minutes * 60)));		
+	public String getFormatedTime(double time) {
+		int minutes = (int) (time/60.);
+		return String.format("%2d:%02d", minutes, (int)(time - (minutes * 60)));		
 	}
 
 	public String toString(String taskType) {
-		StringBuilder sb = new StringBuilder("\n\n");
-		sb.append(String.format("Task: %s  Date Time: %s  Duration: %s [mm:ss]\n", taskType, StringHelper.getFormatedTime("yyyy-MM-dd, HH:mm:ss", getFlightStart()), getFormatedTime(getTimeElapsedSeconds())));
-		sb.append(String.format("Start Alt/Speed: %3.0f m/%6.2f km/h  Penalty: %d  SavetyZoneHit: %b\n", getStartEntryAlti(), getStartEntrySpeed()*3.6, getStartPenaltyPoints(), getZoneEntered()));
-		if (getLaps() > 0) {
-			if (this.get("averageTriangleTime") != null)
-				sb.append(String.format("Laps: %2d  AvgSpeed: %5.2f km/h  AvgLapTime: %s\n", getLaps(), getAllTrianglesAvgSpeed() * 3.6, getFormatedTime(getAverageTriangleTime())));
-			else
-				sb.append(String.format("Laps: %2d  AvgSpeed: %5.2f km/h  AvgLapTime: %s\n", getLaps(), getAllTrianglesAvgSpeed() * 3.6, getFormatedTime(getTimeElapsedSeconds() / getLaps())));
-		}
-		sb.append("\nLAP INDEX DURATION LAP-TIME  ALT  ∆ALT LapSpeed IndexSpeed  Ratio   Sink");
-		sb.append("\n[#]  [%]  [mm:ss]   [mm:ss]  [m]   [m]  [km/h]   [km/h]     [m/1]   [m/s]\n");
-		int lapNo = 1;
-		Double duration = 0.;
-		for (GpsLap lap : gpsLaps) {
-			sb.append(lap.toString(lapNo++, duration, taskType));
-			duration += lap.getTime();
-		}
+		try {
+			StringBuilder sb = new StringBuilder("\n\n");
+			sb.append(String.format("Task: %s  Date Time: %s  Duration: %s [mm:ss]\n", taskType, StringHelper.getFormatedTime("yyyy-MM-dd, HH:mm:ss", getFlightStart()), getFormatedTime(getTimeElapsedSeconds())));
+			sb.append(String.format("Start Alt/Speed: %3.0f m/%6.2f km/h  Penalty: %d  SavetyZoneHit: %b\n", getStartEntryAlti(), getStartEntrySpeed()*3.6, getStartPenaltyPoints(), getZoneEntered()));
+			if (getLaps() > 0) {
+				if (this.get("averageTriangleTime") != null)
+					sb.append(String.format("Laps: %2d  AvgSpeed: %5.2f km/h  AvgLapTime: %s\n", getLaps(), getAllTrianglesAvgSpeed() * 3.6, getFormatedTime(getAverageTriangleTime())));
+				else
+					sb.append(String.format("Laps: %2d  AvgSpeed: %5.2f km/h  AvgLapTime: %s\n", getLaps(), getAllTrianglesAvgSpeed() * 3.6, getFormatedTime(getTimeElapsedSeconds() / getLaps())));
+			}
+			sb.append("\nLAP INDEX DURATION LAP-TIME  ALT  ∆ALT LapSpeed IndexSpeed  Ratio   Sink");
+			sb.append("\n[#]  [%]  [mm:ss]   [mm:ss]  [m]   [m]  [km/h]   [km/h]     [m/1]   [m/s]\n");
+			int lapNo = 1;
+			Double duration = 0.;
+			for (GpsLap lap : gpsLaps) {
+				sb.append(lap.toString(lapNo++, duration, taskType));
+				duration += lap.getTime();
+			}
 
-		return sb.toString();
+			return sb.toString();
+		}
+		catch (Exception e) {
+			return "creation of task statistics has been failed\n";
+		}
 	}
 }
