@@ -37,7 +37,7 @@ import gde.messages.Messages;
  * @author Winfried Brügmann
  */
 public class UT61E extends UniTrend {
-	final static Logger					log						= Logger.getLogger(UT61E.class.getName());
+	final static Logger					log1						= Logger.getLogger(UT61E.class.getName());
 	
 	/**
 	 * constructor using properties file
@@ -74,25 +74,25 @@ public class UT61E extends UniTrend {
 							}
 						}
 						catch (RuntimeException e) {
-							log.log(Level.WARNING, e.getMessage(), e);
+							log1.log(Level.WARNING, e.getMessage(), e);
 						}
 						if (this.getDialog().boundsComposite != null && !this.getDialog().isDisposed()) this.getDialog().boundsComposite.redraw();
 					}
 				}
 				catch (SerialPortException e) {
-					log.log(Level.SEVERE, e.getMessage(), e);
+					log1.log(Level.SEVERE, e.getMessage(), e);
 					this.application.openMessageDialog(this.dialog.getDialogShell(),
 							Messages.getString(gde.messages.MessageIds.GDE_MSGE0015, new Object[] { e.getClass().getSimpleName() + GDE.STRING_BLANK_COLON_BLANK + e.getMessage() }));
 				}
 				catch (ApplicationConfigurationException e) {
-					log.log(Level.SEVERE, e.getMessage(), e);
+					log1.log(Level.SEVERE, e.getMessage(), e);
 					this.application.openMessageDialog(this.dialog.getDialogShell(), Messages.getString(gde.messages.MessageIds.GDE_MSGE0010));
 					this.application.getDeviceSelectionDialog().open();
 				}
 			}
 			else {
 				if (this.getDialog().dataGatherThread != null) {
-					((GathererThread) this.getDialog().dataGatherThread).stopDataGatheringThread(false);
+					this.getDialog().dataGatherThread.stopDataGatheringThread(false);
 				}
 				if (this.getDialog().boundsComposite != null && !this.getDialog().isDisposed()) this.getDialog().boundsComposite.redraw();
 				this.serialPort.close();

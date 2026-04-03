@@ -35,7 +35,7 @@ import gde.messages.Messages;
 import gde.utils.StringHelper;
 
 public class UT71D extends UniTrend {
-	final static Logger					log						= Logger.getLogger(UT71D.class.getName());
+	final static Logger					log1						= Logger.getLogger(UT71D.class.getName());
 
 	public UT71D(String deviceProperties) throws FileNotFoundException, JAXBException {
 		super(deviceProperties);
@@ -55,16 +55,18 @@ public class UT71D extends UniTrend {
 	public int[] convertDataBytes(int[] points, byte[] dataBuffer) {
 		
 		points[0] = Integer.valueOf(String.format("%c%c%c%c%c", dataBuffer[0], dataBuffer[1], dataBuffer[2], dataBuffer[3], dataBuffer[4])).intValue();
-
-		if (log.isLoggable(Level.FINE)) {
+		points[0] = dataBuffer[0] == 0x3B ? points[0] * -1 : points[0];
+		
+		if (log1.isLoggable(Level.FINE)) {
 			StringBuilder sb = new StringBuilder();
 			for (int i = 0; i < 5; i++) {
 				sb.append(String.format("%02x", dataBuffer[i])).append(" "); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			log.log(Level.FINE, sb.toString());
-			log.log(Level.FINE, "Bereich (Byte[5]): " + dataBuffer[5]);
-			log.log(Level.FINE, "Value   (Wert)   : " + points[0]);
+			log1.log(Level.FINE, sb.toString());
+			log1.log(Level.FINE, "Bereich (Byte[5]): " + dataBuffer[5]);
+			log1.log(Level.FINE, "Value   (Wert)   : " + points[0]);
 		}
+		
 		switch (dataBuffer[6]) { //Messart
 		default:
 		case 48: //	'0'	mV~
@@ -142,9 +144,9 @@ public class UT71D extends UniTrend {
 		case 54: //	'6'	°C
 		case 61: //	0x3D	°F
 			switch (dataBuffer[5]) { //Bereich
+			default:
 			case 48:
 				points[0] *= 100;
-			default:
 				break;
 			}
 			break;
@@ -237,13 +239,14 @@ public class UT71D extends UniTrend {
 	 * @param buffer
 	 * @return measurement unit as string
 	 */
+	@Override
 	public HashMap<String, String> getMeasurementInfo(byte[] buffer, HashMap<String, String> measurementInfo) {
-		if (log.isLoggable(Level.FINE)) {
-			log.log(Level.FINE, "buffer : " + StringHelper.byte2Hex4CharString(buffer, buffer.length));
-			log.log(Level.FINE, "Bereich (Byte[5]): " + buffer[5]);
-			log.log(Level.FINE, "Messart (Byte[6]): " + buffer[6]);
-			log.log(Level.FINE, "Kopplung(Byte[7]): " + buffer[7]);
-			log.log(Level.FINE, "Info    (Byte[8]): " + buffer[8]);
+		if (log1.isLoggable(Level.FINE)) {
+			log1.log(Level.FINE, "buffer : " + StringHelper.byte2Hex4CharString(buffer, buffer.length));
+			log1.log(Level.FINE, "Bereich (Byte[5]): " + buffer[5]);
+			log1.log(Level.FINE, "Messart (Byte[6]): " + buffer[6]);
+			log1.log(Level.FINE, "Kopplung(Byte[7]): " + buffer[7]);
+			log1.log(Level.FINE, "Info    (Byte[8]): " + buffer[8]);
 		}
 		
 		String unit = ""; //$NON-NLS-1$
@@ -261,11 +264,23 @@ public class UT71D extends UniTrend {
 		case 51: //	'3'	mV=
 		unit = "mV=";
 			break;
-		case 52: //	'4'	Ω
-		unit = "Ω";
-			break;
 		case 53: //	'5'	F
-		unit = "F";
+			switch  (buffer[5]) {
+			case 49:
+			case 50:
+				unit = "nF";
+				break;
+			case 51:
+			case 52:
+			case 53:
+			default:
+				unit = "µF";
+				break;
+			case 54:
+			case 55:
+				unit = "mF";
+				break;
+			}
 			break;
 		case 54: //	'6'	°C
 		unit = "°C";
@@ -279,6 +294,7 @@ public class UT71D extends UniTrend {
 		case 57: //	'9'	A
 		unit = "A";
 			break;
+		case 52: //	'4'	Ω
 		case 58: //	0x3A	Ω (Pieps, Durchgangsprüfung)
 			switch (buffer[5]) {
 			default:
@@ -302,7 +318,23 @@ public class UT71D extends UniTrend {
 		unit = "V";
 			break;
 		case 60: //	0x3C	Hz (oder Tastverhältnis bei gesetztem NEG-Flag)
-		unit = "Hz";
+		switch (buffer[5]) {
+		case 50:
+		case 51:
+			unit = "kHz";
+			break;
+		case 53:
+		case 54:
+		case 55:
+			unit = "MHz";
+			break;
+		case 48:
+		case 49:
+		case 52:
+		default:
+			unit = "Hz";
+			break;
+		}
 			break;
 		case 61: //	0x3D	°F
 		unit = "°F";
@@ -327,19 +359,31 @@ public class UT71D extends UniTrend {
 		else if (unit.endsWith("F")) //$NON-NLS-1$
 			typeSymbol = Messages.getString(MessageIds.GDE_MSGT1505);	//Kapazität C
 		else if (unit.endsWith("Hz")) //$NON-NLS-1$
-			typeSymbol = Messages.getString(MessageIds.GDE_MSGT1506);	//Frequenz F
+			if (buffer[0] == 0x3B) // negative
+				typeSymbol = Messages.getString(MessageIds.GDE_MSGT1537);	//Tastverhältnis v
+			else
+				typeSymbol = Messages.getString(MessageIds.GDE_MSGT1506);	//Frequenz F
 		else if (unit.endsWith("°C")) //$NON-NLS-1$
 			typeSymbol = Messages.getString(MessageIds.GDE_MSGT1507);	//Temperatur T
 		else if (unit.endsWith("°F")) //$NON-NLS-1$
 			typeSymbol = Messages.getString(MessageIds.GDE_MSGT1507);	//Temperatur T
-		else if (unit.endsWith("%")) typeSymbol = Messages.getString(MessageIds.GDE_MSGT1537); //Tastverhältnis //$NON-NLS-1$
+		else if (unit.endsWith("W")) //$NON-NLS-1$
+			typeSymbol = Messages.getString(MessageIds.GDE_MSGT1538);	//Leistung P
+		else if (unit.endsWith("%")) //$NON-NLS-1$
+			typeSymbol = Messages.getString(MessageIds.GDE_MSGT1537); //Tastverhältnis v 
+		
+		if (log1.isLoggable(Level.FINE)) {
+			log1.log(Level.FINE, "unit  : " + unit);
+			log1.log(Level.FINE, "type  : " + typeSymbol.split(" ")[0]);
+			log1.log(Level.FINE, "symbol: " + typeSymbol.split(" ")[1]);
+		}
 
 		try {
 			measurementInfo.put(UniTrend.INPUT_TYPE, typeSymbol.split(" ")[0]); //$NON-NLS-1$
 			measurementInfo.put(UniTrend.INPUT_SYMBOL, typeSymbol.split(" ")[1]); //$NON-NLS-1$
 		}
 		catch (Exception e) {
-			log.log(Level.WARNING, e.getMessage());
+			log1.log(Level.WARNING, e.getMessage());
 		}
 
 		return measurementInfo;
@@ -350,6 +394,7 @@ public class UT71D extends UniTrend {
 	 * @param buffer
 	 * @return true if battery voltage level detected as low
 	 */
+	@Override
 	public boolean isBatteryLevelLow(byte[] buffer) {
 		return false;
 	}
@@ -359,9 +404,10 @@ public class UT71D extends UniTrend {
 	 * @param buffer
 	 * @return the measurement mode key
 	 */
+	@Override
 	public String getMode(byte[] buffer) {
 		String mode;
-		if ((buffer[7] & 0x03) > 0)
+		if ((buffer[8] & 0x01) > 0)
 			mode = Messages.getString(MessageIds.GDE_MSGT1511);	//AUTO	
 		else
 			mode = Messages.getString(MessageIds.GDE_MSGT1510);	//Manual
@@ -390,18 +436,18 @@ public class UT71D extends UniTrend {
 							}
 						}
 						catch (RuntimeException e) {
-							log.log(Level.WARNING, e.getMessage(), e);
+							log1.log(Level.WARNING, e.getMessage(), e);
 						}
 						if (this.getDialog().boundsComposite != null && !this.getDialog().isDisposed()) this.getDialog().boundsComposite.redraw();
 					}
 				}
 				catch (SerialPortException e) {
-					log.log(Level.SEVERE, e.getMessage(), e);
+					log1.log(Level.SEVERE, e.getMessage(), e);
 					this.application.openMessageDialog(this.dialog.getDialogShell(),
 							Messages.getString(gde.messages.MessageIds.GDE_MSGE0015, new Object[] { e.getClass().getSimpleName() + GDE.STRING_BLANK_COLON_BLANK + e.getMessage() }));
 				}
 				catch (ApplicationConfigurationException e) {
-					log.log(Level.SEVERE, e.getMessage(), e);
+					log1.log(Level.SEVERE, e.getMessage(), e);
 					this.application.openMessageDialog(this.dialog.getDialogShell(), Messages.getString(gde.messages.MessageIds.GDE_MSGE0010));
 					this.application.getDeviceSelectionDialog().open();
 				}

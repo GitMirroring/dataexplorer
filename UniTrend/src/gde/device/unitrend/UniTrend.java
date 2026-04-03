@@ -201,9 +201,9 @@ public class UniTrend extends DeviceConfiguration implements IDevice {
 			case 54:
 				points[0] /= 100000;
 				break;
+			default:
 			case 49:
 				points[0] /= 10;
-			default:
 				break;
 			}
 			break;
