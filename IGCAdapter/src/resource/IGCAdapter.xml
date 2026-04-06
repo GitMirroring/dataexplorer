@@ -46,6 +46,7 @@
 				<unit>m</unit>
 				<active>true</active>
 				<statistics sigma="false" avg="false" max="true" min="true" />
+                <property name="do_subtract_first" value="true" type="Boolean" description="Reduktion aller gemessenem Werte durch den ersten Messwert"/>
 			</Measurement>
 			<Measurement>
 				<name>altitude (GPS)</name>

@@ -20,6 +20,8 @@ package gde.device.igc;
 
 import java.util.HashMap;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import gde.utils.StringHelper;
 
@@ -27,6 +29,7 @@ public class GpsTaskResult extends HashMap<String, String> {
 	//LISTAT{"allTrianglesAvgSpeed":3.63,"averageTriangleTime":266.06,"currentTime":1653484985032,"distanceCovered":0.0,"flightStart":1653484452960,"laps":2,"lapsStats":[],"lastStartAltitude":77.0,"lastStartCrossing":1653484985080,"lastTriangleAvgSpeed":2.34,"lastTriangleIndex":505.41,"lastTriangleTime":412.05,"scoringCode":"0000","signatureValid":false,"startAltitude":194.0,"startEntryAlti":194.0,"startEntrySpeed":25.672728,"startPenaltyPoints":94,"taskHeight":200,"taskLength":200,"timeElapsedSeconds":532,"triangleAlt":-29.0,"zoneEntered":false}
 
 	private static final long serialVersionUID = 3386446540799897163L;
+	private final static Logger				log			 = Logger.getLogger(GpsTaskResult.class.getName());
 	
 	private Vector<GpsLap> gpsLaps = new Vector<>();
 	
@@ -239,6 +242,7 @@ public class GpsTaskResult extends HashMap<String, String> {
 			return sb.toString();
 		}
 		catch (Exception e) {
+			log.log(Level.WARNING, e.getMessage(), e);
 			return "creation of task statistics has been failed\n";
 		}
 	}
