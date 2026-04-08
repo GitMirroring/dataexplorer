@@ -108,8 +108,8 @@ public class GathererThread extends Thread {
 		this.application.setStatusMessage(""); //$NON-NLS-1$
 
 		try {
-			this.serialPort.read(new byte[14], 1000);
-			this.serialPort.read(new byte[14], 1000);
+			this.serialPort.read(new byte[14], 5000);
+			this.serialPort.read(new byte[14], 5000);
 			this.serialPort.getData();
 		}
 		catch (Exception e1) {
@@ -124,6 +124,9 @@ public class GathererThread extends Thread {
 				dataBuffer = this.serialPort.getData();
 
 				this.device.getMeasurementInfo(dataBuffer, configData);
+				if (configData.isEmpty())
+					continue;
+				
 				m_unit = configData.get(UniTrend.INPUT_UNIT);
 				String processName = this.device.getMode(dataBuffer);
 				if (log.isLoggable(Level.FINE))

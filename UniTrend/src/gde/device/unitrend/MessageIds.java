@@ -24,9 +24,12 @@ package gde.device.unitrend;
  */ 
 public class MessageIds { 
 
+	public final static String	GDE_MSGW1500 = "GDE_MSGW1500";
+	
 	public final static String	GDE_MSGI1500 = "GDE_MSGI1500";
 	public final static String	GDE_MSGI1501 = "GDE_MSGI1501";
 	public final static String	GDE_MSGI1502 = "GDE_MSGI1502";
+	
 	public final static String	GDE_MSGT1500 = "GDE_MSGT1500";
 	public final static String	GDE_MSGT1501 = "GDE_MSGT1501";
 	public final static String	GDE_MSGT1503 = "GDE_MSGT1503";

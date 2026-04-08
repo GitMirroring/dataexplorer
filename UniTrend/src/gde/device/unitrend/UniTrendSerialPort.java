@@ -28,7 +28,7 @@ public class UniTrendSerialPort extends DeviceCommPort {
 	final int						dataLength;
 
 	boolean							isInSync				= true;
-	final static int		xferErrorLimit	= 10;
+	final static int		xferErrorLimit	= 50;
 
 	/**
 	 * constructor of default implementation
@@ -99,7 +99,7 @@ public class UniTrendSerialPort extends DeviceCommPort {
 				if (this.isInSync)  {
 					//read fresh data again
 					answer = new byte[this.dataLength];
-					answer = this.read(answer, 3000);
+					answer = this.read(answer, 5000);
 					if (log.isLoggable(Level.FINER)) 
 						log.log(java.util.logging.Level.FINER, StringHelper.byte2Hex4CharString(answer, answer.length));
 					break;

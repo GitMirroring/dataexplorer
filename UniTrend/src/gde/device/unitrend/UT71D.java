@@ -24,6 +24,8 @@ import java.util.logging.Logger;
 
 import javax.xml.bind.JAXBException;
 
+import org.eclipse.swt.SWT;
+
 import gde.GDE;
 import gde.data.Channel;
 import gde.data.Channels;
@@ -247,7 +249,14 @@ public class UT71D extends UniTrend {
 			log1.log(Level.FINE, "Messart (Byte[6]): " + buffer[6]);
 			log1.log(Level.FINE, "Kopplung(Byte[7]): " + buffer[7]);
 			log1.log(Level.FINE, "Info    (Byte[8]): " + buffer[8]);
+			log1.log(Level.FINE, "Low (Byte[0] == 0x3C): " + (buffer[0] == 0x3C));
+			log1.log(Level.FINE, "High(Byte[0] == 0x3F): " + (buffer[0] == 0x3F));
 		}
+		if (buffer[0] == 0x3C || buffer[0] == 0x3F) {// 0x3A = ' ', 0x3B = '-', 0x3C = 'L', 0x3F = 'H'
+			application.setStatusMessage(Messages.getString(MessageIds.GDE_MSGW1500), SWT.COLOR_RED);
+			return measurementInfo;
+		}
+		application.setStatusMessage("");
 		
 		String unit = ""; //$NON-NLS-1$
 		switch (buffer[6]) {
