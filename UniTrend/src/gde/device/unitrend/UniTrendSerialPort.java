@@ -63,7 +63,7 @@ public class UniTrendSerialPort extends DeviceCommPort {
 			if (log.isLoggable(Level.FINER)) 
 				log.log(Level.FINER, StringHelper.byte2Hex4CharString(answer, answer.length));
 			// synchronize received data to begin of sent data
-			while ((answer[this.dataLength - 1] & 0xFF) != this.endByte && (answer[this.dataLength - 2] & 0xFF) != this.endByte_1) {
+			while (answer.length == this.dataLength && (answer[this.dataLength - 1] & 0xFF) != this.endByte && (answer[this.dataLength - 2] & 0xFF) != this.endByte_1) {
 				this.isInSync = false;
 				log.log(Level.WARNING, "Answer needs synchronization, does not end with CRLF");
 				log.log(Level.WARNING, StringHelper.byte2Hex4CharString(answer, answer.length));
@@ -109,7 +109,7 @@ public class UniTrendSerialPort extends DeviceCommPort {
 //					throw new SerialPortException("Check serial port, data can not get in sync!");
 //				}
 			}
-			if ((answer[this.dataLength - 1] & 0xFF) != this.endByte && (answer[this.dataLength - 2] & 0xFF) != this.endByte_1) {
+			if (answer.length != this.dataLength || (answer[this.dataLength - 1] & 0xFF) != this.endByte || (answer[this.dataLength - 2] & 0xFF) != this.endByte_1) {
 				log.logp(Level.WARNING, UniTrendSerialPort.$CLASS_NAME, $METHOD_NAME, "=====> data end does not match, number of errors = " + this.getXferErrors());
 				this.addXferError();
 				if (this.getXferErrors() > 0 && this.getXferErrors() % UniTrendSerialPort.xferErrorLimit == 0) {

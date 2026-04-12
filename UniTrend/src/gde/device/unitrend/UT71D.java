@@ -56,7 +56,9 @@ public class UT71D extends UniTrend {
 	@Override
 	public int[] convertDataBytes(int[] points, byte[] dataBuffer) {
 		
-		points[0] = Integer.valueOf(String.format("%c%c%c%c%c", dataBuffer[0], dataBuffer[1], dataBuffer[2], dataBuffer[3], dataBuffer[4])).intValue();
+		log1.log(Level.FINE, "'" + String.format("%c%c%c%c%c", dataBuffer[0], dataBuffer[1], dataBuffer[2], dataBuffer[3], dataBuffer[4]) + "'");
+		
+		points[0] = Integer.valueOf(String.format("%c%c%c%c%c", dataBuffer[0], dataBuffer[1], dataBuffer[2], dataBuffer[3], dataBuffer[4]).trim()).intValue();
 		points[0] = dataBuffer[0] == 0x3B ? points[0] * -1 : points[0];
 		
 		if (log1.isLoggable(Level.FINE)) {
@@ -244,16 +246,18 @@ public class UT71D extends UniTrend {
 	@Override
 	public HashMap<String, String> getMeasurementInfo(byte[] buffer, HashMap<String, String> measurementInfo) {
 		if (log1.isLoggable(Level.FINE)) {
-			log1.log(Level.FINE, "buffer : " + StringHelper.byte2Hex4CharString(buffer, buffer.length));
+			log1.log(Level.FINE, "buffer : " + StringHelper.byte2Hex2CharString(buffer, buffer.length));
 			log1.log(Level.FINE, "Bereich (Byte[5]): " + buffer[5]);
 			log1.log(Level.FINE, "Messart (Byte[6]): " + buffer[6]);
 			log1.log(Level.FINE, "Kopplung(Byte[7]): " + buffer[7]);
 			log1.log(Level.FINE, "Info    (Byte[8]): " + buffer[8]);
-			log1.log(Level.FINE, "Low (Byte[0] == 0x3C): " + (buffer[0] == 0x3C));
-			log1.log(Level.FINE, "High(Byte[0] == 0x3F): " + (buffer[0] == 0x3F));
+			log1.log(Level.FINE, "Low  (Byte[1] == 0x3C): " + (buffer[1] == 0x3C));
+			log1.log(Level.FINE, "High (Byte[1] == 0x3F): " + (buffer[1] == 0x3F));
+			log1.log(Level.FINE, "NEG(buffer[8] == 0x04): " + (buffer[8] == 0x04));
 		}
-		if (buffer[0] == 0x3C || buffer[0] == 0x3F) {// 0x3A = ' ', 0x3B = '-', 0x3C = 'L', 0x3F = 'H'
+		if (buffer[1] == 0x3C || buffer[1] == 0x3F || buffer[1] == 0x3A || buffer[1] == 0x3C) {// 0x3A = ' ', 0x3B = '-', 0x3C = 'L', 0x3F = 'H'
 			application.setStatusMessage(Messages.getString(MessageIds.GDE_MSGW1500), SWT.COLOR_RED);
+			measurementInfo.clear();
 			return measurementInfo;
 		}
 		application.setStatusMessage("");
@@ -330,6 +334,7 @@ public class UT71D extends UniTrend {
 		switch (buffer[5]) {
 		case 50:
 		case 51:
+		case 60:
 			unit = "kHz";
 			break;
 		case 53:
@@ -360,15 +365,19 @@ public class UT71D extends UniTrend {
 
 		String typeSymbol = Messages.getString(MessageIds.GDE_MSGT1500);	//unknown
 		if (unit.contains("V")) //$NON-NLS-1$
-			typeSymbol = Messages.getString(MessageIds.GDE_MSGT1501);	//Spannung U
-		else if (unit.endsWith("A")) //$NON-NLS-1$
+			if (buffer[6] == 59)
+				typeSymbol = Messages.getString(MessageIds.GDE_MSGT1539);	//DiodenSpannung U
+			else	
+				typeSymbol = Messages.getString(MessageIds.GDE_MSGT1501);	//Spannung U
+		else if (unit.contains("A")) //$NON-NLS-1$
 			typeSymbol = Messages.getString(MessageIds.GDE_MSGT1503);	//Strom I
-		else if (unit.endsWith("Ω")) //$NON-NLS-1$
-			typeSymbol = Messages.getString(MessageIds.GDE_MSGT1504);	//Widerstand R
-		else if (unit.endsWith("F")) //$NON-NLS-1$
-			typeSymbol = Messages.getString(MessageIds.GDE_MSGT1505);	//Kapazität C
+		else if (unit.contains("Ω")) //$NON-NLS-1$
+			if (buffer[6] == 58)
+				typeSymbol = Messages.getString(MessageIds.GDE_MSGT1540);	//Durchgangsprüfung R
+			else
+				typeSymbol = Messages.getString(MessageIds.GDE_MSGT1504);	//Widerstand R
 		else if (unit.endsWith("Hz")) //$NON-NLS-1$
-			if (buffer[0] == 0x3B) // negative
+			if (buffer[8] == 0x04 || buffer[6] == 60) // negative
 				typeSymbol = Messages.getString(MessageIds.GDE_MSGT1537);	//Tastverhältnis v
 			else
 				typeSymbol = Messages.getString(MessageIds.GDE_MSGT1506);	//Frequenz F
@@ -376,6 +385,8 @@ public class UT71D extends UniTrend {
 			typeSymbol = Messages.getString(MessageIds.GDE_MSGT1507);	//Temperatur T
 		else if (unit.endsWith("°F")) //$NON-NLS-1$
 			typeSymbol = Messages.getString(MessageIds.GDE_MSGT1507);	//Temperatur T
+		else if (unit.endsWith("F")) //$NON-NLS-1$
+			typeSymbol = Messages.getString(MessageIds.GDE_MSGT1505);	//Kapazität C
 		else if (unit.endsWith("W")) //$NON-NLS-1$
 			typeSymbol = Messages.getString(MessageIds.GDE_MSGT1538);	//Leistung P
 		else if (unit.endsWith("%")) //$NON-NLS-1$
@@ -416,6 +427,10 @@ public class UT71D extends UniTrend {
 	@Override
 	public String getMode(byte[] buffer) {
 		String mode;
+		if (log1.isLoggable(Level.FINE)) {
+			log1.log(Level.FINE, "Kopplung : " + StringHelper.byte2bin_8(buffer[7]));
+			log1.log(Level.FINE, "Info     : " + StringHelper.byte2bin_8(buffer[8]));
+		}
 		if ((buffer[8] & 0x01) > 0)
 			mode = Messages.getString(MessageIds.GDE_MSGT1511);	//AUTO	
 		else
@@ -423,7 +438,9 @@ public class UT71D extends UniTrend {
 
 		if ((buffer[7] & 0x01) > 0)
 			mode += Messages.getString(MessageIds.GDE_MSGT1512); //AC
-		else if ((buffer[7] & 0x02) > 0) mode += Messages.getString(MessageIds.GDE_MSGT1513); // DC
+		mode += GDE.STRING_BLANK;
+		if ((buffer[7] & 0x02) > 0) 
+			mode += Messages.getString(MessageIds.GDE_MSGT1513); // DC
 
 		return mode;
 	}

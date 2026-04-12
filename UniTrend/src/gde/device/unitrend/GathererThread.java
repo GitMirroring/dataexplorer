@@ -108,8 +108,8 @@ public class GathererThread extends Thread {
 		this.application.setStatusMessage(""); //$NON-NLS-1$
 
 		try {
-			this.serialPort.read(new byte[14], 5000);
-			this.serialPort.read(new byte[14], 5000);
+			this.serialPort.read(new byte[this.serialPort.dataLength], 5000);
+			this.serialPort.read(new byte[this.serialPort.dataLength], 5000);
 			this.serialPort.getData();
 		}
 		catch (Exception e1) {
@@ -139,6 +139,8 @@ public class GathererThread extends Thread {
 						setRetryCounter(GathererThread.WAIT_TIME_RETRYS); // 600 * receive timeout sec timeout  600 sec
 						// record set does not exist or is outdated, build a new name and create
 						this.recordSetKey = this.channel.getNextRecordSetNumber() + ") " + processName; //$NON-NLS-1$
+						if (log.isLoggable(Level.FINE))
+							log.log(Level.FINE, "recordSetKey = " + this.recordSetKey); //$NON-NLS-1$ //$NON-NLS-2$
 						this.channel.put(this.recordSetKey, RecordSet.createRecordSet(this.recordSetKey, this.application.getActiveDevice(), this.channel.getNumber(), true, false, true));
 						this.channel.applyTemplateBasics(this.recordSetKey);
 						if (log.isLoggable(Level.FINE))

@@ -232,17 +232,20 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 			}
 			else if (txt_in != null) {
 				if (this.fileType.equals(GDE.FILE_ENDING_STAR_TXT)) {
-					StringBuffer sb = new StringBuffer();
-					int value;
-
-					sb.append('\f');
-					while ((value = txt_in.read()) != -1 && value != '\f')
-						sb.append((char) value);
-
-					if (sb.length() > 1)
-						readBuffer = sb.toString().getBytes();
-					else
+					String line;
+					if ((line = txt_in.readLine()) != null) {
+						StringBuffer sb = new StringBuffer();
+						StringTokenizer token = new StringTokenizer(line);
+						while (token.hasMoreElements()) {
+							String nextByte = token.nextToken();
+							sb.append(nextByte);
+						}
+						readBuffer = StringHelper.convert2ByteArray(sb.toString());
+					}
+					else {
 						this.close();
+						throw new EOFException();
+					}
 				}
 				else if (this.fileType.equals(GDE.FILE_ENDING_STAR_LOG)) {
 					String line;
