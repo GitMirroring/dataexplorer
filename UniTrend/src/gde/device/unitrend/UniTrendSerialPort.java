@@ -59,7 +59,7 @@ public class UniTrendSerialPort extends DeviceCommPort {
 				isPortOpenedByMe = true;
 			}
 
-			answer = this.read(answer, 5000);
+			answer = this.read(answer, 10000);
 			if (log.isLoggable(Level.FINER)) 
 				log.log(Level.FINER, StringHelper.byte2Hex4CharString(answer, answer.length));
 			// synchronize received data to begin of sent data

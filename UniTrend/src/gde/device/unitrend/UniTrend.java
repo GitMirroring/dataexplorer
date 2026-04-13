@@ -169,8 +169,13 @@ public class UniTrend extends DeviceConfiguration implements IDevice {
 			case 48:
 				points[0] /= 10;
 				break;
-			case 49:
 			default:
+			case 49:
+				switch  (dataBuffer[10]) { //Hz, %
+				case 59:
+				case 57:
+					points[0] *= 100;
+				}
 				break;
 			case 50:
 				points[0] *= 10;
@@ -228,6 +233,7 @@ public class UniTrend extends DeviceConfiguration implements IDevice {
 			}
 			break;
 		case 50: //frequency
+			points[0] *= 100;
 			break;
 		case 61: //current
 			switch (dataBuffer[0]) {
