@@ -564,11 +564,11 @@ public class DeviceConfiguration {
 				constructor = c.getDeclaredConstructor(new Class[] { String.class });
 				if (constructor != null) {
 					return (IDevice) constructor.newInstance(new Object[] { this.getPropertiesFileName() });
-				} else
-					throw new NoClassDefFoundError(Messages.getString(MessageIds.GDE_MSGE0016));
+				}
+				throw new NoClassDefFoundError(Messages.getString(MessageIds.GDE_MSGE0016));
 			}
-		} else
-			throw new NoClassDefFoundError(Messages.getString(MessageIds.GDE_MSGE0016));
+		}
+		throw new NoClassDefFoundError(Messages.getString(MessageIds.GDE_MSGE0016));
 	}
 
 	/**
@@ -583,6 +583,7 @@ public class DeviceConfiguration {
 			Constructor<?> constructor = currentClass.getDeclaredConstructor(new Class[] { DeviceConfiguration.class });
 			tmpDevice = constructor != null ? (IDevice) constructor.newInstance(new Object[] { this }) : null;
 		} catch (Exception e) {
+			//ignore
 		}
 		return tmpDevice;
 	}

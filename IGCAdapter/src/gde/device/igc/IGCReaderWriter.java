@@ -461,12 +461,14 @@ public class IGCReaderWriter {
 							values[i + 4 + bExtensions.size()] = kExtensions.get(i).getValue(line);
 							log.log(Level.FINE, String.format("%s = %d", kExtensions.get(i).threeLetterCode, kExtensions.get(i).getValue(line)/1000));
 						}
-						if (actualTimeStamp > timeStamp)
-							recordSet.addNoneCalculationRecordsPoints(values, actualTimeStamp - startTimeStamp);
-						else if (actualTimeStamp == timeStamp) {
-							if (log.isLoggable(Level.INFO))
-								log.log(Level.INFO, String.format("%s at %s ms %s", recordSet.getName(), new SimpleDateFormat("HH:mm:ss.SSS").format(actualTimeStamp), StringHelper.arrayToString1000(values)));
-							recordSet.replaceUpdateNoneCalculationRecordsPoints(values);
+						if (recordSet != null) {
+							if (actualTimeStamp > timeStamp)
+								recordSet.addNoneCalculationRecordsPoints(values, actualTimeStamp - startTimeStamp);
+							else if (actualTimeStamp == timeStamp) {
+								if (log.isLoggable(Level.INFO))
+									log.log(Level.INFO, String.format("%s at %s ms %s", recordSet.getName(), new SimpleDateFormat("HH:mm:ss.SSS").format(actualTimeStamp), StringHelper.arrayToString1000(values)));
+								recordSet.replaceUpdateNoneCalculationRecordsPoints(values);
+							}
 						}
 						timeStamp = actualTimeStamp;
 					}
@@ -483,7 +485,7 @@ public class IGCReaderWriter {
 							else if (albatrossTask.toString().contains("500,500,120"))
 								taskType = "SLS";
 							
-							if (result != null && result.getLaps() > 0) {
+							if (result.getLaps() > 0) {
 								log.log(Level.OFF, result.toString(taskType));
 								triangles.append(result.toString(taskType));
 							}
@@ -499,7 +501,7 @@ public class IGCReaderWriter {
 						//LISTAT:LAP:{"alt":74,"altGainLos":-163,"index":118.03,"time":100.62}
 						//LRCE_TRIANGLE_LAP_STAT:{"alt":92,"altGainLos":-58,"index":115.25492,"time":86.0}
 						if (line.startsWith("LISTAT{")) {
-							
+							//ignore
 						}
 						else if (line.startsWith("LISTAT:LAP:{") || line.startsWith("LRCE_TRIANGLE_LAP_STAT")) {
 							if (result == null)
@@ -565,10 +567,10 @@ public class IGCReaderWriter {
 				reader = null;
 			}
 			
-			if (error.length() > 10)
-				recordSet.setRecordSetDescription(recordSet.getRecordSetDescription() + GDE.LINE_SEPARATOR + error);
-			if (triangles.length() > 10)
-				recordSet.setRecordSetDescription(recordSet.getRecordSetDescription() + GDE.LINE_SEPARATOR + triangles);
+			if (recordSet != null) {
+				if (error.length() > 10) recordSet.setRecordSetDescription(recordSet.getRecordSetDescription() + GDE.LINE_SEPARATOR + error);
+				if (triangles.length() > 10) recordSet.setRecordSetDescription(recordSet.getRecordSetDescription() + GDE.LINE_SEPARATOR + triangles);
+			}
 			
 		}
 		catch (FileNotFoundException e) {

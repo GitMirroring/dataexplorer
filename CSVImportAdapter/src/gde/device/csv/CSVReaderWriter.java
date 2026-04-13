@@ -20,6 +20,7 @@ package gde.device.csv;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -93,6 +94,9 @@ public class CSVReaderWriter {
 			while (((line = reader.readLine()) != null) && !Character.isDigit(line.charAt(0)) && !line.contains(GDE.STRING_EMPTY + separator)) {
 				// read until line does not starts with numbers and contains defined separator
 			}
+			if (line == null) 
+				throw new EOFException(filePath);
+			
 			String[] headerData = line.split(GDE.STRING_EMPTY + separator);
 			if (headerData.length > 2 || headerData.length < 1) { //not according to exported file with device and channelCinfig, assume actual selected device and first channel configuration
 				String tmpHeaderLine = CSVReaderWriter.application.getActiveDevice().getName() + separator + CSVReaderWriter.channels.getActiveChannel().getChannelConfigKey();

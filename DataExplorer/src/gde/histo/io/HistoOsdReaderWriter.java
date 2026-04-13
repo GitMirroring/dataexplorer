@@ -22,7 +22,6 @@ import static java.util.logging.Level.FINEST;
 
 import java.io.DataInputStream;
 import java.io.EOFException;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -81,7 +80,7 @@ public final class HistoOsdReaderWriter extends OsdReaderWriter {
 		// lazy parsing
 		private List<RecordSetParser>					osdRecordSets;
 
-		HeaderParser(HashMap<String, String> header) throws FileNotFoundException, IOException, NotSupportedFileFormatException {
+		HeaderParser(HashMap<String, String> header) {
 			this.header = header;
 		}
 
@@ -136,7 +135,9 @@ public final class HistoOsdReaderWriter extends OsdReaderWriter {
 			if (header.containsKey(GDE.CREATION_TIME_STAMP)) {
 				try {
 					return Instant.parse(header.get(GDE.CREATION_TIME_STAMP)).toEpochMilli();
-				} catch (DateTimeParseException e) {}
+				} catch (DateTimeParseException e) {
+					//ignore
+				}
 
 				SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd" + ' ' + " HH:mm:ss"); //$NON-NLS-1$ //$NON-NLS-2$
 				try {
@@ -144,9 +145,8 @@ public final class HistoOsdReaderWriter extends OsdReaderWriter {
 				} catch (Exception ex) { // ParseException ex) {
 					throw new RuntimeException(ex);
 				}
-			} else {
-				return 0;
 			}
+			return 0;
 		}
 	}
 
@@ -245,9 +245,8 @@ public final class HistoOsdReaderWriter extends OsdReaderWriter {
 			int idx2 = recordSetComment.indexOf(GDE.CHAR_RIGHT_BRACKET);
 			if (idx1 > 0 && idx2 > idx1) {
 				return recordSetComment.substring(idx1 + 1, idx2);
-			} else {
-				return "";
 			}
+			return "";
 		}
 
 		/**
@@ -266,9 +265,8 @@ public final class HistoOsdReaderWriter extends OsdReaderWriter {
 				} catch (Exception e) {
 					return null;
 				}
-			} else {
-				return null;
 			}
+			return null;
 		}
 
 		/**

@@ -515,7 +515,6 @@ public class NMEAAdapter extends DeviceConfiguration implements IDevice {
 
 						if (fd.getFileName().length() > 4) {
 							Integer channelConfigNumber = NMEAAdapter.this.application.getActiveChannelNumber();
-							channelConfigNumber = channelConfigNumber == null ? 1 : channelConfigNumber;
 							//String recordNameExtend = selectedImportFile.substring(selectedImportFile.lastIndexOf(GDE.CHAR_DOT) - 4, selectedImportFile.lastIndexOf(GDE.CHAR_DOT));
 							try {
 								NMEAReaderWriter.read(selectedImportFile, NMEAAdapter.this, GDE.STRING_EMPTY, channelConfigNumber);

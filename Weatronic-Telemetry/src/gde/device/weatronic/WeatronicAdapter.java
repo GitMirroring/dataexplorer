@@ -408,7 +408,6 @@ public class WeatronicAdapter extends DeviceConfiguration implements IDevice {
 
 						if (fd.getFileName().length() > 4) {
 							Integer channelConfigNumber = WeatronicAdapter.this.application.getActiveChannelNumber();
-							channelConfigNumber = channelConfigNumber == null ? 1 : channelConfigNumber;
 							//String recordNameExtend = selectedImportFile.substring(selectedImportFile.lastIndexOf(GDE.CHAR_DOT) - 4, selectedImportFile.lastIndexOf(GDE.CHAR_DOT));
 							try {
 								LogReader.read(selectedImportFile, channelConfigNumber); //, WeatronicAdapter.this, GDE.STRING_EMPTY, channelConfigNumber);

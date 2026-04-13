@@ -108,7 +108,7 @@ public class GPXDataReaderWriter {
 
 				GDE.getUiNotification().setProgress(100);
 
-				if (GDE.isWithUi()) {
+				if (GDE.isWithUi() && channelRecordSet != null) {
 					Channels.getInstance().switchChannel(activeChannel.getName());
 					activeChannel.switchRecordSet(recordSetName);
 					device.updateVisibilityStatus(channelRecordSet, true);

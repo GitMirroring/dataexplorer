@@ -132,9 +132,8 @@ public abstract class Analyzer implements Cloneable {
 		// shallow copy
 		if (that.deviceConfigurations == null) {
 			throw new UnsupportedOperationException("clone is requested before the configurations are loaded");
-		} else {
-			this.deviceConfigurations = that.deviceConfigurations;
 		}
+		this.deviceConfigurations = that.deviceConfigurations;
 		// define thread object for other methods checking its progress
 		this.deviceConfigurationsThread = that.deviceConfigurationsThread;
 		// do not start because we only do a shallow copy for performance reasons
