@@ -1103,9 +1103,15 @@ public class HoTTbinReader2 extends HoTTbinReader {
 					//30=servoPulse 31=AirSpeed 32=n/a 33=GyroX 34=GyroY 35=GyroZ 36=ENL 37=Version	
 					this.points[30] = _buf3[6] * 1000; 
 					this.points[31] = DataParser.parse2UnsignedShort(_buf3, 7) * 1000;
-					this.points[33] = DataParser.parse2Short(_buf3[9], _buf4[0]) * 1000;
-					this.points[34] = DataParser.parse2Short(_buf4, 1) * 1000;
-					this.points[35] = DataParser.parse2Short(_buf4, 3) * 1000;
+					if ((_buf4[9] & 0xFF) <= 131) { //FW <= 1.31
+						this.points[33] = DataParser.parse2Short(_buf3[9], _buf4[0]) * 1000;
+						this.points[34] = DataParser.parse2Short(_buf4, 1) * 1000;
+						this.points[35] = DataParser.parse2Short(_buf4, 3) * 1000;
+					} else { //FW >= 1.32
+						this.points[33] = _buf3[9] * 10000000 + _buf4[0] * 100000 + _buf4[1] * 1000 + _buf4[2]*10;//HH:mm:ss.SSS
+						this.points[34] = 0;
+						this.points[35] = 0;
+					}
 					this.points[36] = (_buf4[5] & 0xFF) * 1000;
 				}
 				else if ((_buf4[9] & 0xFF) == 4) { //RCE Electronics Sparrow

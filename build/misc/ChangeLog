@@ -9,6 +9,7 @@ Generic changes/fixes
 Device specific changes/fixes
 	* UT71D - add initial support
 	* IGCAdapter - adaptation for task statistics of Albatross v4.4.4
+	* HoTTAdapter* - update value changes according GPS-Logger FW 1.32
 
 Version 4.0.4 - 20 Mar 2026
 Generic changes/fixes 

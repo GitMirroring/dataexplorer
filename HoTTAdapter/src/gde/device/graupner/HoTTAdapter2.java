@@ -2751,6 +2751,7 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 			HashMap<String, String> infoHeader = null;
 			try (BufferedInputStream info_in = new BufferedInputStream(inputStream.get())) {
 				infoHeader = new InfoParser((s) -> {
+					//ignore
 				}).getFileInfo(info_in, truss.getVault().getLoadFilePath(), truss.getVault().getLogFileLength());
 				if (infoHeader == null || infoHeader.isEmpty()) return;
 
@@ -2779,8 +2780,7 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 		RecordSet activeRecordSet = this.application.getActiveChannel().getActiveRecordSet();
 		if (activeRecordSet.get(10).hasReasonableData() && activeRecordSet.get(20).hasReasonableData() && activeRecordSet.get(21).hasReasonableData())
 			return new int[] { 10, 20, 21 };
-		else
-			return new int[0];
+		return new int[0];
 	}  
 
 	/**
@@ -2934,17 +2934,26 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 			tmpRecordSet.get(31).setName(device.getMeasurementReplacement("air_speed") + " GPS");
 			tmpRecordSet.get(31).setUnit("km/h");
 			tmpRecordSet.get(31).createProperty(IDevice.SYNC_ORDINAL, DataTypes.INTEGER, 22); //$NON-NLS-1$
-			tmpRecordSet.get(33).setName(device.getMeasurementReplacement("acceleration") + " X GPS");
-			tmpRecordSet.get(33).setUnit("g");
-			tmpRecordSet.get(33).setFactor(0.01);
-			tmpRecordSet.get(34).setName(device.getMeasurementReplacement("acceleration") + " Y GPS");
-			tmpRecordSet.get(34).setUnit("g");
-			tmpRecordSet.get(34).setFactor(0.01);
-			tmpRecordSet.get(34).createProperty(IDevice.SYNC_ORDINAL, DataTypes.INTEGER, 33); //$NON-NLS-1$
-			tmpRecordSet.get(35).setName(device.getMeasurementReplacement("acceleration") + " Z GPS");
-			tmpRecordSet.get(35).setUnit("g");
-			tmpRecordSet.get(35).setFactor(0.01);
-			tmpRecordSet.get(35).createProperty(IDevice.SYNC_ORDINAL, DataTypes.INTEGER, 33); //$NON-NLS-1$
+			if (version <= 131) {
+				tmpRecordSet.get(33).setName(device.getMeasurementReplacement("acceleration") + " X GPS");
+				tmpRecordSet.get(33).setUnit("g");
+				tmpRecordSet.get(33).setFactor(0.01);
+				tmpRecordSet.get(34).setName(device.getMeasurementReplacement("acceleration") + " Y GPS");
+				tmpRecordSet.get(34).setUnit("g");
+				tmpRecordSet.get(34).setFactor(0.01);
+				tmpRecordSet.get(34).createProperty(IDevice.SYNC_ORDINAL, DataTypes.INTEGER, 33); //$NON-NLS-1$
+				tmpRecordSet.get(35).setName(device.getMeasurementReplacement("acceleration") + " Z GPS");
+				tmpRecordSet.get(35).setUnit("g");
+				tmpRecordSet.get(35).setFactor(0.01);
+				tmpRecordSet.get(35).createProperty(IDevice.SYNC_ORDINAL, DataTypes.INTEGER, 33); //$NON-NLS-1$
+			} else { // >= 1.32 changes due to ELRS adaption
+				tmpRecordSet.get(33).setName(device.getMeasurementReplacement("time") + " GPS");
+				tmpRecordSet.get(33).setUnit("HH:mm:ss.SSS");
+				tmpRecordSet.get(33).setFactor(1.0);
+//			tmpRecordSet.get(35).setName(device.getMeasurementReplacement("distance_start") + " ELRS");
+//			tmpRecordSet.get(35).setUnit("m");
+//			tmpRecordSet.get(35).setFactor(1.0);
+			}
 			tmpRecordSet.get(36).setName("ENL");
 			tmpRecordSet.get(36).setUnit("");
 		}

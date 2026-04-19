@@ -2882,17 +2882,27 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 			tmpRecordSet.get(17).setName(device.getMeasurementReplacement("air_speed"));
 			tmpRecordSet.get(17).setUnit("km/h");
 			tmpRecordSet.get(17).createProperty(IDevice.SYNC_ORDINAL, DataTypes.INTEGER, 6); //$NON-NLS-1$
-			tmpRecordSet.get(19).setName(device.getMeasurementReplacement("acceleration") + " X");
-			tmpRecordSet.get(19).setUnit("g");
-			tmpRecordSet.get(19).setFactor(0.01);
-			tmpRecordSet.get(20).setName(device.getMeasurementReplacement("acceleration") + " Y");
-			tmpRecordSet.get(20).setUnit("g");
-			tmpRecordSet.get(20).setFactor(0.01);
-			tmpRecordSet.get(20).createProperty(IDevice.SYNC_ORDINAL, DataTypes.INTEGER, 19); //$NON-NLS-1$
-			tmpRecordSet.get(21).setName(device.getMeasurementReplacement("acceleration") + " Z");
-			tmpRecordSet.get(21).setUnit("g");
-			tmpRecordSet.get(21).setFactor(0.01);
-			tmpRecordSet.get(21).createProperty(IDevice.SYNC_ORDINAL, DataTypes.INTEGER, 19); //$NON-NLS-1$
+			if (version <= 131) {
+				tmpRecordSet.get(19).setName(device.getMeasurementReplacement("acceleration") + " X");
+				tmpRecordSet.get(19).setUnit("g");
+				tmpRecordSet.get(19).setFactor(0.01);
+				tmpRecordSet.get(20).setName(device.getMeasurementReplacement("acceleration") + " Y");
+				tmpRecordSet.get(20).setUnit("g");
+				tmpRecordSet.get(20).setFactor(0.01);
+				tmpRecordSet.get(20).createProperty(IDevice.SYNC_ORDINAL, DataTypes.INTEGER, 19); //$NON-NLS-1$
+				tmpRecordSet.get(21).setName(device.getMeasurementReplacement("acceleration") + " Z");
+				tmpRecordSet.get(21).setUnit("g");
+				tmpRecordSet.get(21).setFactor(0.01);
+				tmpRecordSet.get(21).createProperty(IDevice.SYNC_ORDINAL, DataTypes.INTEGER, 19); //$NON-NLS-1$
+			}
+			else { // >= 1.32 changes due to ELRS adaption
+				tmpRecordSet.get(19).setName(device.getMeasurementReplacement("time") + " GPS");
+				tmpRecordSet.get(19).setUnit("HH:mm:ss.SSS");
+				tmpRecordSet.get(19).setFactor(1.0);
+//			tmpRecordSet.get(21).setName(device.getMeasurementReplacement("distance_start") + " ELRS");
+//			tmpRecordSet.get(21).setUnit("m");
+//			tmpRecordSet.get(21).setFactor(1.0);
+			}
 			tmpRecordSet.get(22).setName("ENL");
 			tmpRecordSet.get(22).setUnit("");
 		}
