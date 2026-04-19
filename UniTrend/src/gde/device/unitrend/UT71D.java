@@ -59,7 +59,7 @@ public class UT71D extends UniTrend {
 		log1.log(Level.FINE, "'" + String.format("%c%c%c%c%c", dataBuffer[0], dataBuffer[1], dataBuffer[2], dataBuffer[3], dataBuffer[4]) + "'");
 		
 		points[0] = Integer.valueOf(String.format("%c%c%c%c%c", dataBuffer[0], dataBuffer[1], dataBuffer[2], dataBuffer[3], dataBuffer[4]).trim()).intValue();
-		points[0] = dataBuffer[0] == 0x3B ? points[0] * -1 : points[0];
+		points[0] = dataBuffer[6] != 0x3C && (dataBuffer[8] & 0x04) > 0 ? points[0] * -1 : points[0];
 		
 		if (log1.isLoggable(Level.FINE)) {
 			StringBuilder sb = new StringBuilder();
@@ -233,8 +233,6 @@ public class UT71D extends UniTrend {
 			break;
 		}
 
-		if ((dataBuffer[8] & 0x04) > 0) points[0] *= -1;
-
 		return points;
 	}
 
@@ -253,7 +251,7 @@ public class UT71D extends UniTrend {
 			log1.log(Level.FINE, "Info    (Byte[8]): " + buffer[8]);
 			log1.log(Level.FINE, "Low  (Byte[1] == 0x3C): " + (buffer[1] == 0x3C));
 			log1.log(Level.FINE, "High (Byte[1] == 0x3F): " + (buffer[1] == 0x3F));
-			log1.log(Level.FINE, "NEG(buffer[8] == 0x04): " + (buffer[8] == 0x04));
+			log1.log(Level.FINE, "NEG	 (Byte[8] & 0x04 ): " + ((buffer[8] & 0x04) > 0));
 		}
 		if (buffer[1] == 0x3C || buffer[1] == 0x3F || buffer[1] == 0x3A || buffer[1] == 0x3C) {// 0x3A = ' ', 0x3B = '-', 0x3C = 'L', 0x3F = 'H'
 			application.setStatusMessage(Messages.getString(MessageIds.GDE_MSGW1500), SWT.COLOR_RED);
@@ -334,19 +332,19 @@ public class UT71D extends UniTrend {
 		switch (buffer[5]) {
 		case 50:
 		case 51:
+		case 52:
 		case 60:
-			unit = "kHz";
+			unit = (buffer[8] & 0x04) > 0 ? "%" : "kHz";
 			break;
 		case 53:
 		case 54:
 		case 55:
-			unit = "MHz";
+			unit = (buffer[8] & 0x04) > 0 ? "%" : "MHz";
 			break;
 		case 48:
 		case 49:
-		case 52:
 		default:
-			unit = "Hz";
+			unit = (buffer[8] & 0x04) > 0 ? "%" : "Hz";
 			break;
 		}
 			break;
@@ -360,7 +358,11 @@ public class UT71D extends UniTrend {
 		unit = "%";
 			break;
 		}
-
+		
+		if (!(unit.endsWith(GDE.STRING_EQUAL) || unit.endsWith("~"))) {
+			if ((buffer[7] & 0x01) > 0) unit += "~"; //AC
+			else if ((buffer[7] & 0x02) > 0) unit += GDE.STRING_EQUAL; // DC
+		}
 		measurementInfo.put(UniTrend.INPUT_UNIT, unit);
 
 		String typeSymbol = Messages.getString(MessageIds.GDE_MSGT1500);	//unknown
@@ -377,9 +379,6 @@ public class UT71D extends UniTrend {
 			else
 				typeSymbol = Messages.getString(MessageIds.GDE_MSGT1504);	//Widerstand R
 		else if (unit.endsWith("Hz")) //$NON-NLS-1$
-			if (buffer[8] == 0x04 || buffer[6] == 60) // negative
-				typeSymbol = Messages.getString(MessageIds.GDE_MSGT1537);	//Tastverhältnis v
-			else
 				typeSymbol = Messages.getString(MessageIds.GDE_MSGT1506);	//Frequenz F
 		else if (unit.endsWith("°C")) //$NON-NLS-1$
 			typeSymbol = Messages.getString(MessageIds.GDE_MSGT1507);	//Temperatur T
@@ -391,6 +390,7 @@ public class UT71D extends UniTrend {
 			typeSymbol = Messages.getString(MessageIds.GDE_MSGT1538);	//Leistung P
 		else if (unit.endsWith("%")) //$NON-NLS-1$
 			typeSymbol = Messages.getString(MessageIds.GDE_MSGT1537); //Tastverhältnis v 
+		
 		
 		if (log1.isLoggable(Level.FINE)) {
 			log1.log(Level.FINE, "unit  : " + unit);
@@ -431,12 +431,15 @@ public class UT71D extends UniTrend {
 			log1.log(Level.FINE, "Kopplung : " + StringHelper.byte2bin_8(buffer[7]));
 			log1.log(Level.FINE, "Info     : " + StringHelper.byte2bin_8(buffer[8]));
 		}
+		
+		
+		mode = "Fix ";	//FIX	0x30
 		if ((buffer[8] & 0x01) > 0)
 			mode = Messages.getString(MessageIds.GDE_MSGT1511);	//AUTO	
-		else
+		else if ((buffer[8] & 0x02) > 0)
 			mode = Messages.getString(MessageIds.GDE_MSGT1510);	//Manual
 
-		if ((buffer[7] & 0x01) > 0)
+		if ((buffer[7] & 0x01) > 0) 
 			mode += Messages.getString(MessageIds.GDE_MSGT1512); //AC
 		mode += GDE.STRING_BLANK;
 		if ((buffer[7] & 0x02) > 0) 
