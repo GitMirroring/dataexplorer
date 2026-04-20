@@ -7,6 +7,7 @@ Generic changes/fixes
 	* enable MacOS ARM build
 	
 Device specific changes/fixes
+	* UT61E - correct unexpected behavior
 	* UT71D - add initial support
 	* IGCAdapter - adaptation for task statistics of Albatross v4.4.4
 	* HoTTAdapter* - update value changes according GPS-Logger FW 1.32

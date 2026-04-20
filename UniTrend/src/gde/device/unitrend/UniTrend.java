@@ -25,6 +25,8 @@ import java.util.logging.Logger;
 
 import javax.xml.bind.JAXBException;
 
+import org.eclipse.swt.SWT;
+
 import gde.GDE;
 import gde.comm.DeviceCommPort;
 import gde.config.Settings;
@@ -350,11 +352,21 @@ public class UniTrend extends DeviceConfiguration implements IDevice {
 	 */
 	public HashMap<String, String> getMeasurementInfo(byte[] buffer, HashMap<String, String> measurementInfo) {
 		if (log.isLoggable(Level.FINE)) {
-			log.log(Level.FINE, "buffer : " + StringHelper.byte2Hex4CharString(buffer, buffer.length));
-			log.log(Level.FINE, "Schalterstellung (Byte[6]): " + buffer[6]);
-			log.log(Level.FINE, "Bereich          (Byte[0]): " + buffer[0]);
-			log.log(Level.FINE, "Kopplung        (Byte[10]): " + buffer[10]);
+			log.log(Level.FINE, "buffer : " + StringHelper.byte2Hex2CharString(buffer, buffer.length));
+			log.log(Level.FINE, "Bereich          (Byte[0]): " + buffer[0] + " " + StringHelper.byte2bin_8(buffer[0]));
+			log.log(Level.FINE, "Schalterstellung (Byte[6]): " + buffer[6] + " " + StringHelper.byte2bin_8(buffer[6]));
+			log.log(Level.FINE, "Info             (Byte[7]): " + buffer[7] + " " + StringHelper.byte2bin_8(buffer[7]));
+			log.log(Level.FINE, "Rel              (Byte[8]): " + buffer[8] + " " + StringHelper.byte2bin_8(buffer[8]));
+			log.log(Level.FINE, "Limit            (Byte[9]): " + buffer[9] + " " + StringHelper.byte2bin_8(buffer[9]));
+			log.log(Level.FINE, "Kopplung        (Byte[10]): " + buffer[10] + " " + StringHelper.byte2bin_8(buffer[10]));
 		}
+		if ((buffer[7] & 0x01) > 0 || (buffer[9] & 0x08) > 0) {// 0VL  || UL
+			application.setStatusMessage(Messages.getString(MessageIds.GDE_MSGW1500), SWT.COLOR_RED);
+			measurementInfo.clear();
+			return measurementInfo;
+		}
+		application.setStatusMessage("");
+		
 		String unit = ""; //$NON-NLS-1$
 		switch (buffer[6]) {
 		default:
@@ -440,13 +452,13 @@ public class UniTrend extends DeviceConfiguration implements IDevice {
 			}
 			break;
 		case 61: //current
-			unit = "µA";
+			unit = (buffer[10] & 0x01) > 0 ? "Hz" : "µA";
 			break;
 		case 63: //current
-			unit = "mA";
+			unit = (buffer[10] & 0x01) > 0 ? "Hz" : "mA";
 			break;
 		case 48: //current
-			unit = "A";
+			unit = (buffer[10] & 0x01) > 0 ? "Hz" : "A";
 			break;
 		}
 
@@ -454,11 +466,17 @@ public class UniTrend extends DeviceConfiguration implements IDevice {
 
 		String typeSymbol = Messages.getString(MessageIds.GDE_MSGT1500);
 		if (unit.contains("V")) //$NON-NLS-1$
-			typeSymbol = Messages.getString(MessageIds.GDE_MSGT1501);
+			if (buffer[6] == 49)
+				typeSymbol = Messages.getString(MessageIds.GDE_MSGT1539);	//DiodenSpannung U
+			else
+				typeSymbol = Messages.getString(MessageIds.GDE_MSGT1501);
 		else if (unit.endsWith("A")) //$NON-NLS-1$
 			typeSymbol = Messages.getString(MessageIds.GDE_MSGT1503);
 		else if (unit.endsWith("Ω")) //$NON-NLS-1$
-			typeSymbol = Messages.getString(MessageIds.GDE_MSGT1504);
+			if (buffer[6] == 53)
+				typeSymbol = Messages.getString(MessageIds.GDE_MSGT1540);	//Durchgangsprüfung R
+			else
+				typeSymbol = Messages.getString(MessageIds.GDE_MSGT1504);
 		else if (unit.endsWith("F")) //$NON-NLS-1$
 			typeSymbol = Messages.getString(MessageIds.GDE_MSGT1505);
 		else if (unit.endsWith("Hz")) //$NON-NLS-1$
@@ -491,8 +509,8 @@ public class UniTrend extends DeviceConfiguration implements IDevice {
 			mode = Messages.getString(MessageIds.GDE_MSGT1510); //Manual
 
 		if ((buffer[10] & 0x08) > 0)
-			mode += Messages.getString(MessageIds.GDE_MSGT1512); //AC
-		else if ((buffer[10] & 0x04) > 0) mode += Messages.getString(MessageIds.GDE_MSGT1513); // DC
+			mode += Messages.getString(MessageIds.GDE_MSGT1513); //DC
+		else if ((buffer[10] & 0x04) > 0) mode += Messages.getString(MessageIds.GDE_MSGT1512); // AC
 
 		return mode;
 	}
