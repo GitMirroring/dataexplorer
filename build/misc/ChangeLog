@@ -6,6 +6,7 @@ Generic changes/fixes
 	* enable error message box while detecting error from jSerialComm
 	* enable MacOS ARM build
 	* remember zoom steps per recordSet, enable switching  between this steps
+	* add one time action correct the cool bar due to re-organization 
 	
 Device specific changes/fixes
 	* UT61E - correct unexpected behavior

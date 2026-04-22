@@ -347,6 +347,7 @@ public final class Settings extends Properties {
 	 */
 	private void initialize() throws SAXException, JAXBException {
 		this.load();
+		this.checkOneTimeAction();
 
 		if (Analyzer.isWithBuilders()) {
 			this.readMeasurementDiplayProperties();
@@ -3472,5 +3473,18 @@ public final class Settings extends Properties {
 //		deviceList.add("HoTTAdapter2");
 //		deviceList.add("HoTTAdapter2M");
 		return deviceList;
+	}
+	
+	/**
+	 * execute only, while version 405 is installed
+	 * check if APPL_VERSION_NUMBER stored in settings is smaller than static GDE.VERSION_NUMBER defined in GDE.java
+	 */
+	public void checkOneTimeAction() {
+		if (GDE.VERSION_NUMBER == 405 && Integer.valueOf(this.getProperty(Settings.APPL_VERSION_NUMBER, "404").replace(".", "")) < GDE.VERSION_NUMBER) {
+			//log.log(Level.INFO, "run action");
+			this.remove(COOLBAR_ORDER);	
+			this.remove(COOLBAR_WRAPS);
+			this.remove(COOLBAR_SIZES);
+		}
 	}
 }
