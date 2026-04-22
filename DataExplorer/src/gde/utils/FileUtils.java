@@ -1065,7 +1065,8 @@ public class FileUtils {
 			basePath = url.getFile().substring(GDE.IS_WINDOWS ? 1 : 0, url.getPath().lastIndexOf(DataExplorer.class.getSimpleName()));
 			basePath = basePath.replace(GDE.STRING_URL_BLANK, GDE.STRING_BLANK);
 			basePath = basePath + "build" + "/target/" //$NON-NLS-1$ //$NON-NLS-2$
-					+ (GDE.IS_LINUX ? "GNU" : GDE.STRING_EMPTY) + System.getProperty("os.name").split(GDE.STRING_BLANK)[0] + GDE.STRING_UNDER_BAR + GDE.BIT_MODE //$NON-NLS-1$ //$NON-NLS-2$
+					+ (GDE.IS_LINUX ? "GNU" : GDE.STRING_EMPTY) + System.getProperty("os.name").split(GDE.STRING_BLANK)[0] + GDE.STRING_UNDER_BAR //$NON-NLS-1$ //$NON-NLS-2$
+					+ (GDE.IS_MAC ? (System.getProperty("os.arch").contains("aarch64") ? "ARM" : "X86") : GDE.BIT_MODE)
 					+ GDE.STRING_FILE_SEPARATOR_UNIX + GDE.NAME_LONG + (GDE.IS_MAC ? GDE.STRING_MAC_DOT_APP + GDE.STRING_MAC_APP_RES_PATH : GDE.STRING_EMPTY) + GDE.STRING_FILE_SEPARATOR_UNIX;
 		}
 		else { // started outside java -jar *.jar

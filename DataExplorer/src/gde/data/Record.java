@@ -135,6 +135,7 @@ public class Record extends AbstractRecord implements IRecord {
 		/**
 		 * get printable output
 		 */
+		@Override
 		public String toString() {
 			return this.in + ", " + this.out;
 		}
@@ -722,8 +723,8 @@ public class Record extends AbstractRecord implements IRecord {
 	 * clear all property types like offset, factor, scale sync, etc.
 	 */
 	public void clearProperties() {
-		List<PropertyType>  properties = this.getProperties();
-		Iterator<PropertyType> itr = properties.listIterator();
+		List<PropertyType>  propertiesClear = this.getProperties();
+		Iterator<PropertyType> itr = propertiesClear.listIterator();
 		while(itr.hasNext()) {
 			itr.next();
 			itr.remove();
@@ -1919,7 +1920,26 @@ public class Record extends AbstractRecord implements IRecord {
 		this.minZoomScaleValue = tmpMinZoomScaleValue < this.minScaleValue ? this.minScaleValue : tmpMinZoomScaleValue;
 		this.maxZoomScaleValue = tmpMaxZoomScaleValue > this.maxScaleValue ? this.maxScaleValue : tmpMaxZoomScaleValue;
 		if (log.isLoggable(Level.FINER))
-			log.log(Level.FINER, this.name + " - minZoomScaleValue = " + this.minZoomScaleValue + "  maxZoomScaleValue = " + this.maxZoomScaleValue); //$NON-NLS-1$ //$NON-NLS-2$
+			log.log(Level.FINER, this.name + " - minZoomScaleValue = " + this.minZoomScaleValue + "  maxZoomScaleValue = " + this.maxZoomScaleValue); //$NON-NLS-1$ //$NON-NLS-2$		
+	}
+
+	/**
+	 * set the zoom bounds from display as record point offset and size, min/max scale values
+	 * @param zoomBounds - where the start point offset is x,y and the area is width, height
+	 */
+	public void setZoomBounds(ZoomBounds newZoomBounds) {
+		this.zoomTimeOffset = newZoomBounds.getZoomOffsetAndWidth().zoomTimeOffset;
+		this.zoomOffset =  newZoomBounds.getZoomOffsetAndWidth().zoomOffset;
+		this.drawTimeWidth = newZoomBounds.getZoomOffsetAndWidth().drawTimeWidth;
+		if (log.isLoggable(Level.FINER))
+			log.log(Level.FINER, this.name + " zoomOffset " + this.zoomOffset + " zoomTimeOffset " + TimeLine.getFomatedTimeWithUnit(this.zoomTimeOffset) + " drawTimeWidth " + TimeLine.getFomatedTimeWithUnit(this.drawTimeWidth)); //$NON-NLS-1$ //$NON-NLS-2$
+
+		this.tmpMinZoomScaleValue = newZoomBounds.getZoomScaleValues(this.name).tmpMinZoomScaleValue;
+		this.tmpMaxZoomScaleValue = newZoomBounds.getZoomScaleValues(this.name).tmpMaxZoomScaleValue;
+		this.minZoomScaleValue = newZoomBounds.getZoomScaleValues(this.name).minZoomScaleValue;
+		this.maxZoomScaleValue = newZoomBounds.getZoomScaleValues(this.name).maxZoomScaleValue;
+		if (log.isLoggable(Level.FINER))
+			log.log(Level.FINER, this.name + " - minZoomScaleValue = " + this.minZoomScaleValue + "  maxZoomScaleValue = " + this.maxZoomScaleValue); //$NON-NLS-1$ //$NON-NLS-2$		
 	}
 
 	/**
@@ -2560,15 +2580,15 @@ public class Record extends AbstractRecord implements IRecord {
 			//use primary trigger ranges as master and logical OR ranges if isGreaterSecondary is true, else logical AND ranges
 			Iterator<TriggerRange> primaryIterator = primaryTriggerRanges.iterator();
 			TriggerRange primaryRange, secondaryRange;
-			while (primaryIterator.hasNext() && secondaryTriggerRanges != null) {
+			while (primaryIterator.hasNext()) {
 				Iterator<TriggerRange> secondaryIterator = secondaryTriggerRanges.iterator();
 				boolean isMatchRanges = false; //match means overlap of ranges
 
-				primaryRange = (TriggerRange) primaryIterator.next();
+				primaryRange = primaryIterator.next();
 
 				if (isGreaterSecondary) { //OR
 					while (!isMatchRanges && secondaryIterator.hasNext()) {
-						secondaryRange = (TriggerRange) secondaryIterator.next();
+						secondaryRange = secondaryIterator.next();
 						if ((secondaryRange.in + 10) >= primaryRange.in //+10 tolerance
 								&& secondaryRange.in < primaryRange.out 
 								&& secondaryRange.out >= primaryRange.out
@@ -2582,7 +2602,7 @@ public class Record extends AbstractRecord implements IRecord {
 				}
 				else { //AND
 					while (secondaryIterator.hasNext()) {
-						secondaryRange = (TriggerRange) secondaryIterator.next();
+						secondaryRange = secondaryIterator.next();
 						if (secondaryRange.in > primaryRange.out) {
 							break;
 						}

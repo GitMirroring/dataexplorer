@@ -649,6 +649,7 @@ public class Channel extends HashMap<String, RecordSet> {
 			application.updateMenuRegardingEditableDeviceXml();
 			application.getMenuToolBar().updateRecordSetSelectCombo();
 			application.updateMenusRegardingGPSData();
+			application.updateMenusRegardingZoomSteps();
 			application.cleanHeaderAndCommentInGraphicsWindow();
 			application.updateAllTabs(true);
 		}

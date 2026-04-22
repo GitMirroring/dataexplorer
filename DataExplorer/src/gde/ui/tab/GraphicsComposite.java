@@ -1733,6 +1733,7 @@ public class GraphicsComposite extends Composite {
 						if (log.isLoggable(Level.FINER)) log.log(Level.FINER, "zoom xStart = " + xStart + " xEnd = " + xEnd + " yMin = " + yMin + " yMax = " + yMax); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 						if (xEnd - xStart > 5 && yMax - yMin > 5) {
 							recordSet.setDisplayZoomBounds(new Rectangle(xStart, yMin, xEnd - xStart, yMax - yMin));
+							this.application.updateMenusRegardingZoomSteps();
 							this.redrawGraphics(); //this.graphicCanvas.redraw();
 						}
 					}

@@ -965,7 +965,7 @@ public final class Settings extends Properties {
 	}
 
 	public int[] getCoolBarOrder(String defaultCoolBarSizes) {
-		int[] intOrder = StringHelper.stringToIntArray(this.getProperty(Settings.COOLBAR_ORDER, "0;1;2;3;4").trim()); //$NON-NLS-1$
+		int[] intOrder = StringHelper.stringToIntArray(this.getProperty(Settings.COOLBAR_ORDER, "0;1;2;3;4;5;6").trim()); //$NON-NLS-1$
 		int coolBarSize = this.getCoolBarSizes(defaultCoolBarSizes).length;
 		if (intOrder.length != coolBarSize) {
 			StringBuffer sb = new StringBuffer();
@@ -978,7 +978,7 @@ public final class Settings extends Properties {
 	}
 
 	public int[] getCoolBarWraps() {
-		return StringHelper.stringToIntArray(this.getProperty(Settings.COOLBAR_WRAPS, "0;3").trim()); //$NON-NLS-1$
+		return StringHelper.stringToIntArray(this.getProperty(Settings.COOLBAR_WRAPS, "0;4").trim()); //$NON-NLS-1$
 	}
 
 	public Point[] getCoolBarSizes(String defaultCoolBarSizes) {

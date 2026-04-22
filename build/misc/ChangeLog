@@ -5,6 +5,7 @@ Generic changes/fixes
 	* fix upgrade dialog resize problem (ARM 64)
 	* enable error message box while detecting error from jSerialComm
 	* enable MacOS ARM build
+	* remember zoom steps per recordSet, enable switching  between this steps
 	
 Device specific changes/fixes
 	* UT61E - correct unexpected behavior

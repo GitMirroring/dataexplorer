@@ -1856,6 +1856,14 @@ public class DataExplorer extends Composite {
 		this.menuBar.updateAdditionalGPSMenuItems();
 		this.menuToolBar.updateGoogleEarthToolItem();
 	}
+	
+	/**
+	 * update menu items and tool bar items according zoom steps availability
+	 */
+	public void updateMenusRegardingZoomSteps() {
+		//this.menuBar.updateAdditionalGPSMenuItems();
+		this.menuToolBar.updateZoomStepsToolItem();
+	}
 
 	public FileDialog prepareFileOpenDialog(String name, String[] extensions, String path, String fileName, int addStyle) {
 		final String $METHOD_NAME = "fileOpenDialogPath"; //$NON-NLS-1$

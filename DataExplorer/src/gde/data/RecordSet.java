@@ -123,6 +123,9 @@ public final class RecordSet extends AbstractRecordSet {
 
 	private GroupTransitions			histoTransitions;
 	private String								recordKeyMeasurement					= GDE.STRING_EMPTY;
+	
+	Vector<ZoomBounds>						zoomStepVector								= new Vector<ZoomBounds>();
+	ZoomBounds 										actualZoomBounds;
 
 	/**
 	 * record set data buffers according the size of given names array, where
@@ -558,8 +561,8 @@ public final class RecordSet extends AbstractRecordSet {
 		if (this.analyzer.getSettings().isHistoActive() && this.analyzer.getSettings().isDataTableTransitions()) {
 			String[] rowWithSettlements = new TransitionTableMapper(this, this.analyzer).defineRowWithSettlements(index, dataTableRow);
 			return rowWithSettlements;
-		} else
-			return dataTableRow;
+		}
+		return dataTableRow;
 	}
 
 	/**
@@ -957,7 +960,7 @@ public final class RecordSet extends AbstractRecordSet {
 	 * @param recordNames array of names to be used for created records
 	 * @param recordSymbols array of symbols to be used for created records
 	 * @param recordUnits array of units to be used for created records
-	 * @param timeStep_ms
+	 * @param newTimeStep_ms 
 	 * @param isRaw defines if the data needs translation using device specific properties
 	 * @param isFromFile defines if a configuration change must be recorded to signal changes
 	 * @param adjustObjectKey defines if the channel's object key is updated by the settings objects key
@@ -1349,6 +1352,8 @@ public final class RecordSet extends AbstractRecordSet {
 	 */
 	public void resetZoomAndMeasurement() {
 		this.setZoomMode(false);
+		this.zoomStepVector.clear();
+		this.actualZoomBounds = null;
 		this.setMeasurementMode(this.recordKeyMeasurement, false);
 		this.setDeltaMeasurementMode(this.recordKeyMeasurement, false);
 	}
@@ -1358,10 +1363,23 @@ public final class RecordSet extends AbstractRecordSet {
 	 * @param newDisplayZoomBounds - where the start point offset is x,y and the area is width, height
 	 */
 	public void setDisplayZoomBounds(Rectangle newDisplayZoomBounds) {
+		ZoomBounds newZoomBounds = new ZoomBounds(new ZoomOffsetAndWidth(this.get(0), newDisplayZoomBounds));
 		// iterate children
 		for (Record record : this.getValues()) {
-			record.setZoomBounds(newDisplayZoomBounds);
+			newZoomBounds.addZoomScaleValues(new ZoomScaleValues(record, newDisplayZoomBounds));
+			record.setZoomBounds(newZoomBounds);
 		}
+		this.zoomStepVector.add(newZoomBounds);
+		this.actualZoomBounds = newZoomBounds;
+	}
+	
+	public void setZoomBounds(int zoomStepIndex) {
+		ZoomBounds newZoomBounds = this.zoomStepVector.get(zoomStepIndex);
+		// iterate children
+		for (Record record : this.getValues()) {
+			record.setZoomBounds(newZoomBounds);
+		}
+		this.actualZoomBounds = newZoomBounds;
 	}
 
 	/**
@@ -2162,5 +2180,20 @@ public final class RecordSet extends AbstractRecordSet {
 
 	public Analyzer getAnalyzer() {
 		return this.analyzer;
+	}
+	
+	/**
+	 * @return size of zoom step vector
+	 */
+	public int getZoomStepVectorSize() {
+		return this.zoomStepVector.size();
+	}
+	
+	/**
+	 * @param zoomBounds
+	 * @return the index of given zoomBounds
+	 */
+	public int getZoomStepVectorIndex() {
+		return this.actualZoomBounds == null ? 0 : this.zoomStepVector.indexOf(this.actualZoomBounds);
 	}
 }
