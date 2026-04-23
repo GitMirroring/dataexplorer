@@ -656,7 +656,7 @@ public class MenuToolBar {
 					this.lastZoomItem = new ToolItem(this.zoomToolBar, SWT.NONE);
 					this.lastZoomItem.setImage(SWTResourceManager.getImage("gde/resource/ArrowWhiteGreenFieldLeft.gif")); //$NON-NLS-1$
 					this.lastZoomItem.setHotImage(SWTResourceManager.getImage("gde/resource/ArrowWhiteGreenFieldLefHot.gif")); //$NON-NLS-1$
-					this.lastZoomItem.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0063));
+					this.lastZoomItem.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0990));
 					this.lastZoomItem.setEnabled(false);
 					this.lastZoomItem.addSelectionListener(new SelectionAdapter() {
 						@Override
@@ -673,7 +673,7 @@ public class MenuToolBar {
 					this.nextZoomItem = new ToolItem(this.zoomToolBar, SWT.NONE);
 					this.nextZoomItem.setImage(SWTResourceManager.getImage("gde/resource/ArrowWhiteGreenFieldRight.gif")); //$NON-NLS-1$
 					this.nextZoomItem.setHotImage(SWTResourceManager.getImage("gde/resource/ArrowWhiteGreenFieldRightHot.gif")); //$NON-NLS-1$
-					this.nextZoomItem.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0064));
+					this.nextZoomItem.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0991));
 					this.nextZoomItem.setEnabled(false);
 					this.nextZoomItem.addSelectionListener(new SelectionAdapter() {
 						@Override
