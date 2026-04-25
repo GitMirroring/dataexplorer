@@ -586,6 +586,7 @@ public class GraphicsComposite extends Composite {
 								if (log.isLoggable(Level.FINER)) log.log(Level.FINER, "zoom xStart = " + xStart + " xEnd = " + xEnd + " yMin = " + yMin + " yMax = " + yMax); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 								if (xEnd - xStart > 5 && yMax - yMin > 5) {
 									recordSet.setDisplayZoomBounds(new Rectangle(xStart, yMin, xEnd - xStart, yMax - yMin));
+									GraphicsComposite.this.application.updateMenusRegardingZoomSteps();
 									redrawGraphics();
 								}
 							}
@@ -2185,7 +2186,7 @@ public class GraphicsComposite extends Composite {
 	 * refresh displayed measurements using styled text
 	 * @param activeRecordSet
 	 */
-	private void refreshMeasurement(StyledText styledText, RecordSet activeRecordSet, String recordMeasurementKey, int posMeasure) {
+	private void refreshMeasurement(StyledText givenStyledText, RecordSet activeRecordSet, String recordMeasurementKey, int posMeasure) {
 		log.log(Level.INFO, "refresh measurement");
 		int indexPosMeasure = activeRecordSet.get(0).getHorizontalPointIndexFromDisplayPoint(posMeasure);
 		
@@ -2200,8 +2201,8 @@ public class GraphicsComposite extends Composite {
 		styleRanges.add(new StyleRange(startIndex, sb.length() - startIndex, SWTResourceManager.getColor(record.getRGB()), null));
 		startIndex = sb.length();
 
-		styledText.setText(sb.toString());
-		styledText.setStyleRanges(styleRanges.toArray(new StyleRange[0]));
+		givenStyledText.setText(sb.toString());
+		givenStyledText.setStyleRanges(styleRanges.toArray(new StyleRange[0]));
 	}
 	
 	public String findNearestMeasurementCurve(RecordSet recordSet, int posX, int posY, int height) {
