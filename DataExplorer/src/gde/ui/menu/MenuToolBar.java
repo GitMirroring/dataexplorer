@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with GNU DataExplorer.  If not, see <https://www.gnu.org/licenses/>.
 
-    Copyright (c) 2008-2026 Winfried Bruegmann
+    Copyright (c) 2008-2026 Winfried Bruegmann			
     							2016-2019 Thomas Eickert
 ****************************************************************************************/
 package gde.ui.menu;
@@ -663,7 +663,9 @@ public class MenuToolBar {
 						public void widgetSelected(SelectionEvent evt) {
 							log.log(Level.FINEST, "lastZoomItem.widgetSelected, event=" + evt); //$NON-NLS-1$
 							RecordSet activeRecodSet = MenuToolBar.this.application.getActiveRecordSet();
-							activeRecodSet.setZoomBounds(activeRecodSet.getZoomStepVectorIndex()-1);
+							int zoomVectorIndex = activeRecodSet.getZoomStepVectorIndex();
+							if (zoomVectorIndex - 1 >= 0)
+								activeRecodSet.setZoomBounds(zoomVectorIndex-1);
 							MenuToolBar.this.updateZoomStepsToolItem();
 							MenuToolBar.this.application.updateGraphicsWindow(false);
 					}
@@ -680,7 +682,9 @@ public class MenuToolBar {
 						public void widgetSelected(SelectionEvent evt) {
 							log.log(Level.FINEST, "nextZoomItem.widgetSelected, event=" + evt); //$NON-NLS-1$
 							RecordSet activeRecodSet = MenuToolBar.this.application.getActiveRecordSet();
-							activeRecodSet.setZoomBounds(activeRecodSet.getZoomStepVectorIndex()+1);
+							int zoomVectorIndex = activeRecodSet.getZoomStepVectorIndex();
+							if (zoomVectorIndex+1 <= activeRecodSet.getZoomStepVectorSize()-1) 
+								activeRecodSet.setZoomBounds(zoomVectorIndex+1);
 							MenuToolBar.this.updateZoomStepsToolItem();
 							MenuToolBar.this.application.updateGraphicsWindow(false);
 						}
@@ -1881,18 +1885,20 @@ public class MenuToolBar {
 	public void updateZoomStepsToolItem() {
 		final RecordSet activeRecordSet = this.application.getActiveRecordSet();
 		if (activeRecordSet != null) {
-			log.log(Level.OFF, "size = " + activeRecordSet.getZoomStepVectorSize() + " index = " + activeRecordSet.getZoomStepVectorIndex());
+			final int zoomStepVectorSize = activeRecordSet.getZoomStepVectorSize();
+			final int zoomStepVectorIndex = activeRecordSet.getZoomStepVectorIndex();
+			log.log(Level.OFF, "size = " + zoomStepVectorSize + " index = " + zoomStepVectorIndex);
 			if (Thread.currentThread().threadId() == this.application.getThreadId()) {
-				if (activeRecordSet.getZoomStepVectorSize() > 1) {
-					if (activeRecordSet.getZoomStepVectorIndex() > 0 && activeRecordSet.getZoomStepVectorIndex() < activeRecordSet.getZoomStepVectorSize() - 1) {
+				if (zoomStepVectorSize > 1) {
+					if (zoomStepVectorIndex > 0 && zoomStepVectorIndex < zoomStepVectorSize - 1) {
 						this.lastZoomItem.setEnabled(true);
 						this.nextZoomItem.setEnabled(true);
 					}
-					else if (activeRecordSet.getZoomStepVectorIndex() > 0) {
+					else if (zoomStepVectorIndex > 0) {
 						this.lastZoomItem.setEnabled(true);
 						this.nextZoomItem.setEnabled(false);
 					}
-					else if (activeRecordSet.getZoomStepVectorIndex() < activeRecordSet.getZoomStepVectorSize() - 1) {
+					else if (zoomStepVectorIndex < zoomStepVectorSize - 1) {
 						this.lastZoomItem.setEnabled(false);
 						this.nextZoomItem.setEnabled(true);
 					}
@@ -1906,16 +1912,16 @@ public class MenuToolBar {
 				GDE.display.asyncExec(new Runnable() {
 					@Override
 					public void run() {
-						if (activeRecordSet.getZoomStepVectorSize() > 1) {
-							if (activeRecordSet.getZoomStepVectorIndex() > 0 && activeRecordSet.getZoomStepVectorIndex() < activeRecordSet.getZoomStepVectorSize() - 1) {
+						if (zoomStepVectorSize > 1) {
+							if (zoomStepVectorIndex > 0 && zoomStepVectorIndex < zoomStepVectorSize - 1) {
 								MenuToolBar.this.lastZoomItem.setEnabled(true);
 								MenuToolBar.this.nextZoomItem.setEnabled(true);
 							}
-							else if (activeRecordSet.getZoomStepVectorIndex() > 0) {
+							else if (zoomStepVectorIndex > 0) {
 								MenuToolBar.this.lastZoomItem.setEnabled(true);
 								MenuToolBar.this.nextZoomItem.setEnabled(false);
 							}
-							else if (activeRecordSet.getZoomStepVectorIndex() < activeRecordSet.getZoomStepVectorSize() - 1) {
+							else if (zoomStepVectorIndex < zoomStepVectorSize - 1) {
 								MenuToolBar.this.lastZoomItem.setEnabled(false);
 								MenuToolBar.this.nextZoomItem.setEnabled(true);
 							}
