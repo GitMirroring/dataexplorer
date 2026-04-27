@@ -108,7 +108,7 @@ public class MenuToolBar {
 
 	CoolItem						zoomCoolItem;
 	ToolBar							zoomToolBar;
-	ToolItem						zoomWindowItem, panItem, fitIntoItem, lastZoomItem, nextZoomItem, scopePointsComboSep;
+	ToolItem						zoomWindowItem, panItem, fitIntoItem, lastZoomItem, addZoomItem, nextZoomItem, cleanZoomItem, scopePointsComboSep;
 	Composite						scopePointsComposite;
 	CCombo							scopePointsCombo;
 	boolean							isScopePointsCombo		= true;
@@ -185,6 +185,7 @@ public class MenuToolBar {
 							if (MenuToolBar.this.application.getDeviceSelectionDialog().checkDataSaved()) {
 								MenuToolBar.this.application.getDeviceSelectionDialog().setupDataChannels(MenuToolBar.this.application.getActiveDevice());
 							}
+							MenuToolBar.this.updateZoomStepsToolItems();
 						}
 					});
 				}
@@ -653,6 +654,20 @@ public class MenuToolBar {
 					});
 				}
 				{
+					this.fitIntoItem = new ToolItem(this.zoomToolBar, SWT.NONE);
+					this.fitIntoItem.setImage(SWTResourceManager.getImage("gde/resource/Expand.gif")); //$NON-NLS-1$
+					this.fitIntoItem.setHotImage(SWTResourceManager.getImage("gde/resource/ExpandHot.gif")); //$NON-NLS-1$
+					this.fitIntoItem.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0065));
+					this.fitIntoItem.addSelectionListener(new SelectionAdapter() {
+						@Override
+						public void widgetSelected(SelectionEvent evt) {
+							log.log(Level.FINEST, "fitIntoItem.widgetSelected, event=" + evt); //$NON-NLS-1$
+							MenuToolBar.this.application.setGraphicsMode(GraphicsMode.RESET, false);
+							MenuToolBar.this.updateZoomStepsToolItems();
+						}
+					});
+				}
+				{
 					this.lastZoomItem = new ToolItem(this.zoomToolBar, SWT.NONE);
 					this.lastZoomItem.setImage(SWTResourceManager.getImage("gde/resource/ArrowWhiteGreenFieldLeft.gif")); //$NON-NLS-1$
 					this.lastZoomItem.setHotImage(SWTResourceManager.getImage("gde/resource/ArrowWhiteGreenFieldLefHot.gif")); //$NON-NLS-1$
@@ -666,8 +681,23 @@ public class MenuToolBar {
 							int zoomVectorIndex = activeRecodSet.getZoomStepVectorIndex();
 							if (zoomVectorIndex - 1 >= 0)
 								activeRecodSet.setZoomBounds(zoomVectorIndex-1);
-							MenuToolBar.this.updateZoomStepsToolItem();
+							MenuToolBar.this.updateZoomStepsToolItems();
 							MenuToolBar.this.application.updateGraphicsWindow(false);
+					}
+					});
+				}
+				{
+					this.addZoomItem = new ToolItem(this.zoomToolBar, SWT.NONE);
+					this.addZoomItem.setImage(SWTResourceManager.getImage("gde/resource/NewObj.gif")); //$NON-NLS-1$
+					this.addZoomItem.setHotImage(SWTResourceManager.getImage("gde/resource/NewObjHot.gif")); //$NON-NLS-1$
+					this.addZoomItem.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0992));
+					this.addZoomItem.setEnabled(false);
+					this.addZoomItem.addSelectionListener(new SelectionAdapter() {
+						@Override
+						public void widgetSelected(SelectionEvent evt) {
+							log.log(Level.FINEST, "addZoomItem.widgetSelected, event=" + evt); //$NON-NLS-1$
+							MenuToolBar.this.application.getActiveRecordSet().addZoomBounds();
+							MenuToolBar.this.updateZoomStepsToolItems();
 					}
 					});
 				}
@@ -685,21 +715,23 @@ public class MenuToolBar {
 							int zoomVectorIndex = activeRecodSet.getZoomStepVectorIndex();
 							if (zoomVectorIndex+1 <= activeRecodSet.getZoomStepVectorSize()-1) 
 								activeRecodSet.setZoomBounds(zoomVectorIndex+1);
-							MenuToolBar.this.updateZoomStepsToolItem();
+							MenuToolBar.this.updateZoomStepsToolItems();
 							MenuToolBar.this.application.updateGraphicsWindow(false);
 						}
 					});
 				}
 				{
-					this.fitIntoItem = new ToolItem(this.zoomToolBar, SWT.NONE);
-					this.fitIntoItem.setImage(SWTResourceManager.getImage("gde/resource/Expand.gif")); //$NON-NLS-1$
-					this.fitIntoItem.setHotImage(SWTResourceManager.getImage("gde/resource/ExpandHot.gif")); //$NON-NLS-1$
-					this.fitIntoItem.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0065));
-					this.fitIntoItem.addSelectionListener(new SelectionAdapter() {
+					this.cleanZoomItem = new ToolItem(this.zoomToolBar, SWT.NONE);
+					this.cleanZoomItem.setImage(SWTResourceManager.getImage("gde/resource/Delete.gif")); //$NON-NLS-1$
+					this.cleanZoomItem.setHotImage(SWTResourceManager.getImage("gde/resource/DeleteHot.gif")); //$NON-NLS-1$
+					this.cleanZoomItem.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0993));
+					this.cleanZoomItem.setEnabled(false);
+					this.cleanZoomItem.addSelectionListener(new SelectionAdapter() {
 						@Override
 						public void widgetSelected(SelectionEvent evt) {
-							log.log(Level.FINEST, "fitIntoItem.widgetSelected, event=" + evt); //$NON-NLS-1$
-							MenuToolBar.this.application.setGraphicsMode(GraphicsMode.RESET, false);
+							log.log(Level.FINEST, "cleanZoomItem.widgetSelected, event=" + evt); //$NON-NLS-1$
+							MenuToolBar.this.application.getActiveRecordSet().clearZoomBounds();
+							MenuToolBar.this.updateZoomStepsToolItems();
 						}
 					});
 				}
@@ -745,59 +777,6 @@ public class MenuToolBar {
 			this.zoomCoolItem.setMinimumSize(this.toolSize.x, this.toolSize.y);
 			this.toolBarSizes.append(this.toolSize.x).append(GDE.STRING_COLON).append(this.toolSize.y).append(GDE.STRING_SEMICOLON);
 		} // end zoom cool item
-
-		{ // begin help cool item
-			this.helpCoolItem = new CoolItem(this.coolBar, SWT.NONE);
-			{ // begin file tool bar
-				this.helpToolBar = new ToolBar(this.coolBar, SWT.NONE);
-				this.helpToolBar.setBackground(this.application.COLOR_BACKGROUND);
-				this.helpCoolItem.setControl(this.helpToolBar);
-				{
-					this.helpToolItem = new ToolItem(this.helpToolBar, SWT.NONE);
-					this.helpToolItem.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0228));
-					this.helpToolItem.setImage(SWTResourceManager.getImage("gde/resource/Question.gif")); //$NON-NLS-1$
-					this.helpToolItem.setHotImage(SWTResourceManager.getImage("gde/resource/QuestionHot.gif")); //$NON-NLS-1$
-					this.helpToolItem.addSelectionListener(new SelectionAdapter() {
-						@Override
-						public void widgetSelected(SelectionEvent evt) {
-							log.log(Level.FINEST, "helpToolItem.widgetSelected, event=" + evt); //$NON-NLS-1$
-							if (MenuToolBar.this.application.getActiveDevice().getDialog() != null && !MenuToolBar.this.application.getActiveDevice().getDialog().isDisposed()) {
-								MenuToolBar.this.application.getActiveDevice().getDialog().getDialogShell().notifyListeners(SWT.Help, new Event());
-								}
-								else {
-								for (CTabItem tabItem : MenuToolBar.this.application.getTabFolder().getItems()) {
-									if (!tabItem.isDisposed() && tabItem.getControl().isVisible()) {
-										if (tabItem.getControl().isListening(SWT.Help)) {
-											tabItem.getControl().notifyListeners(SWT.Help, new Event());
-											break;
-											}
-											else if (tabItem instanceof GraphicsWindow) {
-											((GraphicsWindow) tabItem).getGraphicsComposite().notifyListeners(SWT.Help, new Event());
-											}
-											else if (tabItem.getText().endsWith("Tool")) { //DataVarioTool, LinkVarioTool //$NON-NLS-1$
-											if (MenuToolBar.this.application.getActiveDevice() != null && MenuToolBar.this.application.getActiveDevice().isUtilityDeviceTabRequested()) {
-												try {
-													MenuToolBar.this.application.openHelpDialog(FileUtils.getJarFileNameOfDevice(MenuToolBar.this.application.getActiveDevice().getDeviceConfiguration()), "HelpInfo.html");//$NON-NLS-1$
-													}
-													catch (Throwable e) {
-													// ignore
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					});
-				}
-				this.helpToolBar.pack();
-				this.toolSize = this.helpToolBar.getSize();
-			}
-			this.helpCoolItem.setControl(this.helpToolBar);
-			this.helpCoolItem.setSize(this.toolSize.x, this.toolSize.y);
-			this.helpCoolItem.setMinimumSize(this.toolSize.x, this.toolSize.y);
-			this.toolBarSizes.append(this.toolSize.x).append(GDE.STRING_COLON).append(this.toolSize.y).append(GDE.STRING_SEMICOLON);
-		} // end help cool item
 
 		{ // begin port cool item
 			this.portCoolItem = new CoolItem(this.coolBar, SWT.NONE);
@@ -1156,6 +1135,59 @@ public class MenuToolBar {
 			this.googleEarthCoolItem.setMinimumSize(this.toolSize.x, this.toolSize.y);
 			this.toolBarSizes.append(this.toolSize.x).append(GDE.STRING_COLON).append(this.toolSize.y).append(GDE.STRING_SEMICOLON);
 		} // end google earth cool item
+
+		{ // begin help cool item
+			this.helpCoolItem = new CoolItem(this.coolBar, SWT.NONE);
+			{ // begin file tool bar
+				this.helpToolBar = new ToolBar(this.coolBar, SWT.NONE);
+				this.helpToolBar.setBackground(this.application.COLOR_BACKGROUND);
+				this.helpCoolItem.setControl(this.helpToolBar);
+				{
+					this.helpToolItem = new ToolItem(this.helpToolBar, SWT.NONE);
+					this.helpToolItem.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0228));
+					this.helpToolItem.setImage(SWTResourceManager.getImage("gde/resource/Question.gif")); //$NON-NLS-1$
+					this.helpToolItem.setHotImage(SWTResourceManager.getImage("gde/resource/QuestionHot.gif")); //$NON-NLS-1$
+					this.helpToolItem.addSelectionListener(new SelectionAdapter() {
+						@Override
+						public void widgetSelected(SelectionEvent evt) {
+							log.log(Level.FINEST, "helpToolItem.widgetSelected, event=" + evt); //$NON-NLS-1$
+							if (MenuToolBar.this.application.getActiveDevice().getDialog() != null && !MenuToolBar.this.application.getActiveDevice().getDialog().isDisposed()) {
+								MenuToolBar.this.application.getActiveDevice().getDialog().getDialogShell().notifyListeners(SWT.Help, new Event());
+								}
+								else {
+								for (CTabItem tabItem : MenuToolBar.this.application.getTabFolder().getItems()) {
+									if (!tabItem.isDisposed() && tabItem.getControl().isVisible()) {
+										if (tabItem.getControl().isListening(SWT.Help)) {
+											tabItem.getControl().notifyListeners(SWT.Help, new Event());
+											break;
+											}
+											else if (tabItem instanceof GraphicsWindow) {
+											((GraphicsWindow) tabItem).getGraphicsComposite().notifyListeners(SWT.Help, new Event());
+											}
+											else if (tabItem.getText().endsWith("Tool")) { //DataVarioTool, LinkVarioTool //$NON-NLS-1$
+											if (MenuToolBar.this.application.getActiveDevice() != null && MenuToolBar.this.application.getActiveDevice().isUtilityDeviceTabRequested()) {
+												try {
+													MenuToolBar.this.application.openHelpDialog(FileUtils.getJarFileNameOfDevice(MenuToolBar.this.application.getActiveDevice().getDeviceConfiguration()), "HelpInfo.html");//$NON-NLS-1$
+													}
+													catch (Throwable e) {
+													// ignore
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					});
+				}
+				this.helpToolBar.pack();
+				this.toolSize = this.helpToolBar.getSize();
+			}
+			this.helpCoolItem.setControl(this.helpToolBar);
+			this.helpCoolItem.setSize(this.toolSize.x, this.toolSize.y);
+			this.helpCoolItem.setMinimumSize(this.toolSize.x, this.toolSize.y);
+			this.toolBarSizes.append(this.toolSize.x).append(GDE.STRING_COLON).append(this.toolSize.y).append(GDE.STRING_SEMICOLON);
+		} // end help cool item
 
 		// set the focus controlled to an item which has no slection capability
 		this.deviceObjectToolBar.setFocus();
@@ -1697,8 +1729,9 @@ public class MenuToolBar {
 	 * enable pan button in zoomed mode
 	 * @param enable
 	 */
-	public void enablePanButton(boolean enable) {
+	public void enablePanFitButton(boolean enable) {
 		this.panItem.setEnabled(enable);
+		this.fitIntoItem.setEnabled(enable);
 	}
 
 	/**
@@ -1731,17 +1764,16 @@ public class MenuToolBar {
 	 * reset the zoom tool bar to default state
 	 */
 	public void resetZoomToolBar() {
-		this.zoomWindowItem.setEnabled(true);
+		this.zoomWindowItem.setEnabled(this.application.getActiveRecordSet() != null);
 		this.panItem.setEnabled(false);
-		this.lastZoomItem.setEnabled(false);
-		this.nextZoomItem.setEnabled(false);
+		this.fitIntoItem.setEnabled(false);
 		this.scopePointsCombo.setEnabled(this.isScopePointsCombo);
 		this.scopePointsCombo.select(0);
 	}
 
 	/**
-	 * get the coolbar sizes as string
-	 * INITIAL_COOLBAR_SIZES = (GDE.IS_WINDOWS == true ? "161:29;136:29;1143:29;145:29;1295:29" : "242:29;413:29;221:29;556:29;138:29;696:29;598:29");
+	 * get the cool bar sizes as string
+	 * INITIAL_COOLBAR_SIZES = "242:29;413:29;777:29;138:29;696:29;68:29;530:29"
 	 */
 	public String getCoolBarSizes() {
 		return this.toolBarSizes.toString();
@@ -1882,13 +1914,16 @@ public class MenuToolBar {
 	 * switch enable zoom steps tool item, if available in active recordSet
 	 * this functions queries the actual recordSet for items in zoomSteps
 	 */
-	public void updateZoomStepsToolItem() {
+	public void updateZoomStepsToolItems() {
 		final RecordSet activeRecordSet = this.application.getActiveRecordSet();
 		if (activeRecordSet != null) {
 			final int zoomStepVectorSize = activeRecordSet.getZoomStepVectorSize();
 			final int zoomStepVectorIndex = activeRecordSet.getZoomStepVectorIndex();
 			log.log(Level.OFF, "size = " + zoomStepVectorSize + " index = " + zoomStepVectorIndex);
 			if (Thread.currentThread().threadId() == this.application.getThreadId()) {
+				this.fitIntoItem.setEnabled(true);
+				this.addZoomItem.setEnabled(!activeRecordSet.isActualZoomBoundsContained());
+				this.cleanZoomItem.setEnabled(zoomStepVectorSize > 1);
 				if (zoomStepVectorSize > 1) {
 					if (zoomStepVectorIndex > 0 && zoomStepVectorIndex < zoomStepVectorSize - 1) {
 						this.lastZoomItem.setEnabled(true);
@@ -1912,6 +1947,9 @@ public class MenuToolBar {
 				GDE.display.asyncExec(new Runnable() {
 					@Override
 					public void run() {
+						MenuToolBar.this.fitIntoItem.setEnabled(true);
+						MenuToolBar.this.addZoomItem.setEnabled(!activeRecordSet.isActualZoomBoundsContained());
+						MenuToolBar.this.cleanZoomItem.setEnabled(zoomStepVectorSize > 1);
 						if (zoomStepVectorSize > 1) {
 							if (zoomStepVectorIndex > 0 && zoomStepVectorIndex < zoomStepVectorSize - 1) {
 								MenuToolBar.this.lastZoomItem.setEnabled(true);
@@ -1933,6 +1971,27 @@ public class MenuToolBar {
 					}
 				});
 			} 
+		}
+		else {
+			if (Thread.currentThread().threadId() == this.application.getThreadId()) {
+				MenuToolBar.this.fitIntoItem.setEnabled(false);
+				MenuToolBar.this.addZoomItem.setEnabled(false);
+				MenuToolBar.this.cleanZoomItem.setEnabled(false);
+				MenuToolBar.this.lastZoomItem.setEnabled(false);
+				MenuToolBar.this.nextZoomItem.setEnabled(false);
+			}
+			else {
+				GDE.display.asyncExec(new Runnable() {
+					@Override
+					public void run() {
+						MenuToolBar.this.fitIntoItem.setEnabled(false);
+						MenuToolBar.this.addZoomItem.setEnabled(false);
+						MenuToolBar.this.cleanZoomItem.setEnabled(false);
+						MenuToolBar.this.lastZoomItem.setEnabled(false);
+						MenuToolBar.this.nextZoomItem.setEnabled(false);
+					}
+				});
+			}
 		}
 	}
 

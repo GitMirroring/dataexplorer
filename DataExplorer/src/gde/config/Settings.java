@@ -979,7 +979,7 @@ public final class Settings extends Properties {
 	}
 
 	public int[] getCoolBarWraps() {
-		return StringHelper.stringToIntArray(this.getProperty(Settings.COOLBAR_WRAPS, "0;4").trim()); //$NON-NLS-1$
+		return StringHelper.stringToIntArray(this.getProperty(Settings.COOLBAR_WRAPS, "0;3").trim()); //$NON-NLS-1$
 	}
 
 	public Point[] getCoolBarSizes(String defaultCoolBarSizes) {

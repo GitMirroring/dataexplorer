@@ -1861,8 +1861,8 @@ public class DataExplorer extends Composite {
 	 * update menu items and tool bar items according zoom steps availability
 	 */
 	public void updateMenusRegardingZoomSteps() {
-		//this.menuBar.updateAdditionalGPSMenuItems();
-		this.menuToolBar.updateZoomStepsToolItem();
+		//this.menuBar.updateZoomStepsToolItems();
+		this.menuToolBar.updateZoomStepsToolItems();
 	}
 
 	public FileDialog prepareFileOpenDialog(String name, String[] extensions, String path, String fileName, int addStyle) {

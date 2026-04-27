@@ -1352,8 +1352,6 @@ public final class RecordSet extends AbstractRecordSet {
 	 */
 	public void resetZoomAndMeasurement() {
 		this.setZoomMode(false);
-		this.zoomStepVector.clear();
-		this.actualZoomBounds = null;
 		this.setMeasurementMode(this.recordKeyMeasurement, false);
 		this.setDeltaMeasurementMode(this.recordKeyMeasurement, false);
 	}
@@ -1369,17 +1367,45 @@ public final class RecordSet extends AbstractRecordSet {
 			newZoomBounds.addZoomScaleValues(new ZoomScaleValues(record, newDisplayZoomBounds));
 			record.setZoomBounds(newZoomBounds);
 		}
-		this.zoomStepVector.add(newZoomBounds);
 		this.actualZoomBounds = newZoomBounds;
 	}
 	
+	/**
+	 * set zoom bounds from stored zoom step vector
+	 * @param zoomStepIndex
+	 */
 	public void setZoomBounds(int zoomStepIndex) {
+		this.setZoomMode(true);
 		ZoomBounds newZoomBounds = this.zoomStepVector.get(zoomStepIndex);
 		// iterate children
 		for (Record record : this.getValues()) {
 			record.setZoomBounds(newZoomBounds);
 		}
 		this.actualZoomBounds = newZoomBounds;
+	}
+	
+	/**
+	 * add actual zoom bounds to zoom step vector
+	 */
+	public void addZoomBounds() {
+		if (this.actualZoomBounds != null)
+			this.zoomStepVector.add(this.actualZoomBounds);
+	}
+	
+	/**
+	 * remove all zoom bounds to zoom step vector
+	 */
+	public void clearZoomBounds() {
+			this.zoomStepVector.clear();
+	}
+	
+	/**
+	 * @return if the actual zoom bounds is already contained in zoom step vector
+	 */
+	public boolean isActualZoomBoundsContained() {
+		if (this.actualZoomBounds != null && this.isZoomMode)
+			return this.zoomStepVector.contains(this.actualZoomBounds);
+		return true;
 	}
 
 	/**
