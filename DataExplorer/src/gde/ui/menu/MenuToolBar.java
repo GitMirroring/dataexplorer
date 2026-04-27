@@ -1923,7 +1923,7 @@ public class MenuToolBar {
 			if (Thread.currentThread().threadId() == this.application.getThreadId()) {
 				this.fitIntoItem.setEnabled(true);
 				this.addZoomItem.setEnabled(!activeRecordSet.isActualZoomBoundsContained());
-				this.cleanZoomItem.setEnabled(zoomStepVectorSize > 1);
+				this.cleanZoomItem.setEnabled(zoomStepVectorSize >= 1);
 				if (zoomStepVectorSize > 1) {
 					if (zoomStepVectorIndex > 0 && zoomStepVectorIndex < zoomStepVectorSize - 1) {
 						this.lastZoomItem.setEnabled(true);
@@ -1949,7 +1949,7 @@ public class MenuToolBar {
 					public void run() {
 						MenuToolBar.this.fitIntoItem.setEnabled(true);
 						MenuToolBar.this.addZoomItem.setEnabled(!activeRecordSet.isActualZoomBoundsContained());
-						MenuToolBar.this.cleanZoomItem.setEnabled(zoomStepVectorSize > 1);
+						MenuToolBar.this.cleanZoomItem.setEnabled(zoomStepVectorSize >= 1);
 						if (zoomStepVectorSize > 1) {
 							if (zoomStepVectorIndex > 0 && zoomStepVectorIndex < zoomStepVectorSize - 1) {
 								MenuToolBar.this.lastZoomItem.setEnabled(true);
