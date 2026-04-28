@@ -44,8 +44,29 @@ public class ZoomOffsetAndWidth {
 		this.zoomOffset = record.findBestIndex(this.zoomTimeOffset);
 		this.drawTimeWidth = record.getHorizontalDisplayPointTime_ms(zoomBounds.width - 1);
 		if (this.drawTimeWidth > record.getMaxTime_ms()) this.drawTimeWidth = record.getMaxTime_ms();
-		if (log.isLoggable(Level.OFF))
-			log.log(Level.OFF, record.name + " zoomOffset " + this.zoomOffset + " zoomTimeOffset " + TimeLine.getFomatedTimeWithUnit(this.zoomTimeOffset) + " drawTimeWidth " + TimeLine.getFomatedTimeWithUnit(this.drawTimeWidth)); //$NON-NLS-1$ //$NON-NLS-2$
+		if (log.isLoggable(Level.FINE))
+			log.log(Level.FINE, record.name + " zoomOffset " + this.zoomOffset + " zoomTimeOffset " + TimeLine.getFomatedTimeWithUnit(this.zoomTimeOffset) + " drawTimeWidth " + TimeLine.getFomatedTimeWithUnit(this.drawTimeWidth)); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+	
+	/**
+	 * @param record
+	 * @param xPercent shift value
+	 */
+	public ZoomOffsetAndWidth(Record record, int xPercent) {
+		double xShift_ms = record.drawTimeWidth * xPercent / 100;
+		if (record.zoomTimeOffset + xShift_ms <= 0) {
+			this.zoomOffset = 0;
+			this.zoomTimeOffset = 0.0;
+		} else if (record.zoomTimeOffset + record.drawTimeWidth + xShift_ms > record.getMaxTime_ms()) {
+			this.zoomTimeOffset = record.getMaxTime_ms() - record.drawTimeWidth;
+			this.zoomOffset = record.findBestIndex(record.zoomTimeOffset);
+		} else {
+			this.zoomTimeOffset = record.zoomTimeOffset + xShift_ms;
+			this.zoomOffset = record.findBestIndex(record.zoomTimeOffset);
+		}
+		this.drawTimeWidth = record.drawTimeWidth;
+		if (log.isLoggable(Level.FINE))
+			log.log(Level.FINE, record.name + " zoomOffset " + this.zoomOffset + " zoomTimeOffset " + TimeLine.getFomatedTimeWithUnit(this.zoomTimeOffset) + " drawTimeWidth " + TimeLine.getFomatedTimeWithUnit(this.drawTimeWidth)); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**

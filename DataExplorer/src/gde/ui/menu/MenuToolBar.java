@@ -1919,7 +1919,8 @@ public class MenuToolBar {
 		if (activeRecordSet != null) {
 			final int zoomStepVectorSize = activeRecordSet.getZoomStepVectorSize();
 			final int zoomStepVectorIndex = activeRecordSet.getZoomStepVectorIndex();
-			log.log(Level.OFF, "size = " + zoomStepVectorSize + " index = " + zoomStepVectorIndex);
+			if (log.isLoggable(Level.FINE))
+				log.log(Level.FINE, "size = " + zoomStepVectorSize + " index = " + zoomStepVectorIndex);
 			if (Thread.currentThread().threadId() == this.application.getThreadId()) {
 				this.fitIntoItem.setEnabled(true);
 				this.addZoomItem.setEnabled(!activeRecordSet.isActualZoomBoundsContained());

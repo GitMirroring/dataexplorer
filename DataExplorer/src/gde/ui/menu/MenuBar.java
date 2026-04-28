@@ -1404,6 +1404,7 @@ public class MenuBar {
 	 */
 	public void enablePanButton(boolean enable) {
 		this.panGraphicMenuItem.setEnabled(enable);
+		this.resetZoomGraphicMenuItem.setEnabled(enable);
 	}
 
 	/**

@@ -1522,6 +1522,7 @@ public class GraphicsComposite extends Composite {
 							}
 							this.xLast = evt.x;
 							this.yLast = evt.y;
+							this.application.updateMenusRegardingZoomSteps();
 						}
 						else if (this.isLeftCutMode) {
 							//define new cut position black/left

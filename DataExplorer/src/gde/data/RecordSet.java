@@ -1471,25 +1471,19 @@ public final class RecordSet extends AbstractRecordSet {
 		return this.isZoomMode;
 	}
 
+	/**
+	 * shift visible record data in pan mode
+	 * @param xPercent
+	 * @param yPercent
+	 */
 	public void shift(int xPercent, int yPercent) {
+		ZoomBounds newZoomBounds = new ZoomBounds(new ZoomOffsetAndWidth(this.get(0), xPercent));
 		// iterate children and set min/max values
 		for (Record record : this.getValues()) {
-			double xShift_ms = record.drawTimeWidth * xPercent / 100;
-			if (record.zoomTimeOffset + xShift_ms <= 0) {
-				record.zoomOffset = 0;
-				record.zoomTimeOffset = 0.0;
-			} else if (record.zoomTimeOffset + record.drawTimeWidth + xShift_ms > record.getMaxTime_ms()) {
-				record.zoomTimeOffset = record.getMaxTime_ms() - record.drawTimeWidth;
-				record.zoomOffset = record.findBestIndex(record.zoomTimeOffset);
-			} else {
-				record.zoomTimeOffset = record.zoomTimeOffset + xShift_ms;
-				record.zoomOffset = record.findBestIndex(record.zoomTimeOffset);
-			}
-
-			double yShift = (record.getMaxScaleValue() - record.getMinScaleValue()) * yPercent / 100;
-			record.minZoomScaleValue = record.getMinScaleValue() + yShift;
-			record.maxZoomScaleValue = record.getMaxScaleValue() + yShift;
+			newZoomBounds.addZoomScaleValues(new ZoomScaleValues(record, yPercent));
+			record.setZoomBounds(newZoomBounds);
 		}
+		this.actualZoomBounds = newZoomBounds;
 	}
 
 	/**

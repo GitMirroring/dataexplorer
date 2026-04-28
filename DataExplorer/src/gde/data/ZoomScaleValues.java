@@ -46,10 +46,23 @@ public class ZoomScaleValues {
 		this.tmpMaxZoomScaleValue = record.getVerticalDisplayPointScaleValue(zoomBounds.height + zoomBounds.y, record.parent.drawAreaBounds);
 		this.minZoomScaleValue = tmpMinZoomScaleValue < record.minScaleValue ? record.minScaleValue : tmpMinZoomScaleValue;
 		this.maxZoomScaleValue = tmpMaxZoomScaleValue > record.maxScaleValue ? record.maxScaleValue : tmpMaxZoomScaleValue;
-		if (log.isLoggable(Level.OFF))
-			log.log(Level.OFF, this.name + " - minZoomScaleValue = " + this.minZoomScaleValue + "  maxZoomScaleValue = " + this.maxZoomScaleValue); //$NON-NLS-1$ //$NON-NLS-2$		
+		if (log.isLoggable(Level.FINE))
+			log.log(Level.FINE, this.name + " - minZoomScaleValue = " + this.minZoomScaleValue + "  maxZoomScaleValue = " + this.maxZoomScaleValue); //$NON-NLS-1$ //$NON-NLS-2$		
 	}
 	
+	/**
+	 * @param record
+	 * @param yPercent shift value
+	 */
+	public ZoomScaleValues(Record record, int yPercent) {
+		this.name = record.name;
+		double yShift = (record.getMaxScaleValue() - record.getMinScaleValue()) * yPercent / 100;
+		this.minZoomScaleValue = record.getMinScaleValue() + yShift;
+		this.maxZoomScaleValue = record.getMaxScaleValue() + yShift;
+		if (log.isLoggable(Level.FINE))
+			log.log(Level.FINE, this.name + " - minZoomScaleValue = " + this.minZoomScaleValue + "  maxZoomScaleValue = " + this.maxZoomScaleValue); //$NON-NLS-1$ //$NON-NLS-2$		
+	}
+
 	/**
 	 * @return the tmpMinZoomScaleValue
 	 */
