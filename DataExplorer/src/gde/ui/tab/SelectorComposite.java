@@ -404,7 +404,6 @@ public class SelectorComposite extends Composite {
 	private void resetMeasuring() {
 		if (this.contextMenu != null) contextMenu.resetMeasuring();
 		this.application.clearMeasurementModes();
-		this.application.resetGraphicsWindowZoomAndMeasurement();
 	}
 
 }
