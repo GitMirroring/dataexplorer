@@ -229,7 +229,7 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 				colorCompositeLData.width = 157;
 				colorCompositeLData.height = 118;
 				colorCompositeLData.top =  new FormAttachment(240, 1000, 0);
-				colorCompositeLData.bottom =  new FormAttachment(1000, 1000, -80);
+				colorCompositeLData.bottom =  new FormAttachment(1000, 1000, -65);
 				colorComposite.setLayoutData(colorCompositeLData);
 				{
 					compositeLower = new Composite(colorComposite, SWT.BORDER);
@@ -341,7 +341,7 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 				limitCompositeLData.top =  new FormAttachment(240, 1000, 0);
 				limitCompositeLData.width = 189;
 				limitCompositeLData.height = 118;
-				limitCompositeLData.bottom =  new FormAttachment(1000, 1000, -80);
+				limitCompositeLData.bottom =  new FormAttachment(1000, 1000, -65);
 				limitComposite.setLayoutData(limitCompositeLData);
 //				{
 //					fillerComposite = new Composite(limitComposite, SWT.NONE);
@@ -483,10 +483,10 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 					FormData corrCompositeLData = new FormData();
 					corrCompositeLData.left =  new FormAttachment(0, 1000, 0);
 					corrCompositeLData.right =  new FormAttachment(1000, 1000, 0);
-					corrCompositeLData.top =  new FormAttachment(1000, 1000, -75);
+					corrCompositeLData.top =  new FormAttachment(1000, 1000, -68);
 					corrCompositeLData.width = 189;
 					corrCompositeLData.height = 118;
-					corrCompositeLData.bottom =  new FormAttachment(1000, 1000, -45);
+					corrCompositeLData.bottom =  new FormAttachment(1000, 1000, -42);
 					correctionComposite.setLayoutData(corrCompositeLData);
 					{
 						CLabel correctionLabel = new CLabel(correctionComposite, SWT.RIGHT);
