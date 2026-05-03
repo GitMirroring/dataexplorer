@@ -108,7 +108,13 @@ The left side gets used to configure the colors for the three velocity ranges.
 <P ALIGN=CENTER><IMG SRC="images/GoogleEarth_Color_Config.png" NAME="GoogleEarth_Color_Config" ALIGN=MIDDLE></P>
 <P>The dialog is displayed twice to make the velocity configuration behavior more clear (blue circled).
 Is a average factor set to zero, the minimum and maximum velocity fields can be used to configure different values.
-While the average factor is not equals zero the minimum and maximum values gets calculated. 
+While the average factor is not equals zero the minimum and maximum values gets calculated.
+The average speed is displayed as a guide.
+</P>
+<P>When the correction factor for the starting elevation is set to -1 m, it allows you to export data relative to the ground.
+When set to 0 m, it uses an automatically determined start elevation. However, this only makes sense if Google Earth also displays the terrain in 3D.
+Sometimes, the path is displayed underground, below the calculated ground level. You can counteract this by setting the value,
+detected with the mouse at the starting point and transferring it to the dialog. This value is then applied directly.
 </P>
 <P><B>Hint:</B> The exported GPS data in form of KMZ files contains data points which gives more info regarding the data point to you while this is switched on.
 It is possible to display a so called elevation profile using the context menu.
