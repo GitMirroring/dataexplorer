@@ -207,6 +207,7 @@ public final class GeoCodes {
 				try {
 					String url = String.format(Locale.US, "https://maps.googleapis.com/maps/api/geocode/xml?latlng=%f,%f", //
 							gpsCoordinate.getLatitude(), gpsCoordinate.getLongitude());
+					log.log(Level.FINER, "Google ", url);
 					return new URI(url).toURL();
 				} catch (Exception e) {
 					throw new RuntimeException("Google malformed URL", e);
@@ -254,7 +255,7 @@ public final class GeoCodes {
 				try {
 					String url = String.format(Locale.US, "https://nominatim.openstreetmap.org/reverse?format=xml&lat=%f&lon=%f&zoom=18&addressdetails=1", //
 							gpsCoordinate.getLatitude(), gpsCoordinate.getLongitude());
-					log.log(Level.FINER, "OSM", url);
+					log.log(Level.FINER, "OSM ", url);
 					return new URI(url).toURL();
 				} catch (Exception e) {
 					throw new RuntimeException("OSM malformed URL", e);

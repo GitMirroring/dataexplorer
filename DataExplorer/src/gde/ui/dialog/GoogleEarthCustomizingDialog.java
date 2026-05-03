@@ -97,6 +97,7 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 	Composite compositeUpper;
 	Composite compositeWithin;
 	Composite compositeLower;
+	Text corrValueText;
 
 	int upperLimitVelocity = 100;
 	int lowerLimitVelocity = 20;
@@ -136,7 +137,7 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 			dialogShell.setLayout( new FormLayout());
 			dialogShell.layout();
 			dialogShell.pack();
-			dialogShell.setSize(360, 265);
+			dialogShell.setSize(360, 300);
 			this.dialogShell.addListener(SWT.Traverse, new Listener() {
 	      @Override
 				public void handleEvent(Event event) {
@@ -228,7 +229,7 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 				colorCompositeLData.width = 157;
 				colorCompositeLData.height = 118;
 				colorCompositeLData.top =  new FormAttachment(240, 1000, 0);
-				colorCompositeLData.bottom =  new FormAttachment(1000, 1000, -45);
+				colorCompositeLData.bottom =  new FormAttachment(1000, 1000, -80);
 				colorComposite.setLayoutData(colorCompositeLData);
 				{
 					compositeLower = new Composite(colorComposite, SWT.BORDER);
@@ -340,7 +341,7 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 				limitCompositeLData.top =  new FormAttachment(240, 1000, 0);
 				limitCompositeLData.width = 189;
 				limitCompositeLData.height = 118;
-				limitCompositeLData.bottom =  new FormAttachment(1000, 1000, -45);
+				limitCompositeLData.bottom =  new FormAttachment(1000, 1000, -80);
 				limitComposite.setLayoutData(limitCompositeLData);
 //				{
 //					fillerComposite = new Composite(limitComposite, SWT.NONE);
@@ -476,6 +477,48 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 				limitComposite.layout();
 			}
 			{
+				Composite correctionComposite = new Composite(dialogShell, SWT.NONE);
+					RowLayout corrCompositeLayout = new RowLayout(org.eclipse.swt.SWT.HORIZONTAL);
+					correctionComposite.setLayout(corrCompositeLayout);
+					FormData corrCompositeLData = new FormData();
+					corrCompositeLData.left =  new FormAttachment(0, 1000, 0);
+					corrCompositeLData.right =  new FormAttachment(1000, 1000, 0);
+					corrCompositeLData.top =  new FormAttachment(1000, 1000, -75);
+					corrCompositeLData.width = 189;
+					corrCompositeLData.height = 118;
+					corrCompositeLData.bottom =  new FormAttachment(1000, 1000, -45);
+					correctionComposite.setLayoutData(corrCompositeLData);
+					{
+						CLabel correctionLabel = new CLabel(correctionComposite, SWT.RIGHT);
+						RowData averageLabelLData = new RowData();
+						averageLabelLData.width = 200;
+						averageLabelLData.height = 22;
+						correctionLabel.setLayoutData(averageLabelLData);
+						correctionLabel.setText(Messages.getString(MessageIds.GDE_MSGT0994));
+						correctionLabel.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0995));
+					}
+					{
+						this.corrValueText = new Text(correctionComposite, SWT.SINGLE | SWT.RIGHT | SWT.BORDER);
+						RowData avgTextLData = new RowData();
+						avgTextLData.width = 45;
+						avgTextLData.height = 16;
+						this.corrValueText.setLayoutData(avgTextLData);
+						this.corrValueText.setEditable(true);
+						this.corrValueText.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0995));
+						this.corrValueText.setText(GDE.STRING_EMPTY + this.settings.getElevationCorrection());
+					}
+					{
+						CLabel corrUnitLabel = new CLabel(correctionComposite, SWT.RIGHT);
+						RowData averageLabelLData = new RowData();
+						averageLabelLData.width = 30;
+						averageLabelLData.height = 22;
+						corrUnitLabel.setLayoutData(averageLabelLData);
+						corrUnitLabel.setText("[m]");
+						corrUnitLabel.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0995));
+					}
+					correctionComposite.layout();
+			}
+			{
 				closeButton = new Button(dialogShell, SWT.PUSH | SWT.CENTER);
 				closeButton.setText(Messages.getString(MessageIds.GDE_MSGT0291));
 				closeButton.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0292));
@@ -489,6 +532,7 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 					@Override
 					public void widgetSelected(SelectionEvent evt) {
 						log.log(Level.FINEST, "closeButton.widgetSelected, event="+evt); //$NON-NLS-1$
+						settings.setElevationCorrection(corrValueText.getText());
 						dialogShell.dispose();
 					}
 				});

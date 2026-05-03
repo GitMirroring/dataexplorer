@@ -19,9 +19,14 @@
 package gde.io;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,7 +43,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import gde.Analyzer;
+import gde.DataAccess;
 import gde.GDE;
+import gde.DataAccess.LocalAccess;
 import gde.config.Settings;
 import gde.data.Channels;
 import gde.data.ObjectData;
@@ -47,6 +58,7 @@ import gde.data.RecordSet;
 import gde.device.IDevice;
 import gde.device.MeasurementPropertyTypes;
 import gde.device.PropertyType;
+import gde.histo.utils.GpsCoordinate;
 import gde.log.Level;
 import gde.messages.MessageIds;
 import gde.messages.Messages;
@@ -363,8 +375,7 @@ public class KMZWriter {
 				altitudeDelta = Math.abs(device.translateValue(recordAltitude, recordAltitude.getMaxValue() / 1000.0) - device.translateValue(recordAltitude, recordAltitude.getMinValue() / 1000.0));
 				isClampToGround = isClampToGround || altitudeDelta < 10;
 			}
-			String altitudeMode = isClampToGround ? ALTITUDE_CLAMP2GROUNDE : isAltRelative ? ALTITUDE_RELATIVE2GROUND : ALTITUDE_ABSOLUTE;
-
+			
 			Record recordTripLength = ordinalTripLength < 0 ? null : recordSet.get(ordinalTripLength);
 			Vector<Integer> recordAzimuth;
 			try {
@@ -404,11 +415,30 @@ public class KMZWriter {
 			}
 			String dateString = new SimpleDateFormat("yyyy-MM-dd").format(date); //$NON-NLS-1$
 			
+			String altitudeMode = isClampToGround ? ALTITUDE_CLAMP2GROUNDE : isAltRelative ? ALTITUDE_RELATIVE2GROUND : ALTITUDE_ABSOLUTE;
 			//find altitude value which can be used as start point while exporting relative to ground
 			//this is required while absolute GPS-altitude or absolute pressure related altitude where start value is not zero
 			int gpsStartIndex = GPSHelper.getStartIndexGPS(recordSet, ordinalLatitude, ordinalLongitude);
 			height0 = isAltRelative && !isClampToGround && recordAltitude != null ? device.translateValue(recordAltitude, recordAltitude.realGet(gpsStartIndex) / 1000.0) : 0;
+		
+			//elevationCorrectionValue == -1 result in relativeToGround, else a elevation correction will occur
+			int elevationCorrectionValue = Settings.getInstance().getElevationCorrection();
+			int startPointElevation = 0;
 
+			if (altitudeMode.equals(ALTITUDE_RELATIVE2GROUND)) { //export via globe
+				if (elevationCorrectionValue == 0) {
+					altitudeMode = ALTITUDE_ABSOLUTE;
+					startPointElevation = getElevation(new GpsCoordinate(
+							device.translateValue(recordLatitude, recordLatitude.realGet(gpsStartIndex)  / 1000.0),
+							device.translateValue(recordLongitude, recordLongitude.realGet(gpsStartIndex)  / 1000.0)));
+				}
+				else if (elevationCorrectionValue < -1 || elevationCorrectionValue > 0) {
+					altitudeMode = ALTITUDE_ABSOLUTE;
+					startPointElevation = elevationCorrectionValue;
+				}
+				//elevationCorrectionValue == -1 result in relativeToGround				
+			}
+			
 			boolean isPositionWritten = false;
 			double positionLongitude = device.translateValue(recordLongitude, recordLongitude.get(1) / 1000.0);
 			double positionLatitude = device.translateValue(recordLongitude, recordLatitude.get(1) / 1000.0);
@@ -571,7 +601,7 @@ public class KMZWriter {
 					}
 					sb = new StringBuilder();
 
-					relAltitude = recordAltitude == null ? 0 : (device.translateValue(recordAltitude, recordAltitude.get(i) / 1000.0) - height0);
+					relAltitude = recordAltitude == null ? 0 : (device.translateValue(recordAltitude, recordAltitude.get(i) / 1000.0) - height0 + startPointElevation);
 					// add data entries, translate according device and measurement unit
 					sb.append(String.format(Locale.ENGLISH, "\t\t\t\t\t\t%.7f,", device.translateValue(recordLongitude, recordLongitude.get(i) / 1000.0))) //$NON-NLS-1$
 							.append(String.format(Locale.ENGLISH, "%.7f,", device.translateValue(recordLatitude, recordLatitude.get(i) / 1000.0))) //$NON-NLS-1$
@@ -589,7 +619,7 @@ public class KMZWriter {
 
 			//triangle-track
 			if (recordSet.getDevice().getName().equals("IGCAdapter")) {
-				int relativeAltitude = (int) (recordAltitude == null ? 0 : device.translateValue(recordAltitude, recordAltitude.getMaxValue() / 1000.0) - height0); //0 == clamp to ground
+				int relativeAltitude = (int) (recordAltitude == null ? 0 : device.translateValue(recordAltitude, recordAltitude.getMaxValue() / 1000.0) - height0  + startPointElevation); //0 == clamp to ground
 				String[] triangleTaskDefinition = recordSet.getRecordSetDescription().split(GDE.LINE_SEPARATOR);
 				if (triangleTaskDefinition.length == 2 && triangleTaskDefinition[1].length() > 25 && triangleTaskDefinition[1].split(GDE.STRING_MESSAGE_CONCAT).length == 4) {
 					List<String> wayPoints = new ArrayList<>();
@@ -642,7 +672,7 @@ public class KMZWriter {
 					double slope = recordSlope == null ? 0 : device.translateValue(recordSlope, recordSlope.get(i) / 1000.0);
 					double slopeLast = i==0 ? slope : recordSlope == null ? 0 : device.translateValue(recordSlope, recordSlope.get(i-1) / 1000.0);
 					boolean isSlope0 = speed > 2 && ((slope <= 0 && slopeLast > 0) || (slope > 0 && slopeLast <= 0) || slope == 0);
-					relAltitude = recordAltitude == null ? 0 : (device.translateValue(recordAltitude, recordAltitude.get(i) / 1000.0) - height0);
+					relAltitude = recordAltitude == null ? 0 : (device.translateValue(recordAltitude, recordAltitude.get(i) / 1000.0) - height0 + startPointElevation);
 					zipWriter.write(String.format(Locale.ENGLISH, dataPoint,
 							(long) (recordSet.getTime_ms(i) / 1000),
 							speed,
@@ -797,4 +827,65 @@ public class KMZWriter {
 		return velocityRange;
 	}
 
+	/**
+	 * try to call a web-service to find a GPS coordinate related elevation 
+	 * @param gpsCoordinate
+	 * @return found elevation in m or -1 if failed
+	 */
+	public static int getElevation(GpsCoordinate gpsCoordinate) {
+		try {
+			Analyzer analyzer = Analyzer.getInstance();
+			DataAccess dataAccess = analyzer.getDataAccess();
+
+			try {
+				//https://api.opentopodata.org/v1/test-dataset?locations=48.62890252073733,8.988615870996933
+				//https://maps.googleapis.com/maps/api/geocode/json?latlng=48.62890252073733,8.988615870996933
+				//https://api.open-elevation.com/api/v1/lookup?locations=48.637106,8.984413
+				String url = String.format(Locale.US, "https://api.open-elevation.com/api/v1/lookup?locations=%f,%f", gpsCoordinate.getLatitude(), gpsCoordinate.getLongitude());
+				log.log(Level.INFO, "Request URL " + url);
+				URL requestUrl = new URI(url).toURL();
+				InputStream inputStream = ((LocalAccess) dataAccess).getHttpsInputStream(requestUrl);
+				BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+				StringBuilder sb = new StringBuilder();
+
+				String line = null;
+				try {
+					while ((line = reader.readLine()) != null) {
+						sb.append(line + "\n");
+					}
+				}
+				catch (IOException e) {
+					log.log(Level.WARNING, e.getMessage(), e);
+				}
+				finally {
+					try {
+						inputStream.close();
+					}
+					catch (IOException e) {
+						log.log(Level.WARNING, e.getMessage(), e);
+					}
+				}
+				log.log(Level.INFO, sb.toString());
+
+				JsonParser jsonParser = new JsonParser();
+
+				JsonObject jsonObject = (JsonObject) jsonParser.parse(sb.toString());
+
+				//System.out.println("status = " + jsonObject.get("status"));
+				//System.out.println("elevation = " + jsonObject.get("results").getAsJsonArray().get(0).getAsJsonObject().get("elevation"));
+				
+				String elevation = jsonObject.get("results").getAsJsonArray().get(0).getAsJsonObject().get("elevation").getAsString();
+				
+				return (int) (Double.valueOf(elevation)+1.5);
+			}
+			catch (Exception e) {
+				log.log(Level.WARNING, e.getMessage(), e);
+			}
+		}
+		catch (Exception e) {
+			log.log(Level.WARNING, e.getMessage(), e);
+		}
+
+	return -1;
+	}
 }

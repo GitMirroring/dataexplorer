@@ -7,6 +7,7 @@ Generic changes/fixes
 	* enable MacOS ARM build
 	* enable storing/deleting zoom steps per recordSet, enable switching  between this steps
 	* add one time action correct the cool bar due to re-organization 
+	* enable KMZ export using the globe with relativeToGround as well as with absolute altitude
 	
 Device specific changes/fixes
 	* UT61E - correct unexpected behavior
