@@ -293,7 +293,7 @@ public class KMZWriter {
 	 * @throws Exception
 	 */
 	public static void write(String kmzFilePath, String kmlFileName, RecordSet recordSet, final int ordinalLongitude, final int ordinalLatitude, final int ordinalAltitude, final int ordinalMeasurement, final int ordinalSlope, final int ordinalTripLength, final int ordinalTrackDirection,
- final boolean isAltRelative, boolean isClampToGround) throws Exception {
+ final boolean isAltRelative, boolean isClampToGround, boolean isExportGlobe) throws Exception {
 		StringBuilder sb = new StringBuilder();
 		double height0 = 0.0, altitudeDelta = 0.0;
 		long startTime = new Date().getTime();
@@ -343,7 +343,7 @@ public class KMZWriter {
 			else { //device oriented
 				Integer activeChannelNumber = application.getActiveChannelNumber();
 				Integer measurementOrdinal = device.getGPS2KMZMeasurementOrdinal();
-				if(activeChannelNumber != null && measurementOrdinal != null && measurementOrdinal >= 0) {
+				if(measurementOrdinal != null && measurementOrdinal >= 0) {
 					PropertyType property = device.getMeasruementProperty(activeChannelNumber.intValue(), measurementOrdinal.intValue(), MeasurementPropertyTypes.GOOGLE_EARTH_IS_EXTRUDE.value());
 					if (property != null) {
 						try {
@@ -425,7 +425,7 @@ public class KMZWriter {
 			int elevationCorrectionValue = Settings.getInstance().getElevationCorrection();
 			int startPointElevation = 0;
 
-			if (altitudeMode.equals(ALTITUDE_RELATIVE2GROUND)) { //export via globe
+			if (altitudeMode.equals(ALTITUDE_RELATIVE2GROUND) && isExportGlobe) { //export via globe
 				if (elevationCorrectionValue == 0) {
 					altitudeMode = ALTITUDE_ABSOLUTE;
 					startPointElevation = getElevation(new GpsCoordinate(

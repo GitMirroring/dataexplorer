@@ -606,7 +606,7 @@ public class FileHandler {
 				kmlFileName = kmlFileName + GDE.FILE_ENDING_DOT_KML;
 
 				KMZWriter.write(kmzFilePath, kmlFileName, activeChannel.getActiveRecordSet(), ordinalLongitude, ordinalLatitude, ordinalAltitude, ordinalSpeed, ordinalClimb, ordinalTripLength,
-						ordinalAzimuth, isRelative, isClampToGround);
+						ordinalAzimuth, isRelative, isClampToGround, false);
 
 			}
 			catch (Exception e) {
@@ -670,7 +670,7 @@ public class FileHandler {
 				this.application.setCursor(SWTResourceManager.getCursor(SWT.CURSOR_WAIT));
 
 				KMZWriter.write(kmzFilePath, fileName.substring(fileName.lastIndexOf(GDE.FILE_SEPARATOR) + 1) + GDE.FILE_ENDING_DOT_KML, activeRecordSet, ordinalLongitude, ordinalLatitude, ordinalHeight,
-						ordinalMeasurement, ordinalSlope, ordinalTripLength, ordinalAzimuth, isHeightRelative, ordinalHeight == -1);
+						ordinalMeasurement, ordinalSlope, ordinalTripLength, ordinalAzimuth, isHeightRelative, ordinalHeight == -1, isExportTmpDir);
 			}
 			catch (Exception e) {
 				FileHandler.log.log(Level.WARNING, e.getMessage(), e);
