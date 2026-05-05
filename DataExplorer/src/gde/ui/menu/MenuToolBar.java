@@ -681,6 +681,8 @@ public class MenuToolBar {
 							int zoomVectorIndex = activeRecodSet.getZoomStepVectorIndex();
 							if (zoomVectorIndex - 1 >= 0)
 								activeRecodSet.setZoomBounds(zoomVectorIndex-1);
+							else if (activeRecodSet.getZoomStepVectorSize() >= 1)
+								activeRecodSet.setZoomBounds(0);
 							MenuToolBar.this.updateZoomStepsToolItems();
 							MenuToolBar.this.application.updateGraphicsWindow(false);
 					}
@@ -1925,12 +1927,12 @@ public class MenuToolBar {
 				this.fitIntoItem.setEnabled(true);
 				this.addZoomItem.setEnabled(!activeRecordSet.isActualZoomBoundsContained());
 				this.cleanZoomItem.setEnabled(zoomStepVectorSize >= 1);
-				if (zoomStepVectorSize > 1) {
-					if (zoomStepVectorIndex > 0 && zoomStepVectorIndex < zoomStepVectorSize - 1) {
+				if (zoomStepVectorSize >= 1) {
+					if (zoomStepVectorIndex >= 0 && zoomStepVectorIndex < zoomStepVectorSize - 1) {
 						this.lastZoomItem.setEnabled(true);
 						this.nextZoomItem.setEnabled(true);
 					}
-					else if (zoomStepVectorIndex > 0) {
+					else if (zoomStepVectorIndex >= 0 || zoomStepVectorSize == 1) {
 						this.lastZoomItem.setEnabled(true);
 						this.nextZoomItem.setEnabled(false);
 					}
@@ -1951,12 +1953,12 @@ public class MenuToolBar {
 						MenuToolBar.this.fitIntoItem.setEnabled(true);
 						MenuToolBar.this.addZoomItem.setEnabled(!activeRecordSet.isActualZoomBoundsContained());
 						MenuToolBar.this.cleanZoomItem.setEnabled(zoomStepVectorSize >= 1);
-						if (zoomStepVectorSize > 1) {
-							if (zoomStepVectorIndex > 0 && zoomStepVectorIndex < zoomStepVectorSize - 1) {
+						if (zoomStepVectorSize >= 1) {
+							if (zoomStepVectorIndex >= 0 && zoomStepVectorIndex < zoomStepVectorSize - 1) {
 								MenuToolBar.this.lastZoomItem.setEnabled(true);
 								MenuToolBar.this.nextZoomItem.setEnabled(true);
 							}
-							else if (zoomStepVectorIndex > 0) {
+							else if (zoomStepVectorIndex >= 0 || zoomStepVectorSize == 1) {
 								MenuToolBar.this.lastZoomItem.setEnabled(true);
 								MenuToolBar.this.nextZoomItem.setEnabled(false);
 							}
