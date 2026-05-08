@@ -90,31 +90,40 @@
 
 <DIV ID="Content" DIR="LTR">
 <H2><A NAME="google_earth_launcher"></A>Google Earth</H2>
-<P>If the current displayed record set contains GPS (global position system) data it is possible to export a KMZL file and launch with such file the Google Earth application.
+<P>If the current displayed record set contains GPS (global position system) data it is possible to export a KMZ file and launch with such file 
+the Google Earth application. Google Earth needs to be installed.
 The globe icon will change its visibility to signal launch capability.</P>
 <P ALIGN=CENTER><IMG SRC="images/MenueToolBar_GoogleEarth.png" NAME="MenueToolBar_GoogleEarth" ALIGN=MIDDLE></P>
 <P><B>Hint : </B>Temporary files gets generated while using the globe button.
 This temporary files gets located in the temp folder of the system and get deleted while closing this application.
 If this files should be saved, change into the temporary folder of your operating system or export the same content using the export functionality (Export - KMZ 3D track).
 </P>
-<P>As sample a flight record is displayed. This flight was recorded with an DataVarioDuo with GPS.</P>
+<P>The KMZ export, along with its flight path, can be color-coded in relation to other data. 
+This must be configured before exporting via the KMZ Export dialog. 
+Shown here as an example is the flight recorded using the DataVarioDuo with GPS. 
+The color changes correspond to the predefined speed ranges.
+</P>
 <P ALIGN=CENTER><IMG SRC="images/GoogleEarth_Sample_0026.png" NAME="graphics2" ALIGN=MIDDLE></P>
-<P>A zoomed part of a flight record would show up like: </P>
+<P>Another example shows elevation changes (climb) highlighted in color in a section of a flight path that has been cropped by zooming.
 <P ALIGN=CENTER><IMG SRC="images/GoogleEarth_Sample_0051.png" NAME="GoogleEarth_Sample_0051" ALIGN=MIDDLE></P>
-<H2><A NAME="google_earth_trail_colors"></A>Track Color Configuration</H2>
-<P>Using the tools button a dialog to configure colors versus velocity can be opened.
-The left side gets used to configure the colors for the three velocity ranges.
+<H2><A NAME="google_earth_trail_colors"></A>KMZ Export Configuration</H2>
+<P>The dialog shown allows you to select the measurement value to be used for color coding and to configure the color ranges. 
+The left side is used to configure the colors for the three possible ranges (Speed the example shown).
 </P>
 <P ALIGN=CENTER><IMG SRC="images/GoogleEarth_Color_Config.png" NAME="GoogleEarth_Color_Config" ALIGN=MIDDLE></P>
-<P>The dialog is displayed twice to make the velocity configuration behavior more clear (blue circled).
-Is a average factor set to zero, the minimum and maximum velocity fields can be used to configure different values.
-While the average factor is not equals zero the minimum and maximum values gets calculated.
-The average speed is displayed as a guide.
+<P>The dialog is shown twice to illustrate the differences in how the average factor is configured (blue border). 
+If the average factor is set to 0, the fields for configuring the minimum and maximum values become active and allow for input. 
+If the mean factor is greater than 0, the minimum and maximum values are automatically calculated based on it. 
+The average value is displayed as a guide.
 </P>
-<P>When the correction factor for the starting elevation is set to -1 m, it allows you to export data relative to the ground.
-When set to 0 m, it uses an automatically determined start elevation. However, this only makes sense if Google Earth also displays the terrain in 3D.
-Sometimes, the path is displayed underground, below the calculated ground level. You can counteract this by setting the value,
-detected with the mouse at the starting point and transferring it to the dialog. This value is then applied directly.
+<P>When the correction factor for the starting altitude is set to -1 m, allows you to export data using relative elevation relative to the ground. 
+This setting will produce satisfactory results in most cases. 
+However, on slopes, the flight path tilts relative to the slope and appears distorted. 
+In such cases, it is better to export using a value of 0 m, with the starting altitude determined automatically and absolute altitude. 
+However, this only makes sense if Google Earth also displays the terrain in 3D. 
+It may happen that the path is displayed underground, below the ground elevation calculated by Google Earth. 
+You can counteract this by detecting the elevation value in Google Earth using the mouse at the starting point and transferring it to the dialog. 
+This value is then directly applied for the export using absolute altitude values.
 </P>
 <P><B>Hint:</B> The exported GPS data in form of KMZ files contains data points which gives more info regarding the data point to you while this is switched on.
 It is possible to display a so called elevation profile using the context menu.
