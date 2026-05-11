@@ -1,10 +1,31 @@
-GNU DataExplorer - News - comes with Version 4.0.4 - 20 Mar 2026
+GNU DataExplorer - News - comes with Version 4.0.5 - 14 May 2026
 
 Generic changes/fixes 
-	* use GDK_BACKEND variable to correct UI behavior on Linux
-	* fix Windows serial port not fount issue, updating jSerialComm library to 2.11.4
-		
+	* fix upgrade dialog resize problem (ARM 64)
+	* enable error message box while detecting error from jSerialComm
+	* enable MacOS ARM build
+	* enable storing/deleting zoom steps per recordSet, enable switching  between this steps
+	* add one time action correct the cool bar due to re-organization 
+	* enable KMZ export using the globe with relativeToGround as well as with absolute altitude
+	* update documentation
+	
+Device specific changes/fixes
+	* UT61E - correct unexpected behavior
+	* UT71D - add initial support
+	* IGCAdapter - adaptation for task statistics of Albatross v4.4.4+
+	* HoTTAdapter* - update value changes according GPS-Logger FW >= 1.32
+			
 Allgemeine Änderungen/Korrekturen
-	* Verwendung der GDK_BACKEND Variable, um das User-Interface Verhalten auf Linux Systemen anzupassen
-	* löse das Problem "kein serieller Port" auf Windows durch Upgrade der jSerialComm Bibliothek auf 2.11.4
-	  
+	* fix upgrade dialog resize problem (ARM 64)
+	* enable error message box while detecting error from jSerialComm
+	* enable MacOS ARM build
+	* enable storing/deleting zoom steps per recordSet, enable switching  between this steps
+	* add one time action correct the cool bar due to re-organization 
+	* enable KMZ export using the globe with relativeToGround as well as with absolute altitude
+	* update documentation
+
+Gerätespezifische Änderungen
+	* UT61E - unerwartetes Verhalten korrigiert
+	* UT71D - initiale Geräteunterstützung
+	* IGCAdapter - Anpassung der Statistik für Albatross v4.4.4+
+	* HoTTAdapter* - Anpassung geänderter Werte SM GPS-Logger FW >= 1.32

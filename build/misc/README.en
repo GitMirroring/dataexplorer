@@ -1,12 +1,11 @@
-﻿******** DataExplorer README ***********  14 May 2025
+﻿******** DataExplorer README ***********  14 May 2026
 
 The GNU DataExplorer is free software, please see http://www.gnu.org/philosophy/free-sw.html. It is also available at no
 cost, but without any warranty. Since the implementation is based on Java using the free available libraries jSerialComm, 
-libjava4usb and SWT the execution of this program is possible under a number of popular operating systems like Windows, GNU/Linux 
+libjava4usb and SWT, the execution of this program is possible under a number of popular operating systems like Windows, GNU/Linux 
 and MAC OS.
 For simplicity, all versions are provided with built-in Java run-time. There is no need to 
-install a Java runtime. Since the MAC OS versions are based on Intel code, DataExplorer runs in the Rosetta 
-emulation layer.
+install a Java runtime. 
 
 The GNU DataExplorer read data from connected devices or text file import and display this data for a 
 various of further analysis. A listing of supported devices can be found http://www.nongnu.org/dataexplorer/index.html.
@@ -37,6 +36,8 @@ Below this directory also application configuration and trace log files are loca
 Depending of the used Windows version and patch level it might be required to install the latest 
 "Microsoft Visual C++ Redistributable Package" from www.microsoft.com/downloads (desktop icon, object link creation).
 
+There is currently no version available for Windows on ARM. If you're interested, please let us know.
+
 
 
 GNU/Linux:
@@ -51,14 +52,14 @@ Below this directory also application configuration and trace log files are loca
 
 MAC OS X:
 
-The DMG contains a Intel based Java runtime environment. A separate Java installation is not required. This will work as well using an ARM (M) processor.
 The download and opened DMG file show up DataExplorer.app which need simply drag to the Applications folder.
 During the first execution of the program the application configuration directories are created /User/<user>/Library/Application Support/DataExplorer.
 Below this directory also application configuration and trace log files are located.
 
 Starting with MAC OS Sequoia, applications that are not distributed via the Apple Store are classified as questionable. A corresponding dialog appears.
-Permission to run the application must be granted once via the "Privacy & Security" setting. You can check via Virustotal
-that no malicious code is contained.
-Provided kernel extensions (kext), to be used for USB HID devices, may installed using https://github.com/chris1111/Kext-Droplet-macOS. This may enable kext extensions on MacOS Sonoma and newer.
+Permission to run the application must be granted once via the "Privacy & Security" setting. 
+You can check via Virustotal that no malicious code is contained.
+Provided kernel extensions (kext), to be used for USB HID devices, may installed using https://github.com/chris1111/Kext-Droplet-macOS. 
+This may enable kext extensions on MacOS Sonoma and newer.
 
 

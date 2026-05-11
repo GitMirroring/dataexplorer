@@ -1,11 +1,11 @@
-******** DataExplorer README ***********  19 Jan 2026
+******** DataExplorer README ***********  14 May 2026
 
-Der GNU DataExplorer ist freie Software, siehe http://www.gnu.org/philosophy/free-sw.html. Sie wird kostenfrei und ohne Spende 
-zur Verfügung gestellt. Es gibt aber auch keinerlei Gewährleistung. Durch die Implementierung in Java auf der Basis von der freien Bibliotheken 
+Der GNU DataExplorer ist freie Software, siehe http://www.gnu.org/philosophy/free-sw.html. Sie wird kostenfrei zur Verfügung gestellt. 
+Es gibt aber auch keinerlei Gewährleistung. Durch die Implementierung in Java auf der Basis von der freien Bibliotheken 
 jSerialComm, libjava4usb und SWT ist die Ausführung des Programms auf vielen populären Betriebssystemplattformen wie Windows, GNU/Linux 
 und MAC OS X möglich.
 Der Einfachheit halber werden alle Versionen mit integrierter Java Laufzeit bereitgestellt. Eine Java Laufzeit muss nicht mehr installiert 
-werden. Da die MAC OS Versionen auf Intel Code basieren läuft der DataExplorer in der Emulationsschicht Rosetta.
+werden.
 
 Der GNU DataExplorer nimmt Daten von angeschlossenen Geräten entgegen oder importiert Dateien und zeigt diese für verschiedene Auswertungen an. 
 Die Liste der unterstützten Geräte findet man hier http://www.nongnu.org/dataexplorer/index.de.html.
@@ -38,10 +38,11 @@ auch Anwendungkonfiguration und Tracelogdaten abgelegt.
 Je nach verwendeter Windows Version und Patchlevel kann es nötig sein das System mit dem 
 "Microsoft Visual C++ Redistributable Package" von www.microsoft.com/downloads nachzurüsten (Desktopicon, Objektlink).
 
+Aktuell gibt es noch keine Version für Windows on ARM. Wenn da Interesse besteht, bitte melden.
+
 
 GNU/Linux:
 
-Entsprechend der Prozessorarchitektur sollte die Java-Laufzeitumgebung installiert werden.
 Eine Installation ist nicht nötig, das im Archiv enthaltene Verzeichnis "DataExplorer" mit den darunter liegenden Verzeichnissen und Dateien
 einfach an einen Ort entpacken, wo Ausführungsrechte vorliegen. (tar -xzvf dataexplorer_..)
 Für den ersten Start des Programms über ein Kommando-Shell in das DataExplorer Verzeichnis wechseln und DataExplorer ausführen.
@@ -51,7 +52,6 @@ Anwendungkonfiguration und Tracelogdaten abgelegt.
 
 MAC OS X:
 
-Die DMG Datei enthält eine Java-Laufzeitumgebung. Das funktiioniert auch mit einem ARM (M) Prozessor, dann unter Rosetta.
 Die bereit gestellt DMG Datei zeigt die Anwendung DataExplorer.app, die einfach auf den Applications Ordner zu ziehen ist.
 Beim ersten Start des Programms werden dann noch Anwendungkonfigurationsverzeichnisse unter /User/<Benutzer>/Library/Application Support/DataExplorer
 angelegt. Hierunter werden auch Anwendungkonfiguration und Tracelogdaten abgelegt.
