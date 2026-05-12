@@ -45,6 +45,8 @@ import gde.device.ObjectFactory;
 import gde.device.PropertyType;
 import gde.device.StatisticsType;
 import gde.log.Level;
+import gde.messages.MessageIds;
+import gde.messages.Messages;
 import gde.ui.DataExplorer;
 import gde.utils.ColorUtils;
 import gde.utils.StringHelper;
@@ -1929,17 +1931,22 @@ public class Record extends AbstractRecord implements IRecord {
 	 */
 	public void setZoomBounds(ZoomBounds newZoomBounds) {
 		this.zoomTimeOffset = newZoomBounds.getZoomOffsetAndWidth().zoomTimeOffset;
-		this.zoomOffset =  newZoomBounds.getZoomOffsetAndWidth().zoomOffset;
+		this.zoomOffset = newZoomBounds.getZoomOffsetAndWidth().zoomOffset;
 		this.drawTimeWidth = newZoomBounds.getZoomOffsetAndWidth().drawTimeWidth;
 		if (log.isLoggable(Level.FINER))
 			log.log(Level.FINER, this.name + " zoomOffset " + this.zoomOffset + " zoomTimeOffset " + TimeLine.getFomatedTimeWithUnit(this.zoomTimeOffset) + " drawTimeWidth " + TimeLine.getFomatedTimeWithUnit(this.drawTimeWidth)); //$NON-NLS-1$ //$NON-NLS-2$
 
-		this.tmpMinZoomScaleValue = newZoomBounds.getZoomScaleValues(this.name).tmpMinZoomScaleValue;
-		this.tmpMaxZoomScaleValue = newZoomBounds.getZoomScaleValues(this.name).tmpMaxZoomScaleValue;
-		this.minZoomScaleValue = newZoomBounds.getZoomScaleValues(this.name).minZoomScaleValue;
-		this.maxZoomScaleValue = newZoomBounds.getZoomScaleValues(this.name).maxZoomScaleValue;
-		if (log.isLoggable(Level.FINER))
-			log.log(Level.FINER, this.name + " - minZoomScaleValue = " + this.minZoomScaleValue + "  maxZoomScaleValue = " + this.maxZoomScaleValue); //$NON-NLS-1$ //$NON-NLS-2$		
+		if (newZoomBounds.getZoomScaleValues(this.name) != null) { // "gde.data.ZoomBounds.getZoomScaleValues(String)" is null for compare_set afterwards added record
+			this.tmpMinZoomScaleValue = newZoomBounds.getZoomScaleValues(this.name).tmpMinZoomScaleValue;
+			this.tmpMaxZoomScaleValue = newZoomBounds.getZoomScaleValues(this.name).tmpMaxZoomScaleValue;
+			this.minZoomScaleValue = newZoomBounds.getZoomScaleValues(this.name).minZoomScaleValue;
+			this.maxZoomScaleValue = newZoomBounds.getZoomScaleValues(this.name).maxZoomScaleValue;
+			if (log.isLoggable(Level.FINER))
+				log.log(Level.FINER, this.name + " - minZoomScaleValue = " + this.minZoomScaleValue + "  maxZoomScaleValue = " + this.maxZoomScaleValue); //$NON-NLS-1$ //$NON-NLS-2$		
+		}
+		else {
+			DataExplorer.getInstance().setStatusMessage(Messages.getString(MessageIds.GDE_MSGW0052, new String[] {this.name}), SWT.COLOR_RED);
+		}
 	}
 
 	/**

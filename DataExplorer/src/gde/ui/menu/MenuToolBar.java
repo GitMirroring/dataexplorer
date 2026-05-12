@@ -53,6 +53,7 @@ import com.thizzer.jtouchbar.swt.JTouchBarSWT;
 import gde.GDE;
 import gde.comm.DeviceCommPort;
 import gde.config.Settings;
+import gde.data.AbstractRecordSet;
 import gde.data.Channel;
 import gde.data.Channels;
 import gde.data.RecordSet;
@@ -677,12 +678,16 @@ public class MenuToolBar {
 						@Override
 						public void widgetSelected(SelectionEvent evt) {
 							log.log(Level.FINEST, "lastZoomItem.widgetSelected, event=" + evt); //$NON-NLS-1$
-							RecordSet activeRecodSet = MenuToolBar.this.application.getActiveRecordSet();
-							int zoomVectorIndex = activeRecodSet.getZoomStepVectorIndex();
+							AbstractRecordSet abstractRecordSet = MenuToolBar.this.application.getRecordSetOfVisibleTab();
+							RecordSet activeRecordSet;
+							if (abstractRecordSet instanceof RecordSet)
+								activeRecordSet = (RecordSet) abstractRecordSet;
+							else return;
+							int zoomVectorIndex = activeRecordSet.getZoomStepVectorIndex();
 							if (zoomVectorIndex - 1 >= 0)
-								activeRecodSet.setZoomBounds(zoomVectorIndex-1);
-							else if (activeRecodSet.getZoomStepVectorSize() >= 1)
-								activeRecodSet.setZoomBounds(0);
+								activeRecordSet.setZoomBounds(zoomVectorIndex-1);
+							else if (activeRecordSet.getZoomStepVectorSize() >= 1)
+								activeRecordSet.setZoomBounds(0);
 							MenuToolBar.this.updateZoomStepsToolItems();
 							MenuToolBar.this.application.updateGraphicsWindow(false);
 					}
@@ -698,7 +703,12 @@ public class MenuToolBar {
 						@Override
 						public void widgetSelected(SelectionEvent evt) {
 							log.log(Level.FINEST, "addZoomItem.widgetSelected, event=" + evt); //$NON-NLS-1$
-							MenuToolBar.this.application.getActiveRecordSet().addZoomBounds();
+							AbstractRecordSet abstractRecordSet = MenuToolBar.this.application.getRecordSetOfVisibleTab();
+							RecordSet activeRecordSet;
+							if (abstractRecordSet instanceof RecordSet)
+								activeRecordSet = (RecordSet) abstractRecordSet;
+							else return;
+							activeRecordSet.addZoomBounds();
 							MenuToolBar.this.updateZoomStepsToolItems();
 					}
 					});
@@ -713,10 +723,14 @@ public class MenuToolBar {
 						@Override
 						public void widgetSelected(SelectionEvent evt) {
 							log.log(Level.FINEST, "nextZoomItem.widgetSelected, event=" + evt); //$NON-NLS-1$
-							RecordSet activeRecodSet = MenuToolBar.this.application.getActiveRecordSet();
-							int zoomVectorIndex = activeRecodSet.getZoomStepVectorIndex();
-							if (zoomVectorIndex+1 <= activeRecodSet.getZoomStepVectorSize()-1) 
-								activeRecodSet.setZoomBounds(zoomVectorIndex+1);
+							AbstractRecordSet abstractRecordSet = MenuToolBar.this.application.getRecordSetOfVisibleTab();
+							RecordSet activeRecordSet;
+							if (abstractRecordSet instanceof RecordSet)
+								activeRecordSet = (RecordSet) abstractRecordSet;
+							else return;
+							int zoomVectorIndex = activeRecordSet.getZoomStepVectorIndex();
+							if (zoomVectorIndex+1 <= activeRecordSet.getZoomStepVectorSize()-1) 
+								activeRecordSet.setZoomBounds(zoomVectorIndex+1);
 							MenuToolBar.this.updateZoomStepsToolItems();
 							MenuToolBar.this.application.updateGraphicsWindow(false);
 						}
@@ -732,7 +746,12 @@ public class MenuToolBar {
 						@Override
 						public void widgetSelected(SelectionEvent evt) {
 							log.log(Level.FINEST, "cleanZoomItem.widgetSelected, event=" + evt); //$NON-NLS-1$
-							MenuToolBar.this.application.getActiveRecordSet().clearZoomBounds();
+							AbstractRecordSet abstractRecordSet = MenuToolBar.this.application.getRecordSetOfVisibleTab();
+							RecordSet activeRecordSet;
+							if (abstractRecordSet instanceof RecordSet)
+								activeRecordSet = (RecordSet) abstractRecordSet;
+							else return;
+							activeRecordSet.clearZoomBounds();
 							MenuToolBar.this.updateZoomStepsToolItems();
 						}
 					});
@@ -1917,8 +1936,10 @@ public class MenuToolBar {
 	 * this functions queries the actual recordSet for items in zoomSteps
 	 */
 	public void updateZoomStepsToolItems() {
-		final RecordSet activeRecordSet = this.application.getActiveRecordSet();
-		if (activeRecordSet != null) {
+		AbstractRecordSet abstractRecordSet = MenuToolBar.this.application.getRecordSetOfVisibleTab();
+		final RecordSet activeRecordSet;
+		if (abstractRecordSet instanceof RecordSet) {
+			activeRecordSet = (RecordSet) abstractRecordSet;
 			final int zoomStepVectorSize = activeRecordSet.getZoomStepVectorSize();
 			final int zoomStepVectorIndex = activeRecordSet.getZoomStepVectorIndex();
 			if (log.isLoggable(Level.FINE))

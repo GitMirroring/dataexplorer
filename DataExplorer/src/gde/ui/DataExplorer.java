@@ -740,6 +740,8 @@ public class DataExplorer extends Composite {
 							DataExplorer.this.isObjectWindowVisible = false;
 						}
 					}
+					DataExplorer.this.updateMenusRegardingZoomSteps();
+					
 					if (log.isLoggable(Level.FINEST) && DataExplorer.this.displayTab != null && DataExplorer.this.menuCoolBar != null && DataExplorer.this.statusComposite != null && getSize().y != 0) {
 						log.logp(Level.FINEST, $CLASS_NAME, $METHOD_NAME, "menuCoolBar.size = " + DataExplorer.this.menuCoolBar.getSize()); //$NON-NLS-1$
 						log.logp(Level.FINEST, $CLASS_NAME, $METHOD_NAME, "shellClient.size = " + new Point(getClientArea().width, getClientArea().height)); //$NON-NLS-1$
@@ -1861,8 +1863,18 @@ public class DataExplorer extends Composite {
 	 * update menu items and tool bar items according zoom steps availability
 	 */
 	public void updateMenusRegardingZoomSteps() {
-		//this.menuBar.updateZoomStepsToolItems();
-		this.menuToolBar.updateZoomStepsToolItems();
+		if (Thread.currentThread().threadId() == this.getThreadId()) {
+			//this.menuBar.updateZoomStepsToolItems();
+			this.menuToolBar.updateZoomStepsToolItems();
+		}
+		else {
+			GDE.display.asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					DataExplorer.this.menuToolBar.updateZoomStepsToolItems();
+				}
+			});
+		}
 	}
 
 	public FileDialog prepareFileOpenDialog(String name, String[] extensions, String path, String fileName, int addStyle) {
