@@ -1618,7 +1618,7 @@ public class FileUtils {
 			String inputLine;
 			int readCount = 0; // limiting read count will help to reduce blocking time if a banner at year end are displayed
 			while (readCount++ < 200 && (inputLine = in.readLine()) != null) {
-				if (inputLine.toLowerCase().contains("dataexplorer-") && inputLine.toLowerCase().contains("_mac_64.dmg\"")) { //$NON-NLS-1$
+				if (inputLine.toLowerCase().contains("dataexplorer-") && inputLine.toLowerCase().contains("64.dmg\"")) { //$NON-NLS-1$
 					log.log(Level.INFO, readCount + " - " + inputLine); //$NON-NLS-1$
 					int index = inputLine.toLowerCase().indexOf("dataexplorer-")+13;
 					log.log(Level.INFO, inputLine.substring(index, index+5)); //$NON-NLS-1$
