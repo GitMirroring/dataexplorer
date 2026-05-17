@@ -3479,11 +3479,11 @@ public final class Settings extends Properties {
 	}
 	
 	/**
-	 * execute only, while version 405 is installed
+	 * execute only, while version 405+ is installed on top of version <= 404
 	 * check if APPL_VERSION_NUMBER stored in settings is smaller than static GDE.VERSION_NUMBER defined in GDE.java
 	 */
 	public void checkOneTimeAction() {
-		if (GDE.VERSION_NUMBER == 405 && Integer.valueOf(this.getProperty(Settings.APPL_VERSION_NUMBER, "404").replace(".", "")) < GDE.VERSION_NUMBER) {
+		if (GDE.VERSION_NUMBER >= 405 && Integer.valueOf(this.getProperty(Settings.APPL_VERSION_NUMBER, "404").replace(".", "")) <= 404) {
 			//log.log(Level.INFO, "run action");
 			this.remove(COOLBAR_ORDER);	
 			this.remove(COOLBAR_WRAPS);

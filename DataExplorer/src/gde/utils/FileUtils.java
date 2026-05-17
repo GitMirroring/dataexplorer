@@ -1604,6 +1604,10 @@ public class FileUtils {
 		return fd;
 	}
 
+	/**
+	 * read content of VersionRelease.txt which contains the latest version release number and compare with running instance version
+	 * @return true|false and instance version
+	 */
 	public static String[] isUpdateAvailable() {
 		BufferedReader in = null;
 		String[] versionCheck = new String[] { "false", GDE.VERSION.substring(8) }; //$NON-NLS-1$
@@ -1612,15 +1616,15 @@ public class FileUtils {
 		int newerVersionNumber = 0;
 
 		try {
-			URL gdeDownload = new URI(GDE.DOWNLOAD_UPDATE_URL).toURL(); //$NON-NLS-1$
+			URL gdeDownload = new URI(GDE.DOWNLOAD_UPDATE_URL + "VersionRelease.txt").toURL(); //$NON-NLS-1$
 			in = new BufferedReader(new InputStreamReader(gdeDownload.openStream()));
 
 			String inputLine;
 			int readCount = 0; // limiting read count will help to reduce blocking time if a banner at year end are displayed
 			while (readCount++ < 200 && (inputLine = in.readLine()) != null) {
-				if (inputLine.toLowerCase().contains("dataexplorer-") && inputLine.toLowerCase().contains("64.dmg\"")) { //$NON-NLS-1$
+				if (inputLine.toLowerCase().contains("version")) { //$NON-NLS-1$
 					log.log(Level.INFO, readCount + " - " + inputLine); //$NON-NLS-1$
-					int index = inputLine.toLowerCase().indexOf("dataexplorer-")+13;
+					int index = inputLine.toLowerCase().indexOf(" ") + 1;
 					log.log(Level.INFO, inputLine.substring(index, index+5)); //$NON-NLS-1$
 					try {
 						newerVersionNumber = Integer.parseInt(inputLine.substring(index, index+5).replace(".", ""));

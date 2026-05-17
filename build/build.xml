@@ -1406,7 +1406,7 @@
 		<exec executable="bash" dir="${basedir}/build/target/install/">
 			<arg value="-l" />
 			<arg value="-c" />
-			<arg value="rsync -vr ${basedir}/build/target/install/* brueg@dl.sv.nongnu.org:/releases/dataexplorer/" />
+			<arg value="/opt/homebrew/bin/rsync -vr ${basedir}/build/target/install/* brueg@dl.sv.nongnu.org:/releases/dataexplorer/" />
 		</exec>
 	</target>
 
@@ -1415,7 +1415,7 @@
 		<exec executable="bash" dir="${basedir}/build/target/">
 			<arg value="-l" />
 			<arg value="-c" />
-			<arg value="rsync -vr --delete install/ brueg@dl.sv.nongnu.org:/releases/dataexplorer/" />
+			<arg value="/opt/homebrew/bin/rsync -vr --delete install/ brueg@dl.sv.nongnu.org:/releases/dataexplorer/" />
 		</exec>
 	</target>
 

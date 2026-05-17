@@ -21,6 +21,7 @@ Please use the preferences dialog with the miscellaneous tab with the related bu
 To create DataExplorer.exe a java wrapper,launch4j, get used. If there are startup errors it might be helpful to launch the application
 using "DataExplorer.exe --l4j-debug". This will generate a launch4j.log with meaningful informations.
 
+The file ReleaseVersion.txt in downloads mark the latest stable version for download.  die aktuelle stabile Version, die herunter geladen werden kann.
 
 For questions or suggestions for improvement feel free to contact me using the e-mail address at the download page http://www.nongnu.org/dataexplorer/download.html.
 						 
