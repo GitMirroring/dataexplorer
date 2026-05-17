@@ -1382,7 +1382,7 @@
 				<echo message="build md5 @{file}" />
 				<exec executable="bash" dir="${basedir}/build/target/install">
 					<arg value="-c" />
-					<arg value="/sbin/md5sum '@{file}' > '@{file}'.md5" />
+					<arg value="md5sum '@{file}' > '@{file}'.md5" />
 				</exec>
 			</sequential>
 		</for>
@@ -1393,7 +1393,7 @@
 			</path>
 			<sequential>
 				<echo message="verify: @{file}" />
-				<exec executable="/sbin/md5sum" dir="${basedir}/build/target/install">
+				<exec executable="md5sum" dir="${basedir}/build/target/install">
 					<arg value="-c" />
 					<arg value="@{file}" />
 				</exec>
@@ -1415,7 +1415,7 @@
 		<exec executable="bash" dir="${basedir}/build/target/">
 			<arg value="-l" />
 			<arg value="-c" />
-			<arg value="/usr/local/bin/rsync -vr --delete install/ brueg@dl.sv.nongnu.org:/releases/dataexplorer/" />
+			<arg value="rsync -vr --delete install/ brueg@dl.sv.nongnu.org:/releases/dataexplorer/" />
 		</exec>
 	</target>
 
