@@ -275,6 +275,7 @@ public final class Settings extends Properties {
 	public final static String			HISTO_OBJECTS_DIR_NAME					= "Fleet";																																												//$NON-NLS-1$
 
 	public static final String			ELEVATION_CORRECTION						= "elevation_correction";																																					//$NON-NLS-1$
+	public static final String			STARTPOINT_ELEVATION						= "startpoint_elevation";																																					//$NON-NLS-1$
 	
 	private static double[]					SAMPLING_TIMESPANS							= new double[] { 10., 5., 1., .5, .1, .05, .001 };
 	private static String[]					REMINDER_COUNT_VALUES						= new String[] { "2", "3", "5", "8" };
@@ -862,7 +863,8 @@ public final class Settings extends Properties {
 			writer.write(String.format("%-40s \t=\t %s\n", Settings.UPDATE_CHECK_INTERVAL, this.getUpdateCheckInterval())); //$NON-NLS-1$
 			writer.write(String.format("%-40s \t=\t %s\n", Settings.IS_OBJECT_TEMPLATES_ACTIVE, isObjectTemplatesActive())); //$NON-NLS-1$
 			writer.write(String.format("%-40s \t=\t %s\n", Settings.IS_MAC_TOUCHBAR, isMacTouchbarEnabled())); //$NON-NLS-1$
-			writer.write(String.format("%-40s \t=\t %s\n", Settings.ELEVATION_CORRECTION, this.getElevationCorrection())); //$NON-NLS-1$
+			writer.write(String.format("%-40s \t=\t %s\n", Settings.ELEVATION_CORRECTION, this.getStartElevationCorrection())); //$NON-NLS-1$
+			writer.write(String.format("%-40s \t=\t %s\n", Settings.STARTPOINT_ELEVATION, this.getStartpointElevation())); //$NON-NLS-1$
 			// charger specials
 			writer.write(String.format("%-40s \t=\t %s\n", Settings.IS_REDUCE_CHARGE_DISCHARGE, this.isReduceChargeDischarge())); //$NON-NLS-1$
 			writer.write(String.format("%-40s \t=\t %s\n", Settings.IS_ALL_IN_ONE_RECORDSET, this.isContinuousRecordSet())); //$NON-NLS-1$
@@ -3492,16 +3494,30 @@ public final class Settings extends Properties {
 	}
 	
 	/**
-	 * @return stored elevation correction value in meter to be used while KMZ export
+	 * @return stored start elevation correction value in meter to be used for start point elevation calculation
 	 */
-	public int getElevationCorrection() {
-		return Integer.valueOf(this.getProperty(Settings.ELEVATION_CORRECTION, "-1"));
+	public int getStartElevationCorrection() {
+		return Integer.valueOf(this.getProperty(Settings.ELEVATION_CORRECTION, "0"));
 	}
 	
 	/**
-	 * set new elevation correction value in meter to be used while KMZ export
+	 * set new start elevation correction value in meter to be used for start point elevation calculation
 	 */
-	public void setElevationCorrection(String newValue) {
+	public void setStartElevationCorrection(String newValue) {
 		this.setProperty(Settings.ELEVATION_CORRECTION, newValue);
+	}
+	
+	/**
+	 * @return stored start point elevation value in meter to be used while KMZ export
+	 */
+	public int getStartpointElevation() {
+		return Integer.valueOf(this.getProperty(Settings.STARTPOINT_ELEVATION, "0"));
+	}
+	
+	/**
+	 * set new start point elevation correction value in meter to be used while KMZ export
+	 */
+	public void setStartpointElevation(String newValue) {
+		this.setProperty(Settings.STARTPOINT_ELEVATION, newValue);
 	}
 }

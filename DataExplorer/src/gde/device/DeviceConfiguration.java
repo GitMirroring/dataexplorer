@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with GNU DataExplorer.  If not, see <http://www.gnu.org/licenses/>.
 
-    Copyright (c) 2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018 Winfried Bruegmann
+    Copyright (c) 2008-2026 Winfried Bruegmann
     							2016,2017,2018 Thomas Eickert
 ****************************************************************************************/
 package gde.device;
@@ -2735,7 +2735,7 @@ public class DeviceConfiguration {
 	public boolean isActualRecordSetWithGpsData() {
 		return false;
 	}
-
+ 
 	/**
 	 * export a file of the actual channel/record set
 	 * @return full qualified file path depending of the file ending type
@@ -2765,6 +2765,13 @@ public class DeviceConfiguration {
 	 */
 	public Integer getGPS2KMZMeasurementOrdinal() {
 		return -1;
+	}
+
+	/**
+	 * @return the measurement ordinal of Latitude as well as of Longitude as Integer array
+	 */
+	public int[] getGPSLatLngOrdinals() {
+		return new int[] {-1, -1};
 	}
 
 	/**

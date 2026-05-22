@@ -98,7 +98,7 @@ Der Globusknopf in der Toolbar ver&auml;ndert sein Aussehen und signalisiert dam
 M&ouml;chte man diese Dateien aber behalten, sollte man den gerade angesehen Ausschnitt &uuml;ber die Men&uuml;bar - "Export/KMZ 3D" in eine Datei an einem beliebigen Platz im Dateisystem sichern.
 </P>
 <P>Der KMZ Export mit dessen Flugbahn kann in Relation zu anderen Daten farbig hervorgehoben werden.
-Das muss vor dem Export über den KMZ-Export Dialog erfolgen. 
+Das muss vor dem Export über den KMZ Export-Konfiguration Dialog erfolgen. 
 Als Beispiel ist hier der Flug gezeigt, der mit dem DataVarioDuo mit GPS aufgezeichnet wurde.
 Die Farbänderung entspricht den vorher bestimmten Geschwindigkeitsbereichen.
 </P>
@@ -109,20 +109,20 @@ Die Farbänderung entspricht den vorher bestimmten Geschwindigkeitsbereichen.
 <P>&Uuml;ber den gezeigten Dialog wird Auswahl des Messwertes möglich, der zur Farbkennung verwendet werden soll, sowie die Farbbereichskonfiguration. 
 Die linke Seite dient der Konfiguration der Farben für die drei m&ouml;glichen, in dem gezeigten Fall, Geschwindigkeitsbereiche.
 </P>
-<P ALIGN=CENTER><IMG SRC="images/GoogleEarth_Color_Config.png" NAME="GoogleEarth_Color_Config" ALIGN=MIDDLE></P>
+<P ALIGN=CENTER><IMG SRC="images/GoogleEarth_Color_Config.png" NAME="KMZ Export-Konfiguration" ALIGN=MIDDLE></P>
 <P>Der Dialog ist zweimal dargestellt, um die Unterschiede zwischen der Konfiguration vom Mittelwertfaktor zu erkl&auml;ren (blaue Umrandung). 
 Wird der Mittelwertfaktor zu 0 gesetzt, werden die Felder zur Minimum- und Maximum-Konfiguration freigeschaltet und einen Eingabe ermöglicht. 
 Ist der Mittelwertfaktor gr&ouml;&szlig;er als 0, werden daraus Minimum und Maximum als Wert automatisch berechnet. 
 Als Hilfestellung wird der Geschwindigkeitsmittelwert angezeigt.
 </P>
-<P>Der Korrekturfaktor für die Starthöhe ermöglicht bei einem Wert von -1 m den Export mit relativer Höhe zum Grund.
+<P>Die Korrektur der Starthöhe dient dem Ausgleich von Fehlern/Toleranzen/Abweichungen des Google Earth Geländemodells. 
+Sie ermöglicht bei aktiviertem Google Earth Geländemodell die komplette/vollständige Sichtbarkeit des Tracks.
+Der Korrekturwert für die Starthöhe ermöglicht, bei einem Wert von -1 m, auch den Export mit relativer Höhe zum Grund.
 Diese Einstellung wird in den meisten Fällen zu einem befriedigen Ergebnis führen. 
 Nur am Hang neigt sich die Flugbahn relativ zum Hang und wirkt verzerrt.
-In so einem Fall ist es besser mit 0 m als Wert, mit automatisch ermittelter Starthöhe und absoluter Höhe, zu exportieren.
-Das macht aber nur Sinn, wenn Google Earth auch das Gelände in 3D zeigt.
-Es kommt vor, dass hierbei der Pfad unterirdisch, unter der von Google Earth berechneten Bodenhöhe, angezeigt wird. 
-Dem kann man entgegen steuern, in dem man den Wert auf Google Earth mit der Maus auf dem Startpunkt feststellt und in den Dialog übernimmt. 
-Dieser Wert wird dann direkt für den Export mit absoluter Höhe übernommen.
+In so einem Fall ist es besser die Google Earth Geländehöhe des Startpunktes zu ermitteln und mit dem Korrekturwert anzupassen.
+Dazu muss in Google Earth auch das Geländemodell aktiviert sein.
+Dann wird die Flugbahn mit absoluter Höhe exportiert, relativ zu MSL.
 </P>
 <P><B>Tipp:</B> Die exportierten GPS-Daten in Form von KMZ-Dateien enthalten auch Datenpunkte, die &uuml;ber den entsprechenden Schalter sichtbar geschaltet werden k&ouml;nnen.
 Ebenso l&auml;sst sich ein H&ouml;henprofil &uuml;ber das Kontextmen&uuml; sichtbar schalten.

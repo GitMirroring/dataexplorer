@@ -1441,6 +1441,15 @@ public class HoTTAdapter2 extends HoTTAdapter implements IDevice, IHistoDevice {
 	}
 
 	/**
+	 * @return the measurement ordinal of Latitude as well as of Longitude as Integer array
+	 */
+	@Override
+	public int[] getGPSLatLngOrdinals() {
+		// 20=Latitude, 21=Longitude, 22=Velocity, 23=Distance, 24=Direction, 25=TripDistance 26=NumSatellites 27=GPS-Fix 28=EventGPS
+		return new int[] {20, 21};
+	}
+
+	/**
 	 * export a file of the actual channel/record set
 	 * @return full qualified file path depending of the file ending type
 	 */
