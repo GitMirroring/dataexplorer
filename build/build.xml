@@ -42,33 +42,17 @@
 			<os name="Linux" />
 		</condition>
 
-		<condition property="build.os.shortname" value="Windows">
-			<os name="Windows XP" />
+		<condition property="build.os.shortname" value="Windows_X86">
+			<and>
+				<os name="Windows 11" />
+				<os arch="x86_64" />
+			</and>
 		</condition>
-		<condition property="build.os.shortname" value="Windows">
-			<os name="Windows VISTA" />
-		</condition>
-		<condition property="build.os.shortname" value="Windows">
-			<os name="Windows 2003" />
-		</condition>
-		<condition property="build.os.shortname" value="Windows">
-			<os name="Windows 7" />
-		</condition>
-		<condition property="build.os.shortname" value="Windows">
-			<os name="Windows 8" />
-		</condition>
-		<condition property="build.os.shortname" value="Windows">
-			<os name="Windows 8.1" />
-		</condition>
-		<condition property="build.os.shortname" value="Windows">
-			<os name="Windows 10" />
-		</condition>
-		<condition property="build.os.shortname" value="Windows">
-			<os name="Windows 11" />
-		</condition>
-		<condition property="build.os.shortname" value="Windows">
-			<os name="Windows NT (unknown)" />
-			<!-- Windows 8 -->
+		<condition property="build.os.shortname" value="Windows_ARM">
+			<and>
+				<os name="Windows 11" />
+				<os arch="aarch64" />
+			</and>
 		</condition>
 
 		<condition property="build.os.shortname" value="MAC_ARM">
@@ -99,8 +83,11 @@
 
 		<echo message="OS short name = ${build.os.shortname}" />
 
-		<condition property="isWindows">
-			<equals arg1="${build.os.shortname}" arg2="Windows" />
+		<condition property="isWindows_X86">
+			<equals arg1="${build.os.shortname}" arg2="Windows_X86" />
+		</condition>
+		<condition property="isWindows_ARM">
+			<equals arg1="${build.os.shortname}" arg2="Windows_ARM" />
 		</condition>
 		<condition property="isLinux">
 			<equals arg1="${build.os.shortname}" arg2="GNULinux" />
@@ -115,11 +102,12 @@
 
 	<!-- init -->
 	<target name="init" depends="init_OS">
-		<echo if:set="isWindows">running on Windows</echo>
-		<echo unless:set="isWindows">not running on Windows</echo>
-		<echo if:set="isLinux">running on Linux</echo>
+		<echo if:set="isWindows_X86">running on Windows Intel</echo>
+		<echo if:set="isWindows_ARM">running on Windows ARM</echo>
+		<echo if:set="isLinux_ARM">running on Linux ARM</echo>
+		<echo if:set="isLinux">running on Linux Intel</echo>
 		<echo if:set="isMac_X86">running on MacOS Intel</echo>
-		<echo if:set="isMac_ARM">running on MacOS M</echo>
+		<echo if:set="isMac_ARM">running on MacOS ARM</echo>
 
 		<property name="build.properties" location="build/build.properties" />
 		<property file="${build.properties}" />
@@ -140,25 +128,40 @@
 		<!-- create src directory varaible -->
 		<property name="source.dir" location="${basedir}" />
 
-		<antcall target="init-windows" if:set="isWindows" />
-		<antcall target="init-armLnx" unless:set="isWindows" />
+		<antcall target="init-windows-x86" if:set="isWindows_X86" />
+		<antcall target="init-windows-arm" if:set="isWindows_ARM" />
+		<antcall target="init-armLnx" if:set="isLinux_ARM" />
 		<antcall target="init-linux" if:set="isLinux" />
 		<antcall target="init-mac-x86" if:set="isMac_X86" />
 		<antcall target="init-mac-arm" if:set="isMac_ARM" />
 	</target>
 
-	<target name="init-windows">
+	<target name="init-windows-x86">
 		<!-- output directories -->
-		<property name="output.windows64" location="${output.dir}/Windows_64" />
-		<property name="output.windows64.program" location="${output.windows64}/DataExplorer" />
-		<property name="output.windows64.program.devices" location="${output.windows64}/DataExplorer/devices" />
-		<property name="output.windows64.java.ext" location="${output.windows64}/DataExplorer/java/ext" />
+		<property name="output.windowsX64" location="${output.dir}/Windows_X64" />
+		<property name="output.windowsX64.program" location="${output.windowsX64}/DataExplorer" />
+		<property name="output.windowsX64.program.devices" location="${output.windowsX64}/DataExplorer/devices" />
+		<property name="output.windowsX64.java.ext" location="${output.windowsX64}/DataExplorer/java/ext" />
 
 		<!-- create output directory structure -->
-		<mkdir dir="${output.windows64}" />
-		<mkdir dir="${output.windows64.program}" />
-		<mkdir dir="${output.windows64.program.devices}" />
-		<mkdir dir="${output.windows64.java.ext}" />
+		<mkdir dir="${output.windowsX64}" />
+		<mkdir dir="${output.windowsX64.program}" />
+		<mkdir dir="${output.windowsX64.program.devices}" />
+		<mkdir dir="${output.windowsX64.java.ext}" />
+	</target>
+
+	<target name="init-windows-arm">
+		<!-- output directories -->
+		<property name="output.windowsARM" location="${output.dir}/Windows_ARM" />
+		<property name="output.windowsARM.program" location="${output.windowsARM}/DataExplorer" />
+		<property name="output.windowsARM.program.devices" location="${output.windowsARM}/DataExplorer/devices" />
+		<property name="output.windowsARM.java.ext" location="${output.windowsARM}/DataExplorer/java/ext" />
+
+		<!-- create output directory structure -->
+		<mkdir dir="${output.windowsARM}" />
+		<mkdir dir="${output.windowsARM.program}" />
+		<mkdir dir="${output.windowsARM.program.devices}" />
+		<mkdir dir="${output.windowsARM.java.ext}" />
 	</target>
 
 	<target name="init-armLnx">
@@ -296,32 +299,21 @@
 			<os name="Linux" />
 		</condition>
 		<antcall target="GNULinux" />
-		<condition property="isWindows">
-			<os name="Windows XP" />
+		
+		<condition property="isWindows_X86">
+			<and>
+				<os name="Windows 11" />
+				<os arch="x86_64" />
+			</and>
 		</condition>
-		<condition property="isWindows">
-			<os name="Windows VISTA" />
+		<antcall target="Windows_X86" />
+		<condition property="isWindows_ARM">
+			<and>
+				<os name="Windows 11" />
+				<os arch="aarch64" />
+			</and>
 		</condition>
-		<condition property="isWindows">
-			<os name="Windows 2003" />
-		</condition>
-		<condition property="isWindows">
-			<os name="Windows 7" />
-		</condition>
-		<condition property="isWindows">
-			<os name="Windows 8" />
-		</condition>
-		<condition property="isWindows">
-			<os name="Windows 8.1" />
-		</condition>
-		<condition property="isWindows">
-			<os name="Windows 10" />
-		</condition>
-		<condition property="isWindows">
-			<os name="Windows NT (unknown)" />
-			<!-- Windows 8 -->
-		</condition>
-		<antcall target="Windows" />
+		<antcall target="Windows_ARM" />
 		
 		<condition property="isMAC_X86">
 			<and>
@@ -354,23 +346,43 @@
 		<echo message="OS short name = ${build.os.shortname}" />
 	</target>
 
-	<target name="Windows" if="isWindows">
+	<target name="Windows_X86" if="isWindows_X86">
 		<echo message="${os.name} ${os.arch} ${sun.arch.data.model}" />
-		<antcall target="WindowsDefault" />
-		<antcall target="WindowsPrefix" />
+		<antcall target="WindowsX86Default" />
+		<antcall target="WindowsX86Prefix" />
 	</target>
-	<target name="WindowsDefault" unless="prefix">
+	<target name="WindowsX86Default" unless="prefix">
 		<echo message="installing to ${install.dir.windows}" />
 		<!-- unzip src="${build.target.dir}/dataexplorer-${version.num}-bin_${build.os.shortname}_x86_${sun.arch.data.model}.zip" dest="${install.dir.windows}" overwrite="true" / -->
 		<copy toDir="${install.dir.windows}/${app.name}">
-			<fileset file="${output.dir}/Windows_${sun.arch.data.model}/${app.name}/**" />
+			<fileset file="${output.dir}/Windows_X${sun.arch.data.model}/${app.name}/**" />
 		</copy>
 	</target>
-	<target name="WindowsPrefix" if="prefix">
+	<target name="WindowsX86Prefix" if="prefix">
 		<echo message="installing to ${prefix}" />
 		<!-- unzip src="${build.target.dir}/dataexplorer-${version.num}-bin_${build.os.shortname}_x86_${sun.arch.data.model}.zip" dest="${prefix}" overwrite="true" / -->
 		<copy toDir="${prefix}">
-			<fileset file="${output.dir}/Windows_${sun.arch.data.model}/**" />
+			<fileset file="${output.dir}/Windows_X${sun.arch.data.model}/**" />
+		</copy>
+	</target>
+
+	<target name="Windows_ARM" if="isWindows_ARM">
+		<echo message="${os.name} ${os.arch} ${sun.arch.data.model}" />
+		<antcall target="WindowsARMDefault" />
+		<antcall target="WindowsARMPrefix" />
+	</target>
+	<target name="WindowsARMDefault" unless="prefix">
+		<echo message="installing to ${install.dir.windows}" />
+		<!-- unzip src="${build.target.dir}/dataexplorer-${version.num}-bin_${build.os.shortname}_x86_${sun.arch.data.model}.zip" dest="${install.dir.windows}" overwrite="true" / -->
+		<copy toDir="${install.dir.windows}/${app.name}">
+			<fileset file="${output.dir}/Windows_ARM/${app.name}/**" />
+		</copy>
+	</target>
+	<target name="WindowsARMPrefix" if="prefix">
+		<echo message="installing to ${prefix}" />
+		<!-- unzip src="${build.target.dir}/dataexplorer-${version.num}-bin_${build.os.shortname}_x86_${sun.arch.data.model}.zip" dest="${prefix}" overwrite="true" / -->
+		<copy toDir="${prefix}">
+			<fileset file="${output.dir}/Windows_ARM/**" />
 		</copy>
 	</target>
 
@@ -712,19 +724,20 @@
 
 	<!-- create internal temporay file structure -->
 	<target name="copy-files" depends="package,create_HoTTMdlViewer_lib">
-		<antcall target="copy-files-windows" if:set="isWindows" />
-		<antcall target="copy-files-armLnx" unless:set="isWindows" />
+		<antcall target="copy-files-windows-x86" if:set="isWindows_X86" />
+		<antcall target="copy-files-windows-arm" if:set="isWindows_ARM" />
+		<antcall target="copy-files-armLnx" if:set="isLinux_ARM" />
 		<antcall target="copy-files-linux" if:set="isLinux" />
 		<antcall target="copy-files-mac-x86" if:set="isMac_X86" />
 		<antcall target="copy-files-mac-arm" if:set="isMac_ARM" />
 	</target>
 
-	<target name="copy-files-windows" depends="init-windows">
+	<target name="copy-files-windows-x86" depends="init-windows-x86">
 		<!-- programm directory -->
-		<copy file="build/misc/DataExplorer64.exe" tofile="${output.windows64.program}/DataExplorer.exe" />
-		<copy file="build/misc/DataExplorer64.cmd" tofile="${output.windows64.program}/DataExplorer.cmd" />
-		<copy file="build/misc/DevicePropertiesEditor64.exe" tofile="${output.windows64.program}/DevicePropertiesEditor.exe" />
-		<copy todir="${output.windows64.program}" flatten="yes">
+		<copy file="build/misc/DataExplorer64.exe" tofile="${output.windowsX64.program}/DataExplorer.exe" />
+		<copy file="build/misc/DataExplorer64.cmd" tofile="${output.windowsX64.program}/DataExplorer.cmd" />
+		<copy file="build/misc/DevicePropertiesEditor64.exe" tofile="${output.windowsX64.program}/DevicePropertiesEditor.exe" />
+		<copy todir="${output.windowsX64.program}" flatten="yes">
 			<fileset file="DataExplorer/build/*.jar" excludes="**/*NonUi*.jar" />
 			<!--
             <fileset file="build/misc/DataExplorer.ico" />
@@ -732,16 +745,16 @@
             -->
 			<fileset file="DataExplorer/src/WinHelper64.dll" />
 		</copy>
-		<copy todir="${output.windows64.program.devices}" flatten="yes">
+		<copy todir="${output.windowsX64.program.devices}" flatten="yes">
 			<fileset dir="${basedir}" excludes="**/*NonUi*.jar">
 				<patternset refid="DE_PLUGIN_JARS" />
 			</fileset>
 		</copy>
 
 		<!-- java extenssions -->
-		<copy todir="${output.windows64.java.ext}" flatten="yes">
+		<copy todir="${output.windowsX64.java.ext}" flatten="yes">
 			<fileset file="build/lib/jSerialComm.jar" />
-			<fileset file="build/lib/Windows/64/swt.jar" />
+			<fileset file="build/lib/Windows_X86/64/swt.jar" />
 			<fileset file="build/misc/*.LICENSE" />
 			<fileset file="build/misc/*.README" />
 			<fileset file="${basedir}/HoTTMdlViewer/lib/HoTTMdlViewer.jar" />
@@ -759,11 +772,60 @@
 			<fileset file="build/lib/tlmreader.jar" />
 			<fileset file="build/lib/jtouchbar.jar" />
 			<fileset file="build/lib/jtouchbar-swt.jar" />
-			<fileset file="build/lib/Windows/64/libusb4java.jar" />
+			<fileset file="build/lib/Windows_X86/64/libusb4java.jar" />
 		</copy>
 
 		<!-- launcher scripts, README -->
-		<copy todir="${output.windows64}/DataExplorer" flatten="yes">
+		<copy todir="${output.windowsX64}/DataExplorer" flatten="yes">
+			<fileset file="build/misc/README.*" />
+		</copy>
+	</target>
+
+	<target name="copy-files-windows-arm" depends="init-windows-arm">
+		<!-- programm directory -->
+		<copy file="build/misc/DataExplorerARM.exe" tofile="${output.windowsARM.program}/DataExplorer.exe" />
+		<copy file="build/misc/DataExplorer64.cmd" tofile="${output.windowsARM.program}/DataExplorer.cmd" />
+		<copy file="build/misc/DevicePropertiesEditorARM.exe" tofile="${output.windowsARM.program}/DevicePropertiesEditor.exe" />
+		<copy todir="${output.windowsARM.program}" flatten="yes">
+			<fileset file="DataExplorer/build/*.jar" excludes="**/*NonUi*.jar" />
+			<!--
+            <fileset file="build/misc/DataExplorer.ico" />
+            <fileset file="build/misc/DevicePropertiesEditor.ico" />
+            -->
+			<fileset file="DataExplorer/src/WinHelper64.dll" />
+		</copy>
+		<copy todir="${output.windowsARM.program.devices}" flatten="yes">
+			<fileset dir="${basedir}" excludes="**/*NonUi*.jar">
+				<patternset refid="DE_PLUGIN_JARS" />
+			</fileset>
+		</copy>
+
+		<!-- java extenssions -->
+		<copy todir="${output.windowsARM.java.ext}" flatten="yes">
+			<fileset file="build/lib/jSerialComm.jar" />
+			<fileset file="build/lib/Windows_ARM/64/swt.jar" />
+			<fileset file="build/misc/*.LICENSE" />
+			<fileset file="build/misc/*.README" />
+			<fileset file="${basedir}/HoTTMdlViewer/lib/HoTTMdlViewer.jar" />
+			<fileset file="build/lib/gson.jar" />
+			<fileset file="build/lib/juniversalchardet.jar" />
+			<fileset file="build/lib/jaxb-api.jar" />
+			<fileset file="build/lib/jaxb-core.jar" />
+			<fileset file="build/lib/jaxb-runtime.jar" />
+			<fileset file="build/lib/istack-commons-runtime.jar" />
+			<fileset file="build/lib/activation.jar" />
+			<fileset file="build/lib/usb4java.jar" />
+			<fileset file="build/lib/usb-api.jar" />
+			<fileset file="build/lib/usb4java-javax.jar" />
+			<fileset file="build/lib/commons-lang3.jar" />
+			<fileset file="build/lib/tlmreader.jar" />
+			<fileset file="build/lib/jtouchbar.jar" />
+			<fileset file="build/lib/jtouchbar-swt.jar" />
+			<fileset file="build/lib/Windows_ARM/64/libusb4java.jar" />
+		</copy>
+
+		<!-- launcher scripts, README -->
+		<copy todir="${output.windowsARM}/DataExplorer" flatten="yes">
 			<fileset file="build/misc/README.*" />
 		</copy>
 	</target>
@@ -1042,8 +1104,24 @@
 	</target>
 
 	<!-- build java runtime using jlink Windows OS Intel -->
-	<target name="jlink_win_intel" depends="init-windows">
-		<exec executable="jlink" dir="${output.windows64.program}">
+	<target name="jlink_win_intel" depends="init-windows-x86">
+		<exec executable="jlink" dir="${output.windowsX64.program}">
+			<arg value="--compress=zip-6" />
+			<arg value="--no-header-files" />
+			<arg value="--no-man-pages" />
+			<arg value="--strip-debug" />
+			<arg value="--output" />
+			<arg value="runtime" />
+			<arg value="--module-path" />
+			<arg value="C:\Program Files\Java\latest\jdk-25\jmods" />
+			<arg value="--add-modules" />
+			<arg value="java.se,jdk.xml.dom,jdk.crypto.cryptoki" />
+		</exec>
+	</target>
+
+	<!-- build java runtime using jlink Windows OS Intel -->
+	<target name="jlink_win_arm" depends="init-windows-arm">
+		<exec executable="jlink" dir="${output.windowsARM.program}">
 			<arg value="--compress=zip-6" />
 			<arg value="--no-header-files" />
 			<arg value="--no-man-pages" />
@@ -1075,7 +1153,7 @@
 
 	<!-- package, build Windows installer, MAC OS disk image, tar for GNULinux -->
 	<target name="binary_package" depends="copy-files">
-		<antcall target="build_Windows_NSIS_installer" description="building NSIS Windows installer" if:set="isWindows" />
+		<antcall target="build_Windows_NSIS_installer_ARM" description="building NSIS Windows installer" if:set="isWindows_ARM" />
 		<antcall target="binary_package-armLnx" description="build armLnx tarball" unless:set="isWindows" />
 		<antcall target="binary_package-linux" description="build Linux tarball" if:set="isLinux" />
 		<antcall target="build_Mac_X64_install_dmg" description="build Mac disk images, replaces building zip archives" if:set="isMac_X86" />
@@ -1422,7 +1500,7 @@
 	<!-- =====================================================
             Windows NSIS Installer
 	====================================================== -->
-	<target name="build_Windows_NSIS_installer" description="Creates the installer">
+	<target name="build_Windows_NSIS_installer_X86" description="Creates the installer">
 
 		<!-- temporary call jlink to build self contained JRE -->
 		<antcall target="jlink_win_intel" description="building java runtime" />
@@ -1442,6 +1520,31 @@
 			<define name="DISTDIR" value="${nsis.dist64}" />
 			<define name="OUTDIR" value="${nsis.outputdir}" />
 			<define name="OUTFILENAME" value="${nsis.outputfilename}_win64.exe" />
+			<define name="EXEFILENAME" value="${launch4j.outputfilename}" />
+			<define name="64BIT" value="defined" />
+		</nsis>
+
+	</target>
+	<target name="build_Windows_NSIS_installer_ARM" description="Creates the installer">
+
+		<!-- temporary call jlink to build self contained JRE -->
+		<antcall target="jlink_win_arm" description="building java runtime" />
+
+		<property file="build/build.nsis.properties" />
+
+		<!-- 
+        v1.2 allows to specify the path to makensis, but does not work properly.
+        Therefore, you have to have the makensis folder on your path.
+        As the languages.nsh is UTF-8 encoded, this target also needs the unicode
+        variant of makensis (s. https://www.scratchpaper.com)
+        -->
+		<taskdef name="nsis" classname="net.sf.nsisant.Task" classpath="build/lib/nsisant-1.2.jar" />
+
+		<nsis script="build/installer.nsi" verbosity="3">
+			<define name="VERSION" value="${nsis.version}" />
+			<define name="DISTDIR" value="${nsis.distARM}" />
+			<define name="OUTDIR" value="${nsis.outputdir}" />
+			<define name="OUTFILENAME" value="${nsis.outputfilename}_winARM.exe" />
 			<define name="EXEFILENAME" value="${launch4j.outputfilename}" />
 			<define name="64BIT" value="defined" />
 		</nsis>

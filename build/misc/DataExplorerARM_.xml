@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch4jConfig>
+  <dontWrapJar>true</dontWrapJar>
+  <headerType>gui</headerType>
+  <jar>DataExplorer.jar</jar>
+  <outfile>C:\Users\winfr\git\dataexplorer\build\misc\DataExplorerARM.exe</outfile>
+  <errTitle>DataExplorer - Exception</errTitle>
+  <cmdLine></cmdLine>
+  <chdir>.</chdir>
+  <priority>normal</priority>
+  <downloadUrl></downloadUrl>
+  <supportUrl>https://savannah.nongnu.org/projects/dataexplorer</supportUrl>
+  <stayAlive>false</stayAlive>
+  <restartOnCrash>false</restartOnCrash>
+  <manifest></manifest>
+  <icon>C:\Users\winfr\git\dataexplorer\build\misc\DataExplorer.ico</icon>
+  <classPath>
+    <mainClass>gde.GDE</mainClass>
+    <cp>DataExplorer.jar</cp>
+  </classPath>
+  <jre>
+    <path>runtime</path>
+    <requiresJdk>false</requiresJdk>
+    <requires64Bit>true</requires64Bit>
+    <minVersion>19</minVersion>
+    <maxVersion>25</maxVersion>
+    <initialHeapSize>64</initialHeapSize>
+    <maxHeapSize>3092</maxHeapSize>
+    <opt>--enable-native-access=ALL-UNNAMED</opt>
+  </jre>
+  <messages>
+    <startupErr>An error occurred while starting the application.</startupErr>
+    <jreNotFoundErr>This application requires a Java Runtime Environment.</jreNotFoundErr>
+    <jreVersionErr>This application requires a Java Runtime Environment</jreVersionErr>
+    <launcherErr>The registry refers to a nonexistent Java Runtime Environment installation or the runtime is corrupted.</launcherErr>
+    <instanceAlreadyExistsMsg>An application instance is already running.</instanceAlreadyExistsMsg>
+  </messages>
+</launch4jConfig>

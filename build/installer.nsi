@@ -221,7 +221,7 @@ SectionEnd
 
 # Installer functions
 Function .onInit
-    !insertmacro checkAppRunning ${EXEFILENAME} "$(nlsAppRunning)"
+    #!insertmacro checkAppRunning ${EXEFILENAME} "$(nlsAppRunning)"
 
     # for testing only
     # !insertmacro MUI_LANGDLL_DISPLAY
@@ -240,7 +240,7 @@ FunctionEnd
 
 # Uninstaller functions
 Function un.onInit
-	!insertmacro checkAppRunning ${EXEFILENAME} "$(nlsAppRunning)"
+	#!insertmacro checkAppRunning ${EXEFILENAME} "$(nlsAppRunning)"
     ReadRegStr $INSTDIR HKLM "${REGKEY}" "InstallDir"
     ReadRegStr $StartMenuGroup HKLM "${REGKEY}" StartMenuGroup
 FunctionEnd
