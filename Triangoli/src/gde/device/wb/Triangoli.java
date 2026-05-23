@@ -300,6 +300,15 @@ public class Triangoli extends DeviceConfiguration implements IDevice {
 	}
 
 	/**
+	 * @return the measurement ordinal of Latitude as well as of Longitude as Integer array
+	 */
+	@Override
+	public int[] getGPSLatLngOrdinals() {
+    // 2=SattellitesInUse 3=SatFix 4=ServoPulse 5=GroundSpeed 6=Altitude 7=Vario 8=BatteryVoltage 9=ENL 10=Pitch 11=Roll 12=Latitude 13=Longitude 14=GpsAltitude 15=GroundTrack 16=AirSpeed 17=Netto
+		return new int[] {12, 13};
+	}
+
+	/**
 	 * function to translate measured values from a device to values represented
 	 * this function should be over written by device and measurement specific algorithm
 	 * @return double of device dependent value

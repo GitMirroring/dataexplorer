@@ -668,6 +668,7 @@ public class FutabaAdapter extends DeviceConfiguration implements IDevice {
 	 * @param recordSet - the record sets with its measurements build up with its measurements from device properties XML
 	 * @return string array of measurement names which match the ordinal of the record set requirements to restore file record properties
 	 */
+	@Override
 	public String[] crossCheckMeasurements(String[] fileRecordsProperties, RecordSet recordSet) {
 		//check record entries in file contained record properties which are not contained in actual configuration
 		String[] recordKeys = recordSet.getRecordNames();

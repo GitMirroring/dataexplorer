@@ -2771,7 +2771,15 @@ public class DeviceConfiguration {
 	 * @return the measurement ordinal of Latitude as well as of Longitude as Integer array
 	 */
 	public int[] getGPSLatLngOrdinals() {
-		return new int[] {-1, -1};
+			RecordSet activeRecordSet = DataExplorer.getInstance().getActiveRecordSet();
+			if (activeRecordSet != null) {
+				int ordinalLongitude = activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_LONGITUDE);
+				ordinalLongitude = ordinalLongitude == -1 ? activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_LONGITUDE_DEGREE) : ordinalLongitude;
+				int ordinalLatitude = activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_LATITUDE);
+				ordinalLatitude = ordinalLatitude == -1 ? activeRecordSet.getRecordOrdinalOfType(Record.DataType.GPS_LATITUDE_DEGREE) : ordinalLatitude;
+				return new int[] {ordinalLatitude, ordinalLongitude};
+			}
+			return new int[] {-1, -1};
 	}
 
 	/**

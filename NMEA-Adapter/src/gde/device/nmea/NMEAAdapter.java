@@ -623,6 +623,15 @@ public class NMEAAdapter extends DeviceConfiguration implements IDevice {
 	}
 
 	/**
+	 * @return the measurement ordinal of Latitude as well as of Longitude as Integer array
+	 */
+	@Override
+	public int[] getGPSLatLngOrdinals() {
+		//0=latitude 1=longitude  2=altitude 3=altitudeGPS 4=climb 5=speed
+		return new int[] {0, 1};
+	}
+
+	/**
 	 * @return the measurement ordinal where velocity limits as well as the colors are specified (GPS-velocity)
 	 */
 	@Override

@@ -2339,6 +2339,7 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 	 */
 	@Override
 	public int[] getGPSLatLngOrdinals() {
+		// 0=RXSQ, 1=Latitude, 2=Longitude, 3=Altitude
 		return new int[] {1, 2};
 	}
 

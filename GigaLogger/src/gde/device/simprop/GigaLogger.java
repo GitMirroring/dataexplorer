@@ -666,6 +666,16 @@ public class GigaLogger extends DeviceConfiguration implements IDevice {
 		return exportFileName;
 	}
 
+	/**
+	 * @return the measurement ordinal of Latitude as well as of Longitude as Integer array
+	 */
+	@Override
+	public int[] getGPSLatLngOrdinals() {
+		//GPGGA	0=latitude 1=longitude  2=altitudeAbs 3=numSatelites
+		return new int[] {0, 1};
+	}
+
+
 	private int findRecordByUnit(RecordSet recordSet, String unit) {
 		if (recordSet != null) {
 			for (int i = 0; i < recordSet.size(); i++) {
