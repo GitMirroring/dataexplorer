@@ -64,17 +64,19 @@ public class ApplicationLauncher {
 			}
 
 			if (GDE.IS_WINDOWS) {
-				for (String tmpSearchExecutableKey : searchKeyVector) {
-					String path = WindowsHelper.findApplicationPath(tmpSearchExecutableKey);
-					if (path.length() > 4) {
-						path = path.substring(0, path.toLowerCase().indexOf(GDE.FILE_ENDING_EXE) + 4);
-						if (path.startsWith("\"")) { //$NON-NLS-1$
-							path = path.substring(1);
+				if (System.getProperty("os.arch").startsWith("x86")) {
+					for (String tmpSearchExecutableKey : searchKeyVector) {
+						String path = WindowsHelper.findApplicationPath(tmpSearchExecutableKey);
+						if (path.length() > 4) {
+							path = path.substring(0, path.toLowerCase().indexOf(GDE.FILE_ENDING_EXE) + 4);
+							if (path.startsWith("\"")) { //$NON-NLS-1$
+								path = path.substring(1);
+							}
+							log.log(Level.FINE, "executable = " + path);
+							break;
 						}
-						log.log(Level.FINE, "executable = " + path);
-						break;
-					}
-					log.log(Level.WARNING, "failed find executable according key = " + tmpSearchExecutableKey + " method: " + searchLocationInfo);
+						log.log(Level.WARNING, "failed find executable according key = " + tmpSearchExecutableKey + " method: " + searchLocationInfo);
+					} 
 				}
 			}
 			else if (GDE.IS_LINUX) {
