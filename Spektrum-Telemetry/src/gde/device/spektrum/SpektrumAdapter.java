@@ -137,6 +137,15 @@ public class SpektrumAdapter extends DeviceConfiguration implements IDevice {
 	}
 
 	/**
+	 * @return the measurement ordinal of Latitude as well as of Longitude as Integer array
+	 */
+	@Override
+	public int[] getGPSLatLngOrdinals() {
+		//GPS	20=Altitude GPS, 21=Latitude, 22=Longitude, 23=Speed GPS, 24=Satellites GPS, 25=Course, 26=HDOP, 27=GPSFix, 28=Trip/UTC
+		return new int[] {21, 22};
+	}
+
+	/**
 	 * exports the actual displayed data set to KML file format
 	 * @param type DeviceConfiguration.HEIGHT_RELATIVE | DeviceConfiguration.HEIGHT_ABSOLUTE
 	 */

@@ -334,6 +334,15 @@ public class HoTTViewer extends HoTTAdapter implements IDevice {
 	}
 
 	/**
+	 * @return the measurement ordinal of Latitude as well as of Longitude as Integer array
+	 */
+	@Override
+	public int[] getGPSLatLngOrdinals() {
+		//20=Distance, 21=Direction, 22=Latitude, 23=Longitude, 24=VoltageTx
+		return new int[] {22, 23};
+	}
+
+	/**
 	 * @return the measurement ordinal where velocity limits as well as the colors are specified (GPS-velocity)
 	 */
 	@Override

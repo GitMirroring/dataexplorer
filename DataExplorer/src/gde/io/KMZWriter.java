@@ -14,19 +14,14 @@
     You should have received a copy of the GNU General Public License
     along with GNU DataExplorer.  If not, see <https://www.gnu.org/licenses/>.
 
-    Copyright (c) 2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025,2026 Winfried Bruegmann
+    Copyright (c) 2010-2026 Winfried Bruegmann
 ****************************************************************************************/
 package gde.io;
 
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URI;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,13 +38,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-import gde.Analyzer;
-import gde.DataAccess;
 import gde.GDE;
-import gde.DataAccess.LocalAccess;
 import gde.config.Settings;
 import gde.data.Channels;
 import gde.data.ObjectData;
@@ -58,7 +47,6 @@ import gde.data.RecordSet;
 import gde.device.IDevice;
 import gde.device.MeasurementPropertyTypes;
 import gde.device.PropertyType;
-import gde.histo.utils.GpsCoordinate;
 import gde.log.Level;
 import gde.messages.MessageIds;
 import gde.messages.Messages;
@@ -421,22 +409,15 @@ public class KMZWriter {
 			int gpsStartIndex = GPSHelper.getStartIndexGPS(recordSet, ordinalLatitude, ordinalLongitude);
 			height0 = isAltRelative && !isClampToGround && recordAltitude != null ? device.translateValue(recordAltitude, recordAltitude.realGet(gpsStartIndex) / 1000.0) : 0;
 		
-			//elevationCorrectionValue == -1 result in relativeToGround, else a elevation correction will occur
-			int elevationCorrectionValue = Settings.getInstance().getElevationCorrection();
+			int startElevationValue = Settings.getInstance().getStartpointElevation();
 			int startPointElevation = 0;
 
+			//startElevationValue == -1 result in relativeToGround, else a elevation correction will occur
 			if (altitudeMode.equals(ALTITUDE_RELATIVE2GROUND) && isExportGlobe) { //export via globe
-				if (elevationCorrectionValue == 0) {
+				if (startElevationValue < -1 || startElevationValue >= 0) {
 					altitudeMode = ALTITUDE_ABSOLUTE;
-					startPointElevation = getElevation(new GpsCoordinate(
-							device.translateValue(recordLatitude, recordLatitude.realGet(gpsStartIndex)  / 1000.0),
-							device.translateValue(recordLongitude, recordLongitude.realGet(gpsStartIndex)  / 1000.0)));
+					startPointElevation = startElevationValue;
 				}
-				else if (elevationCorrectionValue < -1 || elevationCorrectionValue > 0) {
-					altitudeMode = ALTITUDE_ABSOLUTE;
-					startPointElevation = elevationCorrectionValue;
-				}
-				//elevationCorrectionValue == -1 result in relativeToGround				
 			}
 			
 			boolean isPositionWritten = false;
@@ -825,67 +806,5 @@ public class KMZWriter {
 			velocityRange = 2;
 		}
 		return velocityRange;
-	}
-
-	/**
-	 * try to call a web-service to find a GPS coordinate related elevation 
-	 * @param gpsCoordinate
-	 * @return found elevation in m or -1 if failed
-	 */
-	public static int getElevation(GpsCoordinate gpsCoordinate) {
-		try {
-			Analyzer analyzer = Analyzer.getInstance();
-			DataAccess dataAccess = analyzer.getDataAccess();
-
-			try {
-				//https://api.opentopodata.org/v1/test-dataset?locations=48.62890252073733,8.988615870996933
-				//https://maps.googleapis.com/maps/api/geocode/json?latlng=48.62890252073733,8.988615870996933
-				//https://api.open-elevation.com/api/v1/lookup?locations=48.637106,8.984413
-				String url = String.format(Locale.US, "https://api.open-elevation.com/api/v1/lookup?locations=%f,%f", gpsCoordinate.getLatitude(), gpsCoordinate.getLongitude());
-				log.log(Level.INFO, "Request URL " + url);
-				URL requestUrl = new URI(url).toURL();
-				InputStream inputStream = ((LocalAccess) dataAccess).getHttpsInputStream(requestUrl);
-				BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-				StringBuilder sb = new StringBuilder();
-
-				String line = null;
-				try {
-					while ((line = reader.readLine()) != null) {
-						sb.append(line + "\n");
-					}
-				}
-				catch (IOException e) {
-					log.log(Level.WARNING, e.getMessage(), e);
-				}
-				finally {
-					try {
-						inputStream.close();
-					}
-					catch (IOException e) {
-						log.log(Level.WARNING, e.getMessage(), e);
-					}
-				}
-				log.log(Level.INFO, sb.toString());
-
-				JsonParser jsonParser = new JsonParser();
-
-				JsonObject jsonObject = (JsonObject) jsonParser.parse(sb.toString());
-
-				//System.out.println("status = " + jsonObject.get("status"));
-				//System.out.println("elevation = " + jsonObject.get("results").getAsJsonArray().get(0).getAsJsonObject().get("elevation"));
-				
-				String elevation = jsonObject.get("results").getAsJsonArray().get(0).getAsJsonObject().get("elevation").getAsString();
-				
-				return (int) (Double.valueOf(elevation)+1.5);
-			}
-			catch (Exception e) {
-				log.log(Level.WARNING, e.getMessage(), e);
-			}
-		}
-		catch (Exception e) {
-			log.log(Level.WARNING, e.getMessage(), e);
-		}
-
-	return -1;
 	}
 }

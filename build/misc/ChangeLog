@@ -1,5 +1,13 @@
 Development history / change log, please read from bottom up
 
+Version 4.0.6 - xx yyy 2026
+Generic changes/fixes 
+	* starting with release version 4.0.6 ReleaseVersion.txt will provide actual version information for update check
+	* KMZ export configuration dialog refined 
+	
+Device specific changes/fixes
+	* 
+	
 Version 4.0.5 - 14 May 2026
 Generic changes/fixes 
 	* fix upgrade dialog resize problem (ARM 64)

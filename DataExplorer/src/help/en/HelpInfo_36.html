@@ -116,14 +116,14 @@ If the average factor is set to 0, the fields for configuring the minimum and ma
 If the mean factor is greater than 0, the minimum and maximum values are automatically calculated based on it. 
 The average value is displayed as a guide.
 </P>
-<P>When the correction factor for the starting altitude is set to -1 m, allows you to export data using relative elevation relative to the ground. 
+<P>The start altitude correction is used to compensate for errors/tolerances/deviations in the Google Earth terrain model. 
+When the Google Earth terrain model is enabled, it enables that the entire track is visible. 
+When set to -1 m, the start altitude correction value also allows for export using relative elevation to ground level. 
 This setting will produce satisfactory results in most cases. 
-However, on slopes, the flight path tilts relative to the slope and appears distorted. 
-In such cases, it is better to export using a value of 0 m, with the starting altitude determined automatically and absolute altitude. 
-However, this only makes sense if Google Earth also displays the terrain in 3D. 
-It may happen that the path is displayed underground, below the ground elevation calculated by Google Earth. 
-You can counteract this by detecting the elevation value in Google Earth using the mouse at the starting point and transferring it to the dialog. 
-This value is then directly applied for the export using absolute altitude values.
+Only on slopes does the flight path tilt relative to the slope and appear distorted. 
+In such cases, it is better to determine the Google Earth terrain elevation of the starting point and adjust it using the correction value. 
+To do this, the terrain model must also be enabled in Google Earth.
+This results in exports using an absolute altitude, relative to MSL.
 </P>
 <P><B>Hint:</B> The exported GPS data in form of KMZ files contains data points which gives more info regarding the data point to you while this is switched on.
 It is possible to display a so called elevation profile using the context menu.

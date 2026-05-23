@@ -619,7 +619,16 @@ public class DataVario  extends DeviceConfiguration implements IDevice {
 		//13=tripLength 14=distance 15=azimuth 16=directionStart
 		new FileHandler().exportFileKMZ(Messages.getString(MessageIds.GDE_MSGT1859), 7, 8, 9, 10, 11, 13, 15, type == DeviceConfiguration.HEIGHT_RELATIVE, type == DeviceConfiguration.HEIGHT_CLAMPTOGROUND);
 	}
-	
+
+	/**
+	 * @return the measurement ordinal of Latitude as well as of Longitude as Integer array
+	 */
+	@Override
+	public int[] getGPSLatLngOrdinals() {
+		//0=latitude 1=longitude  2=altitude 3=altitudeGPS 4=climb 5=speed
+		return new int[] {7, 8};
+	}
+
 	/**
 	 * query if the actual record set of this device contains GPS data to enable KML export to enable google earth visualization 
 	 * set value of -1 to suppress this measurement

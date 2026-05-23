@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with GNU DataExplorer.  If not, see <https://www.gnu.org/licenses/>.
 
-    Copyright (c) 2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025,2026 Winfried Bruegmann
+    Copyright (c) 2010-2026 Winfried Bruegmann
 ****************************************************************************************/
 package gde.ui.dialog;
 
@@ -27,6 +27,8 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.VerifyEvent;
@@ -52,16 +54,19 @@ import org.eclipse.swt.widgets.Text;
 import gde.GDE;
 import gde.config.Settings;
 import gde.data.ObjectData;
+import gde.data.Record;
 import gde.data.RecordSet;
 import gde.device.DataTypes;
 import gde.device.IDevice;
 import gde.device.MeasurementPropertyTypes;
 import gde.device.PropertyType;
+import gde.histo.utils.GpsCoordinate;
 import gde.log.Level;
 import gde.messages.MessageIds;
 import gde.messages.Messages;
 import gde.ui.DataExplorer;
 import gde.ui.SWTResourceManager;
+import gde.utils.GPSHelper;
 import gde.utils.StringHelper;
 
 /**
@@ -97,7 +102,7 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 	Composite compositeUpper;
 	Composite compositeWithin;
 	Composite compositeLower;
-	Text corrValueText;
+	Text elevationCorrectionText, startWebElevation, startpointElevationText;
 
 	int upperLimitVelocity = 100;
 	int lowerLimitVelocity = 20;
@@ -155,6 +160,8 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 				@Override
 				public void widgetDisposed(DisposeEvent evt) {
 					log.log(Level.FINEST,  "dialogShell.widgetDisposed, event="+evt); //$NON-NLS-1$
+					settings.setStartElevationCorrection(elevationCorrectionText.getText());
+					settings.setStartpointElevation(startpointElevationText.getText());
 					makePersistent();
 					application.resetShellIcon();
 				}
@@ -491,21 +498,89 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 					{
 						CLabel correctionLabel = new CLabel(correctionComposite, SWT.RIGHT);
 						RowData averageLabelLData = new RowData();
-						averageLabelLData.width = 200;
+						averageLabelLData.width = 100;
 						averageLabelLData.height = 22;
 						correctionLabel.setLayoutData(averageLabelLData);
 						correctionLabel.setText(Messages.getString(MessageIds.GDE_MSGT0994));
 						correctionLabel.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0995));
 					}
 					{
-						this.corrValueText = new Text(correctionComposite, SWT.SINGLE | SWT.RIGHT | SWT.BORDER);
+						this.startWebElevation = new Text(correctionComposite, SWT.SINGLE | SWT.RIGHT | SWT.BORDER);
+						RowData avgTextLData = new RowData();
+						avgTextLData.width = 40;
+						avgTextLData.height = GDE.IS_LINUX ? 12 : 16;
+						this.startWebElevation.setLayoutData(avgTextLData);
+						this.startWebElevation.setEditable(false);
+						this.startWebElevation.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0996));
+						this.startWebElevation.setText("0");
+						this.startWebElevation.addModifyListener(new ModifyListener() {					
+							public void modifyText(ModifyEvent arg0) {
+								//if (!corrValueText.getText().equals("") && !corrValueText.getText().equals("-") && !startElevation.getText().equals(""))
+								if (elevationCorrectionText.getText().equals("-1"))
+									startpointElevationText.setText("-1");
+								else
+									try {
+										startpointElevationText.setText(GDE.STRING_EMPTY + (Integer.parseInt(elevationCorrectionText.getText()) + Integer.parseInt(startWebElevation.getText())));
+									}
+									catch (Exception e) {
+										//ignore
+									}
+							}
+						});
+					}
+					{
+						CLabel operationLabel = new CLabel(correctionComposite, SWT.CENTER);
+						RowData averageLabelLData = new RowData();
+						averageLabelLData.width = 20;
+						averageLabelLData.height = 22;
+						operationLabel.setLayoutData(averageLabelLData);
+						operationLabel.setText(" + ");
+					}
+					{
+						this.elevationCorrectionText = new Text(correctionComposite, SWT.SINGLE | SWT.RIGHT | SWT.BORDER);
+						RowData avgTextLData = new RowData();
+						avgTextLData.width = 25;
+						avgTextLData.height = GDE.IS_LINUX ? 12 : 16;
+						this.elevationCorrectionText.setLayoutData(avgTextLData);
+						this.elevationCorrectionText.setEditable(true);
+						this.elevationCorrectionText.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0997));
+						this.elevationCorrectionText.addVerifyListener(new VerifyListener() {	
+							@Override
+							public void verifyText(VerifyEvent evt) {
+								evt.doit = StringHelper.verifyTypedInput(DataTypes.INTEGER, evt.text);						
+							}
+						});
+						this.elevationCorrectionText.addModifyListener(new ModifyListener() {					
+							public void modifyText(ModifyEvent evt) {
+								//if (!corrValueText.getText().equals("") && !corrValueText.getText().equals("-") && !startElevation.getText().equals("")) 
+								if (elevationCorrectionText.getText().equals("-1"))
+									startpointElevationText.setText("-1");
+								else
+									try {
+										startpointElevationText.setText(GDE.STRING_EMPTY + (Integer.parseInt(elevationCorrectionText.getText()) + Integer.parseInt(startWebElevation.getText())));
+									}
+									catch (Exception e) {
+										//ignore
+									}
+							}
+						});
+					}
+					{
+						CLabel correctionLabel = new CLabel(correctionComposite, SWT.CENTER);
+						RowData averageLabelLData = new RowData();
+						averageLabelLData.width = 20;
+						averageLabelLData.height = 22;
+						correctionLabel.setLayoutData(averageLabelLData);
+						correctionLabel.setText(" = ");
+					}
+					{
+						this.startpointElevationText = new Text(correctionComposite, SWT.SINGLE | SWT.RIGHT | SWT.BORDER);
 						RowData avgTextLData = new RowData();
 						avgTextLData.width = 45;
 						avgTextLData.height = GDE.IS_LINUX ? 12 : 16;
-						this.corrValueText.setLayoutData(avgTextLData);
-						this.corrValueText.setEditable(true);
-						this.corrValueText.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0995));
-						this.corrValueText.setText(GDE.STRING_EMPTY + this.settings.getElevationCorrection());
+						this.startpointElevationText.setLayoutData(avgTextLData);
+						this.startpointElevationText.setEditable(false);
+						this.startpointElevationText.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0998));
 					}
 					{
 						CLabel corrUnitLabel = new CLabel(correctionComposite, SWT.RIGHT);
@@ -532,7 +607,8 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 					@Override
 					public void widgetSelected(SelectionEvent evt) {
 						log.log(Level.FINEST, "closeButton.widgetSelected, event="+evt); //$NON-NLS-1$
-						settings.setElevationCorrection(corrValueText.getText());
+						settings.setStartElevationCorrection(elevationCorrectionText.getText());
+						settings.setStartpointElevation(startpointElevationText.getText());
 						dialogShell.dispose();
 					}
 				});
@@ -621,7 +697,7 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 		else { //device oriented
 			Integer activeChannelNumber = application.getActiveChannelNumber();
 			Integer measurementOrdinal = device.getGPS2KMZMeasurementOrdinal();
-			if(activeChannelNumber != null && measurementOrdinal != null) {
+			if(measurementOrdinal != null) {
 				PropertyType property = device.getMeasruementProperty(activeChannelNumber.intValue(), measurementOrdinal.intValue(), MeasurementPropertyTypes.GOOGLE_EARTH_VELOCITY_AVG_LIMIT_FACTOR.value());
 				if (property != null) {
 					try {
@@ -739,6 +815,9 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 		  avgFactorText.setBackground(this.application.COLOR_LIGHT_GREY);
 			upperLimitText.setBackground(this.application.COLOR_WHITE);
 		}
+		this.elevationCorrectionText.setText(GDE.STRING_EMPTY + this.settings.getStartElevationCorrection());
+		this.getStartpointElevation(this.startWebElevation);
+
 	}
 
 	void makePersistent() {
@@ -776,7 +855,7 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 		else { //device oriented
 			Integer activeChannelNumber = application.getActiveChannelNumber();
 			Integer measurementOrdinal = device.getGPS2KMZMeasurementOrdinal();
-			if(activeChannelNumber != null && measurementOrdinal != null) {
+			if(measurementOrdinal != null) {
 				if(avgLimitFactor >= 1) {
 					device.setMeasurementPropertyValue(activeChannelNumber.intValue(), measurementOrdinal.intValue(), MeasurementPropertyTypes.GOOGLE_EARTH_VELOCITY_AVG_LIMIT_FACTOR.value(), DataTypes.DOUBLE, avgLimitFactor);
 					device.setMeasurementPropertyValue(activeChannelNumber.intValue(), measurementOrdinal.intValue(), MeasurementPropertyTypes.GOOGLE_EARTH_VELOCITY_LOWER_LIMIT.value(), DataTypes.INTEGER, null);
@@ -796,5 +875,29 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 			}
 			device.storeDeviceProperties();
 		}
+	}
+	
+	/**
+	 * @param textItem to be updated with the determined terrain elevation value
+	 */
+	private void getStartpointElevation(final Text textItem) {
+		GDE.display.asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				RecordSet activeRecordSet = DataExplorer.getInstance().getActiveRecordSet();
+				IDevice activeDevice = DataExplorer.getInstance().getActiveDevice();
+				if (activeDevice.isActualRecordSetWithGpsData()) {
+					int[] latLng = activeDevice.getGPSLatLngOrdinals();
+					if (latLng[0] != -1 && latLng[1] != -1) {
+						int gpsStartIndex = GPSHelper.getStartIndexGPS(activeRecordSet, latLng[0], latLng[1]);
+						Record recordLatitude = activeRecordSet.get(latLng[0]);
+						Record recordLongitude = activeRecordSet.get(latLng[1]);
+						int elevation = GPSHelper.getElevation(new GpsCoordinate(device.translateValue(recordLatitude, recordLatitude.realGet(gpsStartIndex) / 1000.0),
+								device.translateValue(recordLongitude, recordLongitude.realGet(gpsStartIndex) / 1000.0)));
+						textItem.setText(GDE.STRING_EMPTY + elevation);
+					}
+				}
+			}
+		});
 	}
 }

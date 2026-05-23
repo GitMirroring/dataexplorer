@@ -2335,6 +2335,15 @@ public class HoTTAdapter extends DeviceConfiguration implements IDevice, IHistoD
 	}
 
 	/**
+	 * @return the measurement ordinal of Latitude as well as of Longitude as Integer array
+	 */
+	@Override
+	public int[] getGPSLatLngOrdinals() {
+		// 0=RXSQ, 1=Latitude, 2=Longitude, 3=Altitude
+		return new int[] {1, 2};
+	}
+
+	/**
 	 * export a file of the actual channel/record set
 	 * @return full qualified file path depending of the file ending type
 	 */

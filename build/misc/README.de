@@ -24,6 +24,8 @@ verschiedenen Betriebssystemen. Objekt bezogene Dateien werden nicht dupliziert,
 Daten auf ein anderes Betriebssystem sind die Objekt bezogenen Dateilinks zu entfernen und auf der Zielplatform wieder herzustellen. Dazu bitte den 
 Einstellungsdialog, "Wartung" Tabulator benutzen.
 
+Die Datei ReleaseVersion.txt ,im Download Verzeichnis, markiert die aktuelle stabile Version, die herunter geladen werden kann.
+
 Um Fehler oder Anregungen zu melden, bitte eine e-Mail an die Adresse auf der Downloadseite http://www.nongnu.org/dataexplorer/download.de.html.
 
 

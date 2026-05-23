@@ -14,10 +14,16 @@
     You should have received a copy of the GNU General Public License
     along with GNU DataExplorer.  If not, see <https://www.gnu.org/licenses/>.
     
-    Copyright (c) 2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025,2026 Winfried Bruegmann
+    Copyright (c) 2011-2026 Winfried Bruegmann
 ****************************************************************************************/
 package gde.utils;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URL;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
@@ -25,6 +31,12 @@ import java.util.TreeMap;
 import java.util.Vector;
 import java.util.logging.Logger;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import gde.Analyzer;
+import gde.DataAccess;
+import gde.DataAccess.LocalAccess;
 import gde.data.Record;
 import gde.data.RecordSet;
 import gde.device.IDevice;
@@ -822,5 +834,67 @@ public class GPSHelper {
 //	public static double round(final double value)  {
 //      return Math.round(value * ORDER) / ORDER;
 //  }
+
+	/**
+	 * try to call a web-service to find a GPS coordinate related elevation 
+	 * @param gpsCoordinate
+	 * @return found elevation in m or -1 if failed
+	 */
+	public static int getElevation(GpsCoordinate gpsCoordinate) {
+		try {
+			Analyzer analyzer = Analyzer.getInstance();
+			DataAccess dataAccess = analyzer.getDataAccess();
+
+			try {
+				//https://api.opentopodata.org/v1/test-dataset?locations=48.62890252073733,8.988615870996933
+				//https://maps.googleapis.com/maps/api/geocode/json?latlng=48.62890252073733,8.988615870996933
+				//https://api.open-elevation.com/api/v1/lookup?locations=48.637106,8.984413
+				String url = String.format(Locale.US, "https://api.open-elevation.com/api/v1/lookup?locations=%f,%f", gpsCoordinate.getLatitude(), gpsCoordinate.getLongitude());
+				log.log(Level.INFO, "Request URL " + url);
+				URL requestUrl = new URI(url).toURL();
+				InputStream inputStream = ((LocalAccess) dataAccess).getHttpsInputStream(requestUrl);
+				BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+				StringBuilder sb = new StringBuilder();
+
+				String line = null;
+				try {
+					while ((line = reader.readLine()) != null) {
+						sb.append(line + "\n");
+					}
+				}
+				catch (IOException e) {
+					log.log(Level.WARNING, e.getMessage(), e);
+				}
+				finally {
+					try {
+						inputStream.close();
+					}
+					catch (IOException e) {
+						log.log(Level.WARNING, e.getMessage(), e);
+					}
+				}
+				log.log(Level.INFO, sb.toString());
+
+				JsonParser jsonParser = new JsonParser();
+
+				JsonObject jsonObject = (JsonObject) jsonParser.parse(sb.toString());
+
+				//System.out.println("status = " + jsonObject.get("status"));
+				//System.out.println("elevation = " + jsonObject.get("results").getAsJsonArray().get(0).getAsJsonObject().get("elevation"));
+				
+				String elevation = jsonObject.get("results").getAsJsonArray().get(0).getAsJsonObject().get("elevation").getAsString();
+				
+				return (int) (Double.valueOf(elevation)+1.5);
+			}
+			catch (Throwable e) {
+				log.log(Level.WARNING, e.getMessage(), e);
+			}
+		}
+		catch (Throwable e) {
+			log.log(Level.WARNING, e.getMessage(), e);
+		}
+
+	return 0;
+	}
 
 }

@@ -992,6 +992,11 @@ public interface IDevice {
 	public Integer getGPS2KMZMeasurementOrdinal();
 
 	/**
+	 * @return the measurement ordinal of Latitude as well as of Longitude as Integer array
+	 */
+	public int[] getGPSLatLngOrdinals();
+
+	/**
 	 * @return the translated latitude and longitude to IGC latitude {DDMMmmmN/S, DDDMMmmmE/W} for GPS devices only
 	 */
 	public String translateGPS2IGC(RecordSet recordSet, int index, char fixValidity, int startAltitude, int offsetAltitude);
