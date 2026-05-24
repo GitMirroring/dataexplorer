@@ -164,12 +164,15 @@ Section un.Main
     # the user e.g. specified "c:\program files" as the install dir 
     RmDir /r $INSTDIR\devices
     RmDir /r $INSTDIR\java
+    RmDir /r $INSTDIR\runtime
     Delete $INSTDIR\README.de
-    Delete $INSTDIR\rxtxSerial.dll
+    Delete $INSTDIR\README.en
     Delete $INSTDIR\WinHelper32.dll
     Delete $INSTDIR\WinHelper64.dll
+    Delete $INSTDIR\WinHelperARM.dll
     Delete $INSTDIR\README.en
     Delete $INSTDIR\DataExplorer.exe
+    Delete $INSTDIR\DataExplorer.cmd
     Delete $INSTDIR\DevicePropertiesEditor.exe
     Delete $INSTDIR\DataExplorer.jar
     Delete $INSTDIR\uninstall.exe

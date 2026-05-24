@@ -792,7 +792,7 @@
             <fileset file="build/misc/DataExplorer.ico" />
             <fileset file="build/misc/DevicePropertiesEditor.ico" />
             -->
-			<fileset file="DataExplorer/src/WinHelper64.dll" />
+			<fileset file="DataExplorer/src/WinHelperARM.dll" />
 		</copy>
 		<copy todir="${output.windowsARM.program.devices}" flatten="yes">
 			<fileset dir="${basedir}" excludes="**/*NonUi*.jar">

@@ -47,7 +47,7 @@ public class WindowsHelper {
 			//using internal load functionality where the library may packed within the jar
 			String prop = System.getProperty("sun.arch.data.model"); //$NON-NLS-1$
 			if (prop == null) prop = System.getProperty("com.ibm.vm.bitmode"); //$NON-NLS-1$
-
+			if (GDE.IS_OS_ARCH_ARM)  prop = "ARM";
 			log.log(Level.INFO, "bitmode = " + prop); //$NON-NLS-1$
 			Library.loadLibrary( "WinHelper" + prop ); //$NON-NLS-1$
 		}
@@ -87,59 +87,59 @@ public class WindowsHelper {
 		System.out.println(findApplicationPath("dataexplorer.exe")); //$NON-NLS-1$
 	}
 
-	public static void registerSerialPorts() {
-		long startTime = new Date().getTime();
-		String[] enumPorts = enumerateSerialPorts();
-		if (enumPorts[0].startsWith("GDE_MSG")) {			 //$NON-NLS-1$
-			for (int i = 0; i < enumPorts.length; i++) {
-				log.log(Level.WARNING, enumPorts[i]);
-			}
-			log.log(Level.WARNING, Messages.getString(MessageIds.GDE_MSGW0035, new Object[] {enumPorts[0].split(GDE.STRING_SEMICOLON)[1]}));
-			return;
-		}
-		boolean isSkipBlootoothDevices = Settings.getInstance().isSkipBluetoothDevices();
-		
-		TreeMap<Integer, String> winPorts = DeviceCommPort.getWindowsPorts();
-		winPorts.clear();
-		for (String portString : enumPorts) {
-			if (portString != null && portString.length() > 1) { //$NON-NLS-1$
-					if (!(isSkipBlootoothDevices && portString.toLowerCase().contains("bluetooth"))) {
-						try {
-							int portNumber = Integer.parseInt(portString.substring(portString.indexOf('('+WINDOWS_SERIAL_PORT_COM) + 4, portString.lastIndexOf(')')));
-							String[] tmpDesc = portString.split(GDE.STRING_SEMICOLON);
-							String portDescription = tmpDesc[1].substring(0, tmpDesc[1].indexOf('('+WINDOWS_SERIAL_PORT_COM) - 1);
-							String manufacturer = tmpDesc[0].split(GDE.STRING_BLANK)[0].replace('.', ' ').trim();
-							if (manufacturer.length() > 1 && !manufacturer.startsWith("(")) { //$NON-NLS-1$
-								if (!portDescription.contains(manufacturer)) {
-									portDescription = manufacturer + GDE.STRING_BLANK + portDescription;
-								}
-							}
-							if (log.isLoggable(Level.FINER)) 
-								log.log(Level.FINER, WINDOWS_SERIAL_PORT_COM + portNumber + GDE.STRING_MESSAGE_CONCAT + portDescription);
-							winPorts.put(portNumber, portDescription);
-						}
-						catch (Throwable e) {
-							log.log(Level.WARNING, portString);
-						}
-					}
-			}
-		}
-		
-		if (log.isLoggable(Level.FINE)) {
-			for (int number : winPorts.keySet()) {
-				log.log(Level.FINE, WINDOWS_SERIAL_PORT_COM + number + GDE.STRING_MESSAGE_CONCAT + winPorts.get(number));
-			}
-		}
-		
-		if (winPorts.size() > 0) {
-			StringBuilder sb = new StringBuilder();
-			for (int number : winPorts.keySet()) {
-				sb.append(WINDOWS_SERIAL_PORT_COM).append(number).append(File.pathSeparator);
-			}
-		}
-		if (log.isLoggable(Level.FINE)) 
-			log.log(Level.FINE, "enum Windows ports  takes = " + StringHelper.getFormatedTime("ss:SSS", (new Date().getTime() - startTime))); //$NON-NLS-1$ //$NON-NLS-2$
-	}
+//	public static void registerSerialPorts() {
+//		long startTime = new Date().getTime();
+//		String[] enumPorts = enumerateSerialPorts();
+//		if (enumPorts[0].startsWith("GDE_MSG")) {			 //$NON-NLS-1$
+//			for (int i = 0; i < enumPorts.length; i++) {
+//				log.log(Level.WARNING, enumPorts[i]);
+//			}
+//			log.log(Level.WARNING, Messages.getString(MessageIds.GDE_MSGW0035, new Object[] {enumPorts[0].split(GDE.STRING_SEMICOLON)[1]}));
+//			return;
+//		}
+//		boolean isSkipBlootoothDevices = Settings.getInstance().isSkipBluetoothDevices();
+//		
+//		TreeMap<Integer, String> winPorts = DeviceCommPort.getWindowsPorts();
+//		winPorts.clear();
+//		for (String portString : enumPorts) {
+//			if (portString != null && portString.length() > 1) { //$NON-NLS-1$
+//					if (!(isSkipBlootoothDevices && portString.toLowerCase().contains("bluetooth"))) {
+//						try {
+//							int portNumber = Integer.parseInt(portString.substring(portString.indexOf('('+WINDOWS_SERIAL_PORT_COM) + 4, portString.lastIndexOf(')')));
+//							String[] tmpDesc = portString.split(GDE.STRING_SEMICOLON);
+//							String portDescription = tmpDesc[1].substring(0, tmpDesc[1].indexOf('('+WINDOWS_SERIAL_PORT_COM) - 1);
+//							String manufacturer = tmpDesc[0].split(GDE.STRING_BLANK)[0].replace('.', ' ').trim();
+//							if (manufacturer.length() > 1 && !manufacturer.startsWith("(")) { //$NON-NLS-1$
+//								if (!portDescription.contains(manufacturer)) {
+//									portDescription = manufacturer + GDE.STRING_BLANK + portDescription;
+//								}
+//							}
+//							if (log.isLoggable(Level.FINER)) 
+//								log.log(Level.FINER, WINDOWS_SERIAL_PORT_COM + portNumber + GDE.STRING_MESSAGE_CONCAT + portDescription);
+//							winPorts.put(portNumber, portDescription);
+//						}
+//						catch (Throwable e) {
+//							log.log(Level.WARNING, portString);
+//						}
+//					}
+//			}
+//		}
+//		
+//		if (log.isLoggable(Level.FINE)) {
+//			for (int number : winPorts.keySet()) {
+//				log.log(Level.FINE, WINDOWS_SERIAL_PORT_COM + number + GDE.STRING_MESSAGE_CONCAT + winPorts.get(number));
+//			}
+//		}
+//		
+//		if (winPorts.size() > 0) {
+//			StringBuilder sb = new StringBuilder();
+//			for (int number : winPorts.keySet()) {
+//				sb.append(WINDOWS_SERIAL_PORT_COM).append(number).append(File.pathSeparator);
+//			}
+//		}
+//		if (log.isLoggable(Level.FINE)) 
+//			log.log(Level.FINE, "enum Windows ports  takes = " + StringHelper.getFormatedTime("ss:SSS", (new Date().getTime() - startTime))); //$NON-NLS-1$ //$NON-NLS-2$
+//	}
 
 	/**
 	 * native method called via load library to enable use of native windows ole32 functions
@@ -181,11 +181,11 @@ public class WindowsHelper {
 	//public static native String deregisterMimeType() throws SecurityException, IOException;
 	// realized with OperatingSytemHelper.deregisterApplication()
 
-	/**
-	 * native method called via load library to enable use of native windows ole32 functions
-	 * @return enum list of system serial ports
-	 */
-	public static native String[] enumerateSerialPorts();
+//	/**
+//	 * native method called via load library to enable use of native windows ole32 functions
+//	 * @return enum list of system serial ports
+//	 */
+//	public static native String[] enumerateSerialPorts();
 
 	/**
 	 * native method called via load library to enable use of native windows ole32 functions

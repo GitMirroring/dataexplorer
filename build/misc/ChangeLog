@@ -4,6 +4,7 @@ Version 4.0.6 - xx yyy 2026
 Generic changes/fixes 
 	* starting with release version 4.0.6 ReleaseVersion.txt will provide actual version information for update check
 	* KMZ export configuration dialog refined 
+	* initial support Windows on ARM 
 	
 Device specific changes/fixes
 	* 
