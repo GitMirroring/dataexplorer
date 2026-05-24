@@ -22,12 +22,12 @@
     <path>runtime</path>
     <bundledJre64Bit>true</bundledJre64Bit>
     <bundledJreAsFallback>false</bundledJreAsFallback>
-    <minVersion>1.8</minVersion>
-    <maxVersion>17</maxVersion>
+    <minVersion>19</minVersion>
+    <maxVersion>25</maxVersion>
     <jdkPreference>jdkOnly</jdkPreference>
     <runtimeBits>64</runtimeBits>
     <initialHeapSize>32</initialHeapSize>
-    <maxHeapSize>512</maxHeapSize>
+    <maxHeapSize>1024</maxHeapSize>
     <opt>-Dfile.encoding=UTF-8</opt>
   </jre>
   <messages>

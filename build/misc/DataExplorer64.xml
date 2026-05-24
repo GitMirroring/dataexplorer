@@ -8,7 +8,7 @@
   <cmdLine></cmdLine>
   <chdir>.</chdir>
   <priority>normal</priority>
-  <downloadUrl>https://www.oracle.com/technetwork/java/javase/downloads/server-jre8-downloads-2133154.html</downloadUrl>
+  <downloadUrl></downloadUrl>
   <supportUrl>https://savannah.nongnu.org/projects/dataexplorer</supportUrl>
   <stayAlive>false</stayAlive>
   <restartOnCrash>false</restartOnCrash>
@@ -22,8 +22,8 @@
     <path>runtime</path>
     <bundledJre64Bit>true</bundledJre64Bit>
     <bundledJreAsFallback>false</bundledJreAsFallback>
-    <minVersion>11</minVersion>
-    <maxVersion>21</maxVersion>
+    <minVersion>19</minVersion>
+    <maxVersion>25</maxVersion>
     <jdkPreference>jdkOnly</jdkPreference>
     <runtimeBits>64</runtimeBits>
     <initialHeapSize>64</initialHeapSize>

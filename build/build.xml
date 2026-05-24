@@ -45,7 +45,7 @@
 		<condition property="build.os.shortname" value="Windows_X86">
 			<and>
 				<os name="Windows 11" />
-				<os arch="x86_64" />
+				<os arch="amd64" />
 			</and>
 		</condition>
 		<condition property="build.os.shortname" value="Windows_ARM">
@@ -303,7 +303,7 @@
 		<condition property="isWindows_X86">
 			<and>
 				<os name="Windows 11" />
-				<os arch="x86_64" />
+				<os arch="amd64" />
 			</and>
 		</condition>
 		<antcall target="Windows_X86" />
@@ -1153,11 +1153,12 @@
 
 	<!-- package, build Windows installer, MAC OS disk image, tar for GNULinux -->
 	<target name="binary_package" depends="copy-files">
+		<antcall target="build_Windows_NSIS_installer_X86" description="building NSIS Windows installer" if:set="isWindows_X86" />
 		<antcall target="build_Windows_NSIS_installer_ARM" description="building NSIS Windows installer" if:set="isWindows_ARM" />
-		<antcall target="binary_package-armLnx" description="build armLnx tarball" unless:set="isWindows" />
+		<antcall target="binary_package-armLnx" description="build armLnx tarball" if:set="isLinux" />
 		<antcall target="binary_package-linux" description="build Linux tarball" if:set="isLinux" />
-		<antcall target="build_Mac_X64_install_dmg" description="build Mac disk images, replaces building zip archives" if:set="isMac_X86" />
-		<antcall target="build_Mac_ARM_install_dmg" description="build Mac disk images, replaces building zip archives" if:set="isMac_ARM" />
+		<antcall target="build_Mac_X64_install_dmg" description="build Mac disk images" if:set="isMac_X86" />
+		<antcall target="build_Mac_ARM_install_dmg" description="build Mac disk images" if:set="isMac_ARM" />
 	</target>
 
 	<target name="binary_package-armLnx" depends="init-armLnx">
