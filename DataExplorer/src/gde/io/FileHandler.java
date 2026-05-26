@@ -39,6 +39,7 @@ import gde.messages.MessageIds;
 import gde.messages.Messages;
 import gde.ui.DataExplorer;
 import gde.ui.SWTResourceManager;
+import gde.ui.dialog.GoogleEarthCustomizingDialog;
 import gde.utils.FileUtils;
 import gde.utils.ObjectKeyCompliance;
 import gde.utils.OperatingSystemHelper;
@@ -569,6 +570,10 @@ public class FileHandler {
 		if (activeRecordSet == null) {
 			this.application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGI0005));
 			return;
+		}
+		
+		if (!isRelative && !isClampToGround) {
+			new GoogleEarthCustomizingDialog(application.getShell(), SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL).open();
 		}
 
 		Settings deviceSetting = Settings.getInstance();

@@ -419,6 +419,9 @@ public class KMZWriter {
 					startPointElevation = startElevationValue;
 				}
 			}
+			else if (altitudeMode.equals(ALTITUDE_ABSOLUTE)) {
+				startPointElevation = startElevationValue;
+			}
 			
 			boolean isPositionWritten = false;
 			double positionLongitude = device.translateValue(recordLongitude, recordLongitude.get(1) / 1000.0);
