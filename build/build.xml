@@ -746,9 +746,15 @@
 
 	<!-- create internal temporay file structure -->
 	<target name="copy-files" depends="package,create_HoTTMdlViewer_lib">
+		<condition property="run.linux-arm.target">
+	        <or>
+	            <isset property="isLinux_ARM"/>
+	            <isset property="isLinux"/>
+	        </or>
+	    </condition>
 		<antcall target="copy-files-windows-x86" if:set="isWindows_X86" />
 		<antcall target="copy-files-windows-arm" if:set="isWindows_ARM" />
-		<antcall target="copy-files-linux-arm" if:set="isLinux" />
+		<antcall target="copy-files-linux-arm" if:set="run.linux-arm.target" />
 		<antcall target="copy-files-linux-x86" if:set="isLinux" />
 		<antcall target="copy-files-mac-x86" if:set="isMac_X86" />
 		<antcall target="copy-files-mac-arm" if:set="isMac_ARM" />
