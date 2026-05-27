@@ -1181,9 +1181,15 @@
 
 	<!-- package, build Windows installer, MAC OS disk image, tar for GNULinux -->
 	<target name="binary_package" depends="copy-files">
+		<condition property="run.linux-arm.target">
+	        <or>
+	            <isset property="isLinux_ARM"/>
+	            <isset property="isLinux"/>
+	        </or>
+	    </condition>
 		<antcall target="build_Windows_NSIS_installer_X86" description="building NSIS Windows installer" if:set="isWindows_X86" />
 		<antcall target="build_Windows_NSIS_installer_ARM" description="building NSIS Windows installer" if:set="isWindows_ARM" />
-		<antcall target="binary_package-linux-arm" description="build armLnx tarball" if:set="isLinux" />
+		<antcall target="binary_package-linux-arm" description="build armLnx tarball" if:set="run.linux-arm.target" />
 		<antcall target="binary_package-linux-x86" description="build Linux tarball" if:set="isLinux" />
 		<antcall target="build_Mac_X64_install_dmg" description="build Mac disk images" if:set="isMac_X86" />
 		<antcall target="build_Mac_ARM_install_dmg" description="build Mac disk images" if:set="isMac_ARM" />
