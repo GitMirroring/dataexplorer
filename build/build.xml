@@ -750,8 +750,8 @@
 	        <or>
 	            <isset property="isLinux_ARM"/>
 	            <isset property="isLinux"/>
-	            <isset property="isMAC_X86"/>
-	            <isset property="isMAC_ARM"/>
+	            <isset property="isMac_X86"/>
+	            <isset property="isMac_ARM"/>
 	        </or>
 	    </condition>
 		<antcall target="copy-files-windows-x86" if:set="isWindows_X86" />
@@ -1187,8 +1187,8 @@
 	        <or>
 	            <isset property="isLinux_ARM"/>
 	            <isset property="isLinux"/>
-	            <isset property="isMAC_X86"/>
-	            <isset property="isMAC_ARM"/>
+	            <isset property="isMac_X86"/>
+	            <isset property="isMac_ARM"/>
 	        </or>
 	    </condition>
 		<antcall target="build_Windows_NSIS_installer_X86" description="building NSIS Windows installer" if:set="isWindows_X86" />
