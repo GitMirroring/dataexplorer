@@ -296,7 +296,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 			boolean isVirtual = GDE.IS_WINDOWS && this.serialPort.getDescriptivePortName().toLowerCase().contains("virtual");
 			if (isVirtual) {
 				this.serialPort.setFlowControl(this.jsDeviceConfig.getFlowCtrlMode());
-				this.serialPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING | SerialPort.TIMEOUT_WRITE_BLOCKING, 1000, 1000);
+				this.serialPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING | SerialPort.TIMEOUT_WRITE_BLOCKING, 0, 0);
 				this.serialPort.setComPortParameters(115200, this.jsDeviceConfig.getDataBits().ordinal() + 5,  this.jsDeviceConfig.getStopBits().ordinal() + 1, this.jsDeviceConfig.getParity().ordinal());
 				this.serialPort.disablePortConfiguration();
 			}
@@ -304,6 +304,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 				if (!isVirtual) { // set port parameters
 					this.serialPort.setComPortParameters(this.jsDeviceConfig.getBaudeRate(), this.jsDeviceConfig.getDataBits().ordinal() + 5,  this.jsDeviceConfig.getStopBits().ordinal() + 1, this.jsDeviceConfig.getParity().ordinal());
 					this.serialPort.setFlowControl(this.jsDeviceConfig.getFlowCtrlMode());
+					this.serialPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING | SerialPort.TIMEOUT_WRITE_BLOCKING, 0, 0);
 					if (this.jsDeviceConfig.isRTS()) this.serialPort.setRTS();
 					else this.serialPort.clearRTS();
 					if (this.jsDeviceConfig.isDTR()) this.serialPort.setDTR();
