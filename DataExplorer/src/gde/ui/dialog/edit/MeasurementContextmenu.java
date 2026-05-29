@@ -55,7 +55,7 @@ public class MeasurementContextmenu {
 	MenuItem											regressionIntervalPropertyMenuItem, regressionTypeCurvePropertyMenuItem, regressionTypeLinearPropertyMenuItem;
 	MenuItem											numberMotorPropertyMenuItem, revolutionFactorPropertyMenuItem, prop100WPropertyMenuItem;
 	MenuItem											numberCellsPropertyMenuItem, invertCurrentPropertyMenuItem;
-	MenuItem 											scaleSyncRefOrdinal, googleEarthVelocityAvgLimitFactor, googleEarthVelocityLowerLimit, googleEarthVelocityUpperLimit;
+	MenuItem 											scaleSyncRefOrdinal, googleEarthValueAvgLimitFactor, googleEarthValueLowerLimit, googleEarthValueUpperLimit;
 	MenuItem 											filterFactor, recordDataType;
 
 
@@ -115,9 +115,9 @@ public class MeasurementContextmenu {
 				MeasurementContextmenu.this.numberCellsPropertyMenuItem.setEnabled(true);
 				MeasurementContextmenu.this.invertCurrentPropertyMenuItem.setEnabled(true);
 				MeasurementContextmenu.this.scaleSyncRefOrdinal.setEnabled(true);
-				MeasurementContextmenu.this.googleEarthVelocityAvgLimitFactor.setEnabled(true);
-				MeasurementContextmenu.this.googleEarthVelocityLowerLimit.setEnabled(true);
-				MeasurementContextmenu.this.googleEarthVelocityUpperLimit.setEnabled(true);
+				MeasurementContextmenu.this.googleEarthValueAvgLimitFactor.setEnabled(true);
+				MeasurementContextmenu.this.googleEarthValueLowerLimit.setEnabled(true);
+				MeasurementContextmenu.this.googleEarthValueUpperLimit.setEnabled(true);
 				MeasurementContextmenu.this.filterFactor.setEnabled(true);
 				MeasurementContextmenu.this.recordDataType.setEnabled(true);
 				MeasurementContextmenu.this.defaultPropertyMenuItem.setEnabled(true);
@@ -166,18 +166,18 @@ public class MeasurementContextmenu {
 						case SCALE_SYNC_REF_ORDINAL:
 							MeasurementContextmenu.this.scaleSyncRefOrdinal.setEnabled(false);
 							break;
-						case GOOGLE_EARTH_VELOCITY_AVG_LIMIT_FACTOR:
-							MeasurementContextmenu.this.googleEarthVelocityAvgLimitFactor.setEnabled(false);
-							MeasurementContextmenu.this.googleEarthVelocityLowerLimit.setEnabled(false);
-							MeasurementContextmenu.this.googleEarthVelocityUpperLimit.setEnabled(false);
+						case GOOGLE_EARTH_VALUE_AVG_LIMIT_FACTOR:
+							MeasurementContextmenu.this.googleEarthValueAvgLimitFactor.setEnabled(false);
+							MeasurementContextmenu.this.googleEarthValueLowerLimit.setEnabled(false);
+							MeasurementContextmenu.this.googleEarthValueUpperLimit.setEnabled(false);
 							break;
-						case GOOGLE_EARTH_VELOCITY_LOWER_LIMIT:
-							MeasurementContextmenu.this.googleEarthVelocityAvgLimitFactor.setEnabled(false);
-							MeasurementContextmenu.this.googleEarthVelocityLowerLimit.setEnabled(false);
+						case GOOGLE_EARTH_VALUE_LOWER_LIMIT:
+							MeasurementContextmenu.this.googleEarthValueAvgLimitFactor.setEnabled(false);
+							MeasurementContextmenu.this.googleEarthValueLowerLimit.setEnabled(false);
 							break;
-						case GOOGLE_EARTH_VELOCITY_UPPER_LIMIT:
-							MeasurementContextmenu.this.googleEarthVelocityAvgLimitFactor.setEnabled(false);
-							MeasurementContextmenu.this.googleEarthVelocityUpperLimit.setEnabled(false);
+						case GOOGLE_EARTH_VALUE_UPPER_LIMIT:
+							MeasurementContextmenu.this.googleEarthValueAvgLimitFactor.setEnabled(false);
+							MeasurementContextmenu.this.googleEarthValueUpperLimit.setEnabled(false);
 							break;
 						case FILTER_FACTOR:
 							MeasurementContextmenu.this.filterFactor.setEnabled(false);
@@ -312,28 +312,28 @@ public class MeasurementContextmenu {
 				MeasurementContextmenu.this.measurementTypeTabItem.createMeasurementPropertyTabItem(MeasurementPropertyTypes.SCALE_SYNC_REF_ORDINAL.value());
 			}
 		});
-		this.googleEarthVelocityAvgLimitFactor = new MenuItem(this.addPropertyTypeMenu, SWT.PUSH);
-		this.googleEarthVelocityAvgLimitFactor.setText(MeasurementPropertyTypes.GOOGLE_EARTH_VELOCITY_AVG_LIMIT_FACTOR.value());
-		this.googleEarthVelocityAvgLimitFactor.addListener(SWT.Selection, new Listener() {
+		this.googleEarthValueAvgLimitFactor = new MenuItem(this.addPropertyTypeMenu, SWT.PUSH);
+		this.googleEarthValueAvgLimitFactor.setText(MeasurementPropertyTypes.GOOGLE_EARTH_VALUE_AVG_LIMIT_FACTOR.value());
+		this.googleEarthValueAvgLimitFactor.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				log.log(java.util.logging.Level.FINEST, "googleEarthVelocityAvgLimitFactor action performed! " + e); //$NON-NLS-1$
-				MeasurementContextmenu.this.measurementTypeTabItem.createMeasurementPropertyTabItem(MeasurementPropertyTypes.GOOGLE_EARTH_VELOCITY_AVG_LIMIT_FACTOR.value());
+				MeasurementContextmenu.this.measurementTypeTabItem.createMeasurementPropertyTabItem(MeasurementPropertyTypes.GOOGLE_EARTH_VALUE_AVG_LIMIT_FACTOR.value());
 			}
 		});
-		this.googleEarthVelocityLowerLimit = new MenuItem(this.addPropertyTypeMenu, SWT.PUSH);
-		this.googleEarthVelocityLowerLimit.setText(MeasurementPropertyTypes.GOOGLE_EARTH_VELOCITY_LOWER_LIMIT.value());
-		this.googleEarthVelocityLowerLimit.addListener(SWT.Selection, new Listener() {
+		this.googleEarthValueLowerLimit = new MenuItem(this.addPropertyTypeMenu, SWT.PUSH);
+		this.googleEarthValueLowerLimit.setText(MeasurementPropertyTypes.GOOGLE_EARTH_VALUE_LOWER_LIMIT.value());
+		this.googleEarthValueLowerLimit.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				log.log(java.util.logging.Level.FINEST, "googleEarthVelocityLowerLimit action performed! " + e); //$NON-NLS-1$
-				MeasurementContextmenu.this.measurementTypeTabItem.createMeasurementPropertyTabItem(MeasurementPropertyTypes.GOOGLE_EARTH_VELOCITY_LOWER_LIMIT.value());
+				MeasurementContextmenu.this.measurementTypeTabItem.createMeasurementPropertyTabItem(MeasurementPropertyTypes.GOOGLE_EARTH_VALUE_LOWER_LIMIT.value());
 			}
 		});
-		this.googleEarthVelocityUpperLimit = new MenuItem(this.addPropertyTypeMenu, SWT.PUSH);
-		this.googleEarthVelocityUpperLimit.setText(MeasurementPropertyTypes.GOOGLE_EARTH_VELOCITY_UPPER_LIMIT.value());
-		this.googleEarthVelocityUpperLimit.addListener(SWT.Selection, new Listener() {
+		this.googleEarthValueUpperLimit = new MenuItem(this.addPropertyTypeMenu, SWT.PUSH);
+		this.googleEarthValueUpperLimit.setText(MeasurementPropertyTypes.GOOGLE_EARTH_VALUE_UPPER_LIMIT.value());
+		this.googleEarthValueUpperLimit.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				log.log(java.util.logging.Level.FINEST, "googleEarthVelocityUpperLimit action performed! " + e); //$NON-NLS-1$
-				MeasurementContextmenu.this.measurementTypeTabItem.createMeasurementPropertyTabItem(MeasurementPropertyTypes.GOOGLE_EARTH_VELOCITY_UPPER_LIMIT.value());
+				MeasurementContextmenu.this.measurementTypeTabItem.createMeasurementPropertyTabItem(MeasurementPropertyTypes.GOOGLE_EARTH_VALUE_UPPER_LIMIT.value());
 			}
 		});	
 		this.filterFactor = new MenuItem(this.addPropertyTypeMenu, SWT.PUSH);

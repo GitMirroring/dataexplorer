@@ -614,20 +614,20 @@ public class MeasurementTypeTabItem extends CTabItem implements Cloneable {
 				tmpPropertyType.setDescription(Messages.getString(MessageIds.GDE_MSGT0607));
 				tmpPropertyTypeTabItem.setProperty(this.deviceConfig, tmpPropertyType, false, null, new String[] { DataTypes.INTEGER.value() }, true);
 				break;
-			case GOOGLE_EARTH_VELOCITY_AVG_LIMIT_FACTOR:
+			case GOOGLE_EARTH_VALUE_AVG_LIMIT_FACTOR:
 				tmpPropertyType.setType(DataTypes.DOUBLE);
 				tmpPropertyType.setValue(2.0);
 				tmpPropertyType.setDescription(Messages.getString(MessageIds.GDE_MSGT0608));
 				tmpPropertyTypeTabItem.setProperty(this.deviceConfig, tmpPropertyType, false, null, new String[] { DataTypes.INTEGER.value() }, true);
 				break;
-			case GOOGLE_EARTH_VELOCITY_LOWER_LIMIT:
-				tmpPropertyType.setType(DataTypes.INTEGER);
+			case GOOGLE_EARTH_VALUE_LOWER_LIMIT:
+				tmpPropertyType.setType(DataTypes.DOUBLE);
 				tmpPropertyType.setValue(20);
 				tmpPropertyType.setDescription(Messages.getString(MessageIds.GDE_MSGT0609));
 				tmpPropertyTypeTabItem.setProperty(this.deviceConfig, tmpPropertyType, false, null, new String[] { DataTypes.INTEGER.value() }, true);
 				break;
-			case GOOGLE_EARTH_VELOCITY_UPPER_LIMIT:
-				tmpPropertyType.setType(DataTypes.INTEGER);
+			case GOOGLE_EARTH_VALUE_UPPER_LIMIT:
+				tmpPropertyType.setType(DataTypes.DOUBLE);
 				tmpPropertyType.setValue(100);
 				tmpPropertyType.setDescription(Messages.getString(MessageIds.GDE_MSGT0610));
 				tmpPropertyTypeTabItem.setProperty(this.deviceConfig, tmpPropertyType, false, null, new String[] { DataTypes.INTEGER.value() }, true);

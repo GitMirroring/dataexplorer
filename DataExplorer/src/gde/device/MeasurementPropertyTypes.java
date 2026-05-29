@@ -93,11 +93,11 @@ public enum MeasurementPropertyTypes {
     @XmlEnumValue("scale_sync_ref_ordinal")
     SCALE_SYNC_REF_ORDINAL("scale_sync_ref_ordinal"),
     @XmlEnumValue("google_earth_velocity_avg_limit_factor")
-    GOOGLE_EARTH_VELOCITY_AVG_LIMIT_FACTOR("google_earth_velocity_avg_limit_factor"),
+    GOOGLE_EARTH_VALUE_AVG_LIMIT_FACTOR("google_earth_value_avg_limit_factor"),
     @XmlEnumValue("google_earth_velocity_lower_limit")
-    GOOGLE_EARTH_VELOCITY_LOWER_LIMIT("google_earth_velocity_lower_limit"),
+    GOOGLE_EARTH_VALUE_LOWER_LIMIT("google_earth_value_lower_limit"),
     @XmlEnumValue("google_earth_velocity_upper_limit")
-    GOOGLE_EARTH_VELOCITY_UPPER_LIMIT("google_earth_velocity_upper_limit"),
+    GOOGLE_EARTH_VALUE_UPPER_LIMIT("google_earth_vvalue_upper_limit"),
     @XmlEnumValue("google_earth_within_limits_color")
     GOOGLE_EARTH_WITHIN_LIMITS_COLOR("google_earth_within_limits_color"),
     @XmlEnumValue("google_earth_lower_limit_color")

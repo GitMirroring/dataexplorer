@@ -104,8 +104,8 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 	Composite compositeLower;
 	Text elevationCorrectionText, startWebElevation, startpointElevationText;
 
-	int upperLimitVelocity = 100;
-	int lowerLimitVelocity = 20;
+	double upperLimitValue = 100.;
+	double lowerLimitValue = 20.;
 	double avgLimitFactor = 2.0;
 	RGB withinLimitsColor = SWTResourceManager.getColor(0, 255, 0).getRGB();
 	RGB lowerLimitColor = SWTResourceManager.getColor(255, 0, 0).getRGB();
@@ -350,13 +350,6 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 				limitCompositeLData.height = 118;
 				limitCompositeLData.bottom =  new FormAttachment(1000, 1000, -65);
 				limitComposite.setLayoutData(limitCompositeLData);
-//				{
-//					fillerComposite = new Composite(limitComposite, SWT.NONE);
-//					RowData composite_IL2LData = new RowData();
-//					composite_IL2LData.width = 145;
-//					composite_IL2LData.height = 20;
-//					fillerComposite.setLayoutData(composite_IL2LData);
-//				}
 				{
 					lowerLimitLabel = new CLabel(limitComposite, SWT.RIGHT);
 					RowData lowerLimitLabelLData = new RowData();
@@ -369,14 +362,14 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 				{
 					lowerLimitText = new Text(limitComposite, SWT.SINGLE | SWT.RIGHT | SWT.BORDER);
 					RowData lowerLimitTextLData = new RowData();
-					lowerLimitTextLData.width = 35;
+					lowerLimitTextLData.width = 40;
 					lowerLimitTextLData.height = GDE.IS_LINUX ? 12 : 16;
 					lowerLimitText.setLayoutData(lowerLimitTextLData);
 					lowerLimitText.addVerifyListener(new VerifyListener() {
 						@Override
 						public void verifyText(VerifyEvent evt) {
 							log.log(Level.FINEST,  "lowerLimitText.verifyText, event="+evt); //$NON-NLS-1$
-							evt.doit = StringHelper.verifyTypedInput(DataTypes.INTEGER, evt.text);
+							evt.doit = StringHelper.verifyTypedInput(DataTypes.DOUBLE, evt.text);
 						}
 					});
 				}
@@ -392,7 +385,7 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 				{
 					avgFactorText = new Text(limitComposite, SWT.SINGLE | SWT.RIGHT | SWT.BORDER);
 					RowData avgFactorTextLData = new RowData();
-					avgFactorTextLData.width = 35;
+					avgFactorTextLData.width = 40;
 					avgFactorTextLData.height = GDE.IS_LINUX ? 12 : 16;
 					avgFactorText.setLayoutData(avgFactorTextLData);
 					avgFactorText.addVerifyListener(new VerifyListener() {
@@ -408,20 +401,20 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 							Integer measurementOrdinal = device.getGPS2KMZMeasurementOrdinal();
 							RecordSet activeRecordSet = application.getActiveRecordSet();
 							if (activeRecordSet != null && measurementOrdinal != null && measurementOrdinal >= 0) {
-								int avgValue = (int) device.translateValue(activeRecordSet.get(measurementOrdinal.intValue()), activeRecordSet.get(measurementOrdinal.intValue()).getAvgValue()/1000.0);
-								avgText.setText(GDE.STRING_BLANK + avgValue);
+								double avgValue = device.translateValue(activeRecordSet.get(measurementOrdinal.intValue()), activeRecordSet.get(measurementOrdinal.intValue()).getAvgValue()/1000.0);
+								avgText.setText(String.format(" %.2f", avgValue));
 								try {
 									double factor = Double.parseDouble(avgFactorText.getText().replace(GDE.CHAR_COMMA, GDE.CHAR_DOT));
-									if (factor >= 1) {
-										lowerLimitText.setText(String.format("%d", (int) (avgValue / factor))); //$NON-NLS-1$
-										upperLimitText.setText(String.format("%d", (int) (avgValue * factor))); //$NON-NLS-1$
+									if (factor >= 0.1) {
+										lowerLimitText.setText(String.format("%.1f", (avgValue / factor))); //$NON-NLS-1$
+										upperLimitText.setText(String.format("%.1f", (avgValue * factor))); //$NON-NLS-1$
 										lowerLimitText.setBackground(DataExplorer.getInstance().COLOR_LIGHT_GREY);
 									  avgFactorText.setBackground(DataExplorer.getInstance().COLOR_WHITE);
 										upperLimitText.setBackground(DataExplorer.getInstance().COLOR_LIGHT_GREY);
 									}
 									else {
-										lowerLimitText.setText(GDE.STRING_EMPTY + lowerLimitVelocity);
-										upperLimitText.setText(GDE.STRING_EMPTY + upperLimitVelocity);
+										lowerLimitText.setText(GDE.STRING_EMPTY + lowerLimitValue);
+										upperLimitText.setText(GDE.STRING_EMPTY + upperLimitValue);
 										lowerLimitText.setBackground(DataExplorer.getInstance().COLOR_WHITE);
 									  avgFactorText.setBackground(DataExplorer.getInstance().COLOR_LIGHT_GREY);
 										upperLimitText.setBackground(DataExplorer.getInstance().COLOR_WHITE);
@@ -431,7 +424,7 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 									// ignore
 								}
 							}
-							else avgText.setText("0");
+							else avgText.setText("0.0");
 						}
 					});
 				}
@@ -447,14 +440,14 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 				{
 					upperLimitText = new Text(limitComposite, SWT.SINGLE | SWT.RIGHT | SWT.BORDER);
 					RowData upperLimitTextLData = new RowData();
-					upperLimitTextLData.width = 35;
+					upperLimitTextLData.width = 40;
 					upperLimitTextLData.height = GDE.IS_LINUX ? 12 : 16;
 					upperLimitText.setLayoutData(upperLimitTextLData);
 					upperLimitText.addVerifyListener(new VerifyListener() {
 						@Override
 						public void verifyText(VerifyEvent evt) {
 							log.log(Level.FINEST,  "upperLimitText.verifyText, event="+evt); //$NON-NLS-1$
-							evt.doit = StringHelper.verifyTypedInput(DataTypes.INTEGER, evt.text);
+							evt.doit = StringHelper.verifyTypedInput(DataTypes.DOUBLE, evt.text);
 						}
 					});
 				}
@@ -470,14 +463,14 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 				{
 					avgText = new Text(limitComposite, SWT.SINGLE | SWT.RIGHT | SWT.BORDER);
 					RowData avgTextLData = new RowData();
-					avgTextLData.width = 35;
+					avgTextLData.width = 40;
 					avgTextLData.height = GDE.IS_LINUX ? 12 : 16;
 					avgText.setLayoutData(avgTextLData);
 					avgText.setEditable(false);
 					Integer measurementOrdinal = device.getGPS2KMZMeasurementOrdinal();
 					RecordSet activeRecordSet = application.getActiveRecordSet();
 					if (activeRecordSet != null && measurementOrdinal != null && measurementOrdinal >= 0) {
-						avgText.setText(String.format(" %d", (int) device.translateValue(activeRecordSet.get(measurementOrdinal.intValue()), activeRecordSet.get(measurementOrdinal.intValue()).getAvgValue()/1000.0)));
+						avgText.setText(String.format(" %.2f", device.translateValue(activeRecordSet.get(measurementOrdinal.intValue()), activeRecordSet.get(measurementOrdinal.intValue()).getAvgValue()/1000.0)));
 					}
 					avgText.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0679));
 				}
@@ -628,9 +621,9 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 	}
 
 	void initialize() {
-		lowerLimitVelocity = 20;
+		lowerLimitValue = 20.;
 		avgLimitFactor = 0.0;
-		upperLimitVelocity = 100;
+		upperLimitValue = 100.;
 		withinLimitsColor = SWTResourceManager.getColor(0, 255, 0).getRGB();
 		lowerLimitColor = SWTResourceManager.getColor(255, 0, 0).getRGB();
 		upperLimitColor = SWTResourceManager.getColor(255, 255, 0).getRGB();
@@ -640,19 +633,19 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 			Properties properties = object.getProperties();
 			if (properties != null) {
 				try {
-					avgLimitFactor = Double.parseDouble(((String) properties.get(MeasurementPropertyTypes.GOOGLE_EARTH_VELOCITY_AVG_LIMIT_FACTOR.value())).trim());
+					avgLimitFactor = Double.parseDouble(((String) properties.get(MeasurementPropertyTypes.GOOGLE_EARTH_VALUE_AVG_LIMIT_FACTOR.value())).trim());
 				}
 				catch (Exception e) {
 					// ignore
 				}
 				try {
-					lowerLimitVelocity = Integer.parseInt(((String) properties.get(MeasurementPropertyTypes.GOOGLE_EARTH_VELOCITY_LOWER_LIMIT.value())).trim());
+					lowerLimitValue = Double.parseDouble(((String) properties.get(MeasurementPropertyTypes.GOOGLE_EARTH_VALUE_LOWER_LIMIT.value())).trim());
 				}
 				catch (Exception e) {
 					// ignore
 				}
 				try {
-					upperLimitVelocity = Integer.parseInt(((String) properties.get(MeasurementPropertyTypes.GOOGLE_EARTH_VELOCITY_UPPER_LIMIT.value())).trim());
+					upperLimitValue = Double.parseDouble(((String) properties.get(MeasurementPropertyTypes.GOOGLE_EARTH_VALUE_UPPER_LIMIT.value())).trim());
 				}
 				catch (Exception e) {
 					// ignore
@@ -698,7 +691,7 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 			Integer activeChannelNumber = application.getActiveChannelNumber();
 			Integer measurementOrdinal = device.getGPS2KMZMeasurementOrdinal();
 			if(measurementOrdinal != null) {
-				PropertyType property = device.getMeasruementProperty(activeChannelNumber.intValue(), measurementOrdinal.intValue(), MeasurementPropertyTypes.GOOGLE_EARTH_VELOCITY_AVG_LIMIT_FACTOR.value());
+				PropertyType property = device.getMeasruementProperty(activeChannelNumber.intValue(), measurementOrdinal.intValue(), MeasurementPropertyTypes.GOOGLE_EARTH_VALUE_AVG_LIMIT_FACTOR.value());
 				if (property != null) {
 					try {
 						avgLimitFactor = Double.parseDouble(property.getValue());
@@ -707,19 +700,19 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 						// ignore
 					}
 				}
-				property = device.getMeasruementProperty(activeChannelNumber.intValue(), measurementOrdinal.intValue(), MeasurementPropertyTypes.GOOGLE_EARTH_VELOCITY_LOWER_LIMIT.value());
+				property = device.getMeasruementProperty(activeChannelNumber.intValue(), measurementOrdinal.intValue(), MeasurementPropertyTypes.GOOGLE_EARTH_VALUE_LOWER_LIMIT.value());
 				if (property != null) {
 					try {
-						lowerLimitVelocity = Integer.parseInt(property.getValue());
+						lowerLimitValue = Double.parseDouble(property.getValue());
 					}
 					catch (Exception e) {
 						// ignore
 					}
 				}
-				property = device.getMeasruementProperty(activeChannelNumber.intValue(), measurementOrdinal.intValue(), MeasurementPropertyTypes.GOOGLE_EARTH_VELOCITY_UPPER_LIMIT.value());
+				property = device.getMeasruementProperty(activeChannelNumber.intValue(), measurementOrdinal.intValue(), MeasurementPropertyTypes.GOOGLE_EARTH_VALUE_UPPER_LIMIT.value());
 				if (property != null) {
 					try {
-						upperLimitVelocity = Integer.parseInt(property.getValue());
+						upperLimitValue = Double.parseDouble(property.getValue());
 					}
 					catch (Exception e) {
 						// ignore
@@ -786,21 +779,21 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 			}
 		}
 
-		lowerLimitText.setText(GDE.STRING_EMPTY + lowerLimitVelocity);
-	  avgFactorText.setText(String.format("%.1f", avgLimitFactor)); //$NON-NLS-1$
-		upperLimitText.setText(GDE.STRING_EMPTY + upperLimitVelocity);
+		lowerLimitText.setText(GDE.STRING_EMPTY + lowerLimitValue);
+	  avgFactorText.setText(String.format("%.2f", avgLimitFactor)); //$NON-NLS-1$
+		upperLimitText.setText(GDE.STRING_EMPTY + upperLimitValue);
 		compositeLower.setBackground(SWTResourceManager.getColor(lowerLimitColor.red,lowerLimitColor.green,lowerLimitColor.blue));
 		compositeWithin.setBackground(SWTResourceManager.getColor(withinLimitsColor.red,withinLimitsColor.green,withinLimitsColor.blue));
 		compositeUpper.setBackground(SWTResourceManager.getColor(upperLimitColor.red,upperLimitColor.green,upperLimitColor.blue));
 
-		if(avgLimitFactor >= 1) {
+		if(avgLimitFactor >= 0.1) {
 			Integer measurementOrdinal = device.getGPS2KMZMeasurementOrdinal();
 			RecordSet activeRecordSet = application.getActiveRecordSet();
 			if (activeRecordSet != null && measurementOrdinal != null && measurementOrdinal >= 0) {
 				int avgValue = (int) device.translateValue(activeRecordSet.get(measurementOrdinal.intValue()), activeRecordSet.get(measurementOrdinal.intValue()).getAvgValue()/1000.0);
 				try {
-					lowerLimitText.setText(String.format("%d", (int)(avgValue/Double.parseDouble(avgFactorText.getText().replace(GDE.CHAR_COMMA, GDE.CHAR_DOT))))); //$NON-NLS-1$
-					upperLimitText.setText(String.format("%d", (int)(avgValue*Double.parseDouble(avgFactorText.getText().replace(GDE.CHAR_COMMA, GDE.CHAR_DOT))))); //$NON-NLS-1$
+					lowerLimitText.setText(String.format("%.1f", (avgValue/Double.parseDouble(avgFactorText.getText().replace(GDE.CHAR_COMMA, GDE.CHAR_DOT))))); //$NON-NLS-1$
+					upperLimitText.setText(String.format("%.1f", (avgValue*Double.parseDouble(avgFactorText.getText().replace(GDE.CHAR_COMMA, GDE.CHAR_DOT))))); //$NON-NLS-1$
 				}
 				catch (Exception e) {
 					// ignore
@@ -821,9 +814,9 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 	}
 
 	void makePersistent() {
-		lowerLimitVelocity = Integer.parseInt(lowerLimitText.getText());
+		lowerLimitValue = Double.parseDouble(lowerLimitText.getText().replace(GDE.CHAR_COMMA, GDE.CHAR_DOT));
 		avgLimitFactor = Double.parseDouble(avgFactorText.getText().replace(GDE.CHAR_COMMA, GDE.CHAR_DOT));
-		upperLimitVelocity = Integer.parseInt(upperLimitText.getText());
+		upperLimitValue = Double.parseDouble(upperLimitText.getText().replace(GDE.CHAR_COMMA, GDE.CHAR_DOT));
 
 		if (application.isObjectoriented()) {
 			ObjectData object = application.getObject();
@@ -833,15 +826,15 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 					properties = new Properties();
 					object.setProperties(properties);
 				}
-				if(avgLimitFactor > 0) {
-					properties.setProperty(MeasurementPropertyTypes.GOOGLE_EARTH_VELOCITY_AVG_LIMIT_FACTOR.value(), GDE.STRING_BLANK + avgLimitFactor);
-					if (properties.containsKey(MeasurementPropertyTypes.GOOGLE_EARTH_VELOCITY_LOWER_LIMIT.value())) properties.remove(MeasurementPropertyTypes.GOOGLE_EARTH_VELOCITY_LOWER_LIMIT.value());
-					if (properties.containsKey(MeasurementPropertyTypes.GOOGLE_EARTH_VELOCITY_UPPER_LIMIT.value())) properties.remove(MeasurementPropertyTypes.GOOGLE_EARTH_VELOCITY_UPPER_LIMIT.value());
+				if(avgLimitFactor >= 0.1) {
+					properties.setProperty(MeasurementPropertyTypes.GOOGLE_EARTH_VALUE_AVG_LIMIT_FACTOR.value(), GDE.STRING_BLANK + avgLimitFactor);
+					if (properties.containsKey(MeasurementPropertyTypes.GOOGLE_EARTH_VALUE_LOWER_LIMIT.value())) properties.remove(MeasurementPropertyTypes.GOOGLE_EARTH_VALUE_LOWER_LIMIT.value());
+					if (properties.containsKey(MeasurementPropertyTypes.GOOGLE_EARTH_VALUE_UPPER_LIMIT.value())) properties.remove(MeasurementPropertyTypes.GOOGLE_EARTH_VALUE_UPPER_LIMIT.value());
 				}
 				else {
-					if (properties.containsKey(MeasurementPropertyTypes.GOOGLE_EARTH_VELOCITY_AVG_LIMIT_FACTOR.value())) properties.remove(MeasurementPropertyTypes.GOOGLE_EARTH_VELOCITY_AVG_LIMIT_FACTOR.value());
-					properties.setProperty(MeasurementPropertyTypes.GOOGLE_EARTH_VELOCITY_LOWER_LIMIT.value(), GDE.STRING_BLANK + lowerLimitVelocity);
-					properties.setProperty(MeasurementPropertyTypes.GOOGLE_EARTH_VELOCITY_UPPER_LIMIT.value(), GDE.STRING_BLANK + upperLimitVelocity);
+					if (properties.containsKey(MeasurementPropertyTypes.GOOGLE_EARTH_VALUE_AVG_LIMIT_FACTOR.value())) properties.remove(MeasurementPropertyTypes.GOOGLE_EARTH_VALUE_AVG_LIMIT_FACTOR.value());
+					properties.setProperty(MeasurementPropertyTypes.GOOGLE_EARTH_VALUE_LOWER_LIMIT.value(), GDE.STRING_BLANK + lowerLimitValue);
+					properties.setProperty(MeasurementPropertyTypes.GOOGLE_EARTH_VALUE_UPPER_LIMIT.value(), GDE.STRING_BLANK + upperLimitValue);
 				}
 				properties.setProperty(MeasurementPropertyTypes.GOOGLE_EARTH_WITHIN_LIMITS_COLOR.value(), withinLimitsColor.red + GDE.STRING_COMMA + withinLimitsColor.green + GDE.STRING_COMMA	+ withinLimitsColor.blue);
 				properties.setProperty(MeasurementPropertyTypes.GOOGLE_EARTH_LOWER_LIMIT_COLOR.value(), lowerLimitColor.red + GDE.STRING_COMMA + lowerLimitColor.green + GDE.STRING_COMMA	+ lowerLimitColor.blue);
@@ -857,14 +850,14 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 			Integer measurementOrdinal = device.getGPS2KMZMeasurementOrdinal();
 			if(measurementOrdinal != null) {
 				if(avgLimitFactor >= 1) {
-					device.setMeasurementPropertyValue(activeChannelNumber.intValue(), measurementOrdinal.intValue(), MeasurementPropertyTypes.GOOGLE_EARTH_VELOCITY_AVG_LIMIT_FACTOR.value(), DataTypes.DOUBLE, avgLimitFactor);
-					device.setMeasurementPropertyValue(activeChannelNumber.intValue(), measurementOrdinal.intValue(), MeasurementPropertyTypes.GOOGLE_EARTH_VELOCITY_LOWER_LIMIT.value(), DataTypes.INTEGER, null);
-					device.setMeasurementPropertyValue(activeChannelNumber.intValue(), measurementOrdinal.intValue(), MeasurementPropertyTypes.GOOGLE_EARTH_VELOCITY_UPPER_LIMIT.value(), DataTypes.INTEGER, null);
+					device.setMeasurementPropertyValue(activeChannelNumber.intValue(), measurementOrdinal.intValue(), MeasurementPropertyTypes.GOOGLE_EARTH_VALUE_AVG_LIMIT_FACTOR.value(), DataTypes.DOUBLE, avgLimitFactor);
+					device.setMeasurementPropertyValue(activeChannelNumber.intValue(), measurementOrdinal.intValue(), MeasurementPropertyTypes.GOOGLE_EARTH_VALUE_LOWER_LIMIT.value(), DataTypes.DOUBLE, null);
+					device.setMeasurementPropertyValue(activeChannelNumber.intValue(), measurementOrdinal.intValue(), MeasurementPropertyTypes.GOOGLE_EARTH_VALUE_UPPER_LIMIT.value(), DataTypes.DOUBLE, null);
 				}
 				else {
-					device.setMeasurementPropertyValue(activeChannelNumber.intValue(), measurementOrdinal.intValue(), MeasurementPropertyTypes.GOOGLE_EARTH_VELOCITY_AVG_LIMIT_FACTOR.value(), DataTypes.DOUBLE, null);
-					device.setMeasurementPropertyValue(activeChannelNumber.intValue(), measurementOrdinal.intValue(), MeasurementPropertyTypes.GOOGLE_EARTH_VELOCITY_LOWER_LIMIT.value(), DataTypes.INTEGER, lowerLimitVelocity);
-					device.setMeasurementPropertyValue(activeChannelNumber.intValue(), measurementOrdinal.intValue(), MeasurementPropertyTypes.GOOGLE_EARTH_VELOCITY_UPPER_LIMIT.value(), DataTypes.INTEGER, upperLimitVelocity);
+					device.setMeasurementPropertyValue(activeChannelNumber.intValue(), measurementOrdinal.intValue(), MeasurementPropertyTypes.GOOGLE_EARTH_VALUE_AVG_LIMIT_FACTOR.value(), DataTypes.DOUBLE, null);
+					device.setMeasurementPropertyValue(activeChannelNumber.intValue(), measurementOrdinal.intValue(), MeasurementPropertyTypes.GOOGLE_EARTH_VALUE_LOWER_LIMIT.value(), DataTypes.DOUBLE, lowerLimitValue);
+					device.setMeasurementPropertyValue(activeChannelNumber.intValue(), measurementOrdinal.intValue(), MeasurementPropertyTypes.GOOGLE_EARTH_VALUE_UPPER_LIMIT.value(), DataTypes.DOUBLE, upperLimitValue);
 				}
 				device.setMeasurementPropertyValue(activeChannelNumber.intValue(), measurementOrdinal.intValue(), MeasurementPropertyTypes.GOOGLE_EARTH_WITHIN_LIMITS_COLOR.value(), DataTypes.STRING, withinLimitsColor.red + GDE.STRING_COMMA + withinLimitsColor.green + GDE.STRING_COMMA + withinLimitsColor.blue);
 				device.setMeasurementPropertyValue(activeChannelNumber.intValue(), measurementOrdinal.intValue(), MeasurementPropertyTypes.GOOGLE_EARTH_LOWER_LIMIT_COLOR.value(), DataTypes.STRING, lowerLimitColor.red + GDE.STRING_COMMA + lowerLimitColor.green + GDE.STRING_COMMA + lowerLimitColor.blue);
