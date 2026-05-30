@@ -455,8 +455,7 @@ public class DeviceJavaSerialCommPortImpl extends DeviceCommPort implements IDev
 
 		try {
 			if (this.jsApplication != null) this.jsApplication.setSerialRxOn();
-			if (!GDE.IS_MAC)
-				wait4Bytes(bytes, timeout_msec - (timeout_msec / 5));
+			wait4Bytes(bytes, timeout_msec - (timeout_msec / 5));
 
 
 			while (bytes != readBytes && timeOutCounter-- > 0) {
