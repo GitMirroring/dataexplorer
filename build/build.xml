@@ -443,6 +443,10 @@
 			<fileset file="${output.dir}/GNULinux_${sun.arch.data.model}/**" />
 		</copy>
 	</target>
+	
+	<target name="Linux_ARM" if="isLinux_ARM">
+		<echo message="${os.name} ${os.arch} ${sun.arch.data.model} dummy" />
+	</target>
 
 	<target name="MAC_X64" if="isMAC_X64">
 		<echo message="${os.name} ${os.arch} ${sun.arch.data.model}" />
