@@ -6,6 +6,7 @@ Generic changes/fixes
 	* KMZ export configuration dialog refined 
 	* initial support Windows on ARM
 	* enable double values in Google Earth customization dialog
+	* documentation update
 	
 Device specific changes/fixes
 	* iMax B8+ - update device picture

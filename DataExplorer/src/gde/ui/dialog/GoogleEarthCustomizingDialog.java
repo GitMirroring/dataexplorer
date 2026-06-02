@@ -172,7 +172,7 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 				colorCompositeLData.top =  new FormAttachment(0, 1000, 0);
 				colorCompositeLData.left =  new FormAttachment(0, 1000, 5);
 				colorCompositeLData.right =  new FormAttachment(1000, 1000, -5);
-				colorCompositeLData.height = 55;
+				colorCompositeLData.height = 60;
 				valueSelectorComposite.setLayoutData(colorCompositeLData);
 				RowLayout compositeLayout = new RowLayout(SWT.VERTICAL);
 				valueSelectorComposite.setLayout(compositeLayout);
@@ -363,7 +363,7 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 					lowerLimitText = new Text(limitComposite, SWT.SINGLE | SWT.RIGHT | SWT.BORDER);
 					RowData lowerLimitTextLData = new RowData();
 					lowerLimitTextLData.width = 40;
-					lowerLimitTextLData.height = GDE.IS_LINUX ? 12 : 16;
+					lowerLimitTextLData.height = GDE.IS_LINUX ? 10 : 16;
 					lowerLimitText.setLayoutData(lowerLimitTextLData);
 					lowerLimitText.addVerifyListener(new VerifyListener() {
 						@Override
@@ -386,7 +386,7 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 					avgFactorText = new Text(limitComposite, SWT.SINGLE | SWT.RIGHT | SWT.BORDER);
 					RowData avgFactorTextLData = new RowData();
 					avgFactorTextLData.width = 40;
-					avgFactorTextLData.height = GDE.IS_LINUX ? 12 : 16;
+					avgFactorTextLData.height = GDE.IS_LINUX ? 10 : 16;
 					avgFactorText.setLayoutData(avgFactorTextLData);
 					avgFactorText.addVerifyListener(new VerifyListener() {
 						@Override
@@ -441,7 +441,7 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 					upperLimitText = new Text(limitComposite, SWT.SINGLE | SWT.RIGHT | SWT.BORDER);
 					RowData upperLimitTextLData = new RowData();
 					upperLimitTextLData.width = 40;
-					upperLimitTextLData.height = GDE.IS_LINUX ? 12 : 16;
+					upperLimitTextLData.height = GDE.IS_LINUX ? 10 : 16;
 					upperLimitText.setLayoutData(upperLimitTextLData);
 					upperLimitText.addVerifyListener(new VerifyListener() {
 						@Override
@@ -464,7 +464,7 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 					avgText = new Text(limitComposite, SWT.SINGLE | SWT.RIGHT | SWT.BORDER);
 					RowData avgTextLData = new RowData();
 					avgTextLData.width = 40;
-					avgTextLData.height = GDE.IS_LINUX ? 12 : 16;
+					avgTextLData.height = GDE.IS_LINUX ? 10 : 16;
 					avgText.setLayoutData(avgTextLData);
 					avgText.setEditable(false);
 					Integer measurementOrdinal = device.getGPS2KMZMeasurementOrdinal();
@@ -501,7 +501,7 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 						this.startWebElevation = new Text(correctionComposite, SWT.SINGLE | SWT.RIGHT | SWT.BORDER);
 						RowData avgTextLData = new RowData();
 						avgTextLData.width = 40;
-						avgTextLData.height = GDE.IS_LINUX ? 12 : 16;
+						avgTextLData.height = GDE.IS_LINUX ? 10 : 16;
 						this.startWebElevation.setLayoutData(avgTextLData);
 						this.startWebElevation.setEditable(false);
 						this.startWebElevation.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0996));
@@ -533,7 +533,7 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 						this.elevationCorrectionText = new Text(correctionComposite, SWT.SINGLE | SWT.RIGHT | SWT.BORDER);
 						RowData avgTextLData = new RowData();
 						avgTextLData.width = 25;
-						avgTextLData.height = GDE.IS_LINUX ? 12 : 16;
+						avgTextLData.height = GDE.IS_LINUX ? 10 : 16;
 						this.elevationCorrectionText.setLayoutData(avgTextLData);
 						this.elevationCorrectionText.setEditable(true);
 						this.elevationCorrectionText.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0997));
@@ -570,7 +570,7 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 						this.startpointElevationText = new Text(correctionComposite, SWT.SINGLE | SWT.RIGHT | SWT.BORDER);
 						RowData avgTextLData = new RowData();
 						avgTextLData.width = 45;
-						avgTextLData.height = GDE.IS_LINUX ? 12 : 16;
+						avgTextLData.height = GDE.IS_LINUX ? 10 : 16;
 						this.startpointElevationText.setLayoutData(avgTextLData);
 						this.startpointElevationText.setEditable(false);
 						this.startpointElevationText.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0998));
