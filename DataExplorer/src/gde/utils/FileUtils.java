@@ -1097,7 +1097,7 @@ public class FileUtils {
 				// targetDirectory this.applHomePath + GDE.STRING_FILE_SEPARATOR_UNIX + Settings.DEVICE_PROPERTIES_DIR_NAME);
 				jarPath = basePath + "build" + "/target/" //$NON-NLS-1$ //$NON-NLS-2$
 						+ (GDE.IS_LINUX ? "GNU" : GDE.STRING_EMPTY) + System.getProperty("os.name").split(GDE.STRING_BLANK)[0] 
-						+ (System.getProperty("os.arch").equals("aarch64") ? "_ARM" : System.getProperty("os.arch").startsWith("x86") ? "_X64" : GDE.STRING_EMPTY)
+						+ (System.getProperty("os.arch").equals("aarch64") ? "_ARM" : System.getProperty("os.arch").startsWith("amd64") ? "_X64" : GDE.STRING_EMPTY)
 						+ (GDE.IS_MAC || GDE.IS_WINDOWS ? GDE.STRING_EMPTY : GDE.STRING_UNDER_BAR + GDE.BIT_MODE) //$NON-NLS-1$ //$NON-NLS-2$
 						+ GDE.STRING_FILE_SEPARATOR_UNIX + GDE.NAME_LONG + (GDE.IS_MAC ? GDE.STRING_MAC_DOT_APP + GDE.STRING_MAC_APP_RES_PATH : GDE.STRING_EMPTY) + "/devices"; //$NON-NLS-1$
 			}
