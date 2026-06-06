@@ -1144,7 +1144,7 @@ public class MenuToolBar {
 						@Override
 						public void widgetSelected(SelectionEvent evt) {
 							log.log(Level.FINEST, "googleEarthConfigToolItem.widgetSelected, event=" + evt); //$NON-NLS-1$
-							new GoogleEarthCustomizingDialog(application.getShell(), SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL).open();
+							new GoogleEarthCustomizingDialog(application.getShell(), SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL).open(null, null);
 						}
 					});
 				}

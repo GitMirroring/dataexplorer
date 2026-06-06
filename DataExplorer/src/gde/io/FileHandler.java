@@ -572,9 +572,8 @@ public class FileHandler {
 			return;
 		}
 		
-		if (!isRelative && !isClampToGround) {
-			new GoogleEarthCustomizingDialog(application.getShell(), SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL).open();
-		}
+		new GoogleEarthCustomizingDialog(application.getShell(), SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL).open(isRelative, isClampToGround);
+		final int configuredMeasurementOrdinal = this.application.getActiveDevice().getGPS2KMZMeasurementOrdinal();
 
 		Settings deviceSetting = Settings.getInstance();
 		String devicePath = getDevicePath();
@@ -610,7 +609,7 @@ public class FileHandler {
 				kmlFileName = kmlFileName != null && kmlFileName.contains(GDE.STRING_DOT) ? kmlFileName.substring(0, kmlFileName.indexOf(GDE.CHAR_DOT)) : kmlFileName;
 				kmlFileName = kmlFileName + GDE.FILE_ENDING_DOT_KML;
 
-				KMZWriter.write(kmzFilePath, kmlFileName, activeChannel.getActiveRecordSet(), ordinalLongitude, ordinalLatitude, ordinalAltitude, ordinalSpeed, ordinalClimb, ordinalTripLength,
+				KMZWriter.write(kmzFilePath, kmlFileName, activeChannel.getActiveRecordSet(), ordinalLongitude, ordinalLatitude, ordinalAltitude, configuredMeasurementOrdinal, ordinalClimb, ordinalTripLength,
 						ordinalAzimuth, isRelative, isClampToGround, false);
 
 			}
@@ -650,6 +649,9 @@ public class FileHandler {
 			this.application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGI0005));
 			return GDE.STRING_EMPTY;
 		}
+		
+		new GoogleEarthCustomizingDialog(application.getShell(), SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL).open(null, null);
+		final int configuredMeasurementOrdinal = this.application.getActiveDevice().getGPS2KMZMeasurementOrdinal();
 
 		Settings deviceSetting = Settings.getInstance();
 		String devicePath = getDevicePath();
@@ -675,7 +677,7 @@ public class FileHandler {
 				this.application.setCursor(SWTResourceManager.getCursor(SWT.CURSOR_WAIT));
 
 				KMZWriter.write(kmzFilePath, fileName.substring(fileName.lastIndexOf(GDE.FILE_SEPARATOR) + 1) + GDE.FILE_ENDING_DOT_KML, activeRecordSet, ordinalLongitude, ordinalLatitude, ordinalHeight,
-						ordinalMeasurement, ordinalSlope, ordinalTripLength, ordinalAzimuth, isHeightRelative, ordinalHeight == -1, isExportTmpDir);
+						configuredMeasurementOrdinal, ordinalSlope, ordinalTripLength, ordinalAzimuth, isHeightRelative, ordinalHeight == -1, isExportTmpDir);
 			}
 			catch (Exception e) {
 				FileHandler.log.log(Level.WARNING, e.getMessage(), e);

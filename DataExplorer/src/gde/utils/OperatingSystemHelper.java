@@ -959,11 +959,11 @@ public class OperatingSystemHelper {
 	public static void launchGoogleEarth(IDevice activeDevice) {
 		ApplicationLauncher launcher;
 		if (GDE.IS_MAC)
-			launcher = new ApplicationLauncher(GDE.STRING_MAC_APP_OPEN, new String[] { "Google Earth" }, GDE.STRING_MAC_APP_BASE_PATH + "Google Earth" + GDE.STRING_MAC_DOT_APP); //$NON-NLS-1$ //$NON-NLS-2$
+			launcher = new ApplicationLauncher(GDE.STRING_MAC_APP_OPEN, new String[] { "Google Earth" }, GDE.STRING_MAC_APP_BASE_PATH + "Google Earth Pro" + GDE.STRING_MAC_DOT_APP); //$NON-NLS-1$ //$NON-NLS-2$
 		else if (GDE.IS_LINUX)
-			launcher = new ApplicationLauncher(GDE.STRING_LINUX_APP_OPEN, new String[] { "googleearth", "google-earth" }, "which"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			launcher = new ApplicationLauncher(GDE.STRING_LINUX_APP_OPEN, new String[] { "googleearth", "google-earth", "googleearthpro", "google-earth-pro" }, "which"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		else //GDE.IS_WINDOWS
-			launcher = new ApplicationLauncher(GDE.STRING_WINDOWS_APP_OPEN, new String[] { "Google Earth.kmzfile", "Google Earth.kmlfile" }, //$NON-NLS-1$
+			launcher = new ApplicationLauncher(GDE.STRING_WINDOWS_APP_OPEN, new String[] { "Google Earth Pro.kmzfile", "Google Earth.kmlfile" }, //$NON-NLS-1$
 					"Registry - HKEY_CLASSES_ROOT und HKEY_LOCAL_MACHINE\\SOFTWARE\\Classes");
 
 		if (launcher.isLaunchable()) {

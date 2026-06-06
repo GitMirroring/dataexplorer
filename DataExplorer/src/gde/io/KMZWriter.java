@@ -407,7 +407,7 @@ public class KMZWriter {
 			//find altitude value which can be used as start point while exporting relative to ground
 			//this is required while absolute GPS-altitude or absolute pressure related altitude where start value is not zero
 			int gpsStartIndex = GPSHelper.getStartIndexGPS(recordSet, ordinalLatitude, ordinalLongitude);
-			height0 = isAltRelative && !isClampToGround && recordAltitude != null ? device.translateValue(recordAltitude, recordAltitude.realGet(gpsStartIndex) / 1000.0) : 0;
+			height0 = recordAltitude != null ? device.translateValue(recordAltitude, recordAltitude.realGet(gpsStartIndex) / 1000.0) : 0;
 		
 			int startElevationValue = Settings.getInstance().getStartpointElevation();
 			int startPointElevation = 0;

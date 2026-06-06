@@ -102,6 +102,7 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 	Composite compositeUpper;
 	Composite compositeWithin;
 	Composite compositeLower;
+	CLabel startPointElevationLabel, operationLabel, correctionResultLabel, corrUnitLabel;
 	Text elevationCorrectionText, startWebElevation, startpointElevationText;
 
 	double upperLimitValue = 100.;
@@ -120,7 +121,7 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 			Display display = Display.getDefault();
 			Shell shell = new Shell(display);
 			GoogleEarthCustomizingDialog inst = new GoogleEarthCustomizingDialog(shell, SWT.NULL);
-			inst.open();
+			inst.open(null, null);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -133,7 +134,7 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 		this.device = this.application.getActiveDevice();
 	}
 
-	public void open() {
+	public void open(Boolean isRelative, Boolean isClampToGround) {
 		try {
 			Shell parent = getParent();
 			dialogShell = new Shell(parent, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
@@ -489,13 +490,13 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 					corrCompositeLData.bottom =  new FormAttachment(1000, 1000, -42);
 					correctionComposite.setLayoutData(corrCompositeLData);
 					{
-						CLabel correctionLabel = new CLabel(correctionComposite, SWT.RIGHT);
+						startPointElevationLabel = new CLabel(correctionComposite, SWT.CENTER);
 						RowData averageLabelLData = new RowData();
 						averageLabelLData.width = 100;
 						averageLabelLData.height = 22;
-						correctionLabel.setLayoutData(averageLabelLData);
-						correctionLabel.setText(Messages.getString(MessageIds.GDE_MSGT0994));
-						correctionLabel.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0995));
+						startPointElevationLabel.setLayoutData(averageLabelLData);
+						startPointElevationLabel.setText(Messages.getString(MessageIds.GDE_MSGT0994));
+						startPointElevationLabel.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0995));
 					}
 					{
 						this.startWebElevation = new Text(correctionComposite, SWT.SINGLE | SWT.RIGHT | SWT.BORDER);
@@ -522,7 +523,7 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 						});
 					}
 					{
-						CLabel operationLabel = new CLabel(correctionComposite, SWT.CENTER);
+						operationLabel = new CLabel(correctionComposite, SWT.CENTER);
 						RowData averageLabelLData = new RowData();
 						averageLabelLData.width = 20;
 						averageLabelLData.height = 22;
@@ -559,12 +560,12 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 						});
 					}
 					{
-						CLabel correctionLabel = new CLabel(correctionComposite, SWT.CENTER);
+						correctionResultLabel = new CLabel(correctionComposite, SWT.CENTER);
 						RowData averageLabelLData = new RowData();
 						averageLabelLData.width = 20;
 						averageLabelLData.height = 22;
-						correctionLabel.setLayoutData(averageLabelLData);
-						correctionLabel.setText(" = ");
+						correctionResultLabel.setLayoutData(averageLabelLData);
+						correctionResultLabel.setText(" = ");
 					}
 					{
 						this.startpointElevationText = new Text(correctionComposite, SWT.SINGLE | SWT.RIGHT | SWT.BORDER);
@@ -576,7 +577,7 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 						this.startpointElevationText.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0998));
 					}
 					{
-						CLabel corrUnitLabel = new CLabel(correctionComposite, SWT.RIGHT);
+						corrUnitLabel = new CLabel(correctionComposite, SWT.RIGHT);
 						RowData averageLabelLData = new RowData();
 						averageLabelLData.width = 30;
 						averageLabelLData.height = 22;
@@ -606,7 +607,7 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 					}
 				});
 			}
-			initialize();
+			initialize(isRelative, isClampToGround);
 			this.dialogShell.setLocation(getParent().toDisplay(350, 50));
 			dialogShell.open();
 			avgFactorText.notifyListeners(SWT.KeyUp, new Event()); //update average value according to selected measurement
@@ -620,7 +621,7 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 		}
 	}
 
-	void initialize() {
+	void initialize(Boolean isRelative, Boolean isClampToGround) {
 		lowerLimitValue = 20.;
 		avgLimitFactor = 0.0;
 		upperLimitValue = 100.;
@@ -808,8 +809,25 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 		  avgFactorText.setBackground(this.application.COLOR_LIGHT_GREY);
 			upperLimitText.setBackground(this.application.COLOR_WHITE);
 		}
-		this.elevationCorrectionText.setText(GDE.STRING_EMPTY + this.settings.getStartElevationCorrection());
-		this.getStartpointElevation(this.startWebElevation);
+		boolean isRelative2Ground = isRelative == null ? false : isRelative;
+		boolean isClamp2Ground = isClampToGround == null ? false : isClampToGround;
+		if (!isRelative2Ground && !isClamp2Ground) {
+			this.elevationCorrectionText.setText(GDE.STRING_EMPTY + this.settings.getStartElevationCorrection());
+			this.getStartpointElevation(this.startWebElevation);
+		}
+		else {
+			RowData averageLabelLData = new RowData();
+			averageLabelLData.width = 400;
+			averageLabelLData.height = 22;
+			this.startPointElevationLabel.setLayoutData(averageLabelLData);
+			this.startPointElevationLabel.setText(isRelative2Ground ? "relativeToGround" : isClamp2Ground ? "clampToGround" : "absolute");
+			this.operationLabel.setVisible(false);
+			this.correctionResultLabel.setVisible(false);
+			this.corrUnitLabel.setVisible(false);
+			this.elevationCorrectionText.setVisible(false);
+			this.startWebElevation.setVisible(false);
+			this.startpointElevationText.setVisible(false);
+		}
 
 	}
 
