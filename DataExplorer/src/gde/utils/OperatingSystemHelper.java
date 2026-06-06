@@ -963,7 +963,7 @@ public class OperatingSystemHelper {
 		else if (GDE.IS_LINUX)
 			launcher = new ApplicationLauncher(GDE.STRING_LINUX_APP_OPEN, new String[] { "googleearth", "google-earth", "googleearthpro", "google-earth-pro" }, "which"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		else //GDE.IS_WINDOWS
-			launcher = new ApplicationLauncher(GDE.STRING_WINDOWS_APP_OPEN, new String[] { "Google Earth Pro.kmzfile", "Google Earth.kmlfile" }, //$NON-NLS-1$
+			launcher = new ApplicationLauncher(GDE.STRING_WINDOWS_APP_OPEN, new String[] { "GoogleEarth.kmzfile", "GoogleEarth.kmlfile" }, //$NON-NLS-1$
 					"Registry - HKEY_CLASSES_ROOT und HKEY_LOCAL_MACHINE\\SOFTWARE\\Classes");
 
 		if (launcher.isLaunchable()) {
