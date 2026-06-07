@@ -820,7 +820,10 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 			averageLabelLData.width = 400;
 			averageLabelLData.height = 22;
 			this.startPointElevationLabel.setLayoutData(averageLabelLData);
-			this.startPointElevationLabel.setText(isRelative2Ground ? "relativeToGround" : isClamp2Ground ? "clampToGround" : "absolute");
+			String relativeToGround = Messages.getString(gde.messages.MessageIds.GDE_MSGT0965).substring(8);
+			String clampToGround = Messages.getString(gde.messages.MessageIds.GDE_MSGT0967).substring(8);
+			String absolute = Messages.getString(gde.messages.MessageIds.GDE_MSGT0966).substring(8);
+			this.startPointElevationLabel.setText(isRelative2Ground ? relativeToGround : isClamp2Ground ? clampToGround : absolute);
 			this.operationLabel.setVisible(false);
 			this.correctionResultLabel.setVisible(false);
 			this.corrUnitLabel.setVisible(false);
