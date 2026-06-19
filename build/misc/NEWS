@@ -1,31 +1,23 @@
-GNU DataExplorer - News - comes with Version 4.0.5 - 14 May 2026
+GNU DataExplorer - News - comes with Version 4.0.6 - 20 Jun 2026
 
 Generic changes/fixes 
-	* fix upgrade dialog resize problem (ARM 64)
-	* enable error message box while detecting error from jSerialComm
-	* enable MacOS ARM build
-	* enable storing/deleting zoom steps per recordSet, enable switching  between this steps
-	* add one time action correct the cool bar due to re-organization 
-	* enable KMZ export using the globe with relativeToGround as well as with absolute altitude
-	* update documentation
+	* starting with release version 4.0.6 ReleaseVersion.txt will provide actual version information for update check
+	* KMZ export configuration dialog refined 
+	* enable double values in Google Earth customization dialog
+	* open 'KMZ Export Configuration' dialog each time KMZ get exported
+	* initial support Windows on ARM
+	* documentation update
 	
 Device specific changes/fixes
-	* UT61E - correct unexpected behavior
-	* UT71D - add initial support
-	* IGCAdapter - adaptation for task statistics of Albatross v4.4.4+
-	* HoTTAdapter* - update value changes according GPS-Logger FW >= 1.32
+	* iMax B8+ - update device picture
 			
 Allgemeine Änderungen/Korrekturen
-	* fix upgrade dialog resize problem (ARM 64)
-	* enable error message box while detecting error from jSerialComm
-	* enable MacOS ARM build
-	* enable storing/deleting zoom steps per recordSet, enable switching  between this steps
-	* add one time action correct the cool bar due to re-organization 
-	* enable KMZ export using the globe with relativeToGround as well as with absolute altitude
-	* update documentation
+	* beginnend mit der Freigabe von Version 4.0.6 'ReleaseVersion.txt' enthält die Information zur aktuellen Version für den Update-Check
+	* KMZ Export Konfiguration Dialog verbessert 
+	* benutze Gleitkommazahlen beim Google Earth Konfigurations Dialog
+	* öffne den 'KMZ Export Configuration' Dialog jedes Mal, wenn eine KMZ Datei exportiert wird
+	* initiale Unterstützung für Windows mit ARM Prozessor
+	* documentation update
 
 Gerätespezifische Änderungen
-	* UT61E - unerwartetes Verhalten korrigiert
-	* UT71D - initiale Geräteunterstützung
-	* IGCAdapter - Anpassung der Statistik für Albatross v4.4.4+
-	* HoTTAdapter* - Anpassung geänderter Werte SM GPS-Logger FW >= 1.32
+	* iMax B8+ - Gerätebild erneuert

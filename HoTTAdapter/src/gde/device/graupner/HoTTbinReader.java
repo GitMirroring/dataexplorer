@@ -1772,11 +1772,10 @@ public class HoTTbinReader {
 			this.tmpClimb3 = (_buf3[2] & 0xFF);
 			this.tmpVelocity = DataParser.parse2UnsignedShort(_buf1, 4) * 1000;
 			this.points[0] = (_buf0[4] & 0xFF) * 1000;
+			//0=RXSQ, 1=Latitude, 2=Longitude, 3=Altitude, 4=Climb 1, 5=Climb 3, 6=Velocity, 7=Distance, 8=Direction, 9=TripLength, 10=VoltageRx, 11=TemperatureRx 12=satellites 13=GPS-fix 14=EventGPS
+			//15=HomeDirection 16=Roll 17=Pitch 18=Yaw 19=GyroX 20=GyroY 21=GyroZ 22=Vibration 23=Version	
+			this.points[6] = this.pickerParameters.isFilterEnabled && this.tmpVelocity > 500000 ? this.points[6] : this.tmpVelocity;
 			if (isPointsValid()) {
-				//0=RXSQ, 1=Latitude, 2=Longitude, 3=Altitude, 4=Climb 1, 5=Climb 3, 6=Velocity, 7=Distance, 8=Direction, 9=TripLength, 10=VoltageRx, 11=TemperatureRx 12=satellites 13=GPS-fix 14=EventGPS
-				//15=HomeDirection 16=Roll 17=Pitch 18=Yaw 19=GyroX 20=GyroY 21=GyroZ 22=Vibration 23=Version	
-				this.points[6] = this.pickerParameters.isFilterEnabled && this.tmpVelocity > 2000000 ? this.points[6] : this.tmpVelocity;
-
 				this.tmpLatitude = DataParser.parse2UnsignedShort(_buf1, 7) * 10000 + DataParser.parse2UnsignedShort(_buf1[9], _buf2[0]);
 				this.tmpLatitude = _buf1[6] == 1 ? -1 * this.tmpLatitude : this.tmpLatitude;
 				this.tmpLatitudeDelta = Math.abs(this.tmpLatitude - this.points[1]);

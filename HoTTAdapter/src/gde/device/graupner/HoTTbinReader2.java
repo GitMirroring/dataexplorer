@@ -1031,9 +1031,8 @@ public class HoTTbinReader2 extends HoTTbinReader {
 			this.tmpClimb1 = (DataParser.parse2UnsignedShort(this._buf3, 0) - 30000);
 			this.tmpClimb3 = (this._buf3[2] & 0xFF) - 120;
 			this.tmpVelocity = DataParser.parse2UnsignedShort(this._buf1, 4) * 1000;
+			this.points[22] = this.pickerParameters.isFilterEnabled && this.tmpVelocity > 500000 ? this.points[22] : this.tmpVelocity;
 			if (isPointsValid()) {
-				this.points[22] = this.pickerParameters.isFilterEnabled && this.tmpVelocity > 500000 ? this.points[22] : this.tmpVelocity;
-
 				this.tmpLatitude = DataParser.parse2UnsignedShort(this._buf1, 7) * 10000 + DataParser.parse2UnsignedShort(this._buf1[9], this._buf2[0]);
 				this.tmpLatitude = this._buf1[6] == 1 ? -1 * this.tmpLatitude : this.tmpLatitude;
 				this.tmpLatitudeDelta = Math.abs(this.tmpLatitude - this.points[20]);
