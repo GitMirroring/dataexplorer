@@ -3353,8 +3353,10 @@ public class DataExplorer extends Composite {
 							String arch = System.getProperty("sun.arch.data.model");
 							String version = versionCheck[1];
 							String filename = GDE.STRING_EMPTY;
-							if (GDE.IS_WINDOWS) // DataExplorer_Setup_3.0.8_win64.exe
+							if (GDE.IS_WINDOWS && !GDE.IS_OS_ARCH_ARM) // DataExplorer_Setup_3.0.8_win64.exe
 								filename = "DataExplorer_Setup_" + version + "_win" + arch + GDE.FILE_ENDING_DOT_EXE;
+							else if (GDE.IS_WINDOWS && GDE.IS_OS_ARCH_ARM) // DataExplorer_Setup_3.0.8_winARM.exe
+								filename = "DataExplorer_Setup_" + version + "_winARM" + GDE.FILE_ENDING_DOT_EXE;
 							else if (GDE.IS_LINUX && GDE.IS_OS_ARCH_ARM) // dataexplorer-3.0.8-bin_Linux_ARM_64.tar.gz
 								filename = "dataexplorer-" + version + "-bin_Linux_ARM_" + arch + ".tar.gz";
 							else if (GDE.IS_LINUX && !GDE.IS_OS_ARCH_ARM) // dataexplorer-3.0.8-bin_GNULinux_x86_64.tar.gz
