@@ -1522,7 +1522,7 @@ public class HoTTbinReader {
 				this.points[9] = (_buf[32] & 0x65) * 1000; // warning E,V,T only
 			else
 				this.points[9] = 0;
-			return false;
+			return true;
 		}
 
 		/**
@@ -1720,7 +1720,7 @@ public class HoTTbinReader {
 				return true;
 			}
 			this.points[7] = (_buf1[1] & 0x3F) * 1000; // inverse event
-			return false;
+			return true;
 		}
 
 		private  boolean isPointsValid() {
@@ -1918,11 +1918,17 @@ public class HoTTbinReader {
 				return true;
 			}
 			this.points[14] = (_buf1[1] & 0x0F) * 1000; // inverse event
-			return false;
+			return true;
 		}
 
 		private boolean isPointsValid() {
-			return !this.pickerParameters.isFilterEnabled || (this.tmpClimb1 > 10000 && this.tmpClimb3 > 30 && this.tmpHeight > 10 && this.tmpHeight < 4500);
+			if ((this.tmpClimb1 - 30000) < -20000) 
+				System.out.println((this.tmpClimb1 - 30000));
+			if ((this.tmpHeight - 500) < -490)
+				System.out.println((this.tmpHeight - 500));
+			if ((this.tmpHeight - 500) > 4500)
+				System.out.println((this.tmpHeight - 500));
+			return !this.pickerParameters.isFilterEnabled || ((this.tmpClimb1 - 30000) > -20000 && (this.tmpHeight - 500) >= -490 && (this.tmpHeight - 500) < 4500);
 		}
 	}
 
@@ -2015,7 +2021,7 @@ public class HoTTbinReader {
 			if ((_buf1[1] & 0xFF) + ((_buf1[2] & 0x7F) << 8) != 0)
 				this.points[25] = ((_buf1[1] & 0xFF) + ((_buf1[2] & 0x7F) << 8)) * 1000; //inverse event
 			++this.parseCount;
-			return false;
+			return true;
 		}
 
 		private boolean isPointsValid() {
@@ -2113,7 +2119,7 @@ public class HoTTbinReader {
 			}
 			this.points[30] = ((_buf1[1] & 0xFF) + ((_buf1[2] & 0x7F) << 8)) * 1000; // inverse event
 			++this.parseCount;
-			return false;
+			return true;
 		}
 
 		private boolean isPointsValid() {
@@ -2236,7 +2242,7 @@ public class HoTTbinReader {
 			if ((_buf1[1] & 0xFF) != 0)
 				this.points[13] = (_buf1[1] & 0xFF) * 1000; //inverse event
 			++this.parseCount;
-			return false;
+			return true;
 		}
 
 		private boolean isPointsValid() {

@@ -1,5 +1,12 @@
 Development history / change log, please read from bottom up
 
+Version 4.0.7 - xx yyy 2026
+Generic changes/fixes 
+	* 
+	
+Device specific changes/fixes
+	* HoTTAdapter* - synchronize filter GPS parser
+
 Version 4.0.6 - 20 Jun 2026
 Generic changes/fixes 
 	* starting with release version 4.0.6 ReleaseVersion.txt will provide actual version information for update check
