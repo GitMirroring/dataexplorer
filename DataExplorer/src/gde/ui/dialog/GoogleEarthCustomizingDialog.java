@@ -517,7 +517,12 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 										startpointElevationText.setText(GDE.STRING_EMPTY + (Integer.parseInt(elevationCorrectionText.getText()) + Integer.parseInt(startWebElevation.getText())));
 									}
 									catch (Exception e) {
-										//ignore
+										try {
+											startpointElevationText.setText(GDE.STRING_EMPTY + (Integer.parseInt(elevationCorrectionText.getText())));
+										}
+										catch (NumberFormatException e1) {
+											// ignore, while editing NumberFormatException is always possible
+										}
 									}
 							}
 						});
@@ -547,14 +552,20 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 						this.elevationCorrectionText.addModifyListener(new ModifyListener() {					
 							public void modifyText(ModifyEvent evt) {
 								//if (!corrValueText.getText().equals("") && !corrValueText.getText().equals("-") && !startElevation.getText().equals("")) 
-								if (elevationCorrectionText.getText().equals("-1"))
+								if (elevationCorrectionText.getText().equals("-1")) {
 									startpointElevationText.setText("-1");
+								}
 								else
 									try {
 										startpointElevationText.setText(GDE.STRING_EMPTY + (Integer.parseInt(elevationCorrectionText.getText()) + Integer.parseInt(startWebElevation.getText())));
 									}
 									catch (Exception e) {
-										//ignore
+										try {
+											startpointElevationText.setText(GDE.STRING_EMPTY + (Integer.parseInt(elevationCorrectionText.getText())));
+										}
+										catch (NumberFormatException e1) {
+											// ignore, while editing NumberFormatException is always possible
+										}
 									}
 							}
 						});
@@ -813,7 +824,8 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 		boolean isClamp2Ground = isClampToGround == null ? false : isClampToGround;
 		if (!isRelative2Ground && !isClamp2Ground) {
 			this.elevationCorrectionText.setText(GDE.STRING_EMPTY + this.settings.getStartElevationCorrection());
-			this.getStartpointElevation(this.startWebElevation);
+			if (this.settings.getStartElevationCorrection() != -1)
+				this.getStartpointElevation(this.startWebElevation);
 		}
 		else {
 			RowData averageLabelLData = new RowData();
@@ -903,12 +915,19 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 				if (activeDevice.isActualRecordSetWithGpsData()) {
 					int[] latLng = activeDevice.getGPSLatLngOrdinals();
 					if (latLng[0] != -1 && latLng[1] != -1) {
-						int gpsStartIndex = GPSHelper.getStartIndexGPS(activeRecordSet, latLng[0], latLng[1]);
-						Record recordLatitude = activeRecordSet.get(latLng[0]);
-						Record recordLongitude = activeRecordSet.get(latLng[1]);
-						int elevation = GPSHelper.getElevation(new GpsCoordinate(device.translateValue(recordLatitude, recordLatitude.realGet(gpsStartIndex) / 1000.0),
-								device.translateValue(recordLongitude, recordLongitude.realGet(gpsStartIndex) / 1000.0)));
-						textItem.setText(GDE.STRING_EMPTY + elevation);
+						try {
+							int gpsStartIndex = GPSHelper.getStartIndexGPS(activeRecordSet, latLng[0], latLng[1]);
+							Record recordLatitude = activeRecordSet.get(latLng[0]);
+							Record recordLongitude = activeRecordSet.get(latLng[1]);
+							int elevation = GPSHelper.getElevation(new GpsCoordinate(device.translateValue(recordLatitude, recordLatitude.realGet(gpsStartIndex) / 1000.0),
+									device.translateValue(recordLongitude, recordLongitude.realGet(gpsStartIndex) / 1000.0)));
+							textItem.setText(GDE.STRING_EMPTY + elevation);
+						}
+						catch (Exception e) {
+							log.log(Level.WARNING, e.getMessage());
+							textItem.setText("error");
+							textItem.setForeground(SWTResourceManager.getColor(255,10,10));
+						}
 					}
 				}
 			}

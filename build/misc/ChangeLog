@@ -2,7 +2,7 @@ Development history / change log, please read from bottom up
 
 Version 4.0.7 - xx yyy 2026
 Generic changes/fixes 
-	* 
+	* elevation web-service failing show "error" instead of "0", do not call elevation service if correction value set to -1 for relative2ground
 	
 Device specific changes/fixes
 	* HoTTAdapter* - synchronize filter GPS parser

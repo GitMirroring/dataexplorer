@@ -838,9 +838,10 @@ public class GPSHelper {
 	/**
 	 * try to call a web-service to find a GPS coordinate related elevation 
 	 * @param gpsCoordinate
-	 * @return found elevation in m or -1 if failed
+	 * @return found elevation in m or throw exception if failed
+	 * @throws Exception 
 	 */
-	public static int getElevation(GpsCoordinate gpsCoordinate) {
+	public static int getElevation(GpsCoordinate gpsCoordinate) throws Exception {
 		try {
 			Analyzer analyzer = Analyzer.getInstance();
 			DataAccess dataAccess = analyzer.getDataAccess();
@@ -849,6 +850,10 @@ public class GPSHelper {
 				//https://api.opentopodata.org/v1/test-dataset?locations=48.62890252073733,8.988615870996933
 				//https://maps.googleapis.com/maps/api/geocode/json?latlng=48.62890252073733,8.988615870996933
 				//https://api.open-elevation.com/api/v1/lookup?locations=48.637106,8.984413
+				//https://api.elevationapi.com/api/Elevation?lat=48.641073&lon=8.985102&dataSet=SRTM_GL3
+				//https://www.elevation-api.eu/v1/elevation/48.641073/8.985102
+				//https://openzenith.cyopsys.com/api/elevation?lat=48.641073&lon=8.985102
+				//https://api.open-meteo.com/v1/elevation?latitude=48.641073&longitude=8.985102
 				String url = String.format(Locale.US, "https://api.open-elevation.com/api/v1/lookup?locations=%f,%f", gpsCoordinate.getLatitude(), gpsCoordinate.getLongitude());
 				log.log(Level.INFO, "Request URL " + url);
 				URL requestUrl = new URI(url).toURL();
@@ -878,23 +883,46 @@ public class GPSHelper {
 				JsonParser jsonParser = new JsonParser();
 
 				JsonObject jsonObject = (JsonObject) jsonParser.parse(sb.toString());
-
-				//System.out.println("status = " + jsonObject.get("status"));
-				//System.out.println("elevation = " + jsonObject.get("results").getAsJsonArray().get(0).getAsJsonObject().get("elevation"));
-				
 				String elevation = jsonObject.get("results").getAsJsonArray().get(0).getAsJsonObject().get("elevation").getAsString();
 				
 				return (int) (Double.valueOf(elevation)+1.5);
 			}
 			catch (Throwable e) {
-				log.log(Level.WARNING, e.getMessage(), e);
+				log.log(Level.WARNING, e.getMessage() + " - retry with different service");
+				
+				String url = String.format(Locale.US, "https://www.elevation-api.eu/v1/elevation/%f/%f", gpsCoordinate.getLatitude(), gpsCoordinate.getLongitude());
+				log.log(Level.INFO, "Request URL " + url);
+				URL requestUrl = new URI(url).toURL();
+				InputStream inputStream = ((LocalAccess) dataAccess).getHttpsInputStream(requestUrl);
+				BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+				StringBuilder sb = new StringBuilder();
+
+				String line = null;
+				try {
+					while ((line = reader.readLine()) != null) {
+						sb.append(line + "\n");
+					}
+				}
+				catch (IOException e1) {
+					log.log(Level.WARNING, e1.getMessage(), e1);
+				}
+				finally {
+					try {
+						inputStream.close();
+					}
+					catch (IOException e1) {
+						log.log(Level.WARNING, e1.getMessage(), e1);
+					}
+				}
+				log.log(Level.INFO, sb.toString());
+				
+				return (int) (Double.valueOf(sb.toString())+1.5);				
 			}
 		}
 		catch (Throwable e) {
 			log.log(Level.WARNING, e.getMessage(), e);
+			throw new Exception("elevation servers unavailable");
 		}
-
-	return 0;
 	}
 
 }
