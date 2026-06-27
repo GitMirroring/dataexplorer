@@ -97,7 +97,7 @@ public class iCharger306B extends iCharger {
 	 * convert the device bytes into raw values, no calculation will take place here, see translateValue reverseTranslateValue
 	 * inactive or to be calculated data point are filled with 0 and needs to be handles after words
 	 * @param points pointer to integer array to be filled with converted data
-	 * @param dataBuffer byte arrax with the data to be converted
+	 * @param dataBuffer byte array with the data to be converted
 	 */
 	@Override
 	public int[] convertDataBytes(int[] points, byte[] dataBuffer) {		

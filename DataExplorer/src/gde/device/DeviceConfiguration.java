@@ -3149,7 +3149,7 @@ public class DeviceConfiguration {
 				final Record record = recordSet.get(recordNames[j]);
 				MeasurementType  measurement = this.getMeasurement(recordSet.getChannelConfigNumber(), record.getOrdinal());
 				if (!measurement.isCalculation()) {	// only use active records for writing raw data
-					dataTableRow[index] = String.format("%d", record.realGet(rowIndex)/1000);
+					dataTableRow[index] = String.format("%.3f", record.realGet(rowIndex)/1000.);
 					++index;
 				}
 			}
