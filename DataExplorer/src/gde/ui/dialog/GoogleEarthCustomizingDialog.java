@@ -121,7 +121,7 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 			Display display = Display.getDefault();
 			Shell shell = new Shell(display);
 			GoogleEarthCustomizingDialog inst = new GoogleEarthCustomizingDialog(shell, SWT.NULL);
-			inst.open(null, null);
+			inst.open(null, null, null);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -134,8 +134,9 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 		this.device = this.application.getActiveDevice();
 	}
 
-	public void open(Boolean isRelative, Boolean isClampToGround) {
+	public void open(Boolean isRelative, Boolean isClampToGround, Boolean isFileHandler) {
 		try {
+			boolean isCalledByFileHandler = isFileHandler == null ? false : isFileHandler;
 			Shell parent = getParent();
 			dialogShell = new Shell(parent, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
 			SWTResourceManager.registerResourceUser(dialogShell);
@@ -600,7 +601,7 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 			}
 			{
 				closeButton = new Button(dialogShell, SWT.PUSH | SWT.CENTER);
-				closeButton.setText(Messages.getString(MessageIds.GDE_MSGT0291));
+				closeButton.setText(isCalledByFileHandler == true ? Messages.getString(MessageIds.GDE_MSGT0999) : Messages.getString(MessageIds.GDE_MSGT0291));
 				closeButton.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0292));
 				FormData closeButtonLData = new FormData();
 				closeButtonLData.height = 25;

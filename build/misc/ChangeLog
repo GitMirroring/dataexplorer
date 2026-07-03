@@ -4,6 +4,7 @@ Version 4.0.7 - xx yyy 2026
 Generic changes/fixes 
 	* elevation web-service failing show "error" instead of "0", do not call elevation service if correction value set to -1 for relative2ground
 	* correct raw CSV export integer to float.3
+	* update close button of KMZ Export-Configuration in context of usage scenario 
 	
 Device specific changes/fixes
 	* HoTTAdapter* - synchronize filter GPS parser

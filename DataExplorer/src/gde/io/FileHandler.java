@@ -572,7 +572,7 @@ public class FileHandler {
 			return;
 		}
 		
-		new GoogleEarthCustomizingDialog(application.getShell(), SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL).open(isRelative, isClampToGround);
+		new GoogleEarthCustomizingDialog(application.getShell(), SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL).open(isRelative, isClampToGround, true);
 		final int configuredMeasurementOrdinal = this.application.getActiveDevice().getGPS2KMZMeasurementOrdinal();
 
 		Settings deviceSetting = Settings.getInstance();
@@ -650,7 +650,7 @@ public class FileHandler {
 			return GDE.STRING_EMPTY;
 		}
 		
-		new GoogleEarthCustomizingDialog(application.getShell(), SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL).open(null, null);
+		new GoogleEarthCustomizingDialog(application.getShell(), SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL).open(null, null, true);
 		final int configuredMeasurementOrdinal = this.application.getActiveDevice().getGPS2KMZMeasurementOrdinal();
 
 		Settings deviceSetting = Settings.getInstance();
