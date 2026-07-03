@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.10.17
+Created-By: brueg
+Implementation-Version: 4.0.7
+Built-Date: 2026-06-29 09:38:03
+Bundle-Version: 4.0.7
+Bundle-SymbolicName: EastTester
+Bundle-Description: Implementation for East Tester ET4510
+Export-Service: ET5410:East Tester:SERIAL_IO
+

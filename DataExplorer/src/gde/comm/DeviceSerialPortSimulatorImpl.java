@@ -26,6 +26,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Date;
+import java.util.Properties;
 import java.util.Random;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -86,6 +87,10 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 	final Settings			simSettings;
 	final int						sleepTime_ms;
 	final boolean				isTimeStepConstant;
+	Properties props = new Properties();
+	String lastRequest = GDE.STRING_EMPTY;
+	int writeCount = 23;
+
 
 	/**
 	 * constructor to create a communications port simulation instance
@@ -126,7 +131,7 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 							}
 						}
 						FileDialog openFileDialog = simApplication.openFileOpenDialog("Open File used as simulation input", new String[] { GDE.FILE_ENDING_STAR_LOV, GDE.FILE_ENDING_STAR_TXT,
-								GDE.FILE_ENDING_STAR_LOG }, path, null, SWT.SINGLE);
+								GDE.FILE_ENDING_STAR_LOG, ".properties" }, path, null, SWT.SINGLE);
 						if (openFileDialog.getFileName().length() > 4) {
 							String openFilePath = (openFileDialog.getFilterPath() + GDE.STRING_FILE_SEPARATOR_UNIX + openFileDialog.getFileName()).replace(GDE.CHAR_FILE_SEPARATOR_WINDOWS, GDE.CHAR_FILE_SEPARATOR_UNIX);
 
@@ -156,6 +161,10 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 									fileType = GDE.FILE_ENDING_STAR_LOG;
 									txt_in = new BufferedReader(new InputStreamReader(new FileInputStream(openFilePath), "ISO-8859-1")); //$NON-NLS-1$
 								}
+								else if (openFilePath.toLowerCase().endsWith(".properties")) {
+									fileType = ".properties";
+									props.loadFromXML(new FileInputStream(openFilePath)); //$NON-NLS-1$
+								}
 								else
 									simApplication.openMessageDialog(Messages.getString(MessageIds.GDE_MSGI0008) + openFilePath);
 							}
@@ -163,7 +172,7 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 								log.log(Level.SEVERE, e.getMessage(), e);
 							}
 						}
-						isConnected = data_in != null || txt_in != null;
+						isConnected = data_in != null || txt_in != null || !props.isEmpty();
 						simApplication.setPortConnected(isConnected);
 					}
 				});
@@ -480,6 +489,14 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 						this.close();
 				}
 			}
+			else if (this.fileType.equals(".properties")) {
+				byte[] tmpAnswer = props.get(lastRequest).toString().getBytes();
+				byte[] answer = new byte[tmpAnswer.length + 2];
+				System.arraycopy(tmpAnswer, 0, answer, 0, tmpAnswer.length);
+				answer[answer.length-2] = 0x0D;
+				answer[answer.length-1] = 0x0A;		
+				resultBuffer = readBuffer = answer;
+			}
 		}
 		else 
 			throw new IOException("Connection closed by EOF"); //$NON-NLS-1$ 
@@ -577,7 +594,15 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 	 */
 	@Override
 	public void write(byte[] writeBuffer) throws IOException {
-		//log.log(Level.WARNING, "write() not supported in simulation");
+		byte[] query = new byte[writeBuffer.length - 1];
+		System.arraycopy(writeBuffer, 0, query, 0, query.length);
+		this.lastRequest = (String) StringHelper.arrayToStringNoBlank(query);
+		if (this.lastRequest.contains("ALL")) {
+			if (writeCount == 23) 
+				writeCount = 0;
+			this.lastRequest = writeCount++ + this.lastRequest;
+		}
+		log.log(Level.OFF, "query data with " + this.lastRequest);
 	}
 
 	/**

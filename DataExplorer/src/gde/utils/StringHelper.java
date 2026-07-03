@@ -1081,4 +1081,11 @@ public class StringHelper {
 		}
 		return sb.toString();
 	}
+	public static Object arrayToStringNoBlank(byte[] inputArray) {
+		StringBuffer sb = new StringBuffer();
+		for (byte object : inputArray) {
+			sb.append(String.format("%c", object));
+		}
+		return sb.toString();
+	}
 }
