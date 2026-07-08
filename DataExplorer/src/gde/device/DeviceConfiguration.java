@@ -1520,8 +1520,10 @@ public class DeviceConfiguration {
 	}
 
 	public String getDataBlockPreferredDataLocation() {
-		return this.dataBlock != null ? (this.dataBlock.getPreferredDataLocation() != null && this.dataBlock.getPreferredDataLocation().length() != 0
+		String preferredDataLocation = this.dataBlock != null ? (this.dataBlock.getPreferredDataLocation() != null && this.dataBlock.getPreferredDataLocation().length() != 0
 				? this.dataBlock.getPreferredDataLocation() : this.settings.getDataFilePath()) : this.settings.getDataFilePath();
+		log.log(Level.INFO, "preferredDataLocation = " + preferredDataLocation);
+		return preferredDataLocation;
 	}
 
 	public void setDataBlockPreferredDataLocation(String value) {
