@@ -46,8 +46,8 @@ public class ET5410SerialPort extends DeviceCommPort implements IDeviceCommPort 
 	final static byte[] IDN = {'*', 'I', 'D', 'N', '?', 0x0A};  //*IDN? Return the load's model and serial number (example "ET5410 09411830014 V1.02.1806.028 V1.10.1806.012" for mine)
 	final static byte[] STAT = {'C', 'H', ':', 'S', 'W', '?', 0x0A};  //CH:SW?  Return ON or OFF to indicate whether the load is active or not. It must be set to ON to take measurements, of course...
 	final static byte[] MODE = {'C', 'H', ':', 'M', 'O', 'D', 'E', '?', 0x0A};  //CH:MODE?  Returns "BATT" to indicate that the load is in battery test mode. This is the only mode we are interested in.
-
-
+	final static byte[] CAPA = {'B', 'A', 'T', 'T', ':', 'C', 'A', 'P', 'A', '?', 0x0A};  //BATT:CAPA?  Returns burned capacity
+	final static byte[] MEAS = {'M', 'E', 'A', 'S', ':', 'A', 'L', 'L', '?', 0x0A};  //MEAS:ALL?  Returns burned capacity
 
 	public ET5410SerialPort(IDevice currentDevice, DataExplorer currentApplication) {
 		super(currentDevice, currentApplication);
@@ -76,7 +76,7 @@ public class ET5410SerialPort extends DeviceCommPort implements IDeviceCommPort 
 		int startIndex;
 		String[] result = new String[] {GDE.STRING_QUESTION_MARK, GDE.STRING_QUESTION_MARK, GDE.STRING_QUESTION_MARK, GDE.STRING_QUESTION_MARK}; //deviceName, S/N, FW, HW
 		try {
-			log.log(Level.OFF, "query data " + StringHelper.arrayToStringNoBlank(ET5410SerialPort.IDN));
+			log.log(Level.OFF, "query data '" + StringHelper.arrayToStringNoBlank(ET5410SerialPort.IDN) + "'");
 			this.write(ET5410SerialPort.IDN); 
 			WaitTimer.delay(100);
 			
@@ -84,15 +84,13 @@ public class ET5410SerialPort extends DeviceCommPort implements IDeviceCommPort 
 			readNewData();
 
 			//find start index
-			startIndex = findStartIndex(0);
+			startIndex = 0;
+			this.tmpData = new byte[0];
 
 			//find end index
 			findDataEnd(startIndex);
 			
-			byte[] stripData = new byte[this.data.length-2];
-			System.arraycopy(this.data, 2, stripData, 0, stripData.length);
-
-			StringTokenizer tokenizer = new StringTokenizer((String) StringHelper.arrayToStringNoBlank(stripData), GDE.STRING_BLANK);
+			StringTokenizer tokenizer = new StringTokenizer((String) StringHelper.arrayToStringNoBlank(this.data), GDE.STRING_BLANK);
 			int idx = 0;
 			while (tokenizer.hasMoreTokens()) {
 				result[idx++] = tokenizer.nextToken();
@@ -119,7 +117,7 @@ public class ET5410SerialPort extends DeviceCommPort implements IDeviceCommPort 
 		int startIndex;
 		String result;
 		try {
-			log.log(Level.OFF, "query data " + StringHelper.arrayToStringNoBlank(ET5410SerialPort.MODE));
+			log.log(Level.OFF, "query data '" + StringHelper.arrayToStringNoBlank(ET5410SerialPort.MODE) + "'");
 			this.write(ET5410SerialPort.MODE); 
 			WaitTimer.delay(100);
 			
@@ -127,15 +125,13 @@ public class ET5410SerialPort extends DeviceCommPort implements IDeviceCommPort 
 			readNewData();
 
 			//find start index
-			startIndex = findStartIndex(0);
+			startIndex = 0;
+			this.tmpData = new byte[0];
 
 			//find end index
 			findDataEnd(startIndex);
 			
-			byte[] stripData = new byte[this.data.length-2];
-			System.arraycopy(this.data, 2, stripData, 0, stripData.length);
-
-			result = (String) StringHelper.arrayToStringNoBlank(stripData);
+			result = (String) StringHelper.arrayToStringNoBlank(this.data);
 		}
 		catch (Exception e) {
 			if (!(e instanceof TimeOutException)) {
@@ -158,7 +154,7 @@ public class ET5410SerialPort extends DeviceCommPort implements IDeviceCommPort 
 		int startIndex;
 		boolean result = false;
 		try {
-			log.log(Level.OFF, "query data " + StringHelper.arrayToStringNoBlank(ET5410SerialPort.STAT));
+			log.log(Level.OFF, "query data '" + StringHelper.arrayToStringNoBlank(ET5410SerialPort.STAT) + "'");
 			this.write(ET5410SerialPort.STAT); 
 			WaitTimer.delay(100);
 			
@@ -166,15 +162,13 @@ public class ET5410SerialPort extends DeviceCommPort implements IDeviceCommPort 
 			readNewData();
 
 			//find start index
-			startIndex = findStartIndex(0);
+			startIndex = 0;
+			this.tmpData = new byte[0];
 
 			//find end index
 			findDataEnd(startIndex);
 			
-			byte[] stripData = new byte[this.data.length-2];
-			System.arraycopy(this.data, 2, stripData, 0, stripData.length);
-
-			result = StringHelper.arrayToStringNoBlank(stripData).equals("ON");
+			result = StringHelper.arrayToStringNoBlank(this.data).equals("ON");
 		}
 		catch (Exception e) {
 			if (!(e instanceof TimeOutException)) {
@@ -188,18 +182,17 @@ public class ET5410SerialPort extends DeviceCommPort implements IDeviceCommPort 
 	}
 
 	/**
-	 * method to gather data from device, implementation is individual for device
-	 * @return byte array containing gathered data - this can individual specified per device
+	 * method to gather capacity from device, implementation is individual for device
+	 * @return int value of queried capacity
 	 * @throws IOException
 	 */
-	public synchronized byte[] getData() throws Exception {
-		final String $METHOD_NAME = "getData";
+	public synchronized int getCapacity(int lastValue) throws Exception {
+		final String $METHOD_NAME = "getCapacity";
 		int startIndex;
-		//log.log(Level.OFF, StringHelper.byte2Hex2CharString("MEAS:ALL?".getBytes()));
+		//log.log(Level.OFF, StringHelper.byte2Hex2CharString("BATT:CAPA?".getBytes()));
 		try {
-			log.log(Level.OFF, "query data " + StringHelper.arrayToStringNoBlank(this.serialRequest));
-			if (this.isSerialRequest)
-				this.write(this.serialRequest); 
+			log.log(Level.OFF, "query data '" + StringHelper.arrayToStringNoBlank(CAPA) + "'");
+			this.write(CAPA); 
 			
 			//receive data while needed
 			readNewData();
@@ -209,12 +202,6 @@ public class ET5410SerialPort extends DeviceCommPort implements IDeviceCommPort 
 
 			//find end index
 			findDataEnd(startIndex);
-			/*
-			byte[] stripData = new byte[this.data.length-2];
-			System.arraycopy(this.data, 2, stripData, 0, stripData.length);
-			this.data = new byte[this.data.length-2];
-			System.arraycopy(stripData, 0, this.data, 0, this.data.length);
-			*/
 		}
 		catch (Exception e) {
 			if (!(e instanceof TimeOutException)) {
@@ -222,7 +209,51 @@ public class ET5410SerialPort extends DeviceCommPort implements IDeviceCommPort 
 			}
 			throw e;
 		}
-		log.log(Level.OFF, "return received data " + StringHelper.arrayToStringNoBlank(this.data));
+		String textValue = (String) StringHelper.arrayToStringNoBlank(this.data);
+		log.log(Level.OFF, "return received data '" + textValue + "'");
+		this.isDataReceived = false;
+		
+		int result = 0;
+		try {
+			int idx = this.data[0] == 0x52 ? 1 : 0;
+			result = (int) (Double.parseDouble(textValue.substring(idx).trim()) * 1000.);
+		}
+		catch (Exception e) {
+			result = lastValue;
+		}
+		
+		return result;
+	}
+
+	/**
+	 * method to gather data from device, implementation is individual for device
+	 * @return byte array containing gathered data - this can individual specified per device
+	 * @throws IOException
+	 */
+	public synchronized byte[] getData() throws Exception {
+		final String $METHOD_NAME = "getData";
+		int startIndex;
+		//log.log(Level.OFF, StringHelper.byte2Hex2CharString("MEAS:ALL?".getBytes()));
+		try {
+			log.log(Level.OFF, "query data '" + StringHelper.arrayToStringNoBlank(MEAS) + "'");
+			this.write(MEAS); 
+			
+			//receive data while needed
+			readNewData();
+
+			//find start index
+			startIndex = findStartIndex(0);
+
+			//find end index
+			findDataEnd(startIndex);
+		}
+		catch (Exception e) {
+			if (!(e instanceof TimeOutException)) {
+				log.logp(Level.SEVERE, ET5410SerialPort.$CLASS_NAME, $METHOD_NAME, e.getMessage(), e);
+			}
+			throw e;
+		}
+		log.log(Level.OFF, "return received data '" + StringHelper.arrayToStringNoBlank(this.data) + "'");
 		this.isDataReceived = false;
 		return this.data;
 	}
@@ -246,10 +277,7 @@ public class ET5410SerialPort extends DeviceCommPort implements IDeviceCommPort 
 		}
 		else { //startIndex not found, read new data
 			log.log(Level.WARNING, "startIndex not found, check leading character defined");
-			this.isDataReceived = false;
-			//this.index = 0;
-			readNewData();
-			return findStartIndex(0);
+			return 0;
 		}
 		return searchIndex;
 	}
@@ -273,7 +301,7 @@ public class ET5410SerialPort extends DeviceCommPort implements IDeviceCommPort 
 				--this.index;
 		}
 		
-		if (this.index >= 0 && (this.tmpData.length + this.index - startIndex) > 4) {
+		if (this.index >= 0 && (this.tmpData.length + this.index - startIndex) > 2) {
 			endIndex = this.index > 1 && this.endByte_1 != 0x00 && this.answer[this.index] == this.endByte ? this.index-=1 : this.index;
 			this.data = new byte[this.tmpData.length + endIndex - startIndex];
 			if (log.isLoggable(Level.FINER)) log.log(Level.FINER, this.tmpData.length + " + " + endIndex + " - " + startIndex);

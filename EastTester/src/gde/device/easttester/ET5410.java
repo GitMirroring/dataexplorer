@@ -45,6 +45,8 @@ public class ET5410 extends DeviceConfiguration implements IDevice {
 	protected GathererThread				gathererThread;
 
 	protected boolean								isSerialIO	= false;
+	
+	private Double energySum;
 
 	/**
 	 * constructor using properties file
@@ -143,14 +145,30 @@ public class ET5410 extends DeviceConfiguration implements IDevice {
 	 * @param dataBuffer byte arrax with the data to be converted
 	 */
 	public int[] convertDataBytes(int[] points, byte[] dataBuffer) {
-		byte[] stripData = new byte[dataBuffer.length-2];
-		System.arraycopy(dataBuffer, 2, stripData, 0, stripData.length);
+		byte[] stripData = dataBuffer;
+		
+		if (dataBuffer[0] == 0x52) { //check start with "R"
+			stripData = new byte[dataBuffer.length-1];
+			System.arraycopy(dataBuffer, 1, stripData, 0, stripData.length);
+		}
+		String textResult = (String)StringHelper.arrayToStringNoBlank(stripData);
 
-		StringTokenizer tokenizer = new StringTokenizer((String) StringHelper.arrayToStringNoBlank(stripData), GDE.STRING_BLANK);
-		int idx = 0;
-		while (tokenizer.hasMoreTokens()) {
-			points[idx++] = (int) (Double.parseDouble(tokenizer.nextToken().trim()) * 1000.);
-		}		
+		//0=current 1=voltage 2=capacity 3=power 4=energy 
+		points[0] = (int) (Double.parseDouble(textResult.substring(0, 6).trim()) * 1000.);
+		points[1] = (int) (Double.parseDouble(textResult.substring(6, 13).trim()) * 1000.);
+		//keep points[2] untouched
+		points[3] = (int) (Double.parseDouble(textResult.substring(13, 20).trim()) * 1000.);
+		
+		switch (points[2]) {
+		case 0: //reset energy while capacity not set
+			energySum = 0.;
+			break;
+		default: //add up energy
+			energySum += Double.valueOf((points[0] / 1000.0 * points[1] / 1000.0) / 360.0 + 0.505);
+			points[4] = energySum.intValue();
+			break;
+		}
+		
 		return points;
 	}
 

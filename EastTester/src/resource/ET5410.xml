@@ -18,13 +18,11 @@
         <isRTS>false</isRTS>
         <isDTR>false</isDTR>
         <TimeOut>
-            <ReadTimeOut>1000</ReadTimeOut>
+            <ReadTimeOut>500</ReadTimeOut>
             <ReadStableIndex>5</ReadStableIndex>
             <WriteCharDelayTime>0</WriteCharDelayTime>
             <WriteDelayTime>0</WriteDelayTime>
         </TimeOut>
-        <respond>CSV</respond>
-        <request>4D4541533A414C4C3F0A</request>
     </SerialPort>
     <TimeBase>
         <name>time</name>
@@ -58,6 +56,13 @@
                 <statistics sigma="false" avg="false" max="true" min="true"/>
             </Measurement>
             <Measurement>
+                <name>capacity</name>
+                <symbol>C</symbol>
+                <unit>Ah</unit>
+                <active>true</active>
+                <statistics sigma="false" avg="false" max="true" min="true"/>
+            </Measurement>
+            <Measurement>
                 <name>power</name>
                 <symbol>P</symbol>
                 <unit>W</unit>
@@ -65,9 +70,9 @@
                 <statistics sigma="false" avg="false" max="true" min="true"/>
             </Measurement>
             <Measurement>
-                <name>battery_internal_resistance</name>
-                <symbol>R</symbol>
-                <unit>Ω</unit>
+                <name>energy</name>
+                <symbol>E</symbol>
+                <unit>Wh</unit>
                 <active>true</active>
                 <statistics sigma="false" avg="false" max="true" min="true"/>
             </Measurement>

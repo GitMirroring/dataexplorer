@@ -80,6 +80,7 @@ public class GathererThread extends Thread {
 		double deviceTimeStep_ms = device.getTimeStep_ms();
 		String[] deviceIdentifier = new String[] {GDE.STRING_QUESTION_MARK, GDE.STRING_QUESTION_MARK, GDE.STRING_QUESTION_MARK, GDE.STRING_QUESTION_MARK}; 
 		byte[] dataBuffer = null;
+		int[] points = new int[5];
 
 		this.serialPort.isInterruptedByUser = false;
 		if (log.isLoggable(Level.TIME)) log.logp(Level.TIME, GathererThread.$CLASS_NAME, $METHOD_NAME, "====> entry initial time step ms = " + this.device.getTimeStep_ms()); //$NON-NLS-1$
@@ -88,7 +89,7 @@ public class GathererThread extends Thread {
 			this.serialPort.cleanInputStream();
 			deviceIdentifier = this.serialPort.getIDN(); //ET5410 09411830014 V1.02.1806.028 V1.10.1806.012
 			if (!this.serialPort.getMode().equals("BATT")) {
-				this.application.openMessageDialogAsync(this.device.getName() + " is not in battrey mode");
+				this.application.openMessageDialogAsync(Messages.getString(MessageIds.GDE_MSGI1703));
 				return;
 			}
 		}
@@ -166,6 +167,7 @@ public class GathererThread extends Thread {
 						this.channel.get(this.recordSetKey).updateVisibleAndDisplayableRecordsForTable();
 						measurementCount = 0;
 						startCycleTime = 0;
+						points = new int[channelRecordSet.size()];
 					}
 					// prepare the data for adding to record set
 					tmpCycleTime = System.currentTimeMillis();
@@ -175,8 +177,8 @@ public class GathererThread extends Thread {
 
 					if (channelRecordSet != null) {
 						if (this.serialPort.isInterruptedByUser) break;
-						int[] points = new int[channelRecordSet.size()];
 						this.device.convertDataBytes(points, dataBuffer);
+						points[2] = this.serialPort.getCapacity(points[2]);
 						if (points.length == channelRecordSet.size()) 
 							channelRecordSet.addPoints(points, (tmpCycleTime - startCycleTime));
 						else

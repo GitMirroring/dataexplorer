@@ -602,6 +602,9 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 				writeCount = 0;
 			this.lastRequest = writeCount++ + this.lastRequest;
 		}
+		else if (this.lastRequest.contains("CAPA")) {
+			this.lastRequest = writeCount + this.lastRequest;
+		}
 		log.log(Level.OFF, "query data with " + this.lastRequest);
 	}
 
