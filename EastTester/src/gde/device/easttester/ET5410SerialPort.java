@@ -76,7 +76,7 @@ public class ET5410SerialPort extends DeviceCommPort implements IDeviceCommPort 
 		int startIndex;
 		String[] result = new String[] {GDE.STRING_QUESTION_MARK, GDE.STRING_QUESTION_MARK, GDE.STRING_QUESTION_MARK, GDE.STRING_QUESTION_MARK}; //deviceName, S/N, FW, HW
 		try {
-			log.log(Level.OFF, "query data '" + StringHelper.arrayToStringNoBlank(ET5410SerialPort.IDN) + "'");
+			if (log.isLoggable(Level.FINE)) log.log(Level.FINE, "query data '" + StringHelper.arrayToStringNoBlank(ET5410SerialPort.IDN) + "'");
 			this.write(ET5410SerialPort.IDN); 
 			WaitTimer.delay(100);
 			
@@ -102,7 +102,7 @@ public class ET5410SerialPort extends DeviceCommPort implements IDeviceCommPort 
 			}
 			throw e;
 		}
-		log.log(Level.OFF, "return received data '" + StringHelper.arrayToString(result) + "'");
+		if (log.isLoggable(Level.FINE)) log.log(Level.FINE, "return received data '" + StringHelper.arrayToString(result) + "'");
 		this.isDataReceived = false;
 		return result;
 	}
@@ -117,7 +117,7 @@ public class ET5410SerialPort extends DeviceCommPort implements IDeviceCommPort 
 		int startIndex;
 		String result;
 		try {
-			log.log(Level.OFF, "query data '" + StringHelper.arrayToStringNoBlank(ET5410SerialPort.MODE) + "'");
+			if (log.isLoggable(Level.FINE)) log.log(Level.FINE, "query data '" + StringHelper.arrayToStringNoBlank(ET5410SerialPort.MODE) + "'");
 			this.write(ET5410SerialPort.MODE); 
 			WaitTimer.delay(100);
 			
@@ -139,7 +139,7 @@ public class ET5410SerialPort extends DeviceCommPort implements IDeviceCommPort 
 			}
 			throw e;
 		}
-		log.log(Level.OFF, "return received data '" + result +"'");
+		if (log.isLoggable(Level.FINE)) log.log(Level.FINE, "return received data '" + result +"'");
 		this.isDataReceived = false;
 		return result;
 	}
@@ -154,7 +154,7 @@ public class ET5410SerialPort extends DeviceCommPort implements IDeviceCommPort 
 		int startIndex;
 		boolean result = false;
 		try {
-			log.log(Level.OFF, "query data '" + StringHelper.arrayToStringNoBlank(ET5410SerialPort.STAT) + "'");
+			if (log.isLoggable(Level.FINE)) log.log(Level.FINE, "query data '" + StringHelper.arrayToStringNoBlank(ET5410SerialPort.STAT) + "'");
 			this.write(ET5410SerialPort.STAT); 
 			WaitTimer.delay(100);
 			
@@ -176,7 +176,7 @@ public class ET5410SerialPort extends DeviceCommPort implements IDeviceCommPort 
 			}
 			throw e;
 		}
-		log.log(Level.OFF, "return received data " + result);
+		if (log.isLoggable(Level.FINE)) log.log(Level.FINE, "return received data " + result);
 		this.isDataReceived = false;
 		return result;
 	}
@@ -189,9 +189,9 @@ public class ET5410SerialPort extends DeviceCommPort implements IDeviceCommPort 
 	public synchronized int getCapacity(int lastValue) throws Exception {
 		final String $METHOD_NAME = "getCapacity";
 		int startIndex;
-		//log.log(Level.OFF, StringHelper.byte2Hex2CharString("BATT:CAPA?".getBytes()));
+		//if (log.isLoggable(Level.FINE)) log.log(Level.FINE, StringHelper.byte2Hex2CharString("BATT:CAPA?".getBytes()));
 		try {
-			log.log(Level.OFF, "query data '" + StringHelper.arrayToStringNoBlank(CAPA) + "'");
+			if (log.isLoggable(Level.FINE)) log.log(Level.FINE, "query data '" + StringHelper.arrayToStringNoBlank(CAPA) + "'");
 			this.write(CAPA); 
 			
 			//receive data while needed
@@ -210,7 +210,7 @@ public class ET5410SerialPort extends DeviceCommPort implements IDeviceCommPort 
 			throw e;
 		}
 		String textValue = (String) StringHelper.arrayToStringNoBlank(this.data);
-		log.log(Level.OFF, "return received data '" + textValue + "'");
+		if (log.isLoggable(Level.FINE)) log.log(Level.FINE, "return received data '" + textValue + "'");
 		this.isDataReceived = false;
 		
 		int result = 0;
@@ -233,9 +233,9 @@ public class ET5410SerialPort extends DeviceCommPort implements IDeviceCommPort 
 	public synchronized byte[] getData() throws Exception {
 		final String $METHOD_NAME = "getData";
 		int startIndex;
-		//log.log(Level.OFF, StringHelper.byte2Hex2CharString("MEAS:ALL?".getBytes()));
+		//if (log.isLoggable(Level.FINE)) log.log(Level.FINE, StringHelper.byte2Hex2CharString("MEAS:ALL?".getBytes()));
 		try {
-			log.log(Level.OFF, "query data '" + StringHelper.arrayToStringNoBlank(MEAS) + "'");
+			if (log.isLoggable(Level.FINE)) log.log(Level.FINE, "query data '" + StringHelper.arrayToStringNoBlank(MEAS) + "'");
 			this.write(MEAS); 
 			
 			//receive data while needed
@@ -253,7 +253,7 @@ public class ET5410SerialPort extends DeviceCommPort implements IDeviceCommPort 
 			}
 			throw e;
 		}
-		log.log(Level.OFF, "return received data '" + StringHelper.arrayToStringNoBlank(this.data) + "'");
+		if (log.isLoggable(Level.FINE)) log.log(Level.FINE, "return received data '" + StringHelper.arrayToStringNoBlank(this.data) + "'");
 		this.isDataReceived = false;
 		return this.data;
 	}
@@ -307,8 +307,8 @@ public class ET5410SerialPort extends DeviceCommPort implements IDeviceCommPort 
 			if (log.isLoggable(Level.FINER)) log.log(Level.FINER, this.tmpData.length + " + " + endIndex + " - " + startIndex);
 			System.arraycopy(this.tmpData, 0, this.data, 0, this.tmpData.length);
 			System.arraycopy(this.answer, startIndex, this.data, this.tmpData.length, endIndex - startIndex);
-			if (log.isLoggable(Level.OFF)) {
-				log.logp(Level.OFF, ET5410SerialPort.$CLASS_NAME, $METHOD_NAME, new String(this.data));
+			if (log.isLoggable(Level.FINE)) {
+				log.logp(Level.FINE, ET5410SerialPort.$CLASS_NAME, $METHOD_NAME, new String(this.data));
 				String[] results = new String(this.data).split("\r\n");
 				for (String result : results) {
 					if (result.startsWith(this.device.getDataBlockLeader()))
@@ -318,7 +318,7 @@ public class ET5410SerialPort extends DeviceCommPort implements IDeviceCommPort 
 			return this.data;
 		}
 		//endIndex not found, save temporary data, read new data
-		log.log(Level.INFO,"endIndex not found, save temporary data, read new data " );
+		log.log(Level.FINE,"endIndex not found, save temporary data, read new data " );
 		this.data = new byte[this.tmpData.length];
 		System.arraycopy(this.tmpData, 0, this.data, 0, this.data.length);
 

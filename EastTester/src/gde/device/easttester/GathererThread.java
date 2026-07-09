@@ -27,10 +27,9 @@ public class GathererThread extends Thread {
 	final static int				WAIT_TIME_RETRYS						= 36;
 
 	final DataExplorer			application;
-	final ET5410SerialPort		serialPort;
-	final ET5410	device;
+	final ET5410SerialPort	serialPort;
+	final ET5410						device;
 	final Channels					channels;
-	//final IDataParser				parser;
 	
 	Channel									activeChannel;
 	RecordSet								activeRecordSet;
@@ -63,7 +62,6 @@ public class GathererThread extends Thread {
 			this.serialPort.open();
 			this.isPortOpenedByLiveGatherer = true;
 		}
-		this.setPriority(Thread.MAX_PRIORITY);
 	}
 
 	@Override
@@ -89,8 +87,8 @@ public class GathererThread extends Thread {
 			this.serialPort.cleanInputStream();
 			deviceIdentifier = this.serialPort.getIDN(); //ET5410 09411830014 V1.02.1806.028 V1.10.1806.012
 			if (!this.serialPort.getMode().equals("BATT")) {
-				this.application.openMessageDialogAsync(Messages.getString(MessageIds.GDE_MSGI1703));
-				return;
+				this.application.openMessageDialogAsync(Messages.getString(MessageIds.GDE_MSGW1703));
+				this.serialPort.isInterruptedByUser = true;
 			}
 		}
 		catch (Exception e) {
