@@ -164,7 +164,7 @@ public class ET5410 extends DeviceConfiguration implements IDevice {
 			energySum = 0.;
 			break;
 		default: //add up energy
-			energySum += Double.valueOf((points[0] / 1000.0 * points[1] / 1000.0) / 360.0 + 0.505);
+			energySum += Double.valueOf((points[0] / 1000.0 * points[1] / 1000.0) / 360.0 + 0.502);
 			points[4] = energySum.intValue();
 			break;
 		}
