@@ -1456,7 +1456,8 @@ public final class RecordSet extends AbstractRecordSet {
 	public double getStartTime() {
 		double startTime = 0;
 		if (this.isZoomMode) {
-			startTime = (this.analyzer.getSettings() != null && this.analyzer.getSettings().isTimeFormatAbsolute() && this.timeStep_ms != null) ? this.timeStep_ms.startTimeStamp_ms + this.get(0).zoomTimeOffset
+			startTime = (this.analyzer.getSettings() != null && this.analyzer.getSettings().isTimeFormatAbsolute() && this.timeStep_ms != null) 
+					? this.timeStep_ms.startTimeStamp_ms + this.get(0).zoomTimeOffset
 					: this.get(0).zoomTimeOffset;
 		} else if (this.isScopeMode) {
 			startTime = (this.analyzer.getSettings() != null && this.analyzer.getSettings().isTimeFormatAbsolute() && this.timeStep_ms != null)

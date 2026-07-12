@@ -144,14 +144,14 @@ public class TimeLine {
 		}
 		else if (totalTime_sec > 10) {
 			maxTimeNumberFormated = (int) totalTime_sec;
-			this.timeLineText = isTimeFormatAbsolute ? Messages.getString(MessageIds.GDE_MSGT0724) : Messages.getString(MessageIds.GDE_MSGT0269);
-			format = TimeLine.TIME_LINE_SEC;
+			this.timeLineText = isTimeFormatAbsolute ? Messages.getString(MessageIds.GDE_MSGT0723) : Messages.getString(MessageIds.GDE_MSGT0269);
+			format = isTimeFormatAbsolute ? TimeLine.TIME_LINE_SEC_MIN : TimeLine.TIME_LINE_SEC;
 		}
 		else if (totalTime_sec > 1) {
 			maxTimeNumberFormated = (int) totalTime_msec;
-			this.timeLineText = isTimeFormatAbsolute ? Messages.getString(MessageIds.GDE_MSGT0724) : Messages.getString(MessageIds.GDE_MSGT0269);
+			this.timeLineText = isTimeFormatAbsolute ? Messages.getString(MessageIds.GDE_MSGT0723) : Messages.getString(MessageIds.GDE_MSGT0269);
 			factor = 1000; // 2900 -> 2,9 sec
-			format = TimeLine.TIME_LINE_SEC;
+			format = isTimeFormatAbsolute ? TimeLine.TIME_LINE_SEC_MIN : TimeLine.TIME_LINE_SEC;
 		}
 		else if (totalTime_msec > 0) {
 			maxTimeNumberFormated = (int) totalTime_msec;
@@ -234,7 +234,7 @@ public class TimeLine {
 		Double numberTicks, timeDelta;
 		boolean isAbsoluteTime = Settings.getInstance().isTimeFormatAbsolute() && !recordSet.isCompareSet(); // && !recordSet.isZoomMode();
 		long relativeStartTime = (long) recordSet.getStartTime();
-		long startTimeStamp = isAbsoluteTime && relativeStartTime != 0? (long) recordSet.getStartTime() : recordSet.getStartTimeStamp();
+		long startTimeStamp = isAbsoluteTime && relativeStartTime != 0 ? (long) recordSet.getStartTime() : recordSet.getStartTimeStamp();
 
 		long offset = 0;
 		int timeDeltaValue = endTimeValue - startTimeValue;
