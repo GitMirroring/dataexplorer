@@ -135,8 +135,7 @@ public class OsdReaderWriter {
 				return this.recordSetNameTrunk.equals(newRecordSetName.length() <= RecordSet.MAX_NAME_LENGTH ? newRecordSetName : newRecordSetName.substring(0, RecordSet.MAX_NAME_LENGTH))
 						&& this.channelNumber == newChannelNumber;
 			}
-			else
-				return false;
+			return false;
 		}
 	}
 

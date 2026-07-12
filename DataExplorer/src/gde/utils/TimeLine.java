@@ -90,8 +90,7 @@ public class TimeLine {
 		int maxTimeNumberFormated; // the biggest number in the scale to be displayed
 
 		boolean isTimeFormatAbsolute = DataExplorer.getInstance().getActiveRecordSet() != null && Settings.getInstance().isTimeFormatAbsolute()
-				&& !DataExplorer.getInstance().getActiveRecordSet().isCompareSet()
-				&& !DataExplorer.getInstance().getActiveRecordSet().isZoomMode();
+				&& !DataExplorer.getInstance().getActiveRecordSet().isCompareSet();
 
 		if (totalTime_year > 5) {
 			maxTimeNumberFormated = (int) totalTime_year;
@@ -233,8 +232,10 @@ public class TimeLine {
 	private void drawTickMarks(RecordSet recordSet, GC gc, int x0, int y0, int width, int startTimeValue, int endTimeValue, double scaleFactor, int timeFormat, long deltaTime_ms, int ticklength,
 			int miniticks, int gap) {
 		Double numberTicks, timeDelta;
-		boolean isAbsoluteTime = Settings.getInstance().isTimeFormatAbsolute() && !recordSet.isCompareSet() && !recordSet.isZoomMode();
-		long startTimeStamp = recordSet.getStartTimeStamp();
+		boolean isAbsoluteTime = Settings.getInstance().isTimeFormatAbsolute() && !recordSet.isCompareSet(); // && !recordSet.isZoomMode();
+		long relativeStartTime = (long) recordSet.getStartTime();
+		long startTimeStamp = isAbsoluteTime && relativeStartTime != 0? (long) recordSet.getStartTime() : recordSet.getStartTimeStamp();
+
 		long offset = 0;
 		int timeDeltaValue = endTimeValue - startTimeValue;
 		if (TimeLine.log.isLoggable(Level.FINER))
