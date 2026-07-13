@@ -1584,7 +1584,7 @@ public class FileUtils {
 		}
 		else if (!DataExplorer.getInstance().isObjectoriented()) {
 			searchDirectory = device.getDeviceConfiguration().getDataBlockPreferredDataLocation();
-			if (searchDirectory.contains(baseDirectory)) {
+			if (searchDirectory.contains(GDE.FILE_SEPARATOR + baseDirectory + GDE.FILE_SEPARATOR)) {
 				searchDirectory = searchDirectory.substring(0, searchDirectory.lastIndexOf(baseDirectory)) + baseDirectory + GDE.STRING_FILE_SEPARATOR_UNIX + objectKey;
 			}
 		}

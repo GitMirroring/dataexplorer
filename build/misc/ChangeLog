@@ -11,6 +11,7 @@ Device specific changes/fixes
 	* HoTTAdapter* - synchronize filter GPS parser
 	* ET5410 - initial support
 	* HoTTAdpter2 - fix min/max reset with single GPS as sensor
+	* HoTTAdapter* - check LogData search path more exact
 
 Version 4.0.6 - 20 Jun 2026
 Generic changes/fixes 
