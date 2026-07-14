@@ -1582,12 +1582,6 @@ public class FileUtils {
 			FileUtils.checkDirectoryAndCreate(objectkeyPath);
 			searchDirectory = objectkeyPath;
 		}
-		else if (!DataExplorer.getInstance().isObjectoriented()) {
-			searchDirectory = device.getDeviceConfiguration().getDataBlockPreferredDataLocation();
-			if (searchDirectory.contains(GDE.FILE_SEPARATOR + baseDirectory + GDE.FILE_SEPARATOR)) {
-				searchDirectory = searchDirectory.substring(0, searchDirectory.lastIndexOf(baseDirectory)) + baseDirectory + GDE.STRING_FILE_SEPARATOR_UNIX + objectKey;
-			}
-		}
 		else if (FileUtils.checkDirectoryExist(device.getDeviceConfiguration().getDataBlockPreferredDataLocation())) {
 			searchDirectory = device.getDeviceConfiguration().getDataBlockPreferredDataLocation();
 		}
