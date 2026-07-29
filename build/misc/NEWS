@@ -1,23 +1,28 @@
-GNU DataExplorer - News - comes with Version 4.0.6 - 20 Jun 2026
+GNU DataExplorer - News - comes with Version 4.0.7 - 03 Aug 2026
 
 Generic changes/fixes 
-	* starting with release version 4.0.6 ReleaseVersion.txt will provide actual version information for update check
-	* KMZ export configuration dialog refined 
-	* enable double values in Google Earth customization dialog
-	* open 'KMZ Export Configuration' dialog each time KMZ get exported
-	* initial support Windows on ARM
-	* documentation update
+	* elevation web-service failing show "error" instead of "0"
+	* if elevation web-service failing, a different elevation web-service get called
+	* elevation service doesn't get called if correction value set to -1 for relative2ground
+	* correct raw CSV export integer to float
+	* update close button of KMZ Export-Configuration in context of usage scenario 
+	* display time line with absolute time, if time format absolute hh:mm:ss.SSS is set
 	
 Device specific changes/fixes
-	* iMax B8+ - update device picture
+	* HoTTAdapter* - synchronize filter GPS parser
+	* ET5410 - initial support
+	* HoTTAdpter2 - fix min/max reset with single GPS as sensor
+
 			
 Allgemeine Änderungen/Korrekturen
-	* beginnend mit der Freigabe von Version 4.0.6 'ReleaseVersion.txt' enthält die Information zur aktuellen Version für den Update-Check
-	* KMZ Export Konfiguration Dialog verbessert 
-	* benutze Gleitkommazahlen beim Google Earth Konfigurations Dialog
-	* öffne den 'KMZ Export Configuration' Dialog jedes Mal, wenn eine KMZ Datei exportiert wird
-	* initiale Unterstützung für Windows mit ARM Prozessor
-	* documentation update
+	* der Web-Service zur Höhenabfrage zeigt  Fehler anstatt 0
+	* der Web-Service zur Höhenabfrage versucht im Fehlerfall einen weiteren Web-Service
+	* der Web-Service zur Höhenabfrage wird nicht aufgerufen, wenn der Korrekturwert auf -1 gesetzt wird (relative2ground)
+	* CSV export, raw, zu Gleitkommazahl geändert
+	* der KMZ Export-Konfiguration zeigt in Abhängigkeit des Nutzungs-Scenarios entsprechenden Text
+	* bei Anzeige der Zeitlinie mit absoluter Zeit entsprechend der Konfiguration, auch beim Zoom
 
 Gerätespezifische Änderungen
-	* iMax B8+ - Gerätebild erneuert
+	* HoTTAdapter* - GPS-Parser Filte synchronisiert 
+	* ET5410 - initiale Unterstützung
+	* HoTTAdpter2 - Rücksetzen von min/max bei einzig angeschlossenem GPS Sensor korrigiert

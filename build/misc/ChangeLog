@@ -1,9 +1,11 @@
 Development history / change log, please read from bottom up
 
-Version 4.0.7 - xx yyy 2026
+Version 4.0.7 - 03 Aug 2026
 Generic changes/fixes 
-	* elevation web-service failing show "error" instead of "0", do not call elevation service if correction value set to -1 for relative2ground
-	* correct raw CSV export integer to float.3
+	* elevation web-service failing show "error" instead of "0"
+	* if elevation web-service failing, a different elevation web-service get called
+	* elevation service doesn't get called if correction value set to -1 for relative2ground
+	* correct raw CSV export integer to float
 	* update close button of KMZ Export-Configuration in context of usage scenario 
 	* display time line with absolute time, if time format absolute hh:mm:ss.SSS is set
 	
