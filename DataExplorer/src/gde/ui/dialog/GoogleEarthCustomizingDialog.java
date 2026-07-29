@@ -558,6 +558,7 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 								}
 								else
 									try {
+										getStartpointElevation(startWebElevation);
 										startpointElevationText.setText(GDE.STRING_EMPTY + (Integer.parseInt(elevationCorrectionText.getText()) + Integer.parseInt(startWebElevation.getText())));
 									}
 									catch (Exception e) {
@@ -908,7 +909,7 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 	 * @param textItem to be updated with the determined terrain elevation value
 	 */
 	private void getStartpointElevation(final Text textItem) {
-		GDE.display.asyncExec(new Runnable() {
+		GDE.display.asyncExec(new Thread() {
 			@Override
 			public void run() {
 				RecordSet activeRecordSet = DataExplorer.getInstance().getActiveRecordSet();
