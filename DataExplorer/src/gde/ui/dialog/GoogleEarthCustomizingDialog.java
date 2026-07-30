@@ -542,6 +542,7 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 						avgTextLData.width = 25;
 						avgTextLData.height = GDE.IS_LINUX ? 10 : 16;
 						this.elevationCorrectionText.setLayoutData(avgTextLData);
+						this.elevationCorrectionText.setText(GDE.STRING_EMPTY + this.settings.getStartElevationCorrection());
 						this.elevationCorrectionText.setEditable(true);
 						this.elevationCorrectionText.setToolTipText(Messages.getString(MessageIds.GDE_MSGT0997));
 						this.elevationCorrectionText.addVerifyListener(new VerifyListener() {	
@@ -825,7 +826,6 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 		boolean isRelative2Ground = isRelative == null ? false : isRelative;
 		boolean isClamp2Ground = isClampToGround == null ? false : isClampToGround;
 		if (!isRelative2Ground && !isClamp2Ground) {
-			this.elevationCorrectionText.setText(GDE.STRING_EMPTY + this.settings.getStartElevationCorrection());
 			if (this.settings.getStartElevationCorrection() != -1)
 				this.getStartpointElevation(this.startWebElevation);
 		}

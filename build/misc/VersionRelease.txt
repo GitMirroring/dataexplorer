@@ -1,1 +1,1 @@
-Version 4.0.6 - 20 Jun 2026
+Version 4.0.7 - 03 Aug 2026
