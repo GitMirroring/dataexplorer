@@ -909,7 +909,8 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 	 * @param textItem to be updated with the determined terrain elevation value
 	 */
 	private void getStartpointElevation(final Text textItem) {
-		GDE.display.asyncExec(new Thread() {
+		new Thread() {
+			int elevation;
 			@Override
 			public void run() {
 				RecordSet activeRecordSet = DataExplorer.getInstance().getActiveRecordSet();
@@ -921,18 +922,29 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 							int gpsStartIndex = GPSHelper.getStartIndexGPS(activeRecordSet, latLng[0], latLng[1]);
 							Record recordLatitude = activeRecordSet.get(latLng[0]);
 							Record recordLongitude = activeRecordSet.get(latLng[1]);
-							int elevation = GPSHelper.getElevation(new GpsCoordinate(device.translateValue(recordLatitude, recordLatitude.realGet(gpsStartIndex) / 1000.0),
+							elevation = GPSHelper.getElevation(new GpsCoordinate(device.translateValue(recordLatitude, recordLatitude.realGet(gpsStartIndex) / 1000.0),
 									device.translateValue(recordLongitude, recordLongitude.realGet(gpsStartIndex) / 1000.0)));
-							textItem.setText(GDE.STRING_EMPTY + elevation);
+							GDE.display.asyncExec(new Runnable() {
+								public void run() {
+									if (!textItem.isDisposed())
+										textItem.setText(GDE.STRING_EMPTY + elevation);
+								}
+							});
 						}
 						catch (Exception e) {
 							log.log(Level.WARNING, e.getMessage());
-							textItem.setText("error");
-							textItem.setForeground(SWTResourceManager.getColor(255,10,10));
+							GDE.display.asyncExec(new Runnable() {
+								public void run() {
+									if (!textItem.isDisposed()) {
+										textItem.setText("error");
+										textItem.setForeground(SWTResourceManager.getColor(255,10,10));
+									}
+								}
+							});
 						}
 					}
 				}
 			}
-		});
+		}.start();
 	}
 }
