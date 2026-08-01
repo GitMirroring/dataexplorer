@@ -826,6 +826,7 @@ public class GoogleEarthCustomizingDialog extends org.eclipse.swt.widgets.Dialog
 		boolean isRelative2Ground = isRelative == null ? false : isRelative;
 		boolean isClamp2Ground = isClampToGround == null ? false : isClampToGround;
 		if (!isRelative2Ground && !isClamp2Ground) {
+			this.elevationCorrectionText.setText(GDE.STRING_EMPTY + this.settings.getStartElevationCorrection());
 			if (this.settings.getStartElevationCorrection() != -1)
 				this.getStartpointElevation(this.startWebElevation);
 		}
