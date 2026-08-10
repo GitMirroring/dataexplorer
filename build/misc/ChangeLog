@@ -1,5 +1,12 @@
 Development history / change log, please read from bottom up
 
+Version 4.0.8 - xx yyy 2026
+Generic changes/fixes 
+	* 
+	
+Device specific changes/fixes
+	* ET5410 - fix energy calculation
+
 Version 4.0.7 - 03 Aug 2026
 Generic changes/fixes 
 	* elevation web-service failing show "error" instead of "0"
