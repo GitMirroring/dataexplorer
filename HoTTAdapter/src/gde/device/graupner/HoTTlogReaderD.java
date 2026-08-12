@@ -601,21 +601,18 @@ public class HoTTlogReaderD extends HoTTlogReader2 {
 			if (isGPSData) for (int j = 0; j < 3; j++) { //0=altitude 1=climb1 2=climb3
 				HoTTlogReaderD.points[j + 10] = valuesGPS[j + 3];
 			}
-			HoTTlogReaderD.points[11] = 0;
 			break;
 		case GAM:
 			//8=Altitude, 9=Climb 1, 10=Climb 3
 			if (isGeneralData) for (int j = 0; j < 3; j++) {
 				HoTTlogReaderD.points[j + 10] = valuesGAM[j + 13];
 			}
-			HoTTlogReaderD.points[11] = 0;
 			break;
 		case EAM:
 			//8=Altitude, 9=Climb 1, 10=Climb 3
 			if (isElectricData) for (int j = 0; j < 3; j++) { //0=altitude 1=climb1 2=climb3
 				HoTTlogReaderD.points[j + 10] = valuesEAM[j + 20];
 			}
-			HoTTlogReaderD.points[11] = 0;
 			break;
 		default:
 			break;

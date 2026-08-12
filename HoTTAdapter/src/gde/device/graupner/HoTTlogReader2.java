@@ -586,7 +586,6 @@ public class HoTTlogReader2 extends HoTTlogReader {
 				for (int j = 0; j < 3; j++) { //0=altitude 1=climb1 2=climb3
 				HoTTlogReader2.points[j + 10] = valuesGPS[j + 3];
 			}
-			HoTTlogReader2.points[11] = 0;
 			break;
 		case GAM:
 			//8=Altitude, 9=Climb 1, 10=Climb 3
@@ -594,7 +593,6 @@ public class HoTTlogReader2 extends HoTTlogReader {
 				for (int j = 0; j < 3; j++) {
 				HoTTlogReader2.points[j + 10] = valuesGAM[j + 13];
 			}
-			HoTTlogReader2.points[11] = 0;
 			break;
 		case EAM:
 			//8=Altitude, 9=Climb 1, 10=Climb 3
@@ -602,7 +600,6 @@ public class HoTTlogReader2 extends HoTTlogReader {
 				for (int j = 0; j < 3; j++) { //0=altitude 1=climb1 2=climb3
 				HoTTlogReader2.points[j + 10] = valuesEAM[j + 20];
 			}
-			HoTTlogReader2.points[11] = 0;
 			break;
 		default:
 			break;
