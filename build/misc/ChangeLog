@@ -7,6 +7,7 @@ Generic changes/fixes
 Device specific changes/fixes
 	* ET5410 - fix energy calculation
 	* HoTTAdapter2 - fix climb 1 value setting if dedicated sensor GPS, GAM or EAm is set
+	* Spektrum-Telemetry - fix minor coding issues
 
 Version 4.0.7 - 03 Aug 2026
 Generic changes/fixes 

@@ -333,6 +333,7 @@ public class SpektrumAdapter extends DeviceConfiguration implements IDevice {
 
 	@Override
 	public void addConvertedLovDataBufferAsRawDataPoints(RecordSet recordSet, byte[] dataBuffer, int recordDataSize, boolean doUpdateProgressBar) throws DataInconsitsentException {
+		//ignore, no function
 	}
 
 	/**

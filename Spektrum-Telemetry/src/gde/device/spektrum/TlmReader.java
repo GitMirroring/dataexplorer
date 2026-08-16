@@ -276,48 +276,48 @@ public class TlmReader {
 							if (data instanceof StandardBlock) {
 								//System.out.println(((StandardBlock) data).toString());
 								//Standard 0=RPM St, 1=Volt St, 2=Temperature St, 3=dbm_A, 4=dbm_B
-								isResetMinMax[0] = mergeRawData(((StandardBlock) data).getMeasurementValues(), points, 0, 5, tmpRecordSet, isResetMinMax[0], 2);
+								isResetMinMax[0] = mergeRawData(data.getMeasurementValues(), points, 0, 5, tmpRecordSet, isResetMinMax[0], 2);
 							}
 							else if (data instanceof RxBlock) {
 								//System.out.println(((RxBlock) data).toString());
 								//Rx	5=LostPacketsReceiver A, 6=LostPacketsReceiver B, 7=LostPacketsReceiver L, 8=LostPacketsReceiver R, 9=FrameLoss, 10=Holds, 11=VoltageRx
-								isResetMinMax[1] = mergeRawData(((RxBlock) data).getMeasurementValues(), points, 5, 7, tmpRecordSet, isResetMinMax[1], 6);
+								isResetMinMax[1] = mergeRawData(data.getMeasurementValues(), points, 5, 7, tmpRecordSet, isResetMinMax[1], 6);
 							}
 							else if (data instanceof VarioBlock) {
 								//System.out.println(((VarioBlock) data).toString());
 								//Vario 12=Altitude V, 13=Climb V
-								mergeRawData(((VarioBlock) data).getMeasurementValues(), points, 12, 2, tmpRecordSet, true, -1);
+								mergeRawData(data.getMeasurementValues(), points, 12, 2, tmpRecordSet, true, -1);
 							}
 							//primitive data blocks
 							else if (data instanceof AltitudeBlock) {
 								//System.out.println(((AltitudeBlock) data).toString());
 								//Altitude	14=Altitude A
-								mergeRawData(((AltitudeBlock) data).getMeasurementValues(), points, 14, 1, tmpRecordSet, true, -1);
+								mergeRawData(data.getMeasurementValues(), points, 14, 1, tmpRecordSet, true, -1);
 							}
 							else if (data instanceof AltitudeZeroBlock) {
 								//System.out.println(((AltitudeZeroBlock) data).toString());
 								//AltitudeZero 15=Altitude Offset
-								mergeRawData(((AltitudeZeroBlock) data).getMeasurementValues(), points, 15, 1, tmpRecordSet, true, -1);
+								mergeRawData(data.getMeasurementValues(), points, 15, 1, tmpRecordSet, true, -1);
 							}
 							else if (data instanceof VoltageBlock) {
 								//System.out.println(((VoltageBlock) data).toString());
 								//Voltage 16=Voltage V
-								isResetMinMax[5] = mergeRawData(((VoltageBlock) data).getMeasurementValues(), points, 16, 1, tmpRecordSet, isResetMinMax[5], 0);
+								isResetMinMax[5] = mergeRawData(data.getMeasurementValues(), points, 16, 1, tmpRecordSet, isResetMinMax[5], 0);
 							}
 							else if (data instanceof CurrentBlock) {
 								//System.out.println(((CurrentBlock) data).toString());
 								//Current 17=Current C
-								mergeRawData(((CurrentBlock) data).getMeasurementValues(), points, 17, 1, tmpRecordSet, true, -1);
+								mergeRawData(data.getMeasurementValues(), points, 17, 1, tmpRecordSet, true, -1);
 							}
 							else if (data instanceof TemperatureBlock) {
 								//System.out.println(((TemperatureBlock) data).toString());
 								//Temperature 18=Temperature T
-								isResetMinMax[7] = mergeRawData(((TemperatureBlock) data).getMeasurementValues(), points, 18, 1, tmpRecordSet, isResetMinMax[7], 0);
+								isResetMinMax[7] = mergeRawData(data.getMeasurementValues(), points, 18, 1, tmpRecordSet, isResetMinMax[7], 0);
 							}
 							else if (data instanceof AirspeedBlock) {
 								//System.out.println(((AirspeedBlock) data).toString());
 								//AirSpeed 19=AirSpeed
-								mergeRawData(((AirspeedBlock) data).getMeasurementValues(), points, 19, 1, tmpRecordSet, true, -1);
+								mergeRawData(data.getMeasurementValues(), points, 19, 1, tmpRecordSet, true, -1);
 							}
 							//other important data blocks
 							else if (data instanceof GPSLocationBlock) {
@@ -340,32 +340,32 @@ public class TlmReader {
 							else if (data instanceof FlightPackBlock) {
 								//System.out.println(((FlightPackBlock) data).toString());
 								//FlightPack 29=Current FPA, 30=Capacity FPA, 31=Temperature FPA, 32=Current FPB, 33=Capacity FPB, 34=Temperature FPB
-								mergeRawData(((FlightPackBlock) data).getMeasurementValues(), points, 29, 6, tmpRecordSet, true, -1);
+								mergeRawData(data.getMeasurementValues(), points, 29, 6, tmpRecordSet, true, -1);
 							}
 							else if (data instanceof EscBlock) {
 								//System.out.println(((EscBlock) data).toString());
 								//ESC 35=RPM ESC, 36=Voltage ESC, 37=TempFET ESC, 38=Current ESC, 39=CurrentBEC ESC, 40=VoltsBEC ESC, 41=Throttle ESC, 42=PowerOut ESC, 43=PowerIn ESC
-								isResetMinMax[11] = mergeRawData(((EscBlock) data).getMeasurementValues(), points, 35, 9, tmpRecordSet, isResetMinMax[11], 1);
+								isResetMinMax[11] = mergeRawData(data.getMeasurementValues(), points, 35, 9, tmpRecordSet, isResetMinMax[11], 1);
 							}
 							else if (data instanceof PowerBoxBlock) {
 								//System.out.println(((PowerBoxBlock) data).toString());
 								//PowerBox 44=Voltage PB1, 45=Capacity PB1, 46=Voltage PB2, 47=Capacity PB2, 48=Alarms PB
-								isResetMinMax[12] = mergeRawData(((PowerBoxBlock) data).getMeasurementValues(), points, 44, 5, tmpRecordSet, isResetMinMax[12], 0);
+								isResetMinMax[12] = mergeRawData(data.getMeasurementValues(), points, 44, 5, tmpRecordSet, isResetMinMax[12], 0);
 							}
 							else if (data instanceof JetCatBlock) {
 								//System.out.println(((JetCatBlock) data).toString());
 								//JetCat 49=RawECUStatus JC, 50=Throttle JC, 51=PackVoltage JC, 52=PumpVoltage JC, 53=RPM JC, 54=EGT JC, 55=RawOffCondition JC
-								isResetMinMax[13] = mergeRawData(((JetCatBlock) data).getMeasurementValues(), points, 49, 7, tmpRecordSet, isResetMinMax[13], 2);
+								isResetMinMax[13] = mergeRawData(data.getMeasurementValues(), points, 49, 7, tmpRecordSet, isResetMinMax[13], 2);
 							}
 							else if (data instanceof GForceBlock) {
 								//System.out.println(((GForceBlock) data).toString());
 								//GForce 56=X GF, 57=Y GF, 58=Z GF, 59=Xmax GF, 60=Ymax GF, 61=Zmax GF, 62=Zmin GF
-								mergeRawData(((GForceBlock) data).getMeasurementValues(), points, 56, 7, tmpRecordSet, true, -1);
+								mergeRawData(data.getMeasurementValues(), points, 56, 7, tmpRecordSet, true, -1);
 							}
 							else if (data instanceof ServoDataBlock) {
 								//System.out.println(((ServoDataBlock) data).toString());
 								//Channel 63=Ch 1, ..., 70=Ch 8, ..., 82=Ch 20]
-								mergeRawData(((ServoDataBlock) data).getMeasurementValues(), points, 63, 20, tmpRecordSet, true, -1);
+								mergeRawData(data.getMeasurementValues(), points, 63, 20, tmpRecordSet, true, -1);
 							}
 							else
 								log.log(Level.WARNING, data.toString());
