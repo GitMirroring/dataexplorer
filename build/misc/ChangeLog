@@ -2,7 +2,7 @@ Development history / change log, please read from bottom up
 
 Version 4.0.8 - xx yyy 2026
 Generic changes/fixes 
-	* 
+	* correct the bold display of time line numbers while required
 	
 Device specific changes/fixes
 	* ET5410 - fix energy calculation

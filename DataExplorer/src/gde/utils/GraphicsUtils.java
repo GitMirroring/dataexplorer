@@ -176,10 +176,11 @@ public class GraphicsUtils {
 	public static void drawTextCentered(String string, int x, int y, GC gc, int style) {
 		Display display = Display.getCurrent();
 		if (display == null) SWT.error(SWT.ERROR_THREAD_INVALID_ACCESS);
+		boolean isBold = gc.getFont().getFontData()[0].getStyle() == SWT.BOLD;
 
 		int deviceZoomFactor = GDE.IS_WINDOWS  && (style & SWT.HORIZONTAL) != SWT.HORIZONTAL
 				? Integer.parseInt(System.getProperty("org.eclipse.swt.internal.deviceZoom", "100"))/100 : 1;
-		gc.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE/deviceZoomFactor, SWT.NORMAL));
+		gc.setFont(SWTResourceManager.getFont(GDE.WIDGET_FONT_NAME, GDE.WIDGET_FONT_SIZE/deviceZoomFactor, isBold ? SWT.BOLD : SWT.NORMAL));
 		Point pt = gc.textExtent(string); // string dimensions
 		Image stringImage = SWTResourceManager.getImage(pt.x, pt.y);
 		GC stringGc = new GC(stringImage); // SWTResourceManager.getGC(stringImage);
