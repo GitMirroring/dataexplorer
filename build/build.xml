@@ -301,6 +301,7 @@
 		<ant antfile="build.xml" target="clean" dir="nextGen" inheritall="true" />
 		<ant antfile="build.xml" target="clean" dir="PeakTech" inheritall="true" />
 		<ant antfile="build.xml" target="clean" dir="EastTester" inheritall="true" />
+		<ant antfile="build.xml" target="clean" dir="Schulze" inheritall="true" />
 		<!-- add new device here -->
 	</target>
 
@@ -590,6 +591,7 @@
 		<ant antfile="build.xml" target="package" dir="nextGen" inheritall="true" />
 		<ant antfile="build.xml" target="package" dir="PeakTech" inheritall="true" />
 		<ant antfile="build.xml" target="package" dir="EastTester" inheritall="true" />
+		<ant antfile="build.xml" target="package" dir="Schulze" inheritall="true" />
 		<!-- add new device here -->
 	</target>
 
@@ -640,6 +642,7 @@
 		<ant antfile="build.xml" target="nonui_package" dir="nextGen" inheritall="true" />
 		<ant antfile="build.xml" target="nonui_package" dir="PeakTech" inheritall="true" />
 		<ant antfile="build.xml" target="nonui_package" dir="EastTester" inheritall="true" />
+		<ant antfile="build.xml" target="nonui_package" dir="Schulze" inheritall="true" />
 		<!-- add new device here -->
 	</target>
 
@@ -689,6 +692,7 @@
 			<include name="nextGen/build/*.jar" />
 			<include name="PeakTech/build/*.jar" />
 			<include name="EastTester/build/*.jar" />
+			<include name="Schulze/build/*.jar" />
 			<!-- add new device here -->
 		</patternset>
 	</fileset>
@@ -740,6 +744,7 @@
 			<include name="nextGen/build/*NonUi*.jar" />
 			<include name="PeakTech/build/*NonUi*.jar" />
 			<include name="EastTester/build/*NonUi*.jar" />
+			<include name="Schulze/build/*NonUi*.jar" />
 			<!-- add new device here -->
 		</patternset>
 	</fileset>
