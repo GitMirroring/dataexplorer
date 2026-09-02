@@ -34,7 +34,7 @@ public class DataParserIsl6 extends DataParser {
 	
 	double capacity[] = {0., 0.};
 	double energy[] = {0., 0.};
-	final Isl_6_330d islDevice;
+	final Isl6_330d islDevice;
 	int counter = 0;
 	int newState = 0;
 
@@ -46,7 +46,7 @@ public class DataParserIsl6 extends DataParser {
 	 * @param useCheckSumType
 	 * @param useDataSize
 	 */
-	public DataParserIsl6(Isl_6_330d useDevice, int useTimeFactor, String useLeaderChar, String useSeparator, CheckSumTypes useCheckSumType, int useDataSize, int offset) {
+	public DataParserIsl6(Isl6_330d useDevice, int useTimeFactor, String useLeaderChar, String useSeparator, CheckSumTypes useCheckSumType, int useDataSize, int offset) {
 		super(useTimeFactor, useLeaderChar, useSeparator, useCheckSumType, useDataSize);
 		this.islDevice = useDevice;
 		this.offset = offset;

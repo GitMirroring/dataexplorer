@@ -18,6 +18,7 @@
 ****************************************************************************************/
 package gde.device.schulze;
 
+import java.io.IOException;
 import java.util.logging.Logger;
 
 import gde.GDE;
@@ -83,6 +84,14 @@ public class GathererThread extends Thread {
 			this.serialPort.open();
 		}
 		this.setPriority(Thread.MAX_PRIORITY);
+		try {
+			this.serialPort.cleanInputStream();
+			this.serialPort.getData();
+			this.serialPort.getData();
+		}
+		catch (Exception e) {
+			log.log(Level.WARNING, e.getMessage());
+		}
 	}
 
 	@Override
