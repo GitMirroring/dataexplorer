@@ -31,6 +31,7 @@ import gde.exception.DataInconsitsentException;
 import gde.exception.DevicePropertiesInconsistenceException;
 import gde.exception.SerialPortException;
 import gde.exception.TimeOutException;
+import gde.io.DataParser;
 import gde.log.Level;
 import gde.messages.Messages;
 import gde.ui.DataExplorer;
@@ -46,10 +47,10 @@ public class GathererThread extends Thread {
 	final static int					WAIT_TIME_RETRYS						= 3600;																											// 3600 * 1 sec
 
 	final DataExplorer				application;
-	final NextGenSerialPort		serialPort;
-	final NextGen8						device;
+	final SchulzeSerialPort		serialPort;
+	final BaseCharger							device;
 	final Channels						channels;
-	final DataParserNext			parser;
+	final DataParser    			parser;
 
 	String										recordSetKey1								= Messages.getString(gde.messages.MessageIds.GDE_MSGT0272); //default initialization
 	String										recordSetKey2								= Messages.getString(gde.messages.MessageIds.GDE_MSGT0272); //default initialization
@@ -70,13 +71,13 @@ public class GathererThread extends Thread {
 	 * @throws ApplicationConfigurationException 
 	 * @throws Exception 
 	 */
-	public GathererThread(DataExplorer currentApplication, NextGen8 useDevice, NextGenSerialPort useSerialPort) throws ApplicationConfigurationException, SerialPortException {
+	public GathererThread(DataExplorer currentApplication, BaseCharger useDevice, SchulzeSerialPort useSerialPort, DataParser dataParser) throws ApplicationConfigurationException, SerialPortException {
 		super("dataGatherer"); //$NON-NLS-1$
 		this.application = currentApplication;
 		this.device = useDevice;
 		this.serialPort = useSerialPort;
 		this.channels = Channels.getInstance();
-		this.parser = new DataParserNext(this.device, this.device.getDataBlockTimeUnitFactor(), this.device.getDataBlockLeader(), this.device.getDataBlockSeparator().value(), this.device.getDataBlockCheckSumType(), 14, 0); 
+		this.parser = dataParser; 
 
 		if (!this.serialPort.isConnected()) {
 			this.serialPort.open();
@@ -107,24 +108,36 @@ public class GathererThread extends Thread {
 				
 				this.channelNumber = this.parser.getChannelConfigNumber();
 				this.stateNumber = this.parser.getState(); 
-				if (log.isLoggable(Level.INFO)) log.logp(Level.INFO, GathererThread.$CLASS_NAME, $METHOD_NAME,	device.getChannelCount() + " - data for channel = " + channelNumber + " state = " + stateNumber);
+				if (log.isLoggable(Level.OFF)) log.logp(Level.OFF, GathererThread.$CLASS_NAME, $METHOD_NAME,	device.getChannelCount() + " - data for channel = " + channelNumber + " state = " + stateNumber);
 
-				if (this.channelNumber == 1)
+				if (this.channelNumber == 1) {
+					if (this.stateNumber <= 0) { //program ended
+						recordSet1 = null;
+						continue;
+					}
 					this.isProgrammExecuting1 = this.stateNumber > 0;
-				else 
+				}
+				else {
+					if (this.stateNumber <= 0) { //program ended
+						recordSet2 = null;
+						continue;
+					}
 					this.isProgrammExecuting2 = this.stateNumber > 0;
-
-
+				}
 
 				// check if device is ready for data capturing, discharge or charge allowed only
 				// else wait for 180 seconds max. for actions
 				if (this.isProgrammExecuting1 || this.isProgrammExecuting2) {
-					if (this.isProgrammExecuting1) { // checks for processes active includes check state change waiting to discharge to charge
+					if (this.isProgrammExecuting1 && this.channelNumber == 1) { // checks for processes active includes check state change waiting to discharge to charge
+						if (!checkDataPoints(this.parser.getValues())) //if parsing of data fails point array may empty
+							continue;
 						ch1 = processDataChannel(1, recordSet1, this.recordSetKey1, dataBuffer, points1);
 						recordSet1 = (RecordSet) ch1[0];
 						this.recordSetKey1 = (String) ch1[1];
 					}
-					if (this.isProgrammExecuting2) { // checks for processes active includes check state change waiting to discharge to charge
+					if (this.isProgrammExecuting2 && this.channelNumber == 2) { // checks for processes active includes check state change waiting to discharge to charge
+						if (!checkDataPoints(this.parser.getValues())) //if parsing of data fails point array may empty
+							continue;
 						ch2 = processDataChannel(2, recordSet2, this.recordSetKey2, dataBuffer, points2);
 						recordSet2 = (RecordSet) ch2[0];
 						this.recordSetKey2 = (String) ch2[1];
@@ -143,12 +156,12 @@ public class GathererThread extends Thread {
 					}
 				}
 				else { // no program is executing, wait for 180 seconds max. for actions
-					this.application.setStatusMessage(Messages.getString(MessageIds.GDE_MSGI1702));
+					this.application.setStatusMessage(Messages.getString(MessageIds.GDE_MSGI1400)); 
 					log.logp(java.util.logging.Level.FINER, GathererThread.$CLASS_NAME, $METHOD_NAME, "wait for device activation"); //$NON-NLS-1$
 					
 					if (0 == (setRetryCounter(getRetryCounter() - 1))) {
 						log.log(java.util.logging.Level.FINE, "device activation timeout"); //$NON-NLS-1$
-						this.application.openMessageDialogAsync(Messages.getString(MessageIds.GDE_MSGW1700));
+						this.application.openMessageDialogAsync(Messages.getString(MessageIds.GDE_MSGW1400));
 						stopDataGatheringThread(false, null);
 					}
 					
@@ -188,11 +201,11 @@ public class GathererThread extends Thread {
 				}
 				// this case will be reached while program is started, checked and the check not asap committed, stop pressed
 				else if (e instanceof TimeOutException && !(this.isProgrammExecuting1 || this.isProgrammExecuting2)) {
-					this.application.setStatusMessage(Messages.getString(MessageIds.GDE_MSGI1702));
+					this.application.setStatusMessage(Messages.getString(MessageIds.GDE_MSGI1400));
 					log.logp(java.util.logging.Level.FINE, GathererThread.$CLASS_NAME, $METHOD_NAME, "wait for device activation ..."); //$NON-NLS-1$
 					if (0 == (setRetryCounter(getRetryCounter() - 1))) {
 						log.log(java.util.logging.Level.FINE, "device activation timeout"); //$NON-NLS-1$
-						this.application.openMessageDialogAsync(Messages.getString(MessageIds.GDE_MSGW1700));
+						this.application.openMessageDialogAsync(Messages.getString(MessageIds.GDE_MSGW1400));
 						stopDataGatheringThread(false, null);
 					}
 				}
@@ -228,33 +241,33 @@ public class GathererThread extends Thread {
 		if (stateProperty != null) 
 			processName = this.device.getRecordSetStateNameReplacement(this.stateNumber);
 		else 
-			throw new DevicePropertiesInconsistenceException(Messages.getString(MessageIds.GDE_MSGW1702, new Object[] {this.stateNumber}));
+			throw new DevicePropertiesInconsistenceException(Messages.getString(MessageIds.GDE_MSGW1402, new Object[] {this.stateNumber}));
 		
 		// 0=no processing 1=charge 2=discharge 3=delay 4=auto balance 5=error
 		int processNumber = this.stateNumber;
-		if (log.isLoggable(Level.FINER)) {
-			log.log(Level.FINER, "processName = " + processName + " " + processNumber);
+		if (log.isLoggable(Level.OFF)) {
+			log.log(Level.OFF, "channel = " + number + " processName = " + processName + " " + processNumber);
 		}
-		Channel channel = this.channels.get(number);
-		if (channel != null) {
+		Channel actualChannel = this.channels.get(number);
+		if (actualChannel != null) {
 			// check if a record set matching for re-use is available and prepare a new if required
 			if (recordSet == null || !recordSetKey.contains(processName)) {
 				this.application.setStatusMessage(""); //$NON-NLS-1$
 				setRetryCounter(GathererThread.WAIT_TIME_RETRYS); // reset to 180 sec
 
 				// record set does not exist or is out dated, build a new name and create
-				recordSetKey = channel.getNextRecordSetNumber() + GDE.STRING_RIGHT_PARENTHESIS_BLANK + (this.isContinuousRecordSet ? processName : processName);
+				recordSetKey = actualChannel.getNextRecordSetNumber() + GDE.STRING_RIGHT_PARENTHESIS_BLANK + (this.isContinuousRecordSet ? processName : processName);
 				recordSetKey = recordSetKey.length() <= RecordSet.MAX_NAME_LENGTH ? recordSetKey : recordSetKey.substring(0, RecordSet.MAX_NAME_LENGTH);
 
-				channel.put(recordSetKey, RecordSet.createRecordSet(recordSetKey, this.application.getActiveDevice(), channel.getNumber(), true, false, true));
-				channel.applyTemplateBasics(recordSetKey);
-				log.logp(java.util.logging.Level.FINE, GathererThread.$CLASS_NAME, $METHOD_NAME, recordSetKey + " created for channel " + channel.getName()); //$NON-NLS-1$
-				recordSet = channel.get(recordSetKey);
+				actualChannel.put(recordSetKey, RecordSet.createRecordSet(recordSetKey, this.application.getActiveDevice(), actualChannel.getNumber(), true, false, true));
+				actualChannel.applyTemplateBasics(recordSetKey);
+				log.logp(java.util.logging.Level.FINE, GathererThread.$CLASS_NAME, $METHOD_NAME, recordSetKey + " created for channel " + actualChannel.getName()); //$NON-NLS-1$
+				recordSet = actualChannel.get(recordSetKey);
 				recordSet.setAllDisplayable();
 				//channel.applyTemplate(recordSetKey, false);
 				// switch the active record set if the current record set is child of active channel
-				this.channels.switchChannel(channel.getNumber(), recordSetKey);
-				channel.switchRecordSet(recordSetKey);
+				this.channels.switchChannel(actualChannel.getNumber(), recordSetKey);
+				actualChannel.switchRecordSet(recordSetKey);
 //				String description = recordSet.getRecordSetDescription() + GDE.LINE_SEPARATOR 
 //					+ "Firmware  : " + this.device.firmware //$NON-NLS-1$
 //					+ (this.device.getBatteryMemoryNumber(number, dataBuffer) >= 1 ? "; Memory #" + this.device.getBatteryMemoryNumber(number, dataBuffer) : GDE.STRING_EMPTY); //$NON-NLS-1$
@@ -371,5 +384,12 @@ public class GathererThread extends Thread {
 	 */
 	int setRetryCounter(int newRetryCounter) {
 		return this.retryCounter = newRetryCounter;
+	}
+	
+	boolean checkDataPoints(int[] points) {
+		int sum = 0;
+		for(int point : points)
+			sum += point;
+		return sum != 0;
 	}
 }

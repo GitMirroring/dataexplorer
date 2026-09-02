@@ -1,25 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
-*************************************************************************************
-  	This file is part of GNU DataExplorer.
 
-    GNU DataExplorer is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    GNU DataExplorer is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with GNU DataExplorer.  If not, see <https://www.gnu.org/licenses/>.
-    
-    Copyright (c) 2019,2020,2021,2022,2023,2024,2025,2026 Winfried Bruegmann
-************************************************************************************** 
--->
-<project name="nextGen" default="compile">
+<project name="Schulze" default="package">
 
 	<property name="build.properties" location="../build/build.properties" />
 
@@ -36,8 +17,11 @@
 		<pathelement location="../DataExplorer/build/DataExplorer.jar" />
 		<pathelement location="../build/lib/juniversalchardet.jar" />
 		<pathelement location="../build/lib/jaxb-api.jar" />
+		<pathelement location="../build/lib/usb4java.jar" />
 		<pathelement location="../build/lib/usb-api.jar" />
+		<pathelement location="../build/lib/build/lib/commons-lang3.jar" />
 		<pathelement location="../build/lib/${build.os.shortname}/${sun.arch.data.model}/swt.jar" />
+		<pathelement location="../build/lib/${build.os.shortname}/${sun.arch.data.model}/libusb4java.jar" />
 	</path>
 
 	<target name="compile" description="compile the project">
@@ -72,12 +56,13 @@
 			<attribute name="Built-Date" value="${TODAY}"/> 
     		<attribute name="Bundle-Version" value="${version.num}"/>
     		<attribute name="Bundle-SymbolicName" value="${ant.project.name}"/>
-    		<attribute name="Bundle-Description" value="Implementation to enable import of LogView Zero files"/>
+    		<attribute name="Bundle-Description" value="Implementation Schulze charger device using serial communication"/>
     		<attribute name="Export-Service" value="${export.services}"/>
     	</manifest>
 	    <jar manifest="src/META-INF/MANIFEST.MF" jarfile="build/${ant.project.name}.jar" compress="true" index="true" >
 	       	<fileset dir="${module.output}" includes="**/*.class"/>
 	    	<fileset dir="src" includes="**/*.xml"/>
+	    	<fileset dir="src" includes="**/*.xsd"/>
 	    	<fileset dir="src" includes="**/*.jpg"/>
 	    	<fileset dir="src" includes="**/*.gif"/>
 	    	<fileset dir="src" includes="**/*.png"/>
@@ -104,12 +89,13 @@
 			<attribute name="Built-Date" value="${TODAY}"/> 
     		<attribute name="Bundle-Version" value="${version.num}"/>
     		<attribute name="Bundle-SymbolicName" value="${ant.project.name}"/>
-    		<attribute name="Bundle-Description" value="Implementation to enable gathering Schulze nextGen devices"/>
+    		<attribute name="Bundle-Description" value="Implementation Schulze charger device using serial communication"/>
     		<attribute name="Export-Service" value="${export.services}"/>
     	</manifest>
 	    <jar manifest="src/META-INF/MANIFEST.MF" jarfile="build/${ant.project.name}NonUi-${version.num}.jar" compress="true" >
 	       	<fileset dir="${module.output}" includes="**/*.class"/>
 	    	<fileset dir="src" includes="**/*.xml"/>
+	    	<fileset dir="src" includes="**/*.xsd"/>
 	    	<fileset dir="src" includes="**/*.properties"/>
 	    </jar>
 	</target>

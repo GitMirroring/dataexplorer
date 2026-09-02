@@ -1,24 +1,36 @@
+/**************************************************************************************
+  	This file is part of GNU DataExplorer.
+
+    GNU DataExplorer is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    GNU DataExplorer is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with GNU DataExplorer.  If not, see <https://www.gnu.org/licenses/>.
+
+    Copyright (c) 2026 Winfried Bruegmann
+****************************************************************************************/
 package gde.device.schulze;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.logging.Logger;
 
 import javax.xml.bind.JAXBException;
 
 import gde.GDE;
-import gde.comm.DeviceCommPort;
-import gde.config.Settings;
 import gde.data.Channel;
 import gde.data.Channels;
 import gde.data.Record;
 import gde.data.RecordSet;
-import gde.device.DataBlockType;
 import gde.device.DeviceConfiguration;
 import gde.device.IDevice;
-import gde.device.InputTypes;
 import gde.device.MeasurementPropertyTypes;
 import gde.device.MeasurementType;
 import gde.device.PropertyType;
@@ -27,94 +39,21 @@ import gde.exception.DataInconsitsentException;
 import gde.exception.SerialPortException;
 import gde.log.Level;
 import gde.messages.Messages;
-import gde.ui.DataExplorer;
 import gde.utils.StringHelper;
 
-public class NextGen8 extends DeviceConfiguration implements IDevice {
+public class NextGen8 extends BaseCharger {
 	final static Logger							log					= Logger.getLogger(NextGen8.class.getName());
-
-	final DataExplorer							application;
-	protected final NextGenSerialPort	serialPort;
-	protected final Channels				channels;
-	protected GathererThread				gathererThread;
-
-	protected boolean								isFileIO		= false;
-	protected boolean								isSerialIO	= false;
 	
 	protected static double 				capacity = 0.0; 
-	protected static DataParserNext convertData;
+	protected DataParserNext				convertData;
 
-
-	
-	protected enum States {
-		unknown("?"), l("l"), L("L"), p("p"), P("P"), e("e"), E("E"), r("r"), R("R"), o("o"), O("O"), v("v"), V("V");
-		String value;
-
-		private States(String setValue) {
-			this.value = setValue;
-		}
-
-		public static String[] VALUES = getValues();
-
-		private static String[] getValues() {
-			List<String> list = new ArrayList<String>();
-			for (States element : values()) {
-				list.add(element.value);
-			}
-			return list.toArray(new String[0]);
-		}
-		
-		public int getOrdinal() {
-			log.log(Level.INFO, "state = " + this.value);
-			int result = super.ordinal();
-			return result == -1 ? 0 : result;
-		}
-	};
 
 	public NextGen8(String xmlFileName) throws FileNotFoundException, JAXBException {
 		super(xmlFileName);
-		// initializing the resource bundle for this device
-		Messages.setDeviceResourceBundle("gde.device.schulze.messages", Settings.getInstance().getLocale(), this.getClass().getClassLoader()); //$NON-NLS-1$
-
-		this.application = DataExplorer.getInstance();
-		//this.dialog = new CSV2SerialAdapterDialog(this.application.getShell(), this);
-		this.serialPort = new NextGenSerialPort(this, this.application);
-		this.channels = Channels.getInstance();
-		if (this.application.getMenuToolBar() != null) {
-			for (DataBlockType.Format format : this.getDataBlockType().getFormat()) {
-				if (!isSerialIO) isSerialIO = format.getInputType() == InputTypes.SERIAL_IO;
-				if (!isFileIO) isFileIO = format.getInputType() == InputTypes.FILE_IO;
-			}
-			if (isSerialIO) { //InputTypes.SERIAL_IO has higher relevance  
-				this.configureSerialPortMenu(DeviceCommPort.ICON_SET_START_STOP, Messages.getString(MessageIds.GDE_MSGT1706), Messages.getString(MessageIds.GDE_MSGT1705));
-			}
-			else { //InputTypes.FILE_IO
-				this.configureSerialPortMenu(DeviceCommPort.ICON_SET_IMPORT_CLOSE, Messages.getString(MessageIds.GDE_MSGT1703), Messages.getString(MessageIds.GDE_MSGT1703));
-			}
-		}
 	}
 
 	public NextGen8(DeviceConfiguration deviceConfig) {
 		super(deviceConfig);
-		// initializing the resource bundle for this device
-		Messages.setDeviceResourceBundle("gde.device.schulze.messages", Settings.getInstance().getLocale(), this.getClass().getClassLoader()); //$NON-NLS-1$
-
-		this.application = DataExplorer.getInstance();
-		//this.dialog = new CSV2SerialAdapterDialog(this.application.getShell(), this);
-		this.serialPort = new NextGenSerialPort(this, this.application);
-		this.channels = Channels.getInstance();
-		if (this.application.getMenuToolBar() != null) {
-			for (DataBlockType.Format format : this.getDataBlockType().getFormat()) {
-				if (!isSerialIO) isSerialIO = format.getInputType() == InputTypes.SERIAL_IO;
-				if (!isFileIO) isFileIO = format.getInputType() == InputTypes.FILE_IO;
-			}
-			if (isSerialIO) { //InputTypes.SERIAL_IO has higher relevance  
-				this.configureSerialPortMenu(DeviceCommPort.ICON_SET_START_STOP, Messages.getString(MessageIds.GDE_MSGT1706), Messages.getString(MessageIds.GDE_MSGT1705));
-			}
-			else { //InputTypes.FILE_IO
-				this.configureSerialPortMenu(DeviceCommPort.ICON_SET_IMPORT_CLOSE, Messages.getString(MessageIds.GDE_MSGT1703), Messages.getString(MessageIds.GDE_MSGT1703));
-			}
-		}
 	}
 
 	/**
@@ -156,34 +95,6 @@ public class NextGen8 extends DeviceConfiguration implements IDevice {
 	}
 
 	/**
-	 * set data line end points - this method will be called within getConvertedLovDataBytes only and requires to set startPos and crlfPos to zero before first call
-	 * - data line start is defined with '$ ;'
-	 * - end position is defined with '0d0a' (CRLF)
-	 * @param dataBuffer
-	 * @param startPos
-	 * @param crlfPos
-	 */
-	protected void setDataLineStartAndLength(byte[] dataBuffer, int[] refStartLength) {
-		final byte					startByte1 = '1';
-		final byte					startByte2 = '2';
-		final byte					startByteTrailer = ':';
-
-		int startPos = refStartLength[0] + refStartLength[1];
-		byte[] lineSep = this.getDataBlockEnding();
-		
-		//find start index 1: 2:
-		while (startPos < dataBuffer.length-1 && (dataBuffer[startPos] != startByte1 || dataBuffer[startPos] != startByte2) && dataBuffer[startPos+1] != startByteTrailer)
-			++startPos;
-
-		int crlfPos = refStartLength[0] = startPos;
-
-		for (; crlfPos < dataBuffer.length; ++crlfPos) {
-			if (dataBuffer[crlfPos] == lineSep[0] || dataBuffer[crlfPos + 1] == lineSep[1]) break; //0d0a (CRLF)
-		}
-		refStartLength[1] = crlfPos - startPos;
-	}
-
-	/**
 	 * convert the device bytes into raw values, no calculation will take place here, see translateValue reverseTranslateValue
 	 * inactive or to be calculated data point are filled with 0 and needs to be handles after words
 	 * @param points pointer to integer array to be filled with converted data
@@ -193,12 +104,14 @@ public class NextGen8 extends DeviceConfiguration implements IDevice {
 	public int[] convertDataBytes(int[] points, byte[] dataBuffer) {		
 		int[] startLength = new int[] {0,0};
 		byte[] lineBuffer = null;
+		if (this.convertData == null)
+			this.convertData = new DataParserNext(this, this.getDataBlockTimeUnitFactor(), this.getDataBlockLeader(), this.getDataBlockSeparator().value(), this.getDataBlockCheckSumType(), 14, 0);
 				
 		try {
 			setDataLineStartAndLength(dataBuffer, startLength);
 			lineBuffer = new byte[startLength[1]];
 			System.arraycopy(dataBuffer, startLength[0], lineBuffer, 0, startLength[1]);
-			convertData.parse(new String(lineBuffer), 1);
+			this.convertData.parse(new String(lineBuffer), 1);
 			//0=Voltage 1=Current 2=Capacity 3=Power 4=Temperature 5=balance
 			//6=cellVoltage1 7=cellVoltage2 8=cellVoltage3 9=cellVoltage4 10=cellVoltage5 11=cellVoltage6 12=cellVoltage7 13=cellVoltage8
 		}
@@ -225,7 +138,6 @@ public class NextGen8 extends DeviceConfiguration implements IDevice {
 		byte[] convertBuffer = new byte[dataBufferSize];
 		int[] points = new int[recordSet.size()];
 		String sThreadId = String.format("%06d", Thread.currentThread().threadId()); //$NON-NLS-1$
-		double capacity = 0.;
 		double timeStep_h = 1.0 / 3600.0;
 		int progressCycle = 0;
 		if (doUpdateProgressBar) this.application.setProgress(progressCycle, sThreadId);
@@ -278,7 +190,6 @@ public class NextGen8 extends DeviceConfiguration implements IDevice {
 		int offset = 0;
 		int progressCycle = 0;
 		int lovDataSize = this.getLovDataByteSize();
-		NextGen8.convertData = new DataParserNext(this, this.getDataBlockTimeUnitFactor(), this.getDataBlockLeader(), this.getDataBlockSeparator().value(), this.getDataBlockCheckSumType(), 14, 0); 
 
 		byte[] convertBuffer = new byte[deviceDataBufferSize];
 
@@ -518,17 +429,18 @@ public class NextGen8 extends DeviceConfiguration implements IDevice {
 	 * as example a file selection dialog could be opened to import serialized ASCII data 
 	 */
 	public void open_closeCommPort() {
-		if (this.isSerialIO) {
 			if (this.serialPort != null) {
 				if (!this.serialPort.isConnected()) {
 					try {
 						Channel activChannel = Channels.getInstance().getActiveChannel();
 						if (activChannel != null) {
-							//this.gathererThread = new NextGenGathererThread(this.application, this, this.serialPort, activChannel.getNumber());
-							this.gathererThread = new GathererThread(this.application, this, this.serialPort);
+							if (this.convertData == null)
+								this.convertData = new DataParserNext(this, this.getDataBlockTimeUnitFactor(), this.getDataBlockLeader(), this.getDataBlockSeparator().value(), this.getDataBlockCheckSumType(), 14, 0);
+
+							this.dataGatherThread = new GathererThread(this.application, this, this.serialPort, this.convertData);
 							try {
 								if (this.serialPort.isConnected()) {
-									this.gathererThread.start();
+									this.dataGatherThread.start();
 								}
 							}
 							catch (RuntimeException e) {
@@ -553,12 +465,11 @@ public class NextGen8 extends DeviceConfiguration implements IDevice {
 					}
 				}
 				else {
-					if (this.gathererThread != null) {
-						this.gathererThread.stopDataGatheringThread(false, null);
+					if (this.dataGatherThread != null) {
+						this.dataGatherThread.stopDataGatheringThread(false, null);
 					}
 					this.serialPort.close();
 				}
 			}
-		}
 	}
 }

@@ -34,17 +34,14 @@
         <format inputType="SERIAL_IO" formatType="BYTE" size="73"/>
         <timeUnit>sec</timeUnit>
         <separator>semicolon</separator>
+        <trailer>0D0A</trailer>
     </DataBlock>
     <State>
-        <property name="Datenaufnahme" value="0" type="Integer"/>
-        <property name="Laden" value="1" type="Integer"/>
-        <property name="Laden" value="2" type="Integer"/>
-        <property name="Lade CC-&gt;CV" value="3" type="Integer"/>
-        <property name="Laden CC-&gt;CV" value="4" type="Integer"/>
-        <property name="Entladen" value="5" type="Integer"/>
-        <property name="Entladen" value="6" type="Integer"/>
-        <property name="Entladen-Rückspeisen" value="7" type="Integer"/>
-        <property name="Entladen-Rückspeisen" value="8" type="Integer"/>
+        <property name="state_pause" value="0" type="Integer"/>
+        <property name="state_charge" value="1" type="Integer"/>
+        <property name="state_charge CC-&gt;CV" value="2" type="Integer"/>
+        <property name="state_discharge" value="3" type="Integer"/>
+        <property name="state_discharge regenerative" value="4" type="Integer"/>
     </State>
     <Channels>
         <Channel name="type_outlet 1" type="TYPE_OUTLET">

@@ -358,7 +358,7 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 		byte[] resultBuffer = new byte[0];
 		byte leader = (byte) this.simDevice.getDataBlockLeader().charAt(0);
 		byte[] lineEnding = this.simDevice.getDataBlockEnding();
-		boolean isNextGen = this.simDevice.getName().startsWith("next");
+		boolean isSchulzeCharger = this.simDevice.getName().startsWith("next") || this.simDevice.getName().startsWith("isl");
 		try {
 			waitForStableReceiveBuffer(readBuffer.length, timeout_msec, 100);
 		}
@@ -372,7 +372,7 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 				try {
 					boolean isOF = false;
 					
-					if (isNextGen) {
+					if (isSchulzeCharger) { //received line start with 1: or 2: channel number
 						while ((tmpByte = data_in.readByte()) != 0xff) {
 							if (!isOF) {
 								isOF = tmpByte == ':' && (lastByte == '1' || lastByte == '2'); 
@@ -392,7 +392,8 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 						}
 					}
 					
-					int size2Read = this.simDevice.getLovDataByteSize() - Math.abs(this.simDevice.getDataBlockSize(InputTypes.SERIAL_IO));
+					int size2Read = this.simDevice.getLovDataByteSize() - Math.abs(this.simDevice.getDataBlockSize(InputTypes.SERIAL_IO)) > 0 
+							? this.simDevice.getLovDataByteSize() - Math.abs(this.simDevice.getDataBlockSize(InputTypes.SERIAL_IO)) : 0;
 					byte[] tmpBuffer = new byte[size2Read > 0 ? size2Read : 0];
 					if (data_in.read(tmpBuffer) != size2Read) {
 						//end of file reached
@@ -408,8 +409,10 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 				}
 
 				if (this.simDevice.getDataBlockLeader().length() > 0) {
-					if (isNextGen)
-						while (tmpVector.size() > 2 && (tmpVector.get(0) != '1' || tmpVector.get(0) != '2') && tmpVector.get(1) != ':')
+					if (isSchulzeCharger)
+						while (tmpVector.size() > 4 
+								&& !((tmpVector.get(0) == '1' && tmpVector.get(1) == ':') || (tmpVector.get(0) == '2' && tmpVector.get(1) == ':'))
+								&& tmpVector.get(2) == '$')
 							tmpVector.remove(0);
 					else
 						while (tmpVector.size() > 2 && tmpVector.get(0) != leader)
@@ -431,8 +434,11 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 				if (this.fileType.equals(GDE.FILE_ENDING_STAR_TXT)) {
 					String line;
 					while ((line = txt_in.readLine()) != null) {
+						if (line.length() == 0)
+							continue;
 						if (line.length() >= simDevice.getDataBlockSize(FormatTypes.BYTE)) {
 							readBuffer = (line+"\r\n").getBytes();
+							log.log(Level.OFF, "sim '" + new String(readBuffer) + "'");
 							break;
 						}	
 						this.close();

@@ -298,7 +298,6 @@
 		<ant antfile="build.xml" target="clean" dir="Spektrum-Telemetry" inheritall="true" />
 		<ant antfile="build.xml" target="clean" dir="Triangoli" inheritall="true" />
 		<ant antfile="build.xml" target="clean" dir="Core-Telemetry" inheritall="true" />
-		<ant antfile="build.xml" target="clean" dir="nextGen" inheritall="true" />
 		<ant antfile="build.xml" target="clean" dir="PeakTech" inheritall="true" />
 		<ant antfile="build.xml" target="clean" dir="EastTester" inheritall="true" />
 		<ant antfile="build.xml" target="clean" dir="Schulze" inheritall="true" />
@@ -588,7 +587,6 @@
 		<ant antfile="build.xml" target="package" dir="Spektrum-Telemetry" inheritall="true" />
 		<ant antfile="build.xml" target="package" dir="Triangoli" inheritall="true" />
 		<ant antfile="build.xml" target="package" dir="Core-Telemetry" inheritall="true" />
-		<ant antfile="build.xml" target="package" dir="nextGen" inheritall="true" />
 		<ant antfile="build.xml" target="package" dir="PeakTech" inheritall="true" />
 		<ant antfile="build.xml" target="package" dir="EastTester" inheritall="true" />
 		<ant antfile="build.xml" target="package" dir="Schulze" inheritall="true" />
@@ -639,7 +637,6 @@
 		<ant antfile="build.xml" target="nonui_package" dir="Spektrum-Telemetry" inheritall="true" />
 		<ant antfile="build.xml" target="nonui_package" dir="Triangoli" inheritall="true" />
 		<ant antfile="build.xml" target="nonui_package" dir="Core-Telemetry" inheritall="true" />
-		<ant antfile="build.xml" target="nonui_package" dir="nextGen" inheritall="true" />
 		<ant antfile="build.xml" target="nonui_package" dir="PeakTech" inheritall="true" />
 		<ant antfile="build.xml" target="nonui_package" dir="EastTester" inheritall="true" />
 		<ant antfile="build.xml" target="nonui_package" dir="Schulze" inheritall="true" />
@@ -689,7 +686,6 @@
 			<include name="Spektrum-Telemetry/build/*.jar" />
 			<include name="Triangoli/build/*.jar" />
 			<include name="Core-Telemetry/build/*.jar" />
-			<include name="nextGen/build/*.jar" />
 			<include name="PeakTech/build/*.jar" />
 			<include name="EastTester/build/*.jar" />
 			<include name="Schulze/build/*.jar" />
@@ -741,7 +737,6 @@
 			<include name="Spektrum-Telemetry/build/*NonUi*.jar" />
 			<include name="Triangoli/build/*NonUi*.jar" />
 			<include name="Core-Telemetry/build/*NonUi*.jar" />
-			<include name="nextGen/build/*NonUi*.jar" />
 			<include name="PeakTech/build/*NonUi*.jar" />
 			<include name="EastTester/build/*NonUi*.jar" />
 			<include name="Schulze/build/*NonUi*.jar" />
