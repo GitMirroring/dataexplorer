@@ -71,9 +71,9 @@ public class DataParserIsl6 extends DataParser {
 	 */
 	@Override
 	public void parse(String inputLine, int line) throws DevicePropertiesInconsistenceException {
-		if (inputLine.contains("(A")) { // (A1) Akku_ab, Akku_an
-			int lineIndex = inputLine.indexOf("(A");
-			this.channelConfigNumber = Integer.parseInt(inputLine.substring(lineIndex+2, lineIndex+3).trim()); //channel A1/A2 used to address channel in gatherer thread
+		if (inputLine.contains("(A1") || inputLine.contains("(A2")) { // (A1) Akku_ab, Akku_an
+			int lineIndex = inputLine.indexOf("(A1") == -1 ? inputLine.indexOf("(A2") : inputLine.indexOf("(A1");
+			this.channelConfigNumber = Integer.parseInt(inputLine.substring(lineIndex + 2, lineIndex + 3).trim()); //channel A1/A2 used to address channel in gatherer thread
 
 			this.values[0] = 0; //voltage
 			this.values[1] = 0; //current
@@ -81,6 +81,8 @@ public class DataParserIsl6 extends DataParser {
 			this.values[3] = 0; //power
 			this.values[4] = 0; //energy
 			this.newState = 0; //unknown to signal end processing
+			this.capacity[this.channelConfigNumber - 1] = 0.;
+			this.energy[this.channelConfigNumber - 1] = 0.;
 		}
 		else if (inputLine.contains("laden")) { // ge/ent-laden:  1990mAh
 			//assuming actual channel/output since it can not be detected
@@ -90,8 +92,18 @@ public class DataParserIsl6 extends DataParser {
 			this.values[3] = 0; //power
 			this.values[4] = 0; //energy
 			this.newState = 0; //unknown to signal end processing			
+			this.capacity[this.channelConfigNumber - 1] = 0.;
+			this.energy[this.channelConfigNumber - 1] = 0.;
 		}
-			else {
+		else {
+			int startIndex = line == 0 ? 0 : inputLine.length() - 1 - Math.min(27,  inputLine.length() - 1);
+			int[] refPositions = new int[] {startIndex, inputLine.length() - 1}; //startIndex - endIndex
+			this.islDevice.setDataLineStartAndLength(inputLine.getBytes(), refPositions);
+			byte[] tmpData = new byte[refPositions[1]];
+			System.arraycopy(inputLine.getBytes(), refPositions[0], tmpData, 0, tmpData.length);
+			inputLine = new String(tmpData);
+			log.log(Level.OFF, "parsing " + inputLine);
+			
 			String[] mainValues = inputLine.indexOf(';') == -1 ? inputLine.split(":") : inputLine.substring(0, inputLine.indexOf(';')).split(":");
 			this.channelConfigNumber = Integer.parseInt(mainValues[0].trim()); //channel A1/A2 used to address channel in gatherer thread
 			int indexChannel = this.channelConfigNumber - 1; //to address channel related capacity and energy
@@ -110,11 +122,11 @@ public class DataParserIsl6 extends DataParser {
 				this.values[0] = Integer.parseInt(mainValues[2].trim()); //voltage
 				if (mainValues.length == 4) { // 1:    1: 3719:   12-e.....
 					this.values[1] = Integer.parseInt(mainValues[3].substring(0, 5).trim()) * (mainValues[3].charAt(5) == '-' ? -1 : 1); //current
-					this.newState = this.islDevice.getProcessingState(mainValues[3].substring(6, 7).charAt(0)); 
+					this.newState = this.islDevice.getProcessingState(mainValues[3].substring(6, 7).charAt(0));
 				}
 				else { //mainValues.length == 5, 1:    1: 3719:   12:p.....
 					this.values[1] = Integer.parseInt(mainValues[3].trim()); //current
-					this.newState = this.islDevice.getProcessingState(mainValues[4].substring(0, 1).charAt(0)); 
+					this.newState = this.islDevice.getProcessingState(mainValues[4].substring(0, 1).charAt(0));
 				}
 
 				if (this.newState <= 8)//keep previous state for o,O,v,V and E,R e,E

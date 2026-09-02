@@ -102,7 +102,7 @@ public abstract class BaseCharger extends DeviceConfiguration implements IDevice
 		final byte					startByteTrailer = ':';
 		log.log(Level.OFF, new String(dataBuffer));
 
-		int startPos = refStartLength[0] + refStartLength[1];
+		int startPos = refStartLength[0];
 		byte[] lineSep = this.getDataBlockEnding();
 		
 		//find start index 1: 2:
@@ -113,10 +113,10 @@ public abstract class BaseCharger extends DeviceConfiguration implements IDevice
 
 		int crlfPos = refStartLength[0] = startPos;
 
-		for (; crlfPos < dataBuffer.length; ++crlfPos) {
+		for (; crlfPos < dataBuffer.length - 1; ++crlfPos) {
 			if (dataBuffer[crlfPos] == lineSep[0] || dataBuffer[crlfPos + 1] == lineSep[1]) break; //0d0a (CRLF)
 		}
-		refStartLength[1] = crlfPos - startPos;
+		refStartLength[1] = refStartLength[1] - startPos;
 	}
 
 }
