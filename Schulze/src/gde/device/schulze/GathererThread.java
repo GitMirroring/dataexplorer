@@ -86,8 +86,6 @@ public class GathererThread extends Thread {
 		this.setPriority(Thread.MAX_PRIORITY);
 		try {
 			this.serialPort.cleanInputStream();
-			this.serialPort.getData();
-			this.serialPort.getData();
 		}
 		catch (Exception e) {
 			log.log(Level.WARNING, e.getMessage());
