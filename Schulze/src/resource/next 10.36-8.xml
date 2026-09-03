@@ -72,6 +72,12 @@
                 <statistics min="true" max="true" avg="true" sigma="false"/>
             </Measurement>
             <Measurement>
+                <name>energy</name>
+                <symbol>e</symbol>
+                <unit>Wh</unit>
+                <statistics min="true" max="true" avg="true" sigma="false"/>
+            </Measurement>
+            <Measurement>
                 <name>temperature</name>
                 <symbol>T</symbol>
                 <unit>°C</unit>
@@ -99,7 +105,7 @@
                 <unit>V</unit>
                 <active>true</active>
                 <statistics min="true" max="true" avg="false" sigma="false"/>
-                <property name="scale_sync_ref_ordinal" value="6" type="Integer"/>
+                <property name="scale_sync_ref_ordinal" value="7" type="Integer"/>
             </Measurement>
             <Measurement>
                 <name>cell_voltage 3</name>
@@ -107,7 +113,7 @@
                 <unit>V</unit>
                 <active>true</active>
                 <statistics min="true" max="true" avg="false" sigma="false"/>
-                <property name="scale_sync_ref_ordinal" value="6" type="Integer"/>
+                <property name="scale_sync_ref_ordinal" value="7" type="Integer"/>
             </Measurement>
             <Measurement>
                 <name>cell_voltage 4</name>
@@ -115,7 +121,7 @@
                 <unit>V</unit>
                 <active>true</active>
                 <statistics min="true" max="true" avg="false" sigma="false"/>
-                <property name="scale_sync_ref_ordinal" value="6" type="Integer"/>
+                <property name="scale_sync_ref_ordinal" value="7" type="Integer"/>
             </Measurement>
             <Measurement>
                 <name>cell_voltage 5</name>
@@ -123,7 +129,7 @@
                 <unit>V</unit>
                 <active>true</active>
                 <statistics min="true" max="true" avg="false" sigma="false"/>
-                <property name="scale_sync_ref_ordinal" value="6" type="Integer"/>
+                <property name="scale_sync_ref_ordinal" value="7" type="Integer"/>
             </Measurement>
             <Measurement>
                 <name>cell_voltage 6</name>
@@ -131,7 +137,7 @@
                 <unit>V</unit>
                 <active>true</active>
                 <statistics min="true" max="true" avg="false" sigma="false"/>
-                <property name="scale_sync_ref_ordinal" value="6" type="Integer"/>
+                <property name="scale_sync_ref_ordinal" value="7" type="Integer"/>
             </Measurement>
             <Measurement>
                 <name>cell_voltage 7</name>
@@ -139,7 +145,7 @@
                 <unit>V</unit>
                 <active>true</active>
                 <statistics min="true" max="true" avg="false" sigma="false"/>
-                <property name="scale_sync_ref_ordinal" value="6" type="Integer"/>
+                <property name="scale_sync_ref_ordinal" value="7" type="Integer"/>
             </Measurement>
             <Measurement>
                 <name>cell_voltage 8</name>
@@ -147,7 +153,7 @@
                 <unit>V</unit>
                 <active>true</active>
                 <statistics min="true" max="true" avg="false" sigma="false"/>
-                <property name="scale_sync_ref_ordinal" value="6" type="Integer"/>
+                <property name="scale_sync_ref_ordinal" value="7" type="Integer"/>
             </Measurement>
             <Settlements/>
             <ReferenceGroups/>
@@ -180,6 +186,12 @@
                 <name>power</name>
                 <symbol>P</symbol>
                 <unit>W</unit>
+                <statistics min="true" max="true" avg="true" sigma="false"/>
+            </Measurement>
+            <Measurement>
+                <name>energy</name>
+                <symbol>e</symbol>
+                <unit>Wh</unit>
                 <statistics min="true" max="true" avg="true" sigma="false"/>
             </Measurement>
             <Measurement>

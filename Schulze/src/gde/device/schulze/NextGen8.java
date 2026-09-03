@@ -435,7 +435,7 @@ public class NextGen8 extends BaseCharger {
 						Channel activChannel = Channels.getInstance().getActiveChannel();
 						if (activChannel != null) {
 							if (this.convertData == null)
-								this.convertData = new DataParserNext(this, this.getDataBlockTimeUnitFactor(), this.getDataBlockLeader(), this.getDataBlockSeparator().value(), this.getDataBlockCheckSumType(), 14, 0);
+								this.convertData = new DataParserNext(this, this.getDataBlockTimeUnitFactor(), this.getDataBlockLeader(), this.getDataBlockSeparator().value(), this.getDataBlockCheckSumType(), this.getNumberOfMeasurements(1), 0);
 
 							this.dataGatherThread = new GathererThread(this.application, this, this.serialPort, this.convertData);
 							try {

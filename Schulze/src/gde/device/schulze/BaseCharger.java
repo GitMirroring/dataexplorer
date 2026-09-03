@@ -63,22 +63,18 @@ public abstract class BaseCharger extends DeviceConfiguration implements IDevice
 		case '1':
 		case 'l':
 		case 'L':
-			state = 1; //charge
-			break;
-
+		case 'o':
+		case 'O':
 		case 'p':
 		case 'P':
-			state = 2; //charge CC->CV
+			state = 1; //charge
 			break;
 
 		case 'e':
 		case 'E':
+		case 'r':
+		case 'R':
 			state = 3; //discharge
-			break;
-
-		case 'o':
-		case 'O':
-			state = 4; //discharge to other channel
 			break;
 
 		default:
@@ -116,7 +112,7 @@ public abstract class BaseCharger extends DeviceConfiguration implements IDevice
 		for (; crlfPos < dataBuffer.length - 1; ++crlfPos) {
 			if (dataBuffer[crlfPos] == lineSep[0] || dataBuffer[crlfPos + 1] == lineSep[1]) break; //0d0a (CRLF)
 		}
-		refStartLength[1] = refStartLength[1] - startPos;
+		refStartLength[1] = crlfPos - startPos;
 	}
 
 }

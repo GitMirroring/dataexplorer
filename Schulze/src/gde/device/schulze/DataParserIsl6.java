@@ -37,6 +37,7 @@ public class DataParserIsl6 extends DataParser {
 	final Isl6_330d islDevice;
 	int counter = 0;
 	int newState = 0;
+	int stateCh[] = {0, 0};
 
 	protected final int offset;
 	/**
@@ -140,8 +141,13 @@ public class DataParserIsl6 extends DataParser {
 					this.newState = this.islDevice.getProcessingState(mainValues[4].substring(0, 1).charAt(0));
 				}
 
-				if (this.newState <= 8)//keep previous state for o,O,v,V and E,R e,E
+				if (this.newState != this.stateCh[indexChannel]) {
+					log.log(Level.OFF, "channel = " + this.channelConfigNumber + "; new State = " + this.newState + "; channel state = " + this.stateCh[indexChannel]);
 					this.state = this.newState;
+					this.stateCh[indexChannel] = this.newState;
+					this.capacity[indexChannel] = 0.;
+					this.energy[indexChannel] = 0.;
+				}
 
 				this.capacity[indexChannel] += this.values[1] / 1000. * this.islDevice.getTimeStep_ms() / 3600.;
 				this.values[2] = (int) (this.capacity[indexChannel] * 1000); //capacity
