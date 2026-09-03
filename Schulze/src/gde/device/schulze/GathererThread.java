@@ -18,7 +18,6 @@
 ****************************************************************************************/
 package gde.device.schulze;
 
-import java.io.IOException;
 import java.util.logging.Logger;
 
 import gde.GDE;
