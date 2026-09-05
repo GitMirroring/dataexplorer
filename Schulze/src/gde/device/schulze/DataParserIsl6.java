@@ -81,31 +81,30 @@ public class DataParserIsl6 extends DataParser {
 			this.values[2] = 0; //capacity
 			this.values[3] = 0; //power
 			this.values[4] = 0; //energy
-			this.newState = 0; //unknown to signal end processing
+			this.state = 0; //unknown to signal end processing
+			this.stateCh[this.channelConfigNumber - 1] = this.state;
 			this.capacity[this.channelConfigNumber - 1] = 0.;
 			this.energy[this.channelConfigNumber - 1] = 0.;
 		}
-		else if (inputLine.contains("laden")  || inputLine.contains("schulze")  || inputLine.contains("elektronik")  || inputLine.contains("isl")  || inputLine.contains("rdy")) { // ge/ent-laden:  1990mAh
+		else if (inputLine.contains("laden")) { // ge/ent-laden:  1990mAh
 			//assuming actual channel/output since it can not be detected
 			this.values[0] = 0; //voltage
 			this.values[1] = 0; //current
 			this.values[2] = 0; //capacity
 			this.values[3] = 0; //power
 			this.values[4] = 0; //energy
-			this.newState = 0; //unknown to signal end processing			
+			this.state = 0; //unknown to signal end processing
+			this.stateCh[this.channelConfigNumber - 1] = this.state;
 			this.capacity[this.channelConfigNumber - 1] = 0.;
 			this.energy[this.channelConfigNumber - 1] = 0.;
 		}
-		else if (inputLine.contains("Geraetenummer")) { // Geraetenummer=5164
-			//assuming actual channel/output since it can not be detected
+		else if (inputLine.contains("Geraetenummer")  || inputLine.contains("schulze")  || inputLine.contains("elektronik")  || inputLine.contains("isl")  || inputLine.contains("rdy")) { // Geraetenummer=5164
+			//channel/output independent 
 			this.values[0] = 0; //voltage
 			this.values[1] = 0; //current
 			this.values[2] = 0; //capacity
 			this.values[3] = 0; //power
 			this.values[4] = 0; //energy
-			this.newState = 0; //unknown to signal end processing			
-			this.capacity[this.channelConfigNumber - 1] = 0.;
-			this.energy[this.channelConfigNumber - 1] = 0.;
 		}
 		else {
 			int startIndex = line == 0 ? 0 : inputLine.length() - 1 - Math.min(27,  inputLine.length() - 1);
@@ -148,6 +147,7 @@ public class DataParserIsl6 extends DataParser {
 					this.capacity[indexChannel] = 0.;
 					this.energy[indexChannel] = 0.;
 				}
+				this.state = this.stateCh[indexChannel];
 
 				this.capacity[indexChannel] += this.values[1] / 1000. * this.islDevice.getTimeStep_ms() / 3600.;
 				this.values[2] = (int) (this.capacity[indexChannel] * 1000); //capacity

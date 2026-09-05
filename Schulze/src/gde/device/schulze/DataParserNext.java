@@ -108,6 +108,7 @@ public class DataParserNext extends DataParser {
 			this.capacity[indexChannel] = 0.;
 			this.energy[indexChannel] = 0.;
 		}
+		this.state = this.stateCh[indexChannel];
 				
 		this.capacity[indexChannel] += this.values[1]/1000. * this.nextDevice.getTimeStep_ms() / 3600.;
 		this.values[2] = (int) (this.capacity[indexChannel] * 1000); //capacity
