@@ -28,7 +28,6 @@ import gde.device.InputTypes;
 import gde.exception.TimeOutException;
 import gde.log.Level;
 import gde.ui.DataExplorer;
-import gde.utils.Checksum;
 import gde.utils.StringHelper;
 
 /**
@@ -75,6 +74,8 @@ public class SchulzeSerialPort extends DeviceCommPort implements IDeviceCommPort
 		this.index = 0;
 		this.tmpData = new byte[0];
 	}
+	
+	public void resetTmpData() {this.tmpData = new byte[0];}
 
 	/**
 	 * method to gather data from device, implementation is individual for device
@@ -83,22 +84,43 @@ public class SchulzeSerialPort extends DeviceCommPort implements IDeviceCommPort
 	 */
 	public synchronized byte[] getData() throws Exception {
 		final String $METHOD_NAME = "getData";
-		this.index = 0;
+		int endIndex = 0;
 
 		try {
 			//receive data while needed
 			this.isDataReceived = false;
 			readNewData();
-			log.log(Level.OFF, "'" + new String(answer) + "'"); 
+			if (log.isLoggable(Level.FINE)) log.log(Level.FINE, "'" + new String(answer) + "'"); 
 			
-			//find end of line CR/LF
-			int endIndex = answer.length - 1;			
-			//1: 3488:13614: 2007:L 41 CR/LF		
-			while ((answer[endIndex] & 0xFF) != this.endByte && (answer[endIndex - 1] & 0xFF) != this.endByte_1)
-				--endIndex;
-
-			this.data = new byte[this.answer.length];
-			System.arraycopy(this.answer, 0, this.data, 0, endIndex+1);
+			if (answer.length > 3 && (endIndex = getIndexCRLF(answer)) > 1) { //check for CR/LF
+				if (this.tmpData.length == 0) {
+					this.data = new byte[this.answer.length];
+					System.arraycopy(this.answer, 0, this.data, 0, endIndex+1);
+				}
+				else {
+					this.data = new byte[this.answer.length + this.tmpData.length];
+					System.arraycopy(this.tmpData, 0, this.data, 0, this.tmpData.length);
+					System.arraycopy(this.answer, 0, this.data, this.tmpData.length, this.answer.length);
+				}
+			}
+			else { //do up to 5 retries 
+				if (this.retryCounter++ < 5) {
+					if (this.tmpData.length == 0) { //first retry append data
+						this.tmpData = new byte[this.answer.length];
+						System.arraycopy(this.answer, 0, this.tmpData, 0, this.answer.length);
+					}
+					else { //next retry append data and set tmpData
+						this.data = new byte[this.answer.length + this.tmpData.length];
+						System.arraycopy(this.tmpData, 0, this.data, 0, this.tmpData.length);
+						System.arraycopy(this.answer, 0, this.data, this.tmpData.length, this.answer.length);
+						this.tmpData = new byte[this.data.length];
+						System.arraycopy(this.data, 0, this.tmpData, 0, this.tmpData.length);
+					}
+					this.getData();
+				}
+				else 
+					throw new IOException();
+			}
 		}
 		catch (Exception e) {
 			if (!(e instanceof TimeOutException)) {
@@ -106,62 +128,28 @@ public class SchulzeSerialPort extends DeviceCommPort implements IDeviceCommPort
 			}
 			throw e;
 		}
-		log.log(Level.OFF, StringHelper.byte2Hex2CharString(this.data, this.data.length));
+		
+		if (this.retryCounter != 0)
+			log.log(Level.WARNING, String.format("processed %d retries", this.retryCounter));
+		
+		this.retryCounter = 0;
+		this.tmpData = new byte[0];
+		if (log.isLoggable(Level.FINE)) log.log(Level.FINE, StringHelper.byte2Hex2CharString(this.data, this.data.length));
 		return this.data;
 	}
 
 	/**
-	 * recursive find the end of data, normal exit is not at the end of the method
-	 * @param startIndex
-	 * @throws IOException
-	 * @throws TimeOutException
+	 * find end of line CR/LF begin search from end
+	 * @param tmpAnswer
+	 * @return
 	 */
-	protected byte[] findDataEnd(int startIndex) throws IOException, TimeOutException {
-		int endIndex;
-		
-		//log.log(Level.INFO, StringHelper.byte2Hex2CharString(this.answer, this.answer.length));
-
-		if (answer.length - startIndex >=  Math.abs(this.device.getDataBlockSize(InputTypes.SERIAL_IO))) {
-			this.index =  Math.abs(this.device.getDataBlockSize(InputTypes.SERIAL_IO));
-			while (this.index < this.answer.length && !(this.answer[this.index] == this.separatorByte))
-				--this.index;
-			++this.index;
-		}
-		else 
-			this.index = startIndex + 24; //Ni 1: 3488:13614: 2007:L 41
-		
-		
-		if (this.index < this.answer.length && (this.tmpData.length + this.index - startIndex) > 8) {
-			endIndex = this.index;
-			this.data = new byte[this.tmpData.length + endIndex - startIndex];
-			//System.out.println(startIndex + " - " + this.tmpData.length + " - " + endIndex);
-			System.arraycopy(this.tmpData, 0, this.data, 0, this.tmpData.length);
-			System.arraycopy(this.answer, startIndex, this.data, this.tmpData.length, endIndex - startIndex);
-			//log.log(Level.INFO, StringHelper.byte2Hex2CharString(this.data, this.data.length));
-
-			if (SchulzeSerialPort.log.isLoggable(Level.FINER)) 
-				log.log(Level.FINER, "'" + new String(this.data) + "'");
-
-			return this.data;
-		}
-		//endIndex not found, save temporary data, read new data
-		if (this.retryCounter > 10)
-			throw new TimeOutException("no data received");
-		
-		++this.retryCounter;
-		this.data = new byte[this.tmpData.length];
-		System.arraycopy(this.tmpData, 0, this.data, 0, this.data.length);
-
-		this.tmpData = new byte[this.answer.length - startIndex + this.data.length];
-		System.arraycopy(this.data, 0, this.tmpData, 0, this.data.length);
-		System.arraycopy(this.answer, startIndex, this.tmpData, this.data.length, this.answer.length - startIndex);
-
-		this.isDataReceived = false;
-		readNewData();
-		findDataEnd(this.index = 0);
-		
-		this.retryCounter = 0; //reset retryCounter counter
-		return this.data;
+	private int getIndexCRLF(byte[] tmpAnswer) {
+		//find end of line CR/LF
+		int endIndex = tmpAnswer.length - 1;			
+		//1: 3488:13614: 2007:L 41 CR/LF		
+		while (endIndex > 0 && (tmpAnswer[endIndex] & 0xFF) != this.endByte && (tmpAnswer[endIndex - 1] & 0xFF) != this.endByte_1)
+			--endIndex;
+		return endIndex;
 	}
 
 	/**
@@ -176,19 +164,4 @@ public class SchulzeSerialPort extends DeviceCommPort implements IDeviceCommPort
 			this.isDataReceived = true;
 		}
 	}
-
-	/**
-	 * check check sum of data buffer
-	 * @param buffer
-	 * @return true/false
-	 */
-	protected boolean isChecksumOK(byte[] buffer) {
-		final String $METHOD_NAME = "isChecksumOK";
-		boolean isOK = false;
-		int check_sum = Checksum.XOR(buffer, buffer.length - 4);
-		if (Integer.parseInt(String.format("%c%c", buffer[buffer.length - 4], buffer[buffer.length - 3])) == check_sum) isOK = true;
-		if (SchulzeSerialPort.log.isLoggable(Level.FINER)) SchulzeSerialPort.log.logp(Level.FINER, SchulzeSerialPort.$CLASS_NAME, $METHOD_NAME, "Check_sum = " + isOK); //$NON-NLS-1$
-		return isOK;
-	}
-
 }

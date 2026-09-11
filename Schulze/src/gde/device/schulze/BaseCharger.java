@@ -96,7 +96,7 @@ public abstract class BaseCharger extends DeviceConfiguration implements IDevice
 		final byte					startByte1 = '1';
 		final byte					startByte2 = '2';
 		final byte					startByteTrailer = ':';
-		log.log(Level.OFF, new String(dataBuffer));
+		if (log.isLoggable(Level.FINE)) log.log(Level.FINE, new String(dataBuffer));
 
 		int startPos = refStartLength[0];
 		byte[] lineSep = this.getDataBlockEnding();

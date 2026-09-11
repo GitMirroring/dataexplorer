@@ -113,7 +113,7 @@ public class DataParserIsl6 extends DataParser {
 			byte[] tmpData = new byte[refPositions[1]];
 			System.arraycopy(inputLine.getBytes(), refPositions[0], tmpData, 0, tmpData.length);
 			inputLine = new String(tmpData);
-			log.log(Level.OFF, "parsing " + inputLine);
+			if (log.isLoggable(Level.FINE)) log.log(Level.FINE, "parsing " + inputLine);
 			
 			String[] mainValues = inputLine.indexOf(';') == -1 ? inputLine.split(":") : inputLine.substring(0, inputLine.indexOf(';')).split(":");
 			this.channelConfigNumber = Integer.parseInt(mainValues[0].trim()); //channel A1/A2 used to address channel in gatherer thread
@@ -127,7 +127,7 @@ public class DataParserIsl6 extends DataParser {
 				}
 				else {
 					this.time_ms = (int) (Double.parseDouble(mainValues[1].trim()) * this.timeFactor) - this.start_time_ms; // Seconds * 1000 = msec	
-					//log.log(Level.OFF, "time_s = " + this.time_ms/1000 + " counter = " + counter++);
+					if (log.isLoggable(Level.FINER)) log.log(Level.FINER, "time_s = " + this.time_ms/1000 + " counter = " + counter++);
 				}
 
 				this.values[0] = Integer.parseInt(mainValues[2].trim()); //voltage
@@ -141,7 +141,7 @@ public class DataParserIsl6 extends DataParser {
 				}
 
 				if (this.newState != this.stateCh[indexChannel]) {
-					log.log(Level.OFF, "channel = " + this.channelConfigNumber + "; new State = " + this.newState + "; channel state = " + this.stateCh[indexChannel]);
+					if (log.isLoggable(Level.FINER)) log.log(Level.FINER, "channel = " + this.channelConfigNumber + "; new State = " + this.newState + "; channel state = " + this.stateCh[indexChannel]);
 					this.state = this.newState;
 					this.stateCh[indexChannel] = this.newState;
 					this.capacity[indexChannel] = 0.;

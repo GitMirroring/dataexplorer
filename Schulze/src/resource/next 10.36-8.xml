@@ -18,7 +18,7 @@
         <isRTS>true</isRTS>
         <isDTR>true</isDTR>
         <TimeOut>
-            <ReadTimeOut>390</ReadTimeOut>
+            <ReadTimeOut>1000</ReadTimeOut>
             <ReadStableIndex>5</ReadStableIndex>
             <WriteCharDelayTime>0</WriteCharDelayTime>
             <WriteDelayTime>0</WriteDelayTime>

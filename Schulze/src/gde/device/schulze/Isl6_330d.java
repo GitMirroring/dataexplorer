@@ -122,21 +122,21 @@ public class Isl6_330d extends BaseCharger {
 				
 		try {
 			String inputLine = new String(dataBuffer);
-			log.log(Level.OFF, inputLine);
-			log.log(Level.OFF, StringHelper.byte2Hex2CharString(dataBuffer, dataBuffer.length));
+			if (log.isLoggable(Level.FINE)) log.log(Level.FINE, inputLine);
+			if (log.isLoggable(Level.FINER)) log.log(Level.FINER, StringHelper.byte2Hex2CharString(dataBuffer, dataBuffer.length));
 
 			if (inputLine.contains("(A1") || inputLine.contains("(A2")) { // (A1) Akku_ab, Akku_an
 				int lineIndex = inputLine.indexOf("(A1") == -1 ? inputLine.indexOf("(A2") : inputLine.indexOf("(A1");
 				byte[] lineBuffer = new byte[dataBuffer.length - lineIndex];
 				System.arraycopy(dataBuffer, lineIndex, lineBuffer, 0, lineBuffer.length);
-				log.log(Level.OFF, "A1/A2 parsing " + new String(lineBuffer));
+				if (log.isLoggable(Level.FINE)) log.log(Level.FINE, "A1/A2 parsing " + new String(lineBuffer));
 				this.convertData.parse(new String(lineBuffer), 1);
 			}
 			else if (inputLine.contains("laden")) { // ge/ent-laden:  1990mAh
 				int lineIndex = inputLine.indexOf("laden");
 				byte[] lineBuffer = new byte[dataBuffer.length - lineIndex];
 				System.arraycopy(dataBuffer, lineIndex, lineBuffer, 0, lineBuffer.length);
-				log.log(Level.OFF, "laden parsing " + new String(lineBuffer));
+				if (log.isLoggable(Level.FINE)) log.log(Level.FINE, "laden parsing " + new String(lineBuffer));
 				this.convertData.parse(new String(lineBuffer), 1);
 			}
 			else {
@@ -145,7 +145,7 @@ public class Isl6_330d extends BaseCharger {
 				this.setDataLineStartAndLength(dataBuffer, refPositions);
 				byte[] lineBuffer = new byte[refPositions[1]];
 				System.arraycopy(dataBuffer, refPositions[0], lineBuffer, 0, lineBuffer.length);
-				log.log(Level.OFF, "values parsing " + new String(lineBuffer));
+				if (log.isLoggable(Level.FINE)) log.log(Level.FINE, "values parsing " + new String(lineBuffer));
 				this.convertData.parse(new String(lineBuffer), 0);
 			}
 		}

@@ -85,6 +85,7 @@ public class GathererThread extends Thread {
 		this.setPriority(Thread.MAX_PRIORITY);
 		try {
 			this.serialPort.cleanInputStream();
+			this.serialPort.resetTmpData();
 		}
 		catch (Exception e) {
 			log.log(Level.WARNING, e.getMessage());
@@ -114,7 +115,7 @@ public class GathererThread extends Thread {
 				
 				this.channelNumber = this.parser.getChannelConfigNumber();
 				this.stateNumber = this.parser.getState(); 
-				if (log.isLoggable(Level.OFF)) log.logp(Level.OFF, GathererThread.$CLASS_NAME, $METHOD_NAME,	device.getChannelCount() + " - data for channel = " + channelNumber + " state = " + stateNumber);
+				if (log.isLoggable(Level.FINE)) log.log(Level.FINE, device.getChannelCount() + " - data for channel = " + channelNumber + " state = " + stateNumber);
 
 				if (this.channelNumber == 1) {
 					if (this.stateNumber <= 0) { //program ended
@@ -251,9 +252,8 @@ public class GathererThread extends Thread {
 		
 		// 0=no processing 1=charge 2=discharge 3=delay 4=auto balance 5=error
 		int processNumber = this.stateNumber;
-		if (log.isLoggable(Level.OFF)) {
-			log.log(Level.OFF, "channel = " + number + " processName = " + processName + " " + processNumber);
-		}
+		if (log.isLoggable(Level.FINE)) log.log(Level.FINE, "channel = " + number + " processName = " + processName + " " + processNumber);
+		
 		Channel actualChannel = this.channels.get(number);
 		if (actualChannel != null) {
 			// check if a record set matching for re-use is available and prepare a new if required

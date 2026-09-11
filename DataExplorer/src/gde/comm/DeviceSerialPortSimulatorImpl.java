@@ -437,7 +437,11 @@ public class DeviceSerialPortSimulatorImpl extends DeviceCommPort implements IDe
 						if (line.length() == 0)
 							continue;
 						if (line.length() >= simDevice.getDataBlockSize(FormatTypes.BYTE)) {
-							readBuffer = (line+"\r\n").getBytes();
+							if (line.contains(":") && !line.contains("mAh") && !line.endsWith("..."))
+								readBuffer = (line).getBytes();
+							else 
+								readBuffer = (line+"\r\n").getBytes();
+								
 							log.log(Level.OFF, "sim '" + new String(readBuffer) + "'");
 							break;
 						}	
