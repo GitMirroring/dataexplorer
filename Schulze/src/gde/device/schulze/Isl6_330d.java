@@ -192,10 +192,10 @@ public class Isl6_330d extends BaseCharger {
 				if (doUpdateProgressBar && i % 50 == 0) this.application.setProgress(((++progressCycle * 2500) / recordDataSize), sThreadId);
 			}
 		}
-		log.log(java.util.logging.Level.FINE, timeStamps.size() + " timeStamps = " + timeStamps.toString());
+		if (log.isLoggable(Level.FINE)) log.log(java.util.logging.Level.FINE, timeStamps.size() + " timeStamps = " + timeStamps.toString());
 
 		for (int i = 0; i < recordDataSize; i++) {
-			log.log(java.util.logging.Level.FINER, i + " i*dataBufferSize+timeStampBufferSize = " + i * dataBufferSize + timeStampBufferSize);
+			if (log.isLoggable(Level.FINER))log.log(Level.FINER, i + " i*dataBufferSize+timeStampBufferSize = " + i * dataBufferSize + timeStampBufferSize);
 			System.arraycopy(dataBuffer, i * dataBufferSize + timeStampBufferSize, convertBuffer, 0, dataBufferSize);
 
 			// 0=Voltage 4=Current 2=Capacity 3=Power 4=Energy
@@ -298,7 +298,7 @@ public class Isl6_330d extends BaseCharger {
 		double factor = record.getFactor(); // != 1 if a unit translation is required
 
 		double newValue = value * factor + offset;
-		log.log(java.util.logging.Level.FINE, "for " + record.getName() + " in value = " + value + " out value = " + newValue); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (log.isLoggable(Level.FINER)) log.log(Level.FINER, "for " + record.getName() + " in value = " + value + " out value = " + newValue); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		return newValue;
 	}
 
@@ -314,7 +314,7 @@ public class Isl6_330d extends BaseCharger {
 		double factor = record.getFactor(); // != 1 if a unit translation is required
 
 		double newValue = value / factor - offset;
-		log.log(java.util.logging.Level.FINE, "for " + record.getName() + " in value = " + value + " out value = " + newValue); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (log.isLoggable(Level.FINER)) log.log(Level.FINER, "for " + record.getName() + " in value = " + value + " out value = " + newValue); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		return newValue;
 	}
 
@@ -347,7 +347,7 @@ public class Isl6_330d extends BaseCharger {
 				//4=Energie
 				++displayableCounter;
 
-				log.log(java.util.logging.Level.FINE, "displayableCounter = " + displayableCounter); //$NON-NLS-1$
+				if (log.isLoggable(Level.FINER)) log.log(Level.FINER, "displayableCounter = " + displayableCounter); //$NON-NLS-1$
 				recordSet.setConfiguredDisplayable(displayableCounter);
 
 				if (recordSet.getName().equals(this.application.getActiveRecordSet().getName())) {
@@ -379,17 +379,17 @@ public class Isl6_330d extends BaseCharger {
 		for (int i = 0; i < recordSet.size(); ++i) {
 			Record record = recordSet.get(i);
 			record.setDisplayable(record.hasReasonableData());
-			if (log.isLoggable(java.util.logging.Level.FINE)) log.log(java.util.logging.Level.FINE, record.getName() + " setDisplayable=" + record.hasReasonableData());
+			if (log.isLoggable(Level.FINER)) log.log(Level.FINER, record.getName() + " setDisplayable=" + record.hasReasonableData());
 
 			if (record.isActive() && record.isDisplayable()) {
 				++displayableCounter;
 			}
 		}
 
-		if (log.isLoggable(java.util.logging.Level.FINE)) {
+		if (log.isLoggable(java.util.logging.Level.FINER)) {
 			for (int i = 0; i < recordSet.size(); i++) {
 				Record record = recordSet.get(i);
-				log.log(java.util.logging.Level.FINE, record.getName() + " isActive=" + record.isActive() + " isVisible=" + record.isVisible() + " isDisplayable=" + record.isDisplayable());
+				log.log(java.util.logging.Level.FINER, record.getName() + " isActive=" + record.isActive() + " isVisible=" + record.isVisible() + " isDisplayable=" + record.isDisplayable());
 			}
 		}
 		recordSet.setConfiguredDisplayable(displayableCounter);
