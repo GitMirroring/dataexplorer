@@ -93,10 +93,10 @@ public class DataParserIsl6 extends DataParser {
 			this.values[2] = 0; //capacity
 			this.values[3] = 0; //power
 			this.values[4] = 0; //energy
-			this.state = 0; //unknown to signal end processing
-			this.stateCh[this.channelConfigNumber - 1] = this.state;
-			this.capacity[this.channelConfigNumber - 1] = 0.;
-			this.energy[this.channelConfigNumber - 1] = 0.;
+			//this.state = 0; //unknown to signal end processing
+			//this.stateCh[this.channelConfigNumber - 1] = this.state;
+			//this.capacity[this.channelConfigNumber - 1] = 0.;
+			//this.energy[this.channelConfigNumber - 1] = 0.;
 		}
 		else if (inputLine.contains("Geraetenummer")  || inputLine.contains("schulze")  || inputLine.contains("elektronik")  || inputLine.contains("isl")  || inputLine.contains("rdy")) { // Geraetenummer=5164
 			//channel/output independent 
@@ -105,6 +105,10 @@ public class DataParserIsl6 extends DataParser {
 			this.values[2] = 0; //capacity
 			this.values[3] = 0; //power
 			this.values[4] = 0; //energy
+			this.state = 0; //unknown to signal end processing
+			this.stateCh = new int[] {0, 0};
+			this.capacity = new double[] {0., 0.};
+			this.energy = new double[] {0., 0.};
 		}
 		else {
 			int startIndex = line == 0 ? 0 : inputLine.length() - 1 - Math.min(27,  inputLine.length() - 1);

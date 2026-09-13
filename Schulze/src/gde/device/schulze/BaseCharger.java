@@ -76,7 +76,9 @@ public abstract class BaseCharger extends DeviceConfiguration implements IDevice
 		case 'R':
 			state = 3; //discharge
 			break;
-
+			
+		case 'i':
+		case 'I':
 		default:
 			state = 0; //inactive
 			break;
