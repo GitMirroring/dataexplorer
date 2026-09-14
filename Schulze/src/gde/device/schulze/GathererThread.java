@@ -20,6 +20,8 @@ package gde.device.schulze;
 
 import java.util.logging.Logger;
 
+import org.eclipse.swt.SWT;
+
 import gde.GDE;
 import gde.config.Settings;
 import gde.data.Channel;
@@ -193,8 +195,18 @@ public class GathererThread extends Thread {
 				this.stopDataGatheringThread(false, e);
 			}
 			catch (Throwable e) {
+				// this case will be reached while program is started, checked and the check not asap committed, stop pressed
+				if (e instanceof TimeOutException && !(this.isProgrammExecuting1 || this.isProgrammExecuting2)) {
+					this.application.setStatusMessage(Messages.getString(MessageIds.GDE_MSGI1400));
+					log.logp(java.util.logging.Level.INFO, GathererThread.$CLASS_NAME, $METHOD_NAME, "wait for device activation ..."); //$NON-NLS-1$
+					if (0 == (setRetryCounter(getRetryCounter() - 1))) {
+						log.log(java.util.logging.Level.WARNING, "device activation timeout"); //$NON-NLS-1$
+						this.application.openMessageDialogAsync(Messages.getString(MessageIds.GDE_MSGW1400));
+						stopDataGatheringThread(false, null);
+					}
+				}
 				// this case will be reached while NiXx Akku discharge/charge/discharge cycle
-				if (e instanceof TimeOutException) {
+				else if (e instanceof TimeOutException) {
 					if (recordSet1 != null) {
 						finalizeRecordSet(recordSet1.getName());
 						recordSet1 = null;
@@ -205,16 +217,7 @@ public class GathererThread extends Thread {
 						recordSet2 = null;
 						WaitTimer.delay(500); //assume data will be send every 500 ms per channel
 					}
-				}
-				// this case will be reached while program is started, checked and the check not asap committed, stop pressed
-				else if (e instanceof TimeOutException && !(this.isProgrammExecuting1 || this.isProgrammExecuting2)) {
-					this.application.setStatusMessage(Messages.getString(MessageIds.GDE_MSGI1400));
-					log.logp(java.util.logging.Level.FINE, GathererThread.$CLASS_NAME, $METHOD_NAME, "wait for device activation ..."); //$NON-NLS-1$
-					if (0 == (setRetryCounter(getRetryCounter() - 1))) {
-						log.log(java.util.logging.Level.FINE, "device activation timeout"); //$NON-NLS-1$
-						this.application.openMessageDialogAsync(Messages.getString(MessageIds.GDE_MSGW1400));
-						stopDataGatheringThread(false, null);
-					}
+					this.application.setStatusMessage(Messages.getString(MessageIds.GDE_MSGW1403), SWT.COLOR_DARK_RED);
 				}
 				// program end or unexpected exception occurred, stop data gathering to enable save data by user
 				else {
