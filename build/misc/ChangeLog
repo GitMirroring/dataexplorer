@@ -6,7 +6,7 @@ Generic changes/fixes
 	
 Device specific changes/fixes
 	* ET5410 - fix energy calculation
-	* HoTTAdapter2 - fix climb 1 value setting if dedicated sensor GPS, GAM or EAm is set
+	* HoTTAdapter2 - fix climb 1 value setting if dedicated sensor GPS, GAM or EAM is set
 	* Spektrum-Telemetry - fix minor coding issues
 	* isl 6-330d - add initial support
 

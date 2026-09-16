@@ -78,7 +78,7 @@ public class DataParserNext extends DataParser {
 		this.channelConfigNumber = Integer.parseInt(mainValues[0].trim()); //+1 to simulate channel 2
 		int indexChannel = this.channelConfigNumber - 1; //to address channel related capacity and energy
 		
-		this.values = new int[this.nextDevice.getNumberOfMeasurements(1)];		
+		this.values = new int[this.nextDevice.getNumberOfMeasurements(this.channelConfigNumber)];		
 		
 		if (this.start_time_ms == Integer.MIN_VALUE) {
 			this.start_time_ms = (int) (Double.parseDouble(mainValues[1].trim()) * this.timeFactor); // Seconds * 1000 = msec
