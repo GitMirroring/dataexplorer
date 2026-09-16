@@ -83,9 +83,9 @@ public class SchulzeSerialPort extends DeviceCommPort implements IDeviceCommPort
 	 * @throws IOException
 	 */
 	public synchronized byte[] getData() throws Exception {
-		final String $METHOD_NAME = "getData";
 		int endIndex = 0;
-		long actualTime_ms = System.nanoTime()/1000000;
+		long actualTime_ms = 0;
+		if (log.isLoggable(Level.TIME)) actualTime_ms = System.nanoTime()/1000000;
 
 		try {
 			//receive data while needed
@@ -125,7 +125,7 @@ public class SchulzeSerialPort extends DeviceCommPort implements IDeviceCommPort
 		}
 		catch (Exception e) {
 			if (!(e instanceof TimeOutException)) {
-				SchulzeSerialPort.log.logp(Level.SEVERE, SchulzeSerialPort.$CLASS_NAME, $METHOD_NAME, e.getMessage(), e);
+				SchulzeSerialPort.log.log(Level.SEVERE, e.getMessage(), e);
 			}
 			throw e;
 		}
@@ -136,7 +136,7 @@ public class SchulzeSerialPort extends DeviceCommPort implements IDeviceCommPort
 		this.retryCounter = 0;
 		this.tmpData = new byte[0];
 		if (log.isLoggable(Level.FINE)) log.log(Level.FINE, StringHelper.byte2Hex2CharString(this.data, this.data.length));
-		if (log.isLoggable(Level.INFO)) log.log(Level.INFO, "elapsed time ms = " + (System.nanoTime()/1000000 - actualTime_ms));
+		if (log.isLoggable(Level.TIME)) log.log(Level.TIME, "elapsed time ms = " + (System.nanoTime()/1000000 - actualTime_ms));
 		return this.data;
 	}
 
