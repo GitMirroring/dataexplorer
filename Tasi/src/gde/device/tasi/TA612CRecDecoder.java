@@ -1,0 +1,108 @@
+/* SPDX-License-Identifier: GPL-3.0-or-later 
+ * refer to https://github.com/oikumene-works/tasi/tree/main/ta612c/software/dataexplorer-plugin
+ */
+package gde.device.tasi;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Strict, incremental parser for one REC transfer, confined to its download
+ * worker. The unsigned length byte includes command, length and checksum, so
+ * total frame size is length + 2 and the buffer needs at most 257 bytes.
+ * Nonempty payloads contain groups of four signed little-endian temperatures.
+ * Unlike live decoding, corruption permanently invalidates this parser: silently
+ * resynchronizing would hide sample loss and shorten the inferred REC timeline.
+ */
+public final class TA612CRecDecoder {
+    private final byte[] pending = new byte[257];
+    private int length;
+    private int frames;
+    private int emptyFrames;
+    private boolean failed;
+
+    /** Returns the read-only REC request; it neither erases nor starts recording. */
+    public static byte[] downloadCommand() {
+        return new byte[] {(byte) 0xAA, 0x55, 0x02, 0x03, 0x04};
+    }
+
+    /**
+     * Consumes fragmented or concatenated frames and returns validated sample
+     * groups. Returned groups remain provisional until the entire download is
+     * accepted by the caller. Empty frames count as frames, not end markers.
+     *
+     * @throws IOException on noise, wrong command, invalid length/checksum, or
+     *         reuse after a previous failure; discard the whole pending import
+     */
+    public List<Sample> accept(byte[] bytes) throws IOException {
+        if (failed) throw new IOException("REC decoder is invalid after a transfer error");
+        List<Sample> result = new ArrayList<>();
+        for (byte next : bytes) {
+            pending[length++] = next;
+            if (pending[0] != 0x55 || (length >= 2 && pending[1] != (byte) 0xAA)) fail("Unexpected bytes");
+            if (length >= 3 && pending[2] != 0x02) fail("Unexpected response command");
+            if (length >= 4) {
+                int total = (pending[3] & 0xFF) + 2;
+                if (total < 5 || (total - 5) % 8 != 0) fail("Malformed REC payload length");
+                if (length == total) {
+                    int sum = 0;
+                    for (int i = 0; i < total - 1; ++i) sum += pending[i] & 0xFF;
+                    if ((sum & 0xFF) != (pending[total - 1] & 0xFF)) fail("REC checksum mismatch");
+                    ++frames;
+                    if (total == 5) ++emptyFrames;
+                    for (int offset = 4; offset < total - 1; offset += 8) {
+                        int[] raw = new int[4];
+                        for (int probe = 0; probe < 4; ++probe) {
+                            int p = offset + 2 * probe;
+                            raw[probe] = (short) ((pending[p] & 0xFF) | ((pending[p + 1] & 0xFF) << 8));
+                        }
+                        result.add(new Sample(raw, frames));
+                    }
+                    length = 0;
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Rejects an unfinished frame at the caller's receive endpoint. Passing this
+     * check proves only frame alignment, not receipt of the entire meter memory.
+     */
+    public void endOfInput() throws IOException {
+        if (failed || length != 0) fail("Incomplete REC frame at end of transfer");
+    }
+    public int frames() { return frames; }
+    public int emptyFrames() { return emptyFrames; }
+    /** Latches failure so no caller can continue using a discontinuous transfer. */
+    private void fail(String message) throws IOException {
+        failed = true;
+        throw new IOException(message + "; nothing imported (sample continuity is unknown)");
+    }
+
+    /**
+     * Four raw tenths-Celsius readings with a one-based source-frame number.
+     * Frame numbering includes empty frames and is local provenance, not a
+     * sequence number supplied by the meter. Probe indices are zero-based.
+     */
+    public static final class Sample {
+        private final int[] raw;
+        private final int sourceFrame;
+        /** Takes ownership of the decoder's fresh array and its frame provenance. */
+        private Sample(int[] raw, int sourceFrame) { this.raw = raw; this.sourceFrame = sourceFrame; }
+        public int raw(int probe) { return raw[probe]; }
+        public int sourceFrame() { return sourceFrame; }
+        /** Builds T1..T4 presence bits by excluding only the exact open sentinel. */
+        public int validMask() {
+            int mask = 0;
+            for (int i = 0; i < 4; ++i) if (raw[i] != TA612CFrameDecoder.OPEN_PROBE_RAW) mask |= 1 << i;
+            return mask;
+        }
+        /** Returns thousandths Celsius for a present probe; rejects absent data. */
+        public int point(int probe) {
+            if ((validMask() & (1 << probe)) == 0) throw new IllegalStateException("Open probe has no temperature");
+            return raw[probe] * 100;
+        }
+    }
+}

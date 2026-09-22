@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.10.17
+Created-By: brueg
+Implementation-Version: 4.0.8
+Built-Date: 2026-09-18 18:22:12
+Bundle-Version: 4.0.8
+Bundle-SymbolicName: Tasi
+Bundle-Description: Implementation Tasi thermometer using serial commu
+ nication
+Export-Service: TA612C:TASI:SERIAL_IO
+
