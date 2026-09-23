@@ -8,6 +8,7 @@ package gde.device.tasi;
 import gde.GDE;
 import gde.comm.DeviceCommPort;
 import gde.comm.IDeviceCommPort;
+import gde.config.Settings;
 import gde.data.Channel;
 import gde.data.Channels;
 import gde.data.Record;
@@ -15,10 +16,12 @@ import gde.data.RecordSet;
 import gde.device.DeviceConfiguration;
 import gde.device.IDevice;
 import gde.exception.DataInconsitsentException;
+import gde.messages.Messages;
 import gde.ui.DataExplorer;
 import java.io.FileNotFoundException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import org.eclipse.swt.SWT;
@@ -53,6 +56,8 @@ public class TA612C extends DeviceConfiguration implements IDevice {
      */
     public TA612C(String properties) throws FileNotFoundException, JAXBException {
         super(properties);
+    		// initializing the resource bundle for this device
+    		Messages.setDeviceResourceBundle("gde.device.tasi.messages", Settings.getInstance().getLocale(), this.getClass().getClassLoader()); //$NON-NLS-1$
         application = GDE.isWithUi() ? DataExplorer.getInstance() : null;
         // Core port discovery needs a registered backend before the first Start.
         // Construction keeps the physical port closed and sends no commands.
@@ -63,6 +68,8 @@ public class TA612C extends DeviceConfiguration implements IDevice {
     /** Wraps an existing configuration with the same closed-backend/UI setup. */
     public TA612C(DeviceConfiguration configuration) {
         super(configuration);
+    		// initializing the resource bundle for this device
+    		Messages.setDeviceResourceBundle("gde.device.tasi.messages", Settings.getInstance().getLocale(), this.getClass().getClassLoader()); //$NON-NLS-1$
         application = GDE.isWithUi() ? DataExplorer.getInstance() : null;
         livePort = new TA612CSerialPort(this, application);
         configureMenu();
@@ -72,7 +79,7 @@ public class TA612C extends DeviceConfiguration implements IDevice {
     private void configureMenu() {
         if (application != null) {
             configureSerialPortMenu(DeviceCommPort.ICON_SET_START_STOP,
-                    "Start TA612C live acquisition (available probes are recorded)", "Stop TA612C acquisition / cancel REC download");
+            		Messages.getString(MessageIds.GDE_MSGT4100), Messages.getString(MessageIds.GDE_MSGT4101));
             addRecMenu(application.getMenuBar().getImportMenu());
         }
     }
@@ -86,8 +93,8 @@ public class TA612C extends DeviceConfiguration implements IDevice {
         for (MenuItem item : menu.getItems()) if ("ta612c-rec".equals(item.getData())) return;
         new MenuItem(menu, SWT.SEPARATOR);
         MenuItem item = new MenuItem(menu, SWT.PUSH);
-        item.setData("ta612c-rec");
-        item.setText("Download TA612C REC memory... / Cancel REC");
+        item.setData(Messages.getString(MessageIds.GDE_MSGT4102));
+        item.setText(Messages.getString(MessageIds.GDE_MSGT4103));
         item.addListener(SWT.Selection, event -> downloadRec());
     }
 
@@ -102,7 +109,7 @@ public class TA612C extends DeviceConfiguration implements IDevice {
         if (application.getActiveDevice() != this) return;
         if (recDownloader != null) { recDownloader.requestStop(); return; }
         if (gatherer != null) {
-            application.openMessageDialog("Stop live acquisition before downloading REC memory.");
+            application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGT4104));
             return;
         }
         Long intervalMs = TA612CRecDialog.open(application.getShell());
@@ -121,9 +128,9 @@ public class TA612C extends DeviceConfiguration implements IDevice {
                     if (application.getActiveDevice() != TA612C.this) return;
                     application.setPortConnected(false);
                     if (stopped) {
-                        application.setStatusMessage("REC download cancelled. Nothing imported.");
+                        application.setStatusMessage(Messages.getString(MessageIds.GDE_MSGT4105));
                     } else if (failure != null) {
-                        application.openMessageDialog("REC download failed: " + failure.getMessage() + ". Nothing imported.");
+                        application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGW4100, new String[] {failure.getMessage()}));
                     } else {
                         try {
                             List<RecordSet> prepared = TA612CRecImport.prepare(TA612C.this, result, intervalMs, channel.getNextRecordSetNumber());
@@ -137,21 +144,20 @@ public class TA612C extends DeviceConfiguration implements IDevice {
                                 application.updateStatisticsData();
                                 application.updateDataTable(first.getName(), false);
                             }
-                            String message = "REC: " + result.samples().size() + " sample groups received, " + prepared.size()
-                                    + " segments imported. Time inferred; recording date unknown; transfer completeness unverified.";
-                            if (prepared.isEmpty()) message += " No valid temperatures returned; this does not prove memory is empty.";
+                            String message = Messages.getString(MessageIds.GDE_MSGI4100, new Object[] {result.samples().size(), prepared.size()});
+                            if (prepared.isEmpty()) message += Messages.getString(MessageIds.GDE_MSGI4101);
                             application.setStatusMessage(message);
                             application.openMessageDialog(message);
                         } catch (Exception error) {
                             LOG.log(Level.WARNING, "REC import failed", error);
-                            application.openMessageDialog("REC import failed: " + error.getMessage());
+                            application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGE4100, new String[] {error.getMessage()}));
                         }
                     }
                 }
             });
         });
         application.setPortConnected(true);
-        application.setStatusMessage("Downloading REC memory. Press Stop or use the REC menu again to cancel.");
+        application.setStatusMessage(Messages.getString(MessageIds.GDE_MSGI4102));
         recDownloader.start();
     }
 
@@ -159,33 +165,33 @@ public class TA612C extends DeviceConfiguration implements IDevice {
     public IDeviceCommPort getCommunicationPort() { return livePort; }
 
     /**
-     * Core Start/Stop entry point on SWT. Cancels REC or stops live when a worker
+     * Start/Stop entry point. Cancels REC or stops live when a worker
      * exists; otherwise validates the four-probe variable-time configuration and
      * starts live acquisition. Stop requests do not join the worker on SWT, since
      * its sample callback may itself be waiting for SWT via syncExec.
      */
     @Override
     public synchronized void open_closeCommPort() {
-        if (application == null) throw new UnsupportedOperationException("Live acquisition requires DataExplorer UI");
+        if (application == null) throw new UnsupportedOperationException(Messages.getString(MessageIds.GDE_MSGE4101));
         if (recDownloader != null) {
             recDownloader.requestStop();
-            application.setStatusMessage("Cancelling REC download...");
+            application.setStatusMessage(Messages.getString(MessageIds.GDE_MSGI4103));
             return;
         }
         if (gatherer != null) {
             gatherer.requestStop();
-            application.setStatusMessage("Stopping TA612C...");
+            application.setStatusMessage(Messages.getString(MessageIds.GDE_MSGI4104));
             return;
         }
         Channel channel = Channels.getInstance().getActiveChannel();
         if (channel == null) return;
         if (channel.getNumber() != 1 || getChannelCount() != 1 || getNumberOfMeasurements(1) != 4 || getTimeStep_ms() >= 0) {
-            application.openMessageDialog("TA612C requires one channel, four measurements and a variable time step.");
+            application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGI4105));
             return;
         }
         livePort = new TA612CSerialPort(this, application);
         gatherer = new TA612CGathererThread(livePort, new TA612CGathererThread.Listener() {
-            private RecordSet records;
+            private RecordSet recordSet;
             private int probeMask = -1;
 
             /**
@@ -206,42 +212,42 @@ public class TA612C extends DeviceConfiguration implements IDevice {
                         return;
                     }
                     if (sample.validMask() != probeMask) {
-                        if (records != null) {
-                            makeInActiveDisplayable(records);
-                            records.updateVisibleAndDisplayableRecordsForTable();
+                        if (recordSet != null) {
+                            makeInActiveDisplayable(recordSet);
+                            recordSet.updateVisibleAndDisplayableRecordsForTable();
                             application.updateStatisticsData();
-                            application.updateDataTable(records.getName(), false);
-                            records = null;
+                            application.updateDataTable(recordSet.getName(), false);
+                            recordSet = null;
                         }
                         probeMask = sample.validMask();
                         if (probeMask == 0) {
-                            application.setStatusMessage("TA612C live acquisition: all four probes are open. Waiting; no temperature row is recorded.");
+                            application.setStatusMessage(Messages.getString(MessageIds.GDE_MSGI4106));
                             application.updateAllTabs(false);
                             return;
                         }
-                        String present = TA612CRecImport.probeNames(probeMask);
-                        String name = channel.getNextRecordSetNumber() + ") TA612C live " + present;
-                        records = RecordSet.createRecordSet(name, TA612C.this, 1, true, false, true);
-                        channel.put(name, records);
+                        String presentProbes = TA612CRecImport.probeNames(probeMask);
+                        String name = channel.getNextRecordSetNumber() + Messages.getString(MessageIds.GDE_MSGT4106, new String[] {presentProbes});
+                        name = name.length() <= RecordSet.MAX_NAME_LENGTH ? name : name.substring(0, RecordSet.MAX_NAME_LENGTH);
+                        recordSet = RecordSet.createRecordSet(name, TA612C.this, 1, true, false, true);
+                        channel.put(name, recordSet);
                         channel.setActiveRecordSet(name);
                         channel.applyTemplateBasics(name);
-                        configureLiveSegment(records, probeMask, firstSampleEpochMs);
+                        configureLiveSegment(recordSet, probeMask, firstSampleEpochMs);
                         application.getMenuToolBar().updateRecordSetSelectCombo();
                         if (probeMask == 0x0F) {
-                            application.setStatusMessage("TA612C live acquisition: T1-T4 connected.");
+                            application.setStatusMessage(Messages.getString(MessageIds.GDE_MSGI4107));
                         } else {
-                            application.setStatusMessage("TA612C live acquisition: recording " + sample.presentProbes()
-                                    + "; open probes " + sample.openProbes() + ". Probe changes start new segments.");
+                            application.setStatusMessage(Messages.getString(MessageIds.GDE_MSGI4108, new Object[] {sample.presentProbes(), sample.openProbes()}));
                         }
                     }
-                    if (records == null) return; // Consecutive all-open frames carry no temperature data.
+                    if (recordSet == null) return; // Consecutive all-open frames carry no temperature data.
                     try {
-                        appendLiveSample(records, sample, elapsedMs);
+                        appendLiveSample(recordSet, sample, elapsedMs);
                     } catch (DataInconsitsentException e) {
                         throw new IllegalStateException(e);
                     }
-                    updateVisibilityStatus(records, true);
-                    records.updateVisibleAndDisplayableRecordsForTable();
+                    updateVisibilityStatus(recordSet, true);
+                    recordSet.updateVisibleAndDisplayableRecordsForTable();
                     application.updateAllTabs(false);
                 });
             }
@@ -257,10 +263,10 @@ public class TA612C extends DeviceConfiguration implements IDevice {
                     GDE.display.asyncExec(() -> {
                         synchronized (TA612C.this) { gatherer = null; }
                         if (application.getActiveDevice() == TA612C.this) {
-                            if (records != null) {
-                                makeInActiveDisplayable(records);
+                            if (recordSet != null) {
+                                makeInActiveDisplayable(recordSet);
                                 application.updateStatisticsData();
-                                application.updateDataTable(records.getName(), false);
+                                application.updateDataTable(recordSet.getName(), false);
                             }
                             application.setPortConnected(false);
                             application.setStatusMessage(message);
@@ -270,7 +276,7 @@ public class TA612C extends DeviceConfiguration implements IDevice {
             }
         });
         application.setPortConnected(true);
-        application.setStatusMessage("Waiting for TA612C. Available probes will be recorded; probe changes start new segments.");
+        application.setStatusMessage(Messages.getString(MessageIds.GDE_MSGI4109));
         gatherer.start();
     }
 
@@ -280,14 +286,15 @@ public class TA612C extends DeviceConfiguration implements IDevice {
      * including when that first frame was all-open; elapsed offsets are not reset
      * by a presence change, preserving periods with no temperature points.
      */
-    static void configureLiveSegment(RecordSet records, int probeMask, long firstSampleEpochMs) {
-        if (probeMask < 1 || probeMask > 0x0F) throw new IllegalArgumentException("A live segment requires at least one present probe");
-        records.setTimeStep_ms(-1);
-        records.setStartTimeStamp(firstSampleEpochMs);
-        records.setRecordSetDescription("TA612C live. Time is based on host receipt, starting at the first decoded frame in this acquisition. "
-                + "Present probes " + TA612CRecImport.probeNames(probeMask) + "; other probes are open and have no replacement points. "
-                + "A probe-availability change starts a new live record set; all-open frames contain no temperature rows.");
-        TA612CRecImport.configureMask(records, probeMask);
+    static void configureLiveSegment(RecordSet recordSet, int probeMask, long firstSampleEpochMs) {
+        if (probeMask < 1 || probeMask > 0x0F) throw new IllegalArgumentException(Messages.getString(MessageIds.GDE_MSGE4102));
+        recordSet.setTimeStep_ms(-1);
+        recordSet.setStartTimeStamp(firstSampleEpochMs);
+				String dateTime = new SimpleDateFormat("yyyy-MM-dd, HH:mm:ss").format(firstSampleEpochMs); //$NON-NLS-1$
+				String recordDescription = "TA612C" + GDE.STRING_MESSAGE_CONCAT + Messages.getString(gde.messages.MessageIds.GDE_MSGT0129) + dateTime
+						+ Messages.getString(MessageIds.GDE_MSGT4107, new String[] {TA612CRecImport.probeNames(probeMask)});
+				recordSet.setRecordSetDescription(recordDescription);
+        TA612CRecImport.configureMask(recordSet, probeMask);
     }
 
     /**
@@ -299,12 +306,12 @@ public class TA612C extends DeviceConfiguration implements IDevice {
             throws DataInconsitsentException {
         String[] stored = records.getNoneCalculationRecordNames();
         if (stored.length != Integer.bitCount(sample.validMask())) {
-            throw new IllegalArgumentException("Live sample probe mask does not match its RecordSet segment");
+            throw new IllegalArgumentException(Messages.getString(MessageIds.GDE_MSGE4103));
         }
         int column = 0;
         for (int probe = 0; probe < TA612CFrameDecoder.PROBE_COUNT; ++probe) {
             if (sample.isValid(probe) && !stored[column++].equals(TA612CRecImport.probe(records, probe).getName())) {
-                throw new IllegalArgumentException("Live sample probe mask does not match its RecordSet segment");
+                throw new IllegalArgumentException(Messages.getString(MessageIds.GDE_MSGE4103));
             }
         }
         records.addNoneCalculationRecordsPoints(sample.presentPoints(), elapsedMs);
@@ -317,7 +324,7 @@ public class TA612C extends DeviceConfiguration implements IDevice {
      */
     @Override
     public int[] convertDataBytes(int[] points, byte[] frame) {
-        if (points.length != 4) throw new IllegalArgumentException("TA612C requires four points");
+        if (points.length != 4) throw new IllegalArgumentException(Messages.getString(MessageIds.GDE_MSGE4104));
         int[] decoded = TA612CFrameDecoder.decode(frame).points();
         System.arraycopy(decoded, 0, points, 0, 4);
         return points;
@@ -341,7 +348,7 @@ public class TA612C extends DeviceConfiguration implements IDevice {
         long expected = (long) count * (stored.length * Integer.BYTES + (variable ? Integer.BYTES : 0));
         if (count < 0 || records.size() != 4 || stored.length < 1 || stored.length > 4
                 || expected != buffer.length) {
-            throw new DataInconsitsentException("Invalid TA612C OSD buffer length or measurement count");
+            throw new DataInconsitsentException(Messages.getString(MessageIds.GDE_MSGE4105));
         }
         ByteBuffer data = ByteBuffer.wrap(buffer).order(ByteOrder.BIG_ENDIAN);
         int timestampBytes = variable ? count * Integer.BYTES : 0;
@@ -351,14 +358,14 @@ public class TA612C extends DeviceConfiguration implements IDevice {
             if (variable) {
                 int time = data.getInt(i * Integer.BYTES);
                 if (time < 0 || time < previousTime) {
-                    throw new DataInconsitsentException("Invalid TA612C OSD timestamps");
+                    throw new DataInconsitsentException(Messages.getString(MessageIds.GDE_MSGE4106));
                 }
                 previousTime = time;
             }
             for (int probe = 0; probe < stored.length; ++probe) {
                 int point = data.getInt(timestampBytes + (i * stored.length + probe) * Integer.BYTES);
                 if (point == TA612CFrameDecoder.OPEN_PROBE_RAW * 100) {
-                    throw new DataInconsitsentException("TA612C OSD contains an unsupported open-probe point");
+                    throw new DataInconsitsentException(Messages.getString(MessageIds.GDE_MSGE4107));
                 }
             }
         }
@@ -456,6 +463,6 @@ public class TA612C extends DeviceConfiguration implements IDevice {
     public void addConvertedLovDataBufferAsRawDataPoints(RecordSet records, byte[] buffer, int count, boolean progress) { throw lovUnsupported(); }
     /** Gives all unsupported LogView entry points the same explicit failure. */
     private static UnsupportedOperationException lovUnsupported() {
-        return new UnsupportedOperationException("TA612C LogView import is not supported");
+        return new UnsupportedOperationException(Messages.getString(MessageIds.GDE_MSGE4108));
     }
 }

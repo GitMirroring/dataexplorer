@@ -11,6 +11,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import gde.messages.Messages;
+
 /**
  * SWT prompt for the historical recording interval, which REC bytes do not
  * establish. Intentionally starts blank so a guessed default cannot silently
@@ -25,18 +27,14 @@ final class TA612CRecDialog {
      */
     static Long open(Shell parent) {
         Shell dialog = new Shell(parent, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
-        dialog.setText("Download TA612C REC memory");
+        dialog.setText(Messages.getString(MessageIds.GDE_MSGT4108));
         dialog.setLayout(new GridLayout(2, false));
         Label explanation = new Label(dialog, SWT.WRAP);
-        explanation.setText("Enter the interval used for this recording. It is not read from the meter.\n"
-                + "Time will be inferred from sample order; the absolute recording date is unknown.\n"
-                + "Transfer completion is inferred from silence and remains unverified.\n"
-                + "Valid readings from partially connected probes are retained in separate segments.\n"
-                + "Downloading does not erase memory or change recording settings.");
+        explanation.setText(Messages.getString(MessageIds.GDE_MSGT4109));
         GridData wide = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
         wide.widthHint = 540;
         explanation.setLayoutData(wide);
-        new Label(dialog, SWT.NONE).setText("Recording interval (seconds):");
+        new Label(dialog, SWT.NONE).setText(Messages.getString(MessageIds.GDE_MSGT4110));
         Text interval = new Text(dialog, SWT.BORDER);
         interval.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         Label error = new Label(dialog, SWT.WRAP);
@@ -44,9 +42,9 @@ final class TA612CRecDialog {
         errorData.widthHint = 540; errorData.heightHint = 44;
         error.setLayoutData(errorData);
         Button download = new Button(dialog, SWT.PUSH);
-        download.setText("Download REC");
+        download.setText(Messages.getString(MessageIds.GDE_MSGT4111));
         Button cancel = new Button(dialog, SWT.PUSH);
-        cancel.setText("Cancel");
+        cancel.setText(Messages.getString(MessageIds.GDE_MSGT4112));
         Long[] result = {null};
         download.addListener(SWT.Selection, e -> {
             try { result[0] = TA612CRecImport.parseIntervalMs(interval.getText()); dialog.dispose(); }

@@ -6,6 +6,7 @@ package gde.device.tasi;
 import gde.comm.DeviceCommPort;
 import gde.device.IDevice;
 import gde.exception.TimeOutException;
+import gde.messages.Messages;
 import gde.ui.DataExplorer;
 import java.io.IOException;
 import java.util.List;
@@ -19,7 +20,7 @@ import java.util.List;
  */
 public class TA612CSerialPort extends DeviceCommPort implements TA612CGathererThread.Transport, TA612CRecDownloader.Transport {
     private static final String CONNECTION_UNAVAILABLE =
-            "USB/serial connection unavailable. Check cable and press Start";
+    		Messages.getString(MessageIds.GDE_MSGW4102);
     private final TA612CFrameDecoder decoder = new TA612CFrameDecoder();
     private final int readTimeout;
     private static TA612CSerialPort owner;
@@ -68,7 +69,7 @@ public class TA612CSerialPort extends DeviceCommPort implements TA612CGathererTh
      */
     public void connect() throws Exception {
         synchronized (TA612CSerialPort.class) {
-            if (owner != null || isConnected()) throw new IllegalStateException("TA612C live/REC port is already in use");
+            if (owner != null || isConnected()) throw new IllegalStateException(Messages.getString(MessageIds.GDE_MSGE4136));
             owner = this;
         }
         open(); // The worker closes even a partially failed open.

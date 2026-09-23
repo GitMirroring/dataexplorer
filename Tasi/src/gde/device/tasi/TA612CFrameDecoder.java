@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import gde.messages.Messages;
+
 /**
  * Incremental live-stream decoder with a single 13-byte pending-frame buffer.
  * Live data can recover from noise by searching for the next valid frame; REC
@@ -86,7 +88,7 @@ public final class TA612CFrameDecoder {
     public static Sample decode(byte[] frame) {
         if (frame.length != FRAME_SIZE || frame[0] != 0x55 || frame[1] != (byte) 0xAA
                 || frame[2] != 0x01 || frame[3] != 0x0B || !checksumValid(frame)) {
-            throw new IllegalArgumentException("Invalid TA612C live frame");
+            throw new IllegalArgumentException(Messages.getString(MessageIds.GDE_MSGE4109));
         }
         int[] raw = new int[PROBE_COUNT];
         int validMask = 0;
@@ -145,7 +147,7 @@ public final class TA612CFrameDecoder {
          */
         public int[] points() {
             if (!allProbesConnected()) {
-                throw new IllegalStateException("TA612C open probe; four-column conversion requires all four probes");
+                throw new IllegalStateException(Messages.getString(MessageIds.GDE_MSGE4110));
             }
             return Arrays.stream(raw).map(value -> value * 100).toArray();
         }

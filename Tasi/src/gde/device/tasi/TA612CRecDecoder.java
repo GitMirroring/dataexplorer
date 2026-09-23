@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import gde.messages.Messages;
+
 /**
  * Strict, incremental parser for one REC transfer, confined to its download
  * worker. The unsigned length byte includes command, length and checksum, so
@@ -36,19 +38,19 @@ public final class TA612CRecDecoder {
      *         reuse after a previous failure; discard the whole pending import
      */
     public List<Sample> accept(byte[] bytes) throws IOException {
-        if (failed) throw new IOException("REC decoder is invalid after a transfer error");
+        if (failed) throw new IOException(Messages.getString(MessageIds.GDE_MSGE4114));
         List<Sample> result = new ArrayList<>();
         for (byte next : bytes) {
             pending[length++] = next;
-            if (pending[0] != 0x55 || (length >= 2 && pending[1] != (byte) 0xAA)) fail("Unexpected bytes");
-            if (length >= 3 && pending[2] != 0x02) fail("Unexpected response command");
+            if (pending[0] != 0x55 || (length >= 2 && pending[1] != (byte) 0xAA)) fail(Messages.getString(MessageIds.GDE_MSGE4115));
+            if (length >= 3 && pending[2] != 0x02) fail(Messages.getString(MessageIds.GDE_MSGE4116));
             if (length >= 4) {
                 int total = (pending[3] & 0xFF) + 2;
-                if (total < 5 || (total - 5) % 8 != 0) fail("Malformed REC payload length");
+                if (total < 5 || (total - 5) % 8 != 0) fail(Messages.getString(MessageIds.GDE_MSGE4117));
                 if (length == total) {
                     int sum = 0;
                     for (int i = 0; i < total - 1; ++i) sum += pending[i] & 0xFF;
-                    if ((sum & 0xFF) != (pending[total - 1] & 0xFF)) fail("REC checksum mismatch");
+                    if ((sum & 0xFF) != (pending[total - 1] & 0xFF)) fail(Messages.getString(MessageIds.GDE_MSGE4118));
                     ++frames;
                     if (total == 5) ++emptyFrames;
                     for (int offset = 4; offset < total - 1; offset += 8) {
@@ -71,14 +73,17 @@ public final class TA612CRecDecoder {
      * check proves only frame alignment, not receipt of the entire meter memory.
      */
     public void endOfInput() throws IOException {
-        if (failed || length != 0) fail("Incomplete REC frame at end of transfer");
+        if (failed || length != 0) fail(Messages.getString(MessageIds.GDE_MSGE4119));
     }
+    
     public int frames() { return frames; }
+    
     public int emptyFrames() { return emptyFrames; }
+    
     /** Latches failure so no caller can continue using a discontinuous transfer. */
     private void fail(String message) throws IOException {
         failed = true;
-        throw new IOException(message + "; nothing imported (sample continuity is unknown)");
+        throw new IOException(Messages.getString(MessageIds.GDE_MSGE4120, new String[] {message}));
     }
 
     /**
@@ -101,7 +106,7 @@ public final class TA612CRecDecoder {
         }
         /** Returns thousandths Celsius for a present probe; rejects absent data. */
         public int point(int probe) {
-            if ((validMask() & (1 << probe)) == 0) throw new IllegalStateException("Open probe has no temperature");
+            if ((validMask() & (1 << probe)) == 0) throw new IllegalStateException(Messages.getString(MessageIds.GDE_MSGE4121));
             return raw[probe] * 100;
         }
     }

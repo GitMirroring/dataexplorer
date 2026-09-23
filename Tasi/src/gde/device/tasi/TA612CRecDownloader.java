@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import gde.messages.Messages;
+
 /**
  * Collects one read-only REC transfer off the UI thread, with no automatic retry.
  * Samples remain private to the worker until framing and cleanup have succeeded.
@@ -43,8 +45,7 @@ public final class TA612CRecDownloader extends Thread {
         public Result { samples = List.copyOf(samples); }
         /** Supplies the completeness caveat persisted in each imported segment. */
         public String completionDescription() {
-            return "Transfer ended after " + quietMs + " ms without bytes; completeness unverified. "
-                    + "No sample count, sequence numbers or proven end marker available.";
+            return Messages.getString(MessageIds.GDE_MSGI4111, new Object[] {quietMs});
         }
     }
     private final Transport transport;
@@ -94,14 +95,14 @@ public final class TA612CRecDownloader extends Thread {
                 // A read timeout may have discarded bytes in the core: it is fatal, not silence.
                 byte[] bytes = transport.readRecBytes();
                 long now = System.nanoTime();
-                if (now - start >= maximumMs * 1_000_000L) throw new IOException("REC transfer duration limit exceeded");
+                if (now - start >= maximumMs * 1_000_000L) throw new IOException(Messages.getString(MessageIds.GDE_MSGE4122));
                 if (bytes.length != 0) {
                     received = true; lastByte = now;
                     samples.addAll(decoder.accept(bytes));
                     if (samples.size() > maximumSamples || decoder.frames() > 200000)
-                        throw new IOException("REC transfer size limit exceeded");
+                        throw new IOException(Messages.getString(MessageIds.GDE_MSGE4122));
                 } else if (!received && now - start >= firstByteMs * 1_000_000L) {
-                    throw new IOException("No REC response; empty memory cannot be inferred from silence");
+                    throw new IOException(Messages.getString(MessageIds.GDE_MSGE4123));
                 } else if (received && now - lastByte >= quietMs * 1_000_000L) {
                     decoder.endOfInput();
                     result = new Result(samples, decoder.frames(), decoder.emptyFrames(), quietMs);

@@ -8,6 +8,7 @@ import gde.data.RecordSet;
 import gde.device.DataTypes;
 import gde.device.IDevice;
 import gde.exception.DataInconsitsentException;
+import gde.messages.Messages;
 import gde.utils.StringHelper;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public final class TA612CRecImport {
             if (value < 1 || value > 86400000) throw new IllegalArgumentException();
             return value;
         } catch (RuntimeException e) {
-            throw new IllegalArgumentException("Enter the recording interval in seconds (0.001 to 86400, at most three decimals).", e);
+            throw new IllegalArgumentException(Messages.getString(MessageIds.GDE_MSGE4124), e);
         }
     }
 
@@ -59,46 +60,53 @@ public final class TA612CRecImport {
      */
     public static List<RecordSet> prepare(TA612C device, TA612CRecDownloader.Result result, long intervalMs, int firstNumber)
             throws DataInconsitsentException {
-        if (intervalMs < 1 || intervalMs > 86400000) throw new IllegalArgumentException("Invalid REC interval");
+        if (intervalMs < 1 || intervalMs > 86400000) throw new IllegalArgumentException(Messages.getString(MessageIds.GDE_MSGE4125));
         List<TA612CRecDecoder.Sample> samples = result.samples();
         // The core OSD writer truncates variable times to signed int32 in 0.1 ms.
         if (Math.max(0, samples.size() - 1) * intervalMs > Integer.MAX_VALUE / 10L)
-            throw new IllegalArgumentException("Inferred REC span exceeds the supported variable-time OSD range (about 59.6 hours)");
+            throw new IllegalArgumentException(Messages.getString(MessageIds.GDE_MSGE4126));
         String absentRanges = allAbsentRanges(samples);
         List<RecordSet> prepared = new ArrayList<>();
-        for (int first = 0; first < samples.size();) {
-            int mask = samples.get(first).validMask();
-            int end = first + 1;
-            while (end < samples.size() && samples.get(end).validMask() == mask) ++end;
-            if (mask != 0) {
-                if (prepared.size() >= 1000) throw new IllegalArgumentException("REC segment limit exceeded (1000); nothing imported");
-                String name = (firstNumber + prepared.size()) + ") REC inferred " + probeNames(mask);
-                RecordSet records = RecordSet.createRecordSet(name, device, 1, true, false, false);
-                configureMask(records, mask);
-                records.setTimeStep_ms(-1);
-                records.setStartTimeStamp(0); // Explicit unknown epoch placeholder, never download time.
-                records.setRecordSetDescription("TA612C REC v1. INFERRED TIME; absolute recording time UNKNOWN. "
-                        + "Interval " + BigDecimal.valueOf(intervalMs, 3).stripTrailingZeros().toPlainString()
-                        + " s supplied by user, NOT read from meter. elapsed = original zero-based sample index * interval. "
-                        + "OSD epoch 0 (1970) is an unknown-time placeholder; absolute-time views are not recording dates. "
-                        + "Original samples " + first + ".." + (end - 1) + " of " + samples.size()
-                        + "; source REC frames " + samples.get(first).sourceFrame() + ".." + samples.get(end - 1).sourceFrame()
-                        + "; present probes " + probeNames(mask) + ". Other probes absent, no replacement points. "
-                        + "All-probes-absent sample ranges: " + absentRanges + ". "
-                        + result.completionDescription() + " Frames " + result.frames() + ", empty frames " + result.emptyFrames() + ".");
-                for (int i = first; i < end; ++i) {
-                    int[] points = new int[Integer.bitCount(mask)];
-                    int column = 0;
-                    for (int p = 0; p < 4; ++p) if ((mask & (1 << p)) != 0) points[column++] = samples.get(i).point(p);
-                    records.addTimeStep_ms(i * intervalMs);
-                    records.addNoneCalculationRecordsPoints(points);
-                }
-                device.makeInActiveDisplayable(records);
-                records.syncScaleOfSyncableRecords();
-                prepared.add(records);
-            }
-            first = end;
-        }
+				for (int first = 0; first < samples.size();) {
+					int mask = samples.get(first).validMask();
+					int end = first + 1;
+					while (end < samples.size() && samples.get(end).validMask() == mask)
+						++end;
+					if (mask != 0) {
+						if (prepared.size() >= 1000) throw new IllegalArgumentException(Messages.getString(MessageIds.GDE_MSGE4127));
+						String name = (firstNumber + prepared.size()) + Messages.getString(MessageIds.GDE_MSGT4113, new String[] { probeNames(mask) });
+						name = name.length() <= RecordSet.MAX_NAME_LENGTH ? name : name.substring(0, RecordSet.MAX_NAME_LENGTH);
+						RecordSet records = RecordSet.createRecordSet(name, device, 1, true, false, false);
+						configureMask(records, mask);
+						records.setTimeStep_ms(-1);
+						records.setStartTimeStamp(0); // Explicit unknown epoch placeholder, never download time.
+						records.setRecordSetDescription(
+								Messages.getString(MessageIds.GDE_MSGT4114, new Object[] { 
+										BigDecimal.valueOf(intervalMs, 3).stripTrailingZeros().toPlainString(), 
+										first, 
+										(end - 1), 
+										samples.size(),
+										samples.get(first).sourceFrame(), 
+										samples.get(end - 1).sourceFrame(), 
+										probeNames(mask), 
+										absentRanges, 
+										result.completionDescription(), 
+										result.frames(), 
+										result.emptyFrames() }));
+						for (int i = first; i < end; ++i) {
+							int[] points = new int[Integer.bitCount(mask)];
+							int column = 0;
+							for (int p = 0; p < 4; ++p)
+								if ((mask & (1 << p)) != 0) points[column++] = samples.get(i).point(p);
+							records.addTimeStep_ms(i * intervalMs);
+							records.addNoneCalculationRecordsPoints(points);
+						}
+						device.makeInActiveDisplayable(records);
+						records.syncScaleOfSyncableRecords();
+						prepared.add(records);
+					}
+					first = end;
+				}
         return List.copyOf(prepared);
     }
 
@@ -109,7 +117,7 @@ public final class TA612CRecImport {
      * visibility; applying a different mask to populated data is not supported.
      */
     static void configureMask(RecordSet records, int mask) {
-        if (records.size() != 4 || mask < 1 || mask > 15) throw new IllegalArgumentException("Invalid REC probe mask");
+        if (records.size() != 4 || mask < 1 || mask > 15) throw new IllegalArgumentException(Messages.getString(MessageIds.GDE_MSGE4128));
         List<String> stored = new ArrayList<>();
         for (int p = 0; p < 4; ++p) {
             Record record = probe(records, p);
@@ -172,29 +180,29 @@ public final class TA612CRecImport {
      * of whether a measurement column exists on disk.
      */
     static String[] restoreMask(String[] properties, RecordSet records) {
-        if (properties.length != 4 || records.size() != 4) throw new IllegalArgumentException("TA612C OSD requires four probe definitions");
+        if (properties.length != 4 || records.size() != 4) throw new IllegalArgumentException(Messages.getString(MessageIds.GDE_MSGE4129));
         int mask = 0, markers = 0;
         String[] recordKeys = new String[properties.length];
         for (int i = 0; i < properties.length; ++i) {
             HashMap<String, String> standard = StringHelper.splitString(properties[i], Record.DELIMITER, Record.propertyKeys);
             String recordKey = standard.get(Record.NAME);
             Record record = records.get(recordKey);
-            if (record == null) throw new IllegalArgumentException("Unknown TA612C OSD probe: " + recordKey);
+            if (record == null) throw new IllegalArgumentException(Messages.getString(MessageIds.GDE_MSGE4130, new String[] {recordKey}));
             int p = record.getOrdinal();
             recordKeys[i] = recordKey;
             String value = null;
             for (String entry : properties[i].split("\\|")) {
                 if (entry.startsWith(PRESENT + "_")) {
-                    if (value != null) throw new IllegalArgumentException("Duplicate REC probe marker");
+                    if (value != null) throw new IllegalArgumentException(Messages.getString(MessageIds.GDE_MSGE4131));
                     // DataTypes.toString() is BOOLEAN in this version of the core.
                     if (!entry.equals(PRESENT + "_BOOLEAN=true") && !entry.equals(PRESENT + "_BOOLEAN=false"))
-                        throw new IllegalArgumentException("Invalid REC probe marker");
+                        throw new IllegalArgumentException(Messages.getString(MessageIds.GDE_MSGE4132));
                     value = entry.substring(entry.indexOf('=') + 1);
                 }
             }
             if (value != null) { ++markers; if (value.equals("true")) mask |= 1 << p; }
         }
-        if (markers != 0 && markers != 4) throw new IllegalArgumentException("Incomplete REC probe markers");
+        if (markers != 0 && markers != 4) throw new IllegalArgumentException(Messages.getString(MessageIds.GDE_MSGE4133));
         if (markers == 4) configureMask(records, mask);
         return recordKeys;
     }
@@ -220,6 +228,6 @@ public final class TA612CRecImport {
             while (i + 1 < samples.size() && samples.get(i + 1).validMask() == 0) ++i;
             ranges.add(first == i ? "" + first : first + ".." + i);
         }
-        return ranges.isEmpty() ? "none" : String.join(", ", ranges);
+        return ranges.isEmpty() ? Messages.getString(MessageIds.GDE_MSGT4115) : String.join(", ", ranges);
     }
 }

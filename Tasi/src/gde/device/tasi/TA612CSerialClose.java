@@ -4,6 +4,7 @@
 package gde.device.tasi;
 
 import gde.comm.IDeviceCommPort;
+import gde.messages.Messages;
 import gde.comm.DeviceJavaSerialCommPortImpl;
 
 /** DataExplorer 4.0.7 closes serial asynchronously. Keep TA612C ownership until it finishes.
@@ -30,7 +31,7 @@ public final class TA612CSerialClose {
             field.setAccessible(true);
             closing = (Thread) field.get(serial);
         } catch (ReflectiveOperationException | RuntimeException e) {
-            throw new IllegalStateException("Cannot confirm serial port closure with this core version", e);
+            throw new IllegalStateException(Messages.getString(MessageIds.GDE_MSGE4134), e);
         }
         if (closing == null) return;
         boolean interrupted = Thread.interrupted();
@@ -38,7 +39,7 @@ public final class TA612CSerialClose {
         try {
             while (closing.isAlive()) {
                 long remaining = deadline - System.nanoTime();
-                if (remaining <= 0) throw new IllegalStateException("Serial port is still closing; restart DataExplorer before another acquisition");
+                if (remaining <= 0) throw new IllegalStateException(Messages.getString(MessageIds.GDE_MSGE4135));
                 try { closing.join(Math.max(1, remaining / 1_000_000)); }
                 catch (InterruptedException e) { interrupted = true; }
             }

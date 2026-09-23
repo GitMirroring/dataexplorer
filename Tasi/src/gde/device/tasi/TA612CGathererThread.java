@@ -4,6 +4,8 @@
 package gde.device.tasi;
 
 import gde.exception.TimeOutException;
+import gde.messages.Messages;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -75,7 +77,7 @@ public final class TA612CGathererThread extends Thread {
      */
     @Override
     public void run() {
-        String message = "TA612C stopped. Collected data is retained.";
+        String message = Messages.getString(MessageIds.GDE_MSGI4110);
         Exception failure = null;
         long firstSampleNanos = 0;
         long firstSampleEpochMs = 0;
@@ -109,7 +111,7 @@ public final class TA612CGathererThread extends Thread {
                 if (stopRequested) break;
                 if (System.nanoTime() - lastActivity >= silenceNanos) {
                     if (restarts == maxRestarts) {
-                        throw new IOException("No valid TA612C live frame after " + maxRestarts + " restart attempts");
+                        throw new IOException(Messages.getString(MessageIds.GDE_MSGE4111, new Object[] {maxRestarts}));
                     }
                     transport.startLive();
                     ++restarts;
@@ -120,13 +122,13 @@ public final class TA612CGathererThread extends Thread {
         } catch (InterruptedException interrupted) {
             if (!stopRequested) {
                 failure = interrupted;
-                message = "TA612C acquisition was interrupted. Collected data is retained.";
+                message = Messages.getString(MessageIds.GDE_MSGW4101);
             }
             Thread.currentThread().interrupt();
         } catch (Exception error) {
             if (!stopRequested) {
                 failure = error;
-                message = "TA612C stopped: " + error.getMessage() + ". Collected data is retained.";
+                message = Messages.getString(MessageIds.GDE_MSGE4112, new Object[] {error.getMessage()});
             }
         } finally {
             stopRequested = true;
@@ -135,7 +137,7 @@ public final class TA612CGathererThread extends Thread {
             } catch (RuntimeException closeError) {
                 if (failure == null) failure = closeError;
                 else failure.addSuppressed(closeError);
-                message += " The port reported a close error.";
+                message += Messages.getString(MessageIds.GDE_MSGE4113);
             }
             listener.onStopped(message, failure);
         }
