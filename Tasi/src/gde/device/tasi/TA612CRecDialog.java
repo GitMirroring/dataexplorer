@@ -14,9 +14,9 @@ import org.eclipse.swt.widgets.Text;
 import gde.messages.Messages;
 
 /**
- * SWT prompt for the historical recording interval, which REC bytes do not
- * establish. Intentionally starts blank so a guessed default cannot silently
- * become a time axis. Explains timing and completeness limits before download.
+ * Recording download dialog to prompt for the historical recording interval, which REC bytes do not establish. 
+ * Intentionally starts blank so a guessed default cannot silently become a time axis. 
+ * Explains timing and completeness limits before download.
  */
 final class TA612CRecDialog {
     /**
@@ -52,8 +52,12 @@ final class TA612CRecDialog {
         });
         cancel.addListener(SWT.Selection, e -> dialog.dispose());
         dialog.setDefaultButton(download);
-        dialog.pack(); dialog.open(); interval.setFocus();
-        while (!dialog.isDisposed()) if (!dialog.getDisplay().readAndDispatch()) dialog.getDisplay().sleep();
+        dialog.pack(); 
+        dialog.open(); 
+        interval.setFocus();
+        while (!dialog.isDisposed()) 
+        	if (!dialog.getDisplay().readAndDispatch()) 
+        		dialog.getDisplay().sleep();
         return result[0];
     }
 }

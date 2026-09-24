@@ -7,7 +7,7 @@ import gde.comm.IDeviceCommPort;
 import gde.messages.Messages;
 import gde.comm.DeviceJavaSerialCommPortImpl;
 
-/** DataExplorer 4.0.7 closes serial asynchronously. Keep TA612C ownership until it finishes.
+/** DataExplorer closes serial asynchronously. Keep TA612C ownership until it finishes.
  * The core exposes no public close-wait API. This narrow version-specific reflection also
  * works when the plugin and core use different class loaders.
  */

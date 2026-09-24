@@ -9,7 +9,7 @@ Device specific changes/fixes
 	* HoTTAdapter2 - fix climb 1 value setting if dedicated sensor GPS, GAM or EAM is set
 	* Spektrum-Telemetry - fix minor coding issues
 	* Schulze isl 6-330d - add initial support
-	* Tasi TA612C -add initial support
+	* Tasi TA612C - add initial support
 
 Version 4.0.7 - 03 Aug 2026
 Generic changes/fixes 
