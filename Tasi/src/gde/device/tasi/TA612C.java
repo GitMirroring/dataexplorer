@@ -30,6 +30,7 @@ import gde.data.Record;
 import gde.data.RecordSet;
 import gde.device.DeviceConfiguration;
 import gde.device.IDevice;
+import gde.exception.ApplicationConfigurationException;
 import gde.exception.DataInconsitsentException;
 import gde.messages.Messages;
 import gde.ui.DataExplorer;
@@ -146,6 +147,8 @@ public class TA612C extends DeviceConfiguration implements IDevice {
                         application.setStatusMessage(Messages.getString(MessageIds.GDE_MSGT4105));
                     } else if (failure != null) {
                         application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGW4100, new String[] {failure.getMessage()}));
+                        if (failure instanceof ApplicationConfigurationException) 
+                        	application.getDeviceSelectionDialog().open();
                     } else {
                         try {
                             List<RecordSet> prepared = TA612CRecImport.prepare(TA612C.this, result, intervalMs, channel.getNextRecordSetNumber());
@@ -285,6 +288,9 @@ public class TA612C extends DeviceConfiguration implements IDevice {
                             }
                             application.setPortConnected(false);
                             application.setStatusMessage(message);
+                            application.openMessageDialog(message);
+                            if (failure instanceof ApplicationConfigurationException) 
+                            	application.getDeviceSelectionDialog().open();
                         }
                     });
                 }
