@@ -35,6 +35,7 @@ public class AllTests {
 		suite.addTestSuite(TestQuadraticRegression.class);
 		suite.addTestSuite(ObjectKeyComplianceTest.class);
 		suite.addTestSuite(TestObjectKeyScanner.class);
+		suite.addTestSuite(TestTasiTC612C.class);
 		suite.addTestSuite(CleanupTestTemp.class);
 
 		//$JUnit-END$

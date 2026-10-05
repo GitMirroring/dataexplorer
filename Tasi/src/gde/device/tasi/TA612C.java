@@ -106,7 +106,9 @@ public class TA612C extends DeviceConfiguration implements IDevice {
      * checks that this device is still active before starting work.
      */
     void addRecMenu(Menu menu) {
-        for (MenuItem item : menu.getItems()) if ("ta612c-rec".equals(item.getData())) return;
+        for (MenuItem item : menu.getItems()) 
+        	if ("ta612c-rec".equals(item.getData())) 
+        		return;
         new MenuItem(menu, SWT.SEPARATOR);
         MenuItem item = new MenuItem(menu, SWT.PUSH);
         item.setData(Messages.getString(MessageIds.GDE_MSGT4102));

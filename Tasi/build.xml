@@ -42,67 +42,73 @@
 	<target name="package" depends="compile">
 		<echo message="Building using ${os.name} ${os.arch}" />
 		<tstamp>
-		     <format property="TODAY" pattern="yyyy-MM-dd HH:mm:ss" />
+			<format property="TODAY" pattern="yyyy-MM-dd HH:mm:ss" />
 		</tstamp>
 		<java classname="gde.tools.ExportServiceBuilder" outputproperty="export.services">
-		    <arg value="${basedir}"/>
-		    <classpath>
-		        <pathelement location="../DataExplorer/build/DataExplorer.jar"/>
-		    </classpath>
+			<arg value="${basedir}"/>
+			<classpath>
+				<pathelement location="../DataExplorer/build/DataExplorer.jar"/>
+			</classpath>
 		</java>
 		<manifest file="src/META-INF/MANIFEST.MF">
-    		<attribute name="Implementation-Version" value="${version.num}"/>
+			<attribute name="Implementation-Version" value="${version.num}"/>
 			<attribute name="Created-By" value="${user.name}"/>
-			<attribute name="Built-Date" value="${TODAY}"/> 
-    		<attribute name="Bundle-Version" value="${version.num}"/>
-    		<attribute name="Bundle-SymbolicName" value="${ant.project.name}"/>
-    		<attribute name="Bundle-Description" value="Implementation Tasi thermometer using serial comm"/>
-    		<attribute name="Export-Service" value="${export.services}"/>
-    	</manifest>
-	    <jar manifest="src/META-INF/MANIFEST.MF" jarfile="build/${ant.project.name}.jar" compress="true" index="true" >
-	       	<fileset dir="${module.output}" includes="**/*.class"/>
-	    	<fileset dir="src" includes="**/*.xml"/>
-	    	<fileset dir="src" includes="**/*.xsd"/>
-	    	<fileset dir="src" includes="**/*.jpg"/>
-	    	<fileset dir="src" includes="**/*.gif"/>
-	    	<fileset dir="src" includes="**/*.png"/>
-	    	<fileset dir="src" includes="**/*.properties"/>
-	    	<fileset dir="src" includes="**/*.html"/>
-	    	<fileset dir="src" includes="**/*.css"/>
-	    </jar>
+			<attribute name="Built-Date" value="${TODAY}"/>
+			<attribute name="Bundle-Version" value="${version.num}"/>
+			<attribute name="Bundle-SymbolicName" value="${ant.project.name}"/>
+			<attribute name="Bundle-Description" value="Implementation Tasi thermometer using serial comm"/>
+			<attribute name="Export-Service" value="${export.services}"/>
+		</manifest>
+		<jar manifest="src/META-INF/MANIFEST.MF" jarfile="build/${ant.project.name}.jar" compress="true" index="true" >
+			<fileset dir="${module.output}" includes="**/*.class"/>
+			<fileset dir="src" includes="**/*.xml"/>
+			<fileset dir="src" includes="**/*.xsd"/>
+			<fileset dir="src" includes="**/*.jpg"/>
+			<fileset dir="src" includes="**/*.gif"/>
+			<fileset dir="src" includes="**/*.png"/>
+			<fileset dir="src" includes="**/*.properties"/>
+			<fileset dir="src" includes="**/*.html"/>
+			<fileset dir="src" includes="**/*.css"/>
+		</jar>
 	</target>
 
 	<target name="nonui_package" depends="compile">
 		<echo message="Building using ${os.name} ${os.arch}" />
 		<tstamp>
-		     <format property="TODAY" pattern="yyyy-MM-dd HH:mm:ss" />
+			<format property="TODAY" pattern="yyyy-MM-dd HH:mm:ss" />
 		</tstamp>
 		<java classname="gde.tools.ExportServiceBuilder" outputproperty="export.services">
-		    <arg value="${basedir}"/>
-		    <classpath>
-		        <pathelement location="../DataExplorer/build/DataExplorer.jar"/>
-		    </classpath>
+			<arg value="${basedir}"/>
+			<classpath>
+				<pathelement location="../DataExplorer/build/DataExplorer.jar"/>
+			</classpath>
 		</java>
 		<manifest file="src/META-INF/MANIFEST.MF">
-    		<attribute name="Implementation-Version" value="${version.num}"/>
+			<attribute name="Implementation-Version" value="${version.num}"/>
 			<attribute name="Created-By" value="${user.name}"/>
-			<attribute name="Built-Date" value="${TODAY}"/> 
-    		<attribute name="Bundle-Version" value="${version.num}"/>
-    		<attribute name="Bundle-SymbolicName" value="${ant.project.name}"/>
-    		<attribute name="Bundle-Description" value="Implementation Tasi thermometer using serial comm"/>
-    		<attribute name="Export-Service" value="${export.services}"/>
-    	</manifest>
-	    <jar manifest="src/META-INF/MANIFEST.MF" jarfile="build/${ant.project.name}NonUi-${version.num}.jar" compress="true" >
-	       	<fileset dir="${module.output}" includes="**/*.class"/>
-	    	<fileset dir="src" includes="**/*.xml"/>
-	    	<fileset dir="src" includes="**/*.xsd"/>
-	    	<fileset dir="src" includes="**/*.properties"/>
-	    </jar>
+			<attribute name="Built-Date" value="${TODAY}"/>
+			<attribute name="Bundle-Version" value="${version.num}"/>
+			<attribute name="Bundle-SymbolicName" value="${ant.project.name}"/>
+			<attribute name="Bundle-Description" value="Implementation Tasi thermometer using serial comm"/>
+			<attribute name="Export-Service" value="${export.services}"/>
+		</manifest>
+		<jar manifest="src/META-INF/MANIFEST.MF" jarfile="build/${ant.project.name}NonUi-${version.num}.jar" compress="true" >
+			<fileset dir="${module.output}" includes="**/*.class"/>
+			<fileset dir="src" includes="**/*.xml"/>
+			<fileset dir="src" includes="**/*.xsd"/>
+			<fileset dir="src" includes="**/*.properties"/>
+		</jar>
 	</target>
 
 	<target name="clean">
 		<delete dir="build" />
 		<delete dir="bin" />
 		<delete dir="classes" />
+		<delete>
+			<fileset dir="test-output">
+				<include name="*.*"/>
+			</fileset>
+		</delete>
+
 	</target>
 </project>

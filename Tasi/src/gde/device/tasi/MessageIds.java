@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with GNU DataExplorer.  If not, see <https://www.gnu.org/licenses/>.
 
-Copyright (c) 2026 Winfried Bruegmann 
+Copyright (c) 2008-2026 Winfried Bruegmann 
 ****************************************************************************************/
 package gde.device.tasi;
 
@@ -64,17 +64,6 @@ public class MessageIds {
 	public final static String	GDE_MSGW4100 = "GDE_MSGW4100";
 	public final static String	GDE_MSGW4101 = "GDE_MSGW4101";
 	public final static String	GDE_MSGW4102 = "GDE_MSGW4102";
-	public final static String	GDE_MSGW4103 = "GDE_MSGW4103";
-	public final static String	GDE_MSGW4104 = "GDE_MSGW4104";
-	public final static String	GDE_MSGW4105 = "GDE_MSGW4105";
-	public final static String	GDE_MSGW4106 = "GDE_MSGW4106";
-	public final static String	GDE_MSGW4107 = "GDE_MSGW4107";
-	public final static String	GDE_MSGW4108 = "GDE_MSGW4108";
-	public final static String	GDE_MSGW4109 = "GDE_MSGW4109";
-	public final static String	GDE_MSGW4110 = "GDE_MSGW4110";
-	public final static String	GDE_MSGW4111 = "GDE_MSGW4111";
-	public final static String	GDE_MSGW4112 = "GDE_MSGW4112";
-	public final static String	GDE_MSGW4113 = "GDE_MSGW4113";
 	public final static String	GDE_MSGI4100 = "GDE_MSGI4100";
 	public final static String	GDE_MSGI4101 = "GDE_MSGI4101";
 	public final static String	GDE_MSGI4102 = "GDE_MSGI4102";
@@ -89,6 +78,7 @@ public class MessageIds {
 	public final static String	GDE_MSGI4111 = "GDE_MSGI4111";
 	public final static String	GDE_MSGI4112 = "GDE_MSGI4112";
 	public final static String	GDE_MSGI4113 = "GDE_MSGI4113";
+	public final static String	GDE_MSGI4114 = "GDE_MSGI4114";
 	public final static String	GDE_MSGT4100 = "GDE_MSGT4100";
 	public final static String	GDE_MSGT4101 = "GDE_MSGT4101";
 	public final static String	GDE_MSGT4102 = "GDE_MSGT4102";
@@ -105,9 +95,5 @@ public class MessageIds {
 	public final static String	GDE_MSGT4113 = "GDE_MSGT4113";
 	public final static String	GDE_MSGT4114 = "GDE_MSGT4114";
 	public final static String	GDE_MSGT4115 = "GDE_MSGT4115";
-	public final static String	GDE_MSGT4116 = "GDE_MSGT4116";
-	public final static String	GDE_MSGT4117 = "GDE_MSGT4117";
-	public final static String	GDE_MSGT4118 = "GDE_MSGT4118";
-	public final static String	GDE_MSGT4119 = "GDE_MSGT4119";
 
  }
