@@ -104,7 +104,7 @@
 		<delete dir="build" />
 		<delete dir="bin" />
 		<delete dir="classes" />
-		<delete>
+		<delete failonerror="no">
 			<fileset dir="test-output">
 				<include name="*.*"/>
 			</fileset>

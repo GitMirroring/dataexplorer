@@ -10,6 +10,7 @@ Device specific changes/fixes
 	* Spektrum-Telemetry - fix minor coding issues
 	* Schulze isl 6-330d - add initial support
 	* Tasi TA612C - add initial support
+	* iCharger*DUO - disable program execution via dialog on selected channel due to sync cabling
 
 Version 4.0.7 - 03 Aug 2026
 Generic changes/fixes 

@@ -3233,13 +3233,29 @@ public class ChargerDialog extends DeviceDialog {
 						}
 						
 						//update charge/discharge max current channel async/sync
-						if (this.memoryValues[47] == 1) {//single channel or channels async
+						if (this.memoryValues[47] == 1) {//single channel or channels sync
 							this.memoryParameters[3].updateValueRange(String.format("0.05 ~ %d A", device.getChargeCurrentMaxSyncChannels()/10), 5, device.getChargeCurrentMaxSyncChannels()*10+10); //$NON-NLS-1$
 							this.memoryParameters[17].updateValueRange(String.format("0.05 ~ %d A", device.getChargeCurrentMaxSyncChannels()/10), 5, device.getChargeCurrentMaxSyncChannels()*10+10); //$NON-NLS-1$
+							if (this.btnCharge != null && !this.btnCharge.isDisposed()) {
+								//disable starting program execution due to required cabling
+								this.btnCharge.setEnabled(false);
+								this.btnStorage.setEnabled(false);
+								this.btnDischarge.setEnabled(false);
+								this.btnCycle.setEnabled(false);
+								this.btnBalance.setEnabled(false);
+							}
 						}
-						else {//duo device channels in sync
+						else {//duo device channels in async
 							this.memoryParameters[3].updateValueRange(String.format("0.05 ~ %d A", device.getChargeCurrentMax4Channel()/10), 5, device.getChargeCurrentMax4Channel()*10+10); //$NON-NLS-1$
 							this.memoryParameters[17].updateValueRange(String.format("0.05 ~ %d A", device.getChargeCurrentMax4Channel()/10), 5, device.getChargeCurrentMax4Channel()*10+10); //$NON-NLS-1$
+							if (this.btnCharge != null && !this.btnCharge.isDisposed()) {
+								//disable starting program execution due to required cabling
+								this.btnCharge.setEnabled(true);
+								this.btnStorage.setEnabled(true);
+								this.btnDischarge.setEnabled(true);
+								this.btnCycle.setEnabled(true);
+								this.btnBalance.setEnabled(true);
+							}
 						}
 					}
 				}
