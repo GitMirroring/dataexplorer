@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DeviceProperties xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="DeviceProperties_V50.xsd">
+    <Device>
+        <name implementation="gde.device.wb.CSV2SerialAdapter">Cheali Charger</name>
+        <manufacturer>Cheali</manufacturer>
+        <manufacturerURL>https://github.com/stawel/cheali-charger</manufacturerURL>
+        <group>charger</group>
+        <image>ChealiCharger.png</image>
+        <editable>true</editable>
+        <usage>false</usage>
+    </Device>
+    <SerialPort>
+        <port>-</port>
+        <baudeRate>38400</baudeRate>
+        <dataBits>DATABITS_8</dataBits>
+        <stopBits>STOPBITS_1</stopBits>
+        <parity>PARITY_NONE</parity>
+        <flowControlMode>FLOWCONTROL_NONE</flowControlMode>
+        <isRTS>false</isRTS>
+        <isDTR>false</isDTR>
+        <TimeOut>
+            <ReadTimeOut>390</ReadTimeOut>
+            <ReadStableIndex>5</ReadStableIndex>
+            <WriteCharDelayTime>0</WriteCharDelayTime>
+            <WriteDelayTime>0</WriteDelayTime>
+        </TimeOut>
+    </SerialPort>
+    <TimeBase>
+        <name>time</name>
+        <symbol>t</symbol>
+        <unit>msec</unit>
+        <timeStep>-1.0</timeStep>
+    </TimeBase>
+    <DataBlock>
+        <format inputType="SERIAL_IO" formatType="BYTE" size="-150"/>
+        <format inputType="FILE_IO" formatType="VALUE" size="24"/>
+        <timeUnit>sec</timeUnit>
+        <separator>semicolon</separator>
+        <leader>$</leader>
+        <trailer>0D0A</trailer>
+        <preferredFileExtention>*.csv</preferredFileExtention>
+    </DataBlock>
+    <State>
+        <property name="state_charge" value="1" type="Integer" description="Charge"/>
+        <property name="state_charge_balance" value="2" type="Integer" description="Charge + balance"/>
+        <property name="state_balance" value="3" type="Integer" description="Balance"/>
+        <property name="state_discharge" value="4" type="Integer" description="Discharge"/>
+        <property name="state_fast_charge" value="5" type="Integer" description="Fast charge"/>
+        <property name="state_storage" value="6" type="Integer" description="Storage"/>
+        <property name="state_storage_balance" value="7" type="Integer" description="Storage + balance"/>
+        <property name="state_discharge_charge_cycle" value="8" type="Integer" description="Discharge/charge cycle"/>
+        <property name="state_capacity_check" value="9" type="Integer" description="Capacity check"/>
+    </State>
+    <Channels>
+        <Channel name="type_outlet" type="TYPE_OUTLET">
+            <Measurement>
+                <name>voltage</name>
+                <symbol>U</symbol>
+                <unit>V</unit>
+                <active>true</active>
+                <statistics min="true" max="true" avg="false" sigma="false"/>
+                <property name="factor" value="0.001" type="Double" description="mV -&gt; V"/>
+            </Measurement>
+            <Measurement>
+                <name>current</name>
+                <symbol>I</symbol>
+                <unit>A</unit>
+                <active>true</active>
+                <statistics min="true" max="true" avg="false" sigma="false"/>
+                <property name="factor" value="0.001" type="Double" description="mA -&gt; A"/>
+            </Measurement>
+            <Measurement>
+                <name>capacity</name>
+                <symbol>C</symbol>
+                <unit>mAh</unit>
+                <active>true</active>
+                <statistics min="true" max="true" avg="false" sigma="false"/>
+            </Measurement>
+            <Measurement>
+                <name>power</name>
+                <symbol>P</symbol>
+                <unit>W</unit>
+                <active>true</active>
+                <statistics min="true" max="true" avg="false" sigma="false"/>
+                <property name="factor" value="0.01" type="Double" description="0.01 W -&gt; W"/>
+            </Measurement>
+            <Measurement>
+                <name>energy</name>
+                <symbol>E</symbol>
+                <unit>Wh</unit>
+                <active>true</active>
+                <statistics min="true" max="true" avg="false" sigma="false"/>
+                <property name="factor" value="0.01" type="Double" description="0.01 Wh -&gt; Wh"/>
+            </Measurement>
+            <Measurement>
+                <name>temperature external</name>
+                <symbol>Tx</symbol>
+                <unit>°C</unit>
+                <active>true</active>
+                <statistics min="true" max="true" avg="false" sigma="false"/>
+                <property name="factor" value="0.01" type="Double" description="0.01 °C -&gt; °C"/>
+            </Measurement>
+            <Measurement>
+                <name>temperature internal</name>
+                <symbol>Ti</symbol>
+                <unit>°C</unit>
+                <active>true</active>
+                <statistics min="true" max="true" avg="false" sigma="false"/>
+                <property name="factor" value="0.01" type="Double" description="0.01 °C -&gt; °C"/>
+            </Measurement>
+            <Measurement>
+                <name>supply_voltage</name>
+                <symbol>Uin</symbol>
+                <unit>V</unit>
+                <active>true</active>
+                <statistics min="true" max="true" avg="false" sigma="false"/>
+                <property name="factor" value="0.001" type="Double" description="mV -&gt; V"/>
+            </Measurement>
+            <Measurement>
+                <name>cell_voltage 1</name>
+                <symbol>U</symbol>
+                <unit>V</unit>
+                <active>true</active>
+                <statistics min="true" max="true" avg="false" sigma="false"/>
+                <property name="factor" value="0.001" type="Double" description="mV -&gt; V"/>
+            </Measurement>
+            <Measurement>
+                <name>cell_voltage 2</name>
+                <symbol>U</symbol>
+                <unit>V</unit>
+                <active>true</active>
+                <statistics min="true" max="true" avg="false" sigma="false"/>
+                <property name="factor" value="0.001" type="Double" description="mV -&gt; V"/>
+                <property name="scale_sync_ref_ordinal" value="8" type="Integer"/>
+            </Measurement>
+            <Measurement>
+                <name>cell_voltage 3</name>
+                <symbol>U</symbol>
+                <unit>V</unit>
+                <active>true</active>
+                <statistics min="true" max="true" avg="false" sigma="false"/>
+                <property name="factor" value="0.001" type="Double" description="mV -&gt; V"/>
+                <property name="scale_sync_ref_ordinal" value="8" type="Integer"/>
+            </Measurement>
+            <Measurement>
+                <name>cell_voltage 4</name>
+                <symbol>U</symbol>
+                <unit>V</unit>
+                <active>true</active>
+                <statistics min="true" max="true" avg="false" sigma="false"/>
+                <property name="factor" value="0.001" type="Double" description="mV -&gt; V"/>
+                <property name="scale_sync_ref_ordinal" value="8" type="Integer"/>
+            </Measurement>
+            <Measurement>
+                <name>cell_voltage 5</name>
+                <symbol>U</symbol>
+                <unit>V</unit>
+                <active>true</active>
+                <statistics min="true" max="true" avg="false" sigma="false"/>
+                <property name="factor" value="0.001" type="Double" description="mV -&gt; V"/>
+                <property name="scale_sync_ref_ordinal" value="8" type="Integer"/>
+            </Measurement>
+            <Measurement>
+                <name>cell_voltage 6</name>
+                <symbol>U</symbol>
+                <unit>V</unit>
+                <active>true</active>
+                <statistics min="true" max="true" avg="false" sigma="false"/>
+                <property name="factor" value="0.001" type="Double" description="mV -&gt; V"/>
+                <property name="scale_sync_ref_ordinal" value="8" type="Integer"/>
+            </Measurement>
+            <Measurement>
+                <name>cell_internal_resistance 1</name>
+                <symbol>Ri1</symbol>
+                <unit>mΩ</unit>
+                <active>true</active>
+                <statistics min="true" max="true" avg="false" sigma="false"/>
+            </Measurement>
+            <Measurement>
+                <name>cell_internal_resistance 2</name>
+                <symbol>Ri2</symbol>
+                <unit>mΩ</unit>
+                <active>true</active>
+                <statistics min="true" max="true" avg="false" sigma="false"/>
+                <property name="scale_sync_ref_ordinal" value="14" type="Integer"/>
+            </Measurement>
+            <Measurement>
+                <name>cell_internal_resistance 3</name>
+                <symbol>Ri3</symbol>
+                <unit>mΩ</unit>
+                <active>true</active>
+                <statistics min="true" max="true" avg="false" sigma="false"/>
+                <property name="scale_sync_ref_ordinal" value="14" type="Integer"/>
+            </Measurement>
+            <Measurement>
+                <name>cell_internal_resistance 4</name>
+                <symbol>Ri4</symbol>
+                <unit>mΩ</unit>
+                <active>true</active>
+                <statistics min="true" max="true" avg="false" sigma="false"/>
+                <property name="scale_sync_ref_ordinal" value="14" type="Integer"/>
+            </Measurement>
+            <Measurement>
+                <name>cell_internal_resistance 5</name>
+                <symbol>Ri5</symbol>
+                <unit>mΩ</unit>
+                <active>true</active>
+                <statistics min="true" max="true" avg="false" sigma="false"/>
+                <property name="scale_sync_ref_ordinal" value="14" type="Integer"/>
+            </Measurement>
+            <Measurement>
+                <name>cell_internal_resistance 6</name>
+                <symbol>Ri6</symbol>
+                <unit>mΩ</unit>
+                <active>true</active>
+                <statistics min="true" max="true" avg="false" sigma="false"/>
+                <property name="scale_sync_ref_ordinal" value="14" type="Integer"/>
+            </Measurement>
+            <Measurement>
+                <name>battery_internal_resistance</name>
+                <symbol>Rb</symbol>
+                <unit>mΩ</unit>
+                <active>true</active>
+                <statistics min="true" max="true" avg="false" sigma="false"/>
+            </Measurement>
+            <Measurement>
+                <name>resistance_wire</name>
+                <symbol>Rw</symbol>
+                <unit>mΩ</unit>
+                <active>true</active>
+                <statistics min="true" max="true" avg="false" sigma="false"/>
+            </Measurement>
+            <Measurement>
+                <name>charge_level</name>
+                <symbol>Q</symbol>
+                <unit>%</unit>
+                <active>true</active>
+                <statistics min="true" max="true" avg="false" sigma="false"/>
+            </Measurement>
+            <Measurement>
+                <name>remaining_time</name>
+                <symbol>tr</symbol>
+                <unit>raw</unit>
+                <active>true</active>
+                <statistics min="true" max="true" avg="false" sigma="false"/>
+            </Measurement>
+            <Settlements/>
+            <ReferenceGroups/>
+            <TransitionGroups/>
+            <Transitions/>
+            <ScoreGroups/>
+        </Channel>
+    </Channels>
+    <Desktop>
+        <property name="table_tab" value="true"/>
+        <property name="digital_tab" value="true"/>
+        <property name="analog_tab" value="false"/>
+        <property name="voltage_per_cell_tab" value="false"/>
+        <property name="utility_garphics_tab" value="false" description="UTILITY_GRAPHICS_TAB"/>
+        <property name="utility_device_tab" value="false" description="UTILITY_DEVICE_TAB"/>
+    </Desktop>
+</DeviceProperties>
