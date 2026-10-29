@@ -578,8 +578,12 @@ public class Channel extends HashMap<String, RecordSet> {
 	public void setActiveRecordSet(String recordSetKey) {
 		DataExplorer.getInstance().checkUpdateFileComment();
 		DataExplorer.getInstance().checkUpdateRecordSetComment();
-
+		
 		RecordSet newActiveRecordSet = this.get(recordSetKey);
+
+		if (this.activeRecordSet != null && this.activeRecordSet != newActiveRecordSet)
+			DataExplorer.getInstance().checkDataTable(this.activeRecordSet, newActiveRecordSet);
+		
 		if (newActiveRecordSet != null) {
 			this.activeRecordSet = newActiveRecordSet;
 		}

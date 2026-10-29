@@ -2689,6 +2689,26 @@ public class DataExplorer extends Composite {
 	}
 
 	/**
+	 * check if data table changed with new record set compared an existing record set
+	 */
+	public void checkDataTable(RecordSet oldRecordSet, RecordSet newRecordSet) {
+		final boolean isDataTableHeaderChanged = (0 == Arrays.compare(oldRecordSet.getDisplayableAndVisibleRecordNames(), newRecordSet.getDisplayableAndVisibleRecordNames()));
+				
+		if (Thread.currentThread().threadId() == DataExplorer.application.getThreadId()) {
+			if (this.dataTableTabItem != null && isDataTableHeaderChanged)
+				this.updateDataTable(newRecordSet.getName(), true);
+		} else { // if the percentage is not up to date it will updated later
+			GDE.display.asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					if (DataExplorer.this.dataTableTabItem != null && isDataTableHeaderChanged)
+						DataExplorer.this.updateDataTable(newRecordSet.getName(), true);
+				}
+			});
+		}
+	}
+
+	/**
 	 * @return the canvasImage alias graphics window for the visible tab.
 	 */
 	public Image getGraphicsPrintImage() {
