@@ -3286,6 +3286,13 @@ public class DataExplorer extends Composite {
 					tabItem.getParent().setSelection(i - 1);
 				else
 					tabItem.getParent().setSelection(tabItems.length - 1);
+				
+				//explicit update the tab content since setSelection doesn't 
+				if (tabItem.getParent().getSelection() instanceof GraphicsWindow)
+					((GraphicsWindow)tabItem.getParent().getSelection()).redrawGraphics(true);
+				else
+					tabItem.getParent().getSelection().getControl().redraw();
+
 				break;
 			}
 		}
@@ -3303,6 +3310,13 @@ public class DataExplorer extends Composite {
 					tabItem.getParent().setSelection(i + 1);
 				else
 					tabItem.getParent().setSelection(0);
+				
+				//explicit update the tab content since setSelection doesn't 
+				if (tabItem.getParent().getSelection() instanceof GraphicsWindow)
+					((GraphicsWindow)tabItem.getParent().getSelection()).redrawGraphics(true);
+				else
+					tabItem.getParent().getSelection().getControl().redraw();
+
 				break;
 			}
 		}
