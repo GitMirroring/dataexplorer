@@ -123,63 +123,70 @@ public class TA612C extends DeviceConfiguration implements IDevice {
      * every segment before channel insertion and honors cancellation requested
      * after reception but before the queued UI callback runs.
      */
-    private synchronized void downloadRec() {
-        if (application.getActiveDevice() != this) return;
-        if (recDownloader != null) { recDownloader.requestStop(); return; }
-        if (gatherer != null) {
-            application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGT4104));
-            return;
-        }
-        Long intervalMs = TA612CRecDialog.open(application.getShell());
-        // The modal dialog dispatches events: recheck ownership and the selected device afterwards.
-        if (intervalMs == null || gatherer != null || recDownloader != null || application.getActiveDevice() != this) return;
-        Channel channel = Channels.getInstance().getActiveChannel();
-        if (channel == null || channel.getNumber() != 1 || getNumberOfMeasurements(1) != 4) return;
-        livePort = new TA612CSerialPort(this, application);
-        recDownloader = new TA612CRecDownloader(livePort, (result, failure, cancelled) -> {
-            if (failure != null) LOG.log(Level.WARNING, "REC download failed", failure);
-            if (GDE.display == null || GDE.display.isDisposed()) return;
-            GDE.display.asyncExec(() -> {
-                synchronized (TA612C.this) {
-                    boolean stopped = cancelled || recDownloader.isStopRequested();
-                    recDownloader = null;
-                    if (application.getActiveDevice() != TA612C.this) return;
-                    application.setPortConnected(false);
-                    if (stopped) {
-                        application.setStatusMessage(Messages.getString(MessageIds.GDE_MSGT4105));
-                    } else if (failure != null) {
-                        application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGW4100, new String[] {failure.getMessage()}));
-                        if (failure instanceof ApplicationConfigurationException) 
-                        	application.getDeviceSelectionDialog().open();
-                    } else {
-                        try {
-                            List<RecordSet> prepared = TA612CRecImport.prepare(TA612C.this, result, intervalMs, channel.getNextRecordSetNumber());
-                            // Publish only after all segments have been validated and prepared.
-                            for (RecordSet records : prepared) channel.put(records.getName(), records);
-                            if (!prepared.isEmpty()) {
-                                RecordSet first = prepared.get(0);
-                                channel.setActiveRecordSet(first.getName());
-                                application.getMenuToolBar().updateRecordSetSelectCombo();
-                                application.updateAllTabs(false);
-                                application.updateStatisticsData();
-                                application.updateDataTable(first.getName(), false);
-                            }
-                            String message = Messages.getString(MessageIds.GDE_MSGI4100, new Object[] {result.samples().size(), prepared.size()});
-                            if (prepared.isEmpty()) message += Messages.getString(MessageIds.GDE_MSGI4101);
-                            application.setStatusMessage(message);
-                            application.openMessageDialog(message);
-                        } catch (Exception error) {
-                            LOG.log(Level.WARNING, "REC import failed", error);
-                            application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGE4100, new String[] {error.getMessage()}));
-                        }
-                    }
-                }
-            });
-        });
-        application.setPortConnected(true);
-        application.setStatusMessage(Messages.getString(MessageIds.GDE_MSGI4102));
-        recDownloader.start();
-    }
+		private synchronized void downloadRec() {
+			if (!(application.getActiveDevice() instanceof TA612C)) 
+				return;
+			if (recDownloader != null) {
+				recDownloader.requestStop();
+				return;
+			}
+			if (gatherer != null) {
+				application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGT4104));
+				return;
+			}
+			Long intervalMs = TA612CRecDialog.open(application.getShell());
+			// The modal dialog dispatches events: recheck ownership and the selected device afterwards.
+			if (intervalMs == null || gatherer != null || recDownloader != null || application.getActiveDevice() != this) return;
+			Channel channel = Channels.getInstance().getActiveChannel();
+			if (channel == null || channel.getNumber() != 1 || getNumberOfMeasurements(1) != 4) return;
+			livePort = new TA612CSerialPort(this, application);
+			recDownloader = new TA612CRecDownloader(livePort, (result, failure, cancelled) -> {
+				if (failure != null) LOG.log(Level.WARNING, "REC download failed", failure);
+				if (GDE.display == null || GDE.display.isDisposed()) return;
+				GDE.display.asyncExec(() -> {
+					synchronized (TA612C.this) {
+						boolean stopped = cancelled || recDownloader.isStopRequested();
+						recDownloader = null;
+						if (application.getActiveDevice() != TA612C.this) return;
+						application.setPortConnected(false);
+						if (stopped) {
+							application.setStatusMessage(Messages.getString(MessageIds.GDE_MSGT4105));
+						}
+						else if (failure != null) {
+							application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGW4100, new String[] { failure.getMessage() }));
+							if (failure instanceof ApplicationConfigurationException) application.getDeviceSelectionDialog().open();
+						}
+						else {
+							try {
+								List<RecordSet> prepared = TA612CRecImport.prepare(TA612C.this, result, intervalMs, channel.getNextRecordSetNumber());
+								// Publish only after all segments have been validated and prepared.
+								for (RecordSet records : prepared)
+									channel.put(records.getName(), records);
+								if (!prepared.isEmpty()) {
+									RecordSet first = prepared.get(0);
+									channel.setActiveRecordSet(first.getName());
+									application.getMenuToolBar().updateRecordSetSelectCombo();
+									application.updateAllTabs(false);
+									application.updateStatisticsData();
+									application.updateDataTable(first.getName(), false);
+								}
+								String message = Messages.getString(MessageIds.GDE_MSGI4100, new Object[] { result.samples().size(), prepared.size() });
+								if (prepared.isEmpty()) message += Messages.getString(MessageIds.GDE_MSGI4101);
+								application.setStatusMessage(message);
+								application.openMessageDialog(message);
+							}
+							catch (Exception error) {
+								LOG.log(Level.WARNING, "REC import failed", error);
+								application.openMessageDialog(Messages.getString(MessageIds.GDE_MSGE4100, new String[] { error.getMessage() }));
+							}
+						}
+					}
+				});
+			});
+			application.setPortConnected(true);
+			application.setStatusMessage(Messages.getString(MessageIds.GDE_MSGI4102));
+			recDownloader.start();
+		}
 
     @Override
     public IDeviceCommPort getCommunicationPort() { return livePort; }
