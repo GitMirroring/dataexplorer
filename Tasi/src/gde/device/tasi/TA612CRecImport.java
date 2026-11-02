@@ -64,9 +64,10 @@ public final class TA612CRecImport {
 
     /**
      * Builds all fixed-mask segments before the caller inserts any into a channel.
-     * Elapsed time uses the original zero-based sample index times intervalMs,
-     * preserving offsets across all-open ranges; epoch zero explicitly denotes
-     * an unknown recording date. Empty/all-open input yields no RecordSets and
+     * Each segment starts at relative zero. Its original sample indices and
+     * inferred recording offset remain in the persisted description, preserving
+     * all-open gaps without using a fictitious date. Epoch zero explicitly
+     * denotes an unknown recording date. Empty/all-open input yields no RecordSets and
      * does not prove empty meter memory. The result's completeness caveat is
      * copied into every segment's persisted description.
      *
@@ -109,13 +110,14 @@ public final class TA612CRecImport {
 										absentRanges, 
 										result.completionDescription(), 
 										result.frames(), 
-										result.emptyFrames() }));
+										result.emptyFrames(),
+										BigDecimal.valueOf(first * intervalMs, 3).stripTrailingZeros().toPlainString() }));
 						for (int i = first; i < end; ++i) {
 							int[] points = new int[Integer.bitCount(mask)];
 							int column = 0;
 							for (int p = 0; p < 4; ++p)
 								if ((mask & (1 << p)) != 0) points[column++] = samples.get(i).point(p);
-							records.addTimeStep_ms(i * intervalMs);
+							records.addTimeStep_ms((i - first) * intervalMs);
 							records.addNoneCalculationRecordsPoints(points);
 						}
 						device.makeInActiveDisplayable(records);
