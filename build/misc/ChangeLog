@@ -3,6 +3,7 @@ Development history / change log, please read from bottom up
 Version 4.0.8 - xx yyy 2026
 Generic changes/fixes 
 	* correct the bold display of time line numbers while required
+	* add tab content update changing tabs using keyboard
 	
 Device specific changes/fixes
 	* ET5410 - fix energy calculation
@@ -12,6 +13,7 @@ Device specific changes/fixes
 	* Tasi TA612C - add initial support
 	* iCharger*DUO - disable program execution via dialog on selected channel due to sync cabling
 	* Cheali Charger - add initial support BC6 firmware replacement
+	* HoTTAdapter* - Channels configuration; skip first data blocks until block #0 reached
 
 Version 4.0.7 - 03 Aug 2026
 Generic changes/fixes 

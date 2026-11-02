@@ -785,12 +785,21 @@ public class HoTTbinReader {
 				// recordSetChannel initialized and ready to add data
 			}
 
-			// read all the data blocks from the file and parse
+			// read all the data blocks from the file and parse, skip first blocks until block#0 occurs
+			boolean isBlock0Reached = false;
 			for (int i = 0; i < numberDatablocks; i++) {
 				data_in.read(HoTTbinReader.buf);
 				if (HoTTbinReader.log.isLoggable(Level.FINE) && i % 10 == 0) {
 					HoTTbinReader.log.logp(Level.FINE, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, StringHelper.fourDigitsRunningNumber(HoTTbinReader.buf.length));
 					HoTTbinReader.log.logp(Level.FINE, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, StringHelper.byte2Hex4CharString(HoTTbinReader.buf, HoTTbinReader.buf.length));
+				}
+
+				if (!isBlock0Reached)
+					isBlock0Reached = HoTTbinReader2.buf[33] == 0;
+				if (!isBlock0Reached && HoTTbinReader2.buf[33] <= 4) {
+					isBlock0Reached = HoTTbinReader2.buf[33] == 4;
+					//HoTTbinReader.log.log(Level.OFF, String.format("skip Sensor %x Blocknummer : %d", HoTTbinReader.buf[7], HoTTbinReader.buf[33]));
+					continue;
 				}
 
 				if (!HoTTbinReader.pickerParameters.isFilterTextModus || (HoTTbinReader.buf[6] & 0x01) == 0) { // switch into text modus
@@ -1192,12 +1201,21 @@ public class HoTTbinReader {
 				// recordSetChannel initialized and ready to add data
 			}
 
-			// read all the data blocks from the file and parse
+			// read all the data blocks from the file and parse, skip first blocks until block#0 occurs
+			boolean isBlock0Reached = false;
 			for (int i = 0; i < numberDatablocks; i++) {
 				data_in.read(HoTTbinReader.buf);
 				if (HoTTbinReader.log.isLoggable(Level.FINEST) && i % 10 == 0) {
 					HoTTbinReader.log.logp(Level.FINEST, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, StringHelper.fourDigitsRunningNumber(HoTTbinReader.buf.length));
 					HoTTbinReader.log.logp(Level.FINEST, HoTTbinReader.$CLASS_NAME, $METHOD_NAME, StringHelper.byte2Hex4CharString(HoTTbinReader.buf, HoTTbinReader.buf.length));
+				}
+
+				if (!isBlock0Reached)
+					isBlock0Reached = HoTTbinReader2.buf[33] == 0;
+				if (!isBlock0Reached && HoTTbinReader2.buf[33] <= 4) {
+					isBlock0Reached = HoTTbinReader2.buf[33] == 4;
+					//HoTTbinReader.log.log(Level.OFF, String.format("skip Sensor %x Blocknummer : %d", HoTTbinReader.buf[7], HoTTbinReader.buf[33]));
+					continue;
 				}
 
 				if (!HoTTbinReader.pickerParameters.isFilterTextModus || (HoTTbinReader.buf[6] & 0x01) == 0) { // switch into text modus
