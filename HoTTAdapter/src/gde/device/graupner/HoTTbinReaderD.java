@@ -197,8 +197,7 @@ public class HoTTbinReaderD extends HoTTbinReader2 {
 				}
 				return true;
 			}
-			else 
-				System.out.println();
+
 			this.points[14] = (this._buf1[1] & 0x3F) * 1000; // inverse event
 			return isPointsValid();
 		}
@@ -531,12 +530,21 @@ public class HoTTbinReaderD extends HoTTbinReader2 {
 			tmpRecordSet.setStartTimeStamp(startTimeStamp_ms);
 			// recordSet initialized and ready to add data
 
-			// read all the data blocks from the file and parse
+			// read all the data blocks from the file and parse, skip first blocks until block#0 occurs
+			boolean isBlock0Reached = false;
 			for (int i = 0; i < numberDatablocks; i++) {
 				data_in.read(HoTTbinReaderD.buf);
 				if (HoTTbinReaderD.log.isLoggable(Level.FINE) && i % 10 == 0) {
 					HoTTbinReaderD.log.log(Level.FINE, StringHelper.fourDigitsRunningNumber(HoTTbinReaderD.buf.length));
 					HoTTbinReaderD.log.log(Level.FINE, StringHelper.byte2Hex4CharString(HoTTbinReaderD.buf, HoTTbinReaderD.buf.length));
+				}
+
+				if (!isBlock0Reached)
+					isBlock0Reached = HoTTbinReader2.buf[33] == 0;
+				if (!isBlock0Reached && HoTTbinReader2.buf[33] <= 4) {
+					isBlock0Reached = HoTTbinReader2.buf[33] == 4;
+					HoTTbinReaderD.log.log(Level.OFF, String.format("skip Sensor %x Blocknummer : %d", HoTTbinReader2.buf[7], HoTTbinReader2.buf[33]));
+					continue;
 				}
 
 				if (!HoTTbinReaderD.pickerParameters.isFilterTextModus || (HoTTbinReaderD.buf[6] & 0x01) == 0) { // switch into text modus
@@ -808,11 +816,11 @@ public class HoTTbinReaderD extends HoTTbinReader2 {
 		HoTTbinReaderD.buf4 = new byte[30];
 		BufCopier bufCopier = new BufCopier(buf, buf0, buf1, buf2, buf3, buf4);
 		long[] timeSteps_ms = new long[] { 0 };
-		// parse in situ for receiver and channel
+		// parse inside for receiver and channel
 		HoTTbinReaderD.rcvBinParser = Sensor.RECEIVER.createBinParserD(HoTTbinReaderD.pickerParameters, HoTTbinReaderD.points, timeSteps_ms, new byte[][] { buf });
 		HoTTbinReaderD.chnBinParser = Sensor.CHANNEL.createBinParserD(HoTTbinReaderD.pickerParameters, HoTTbinReaderD.points, timeSteps_ms, new byte[][] { buf });
 		// use parser points objects
-		HoTTbinReaderD.varBinParser = (VarBinParserD) Sensor.VARIO.createBinParserD(HoTTbinReaderD.pickerParameters, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
+		HoTTbinReaderD.varBinParser = Sensor.VARIO.createBinParserD(HoTTbinReaderD.pickerParameters, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
 		HoTTbinReaderD.gpsBinParser = Sensor.GPS.createBinParserD(HoTTbinReaderD.pickerParameters, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
 		HoTTbinReaderD.gamBinParser = Sensor.GAM.createBinParserD(HoTTbinReaderD.pickerParameters, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
 		HoTTbinReaderD.eamBinParser = Sensor.EAM.createBinParserD(HoTTbinReaderD.pickerParameters, timeSteps_ms, new byte[][] { buf0, buf1, buf2, buf3, buf4 });
@@ -845,11 +853,20 @@ public class HoTTbinReaderD extends HoTTbinReader2 {
 			tmpRecordSet.setStartTimeStamp(startTimeStamp_ms);
 			// recordSet initialized and ready to add data
 
-			// read all the data blocks from the file and parse
+			// read all the data blocks from the file and parse, skip first blocks until block#0 occurs
+			boolean isBlock0Reached = false;
 			for (int i = 0; i < numberDatablocks; i++) {
 				data_in.read(HoTTbinReaderD.buf);
 				if (HoTTbinReaderD.log.isLoggable(Level.FINEST)) {
 					HoTTbinReaderD.log.log(Level.FINEST, StringHelper.byte2Hex4CharString(HoTTbinReaderD.buf, HoTTbinReaderD.buf.length));
+				}
+
+				if (!isBlock0Reached)
+					isBlock0Reached = HoTTbinReader2.buf[33] == 0;
+				if (!isBlock0Reached && HoTTbinReader2.buf[33] <= 4) {
+					isBlock0Reached = HoTTbinReader2.buf[33] == 4;
+					HoTTbinReaderD.log.log(Level.OFF, String.format("skip Sensor %x Blocknummer : %d", HoTTbinReader2.buf[7], HoTTbinReader2.buf[33]));
+					continue;
 				}
 
 				if (!HoTTbinReaderD.pickerParameters.isFilterTextModus || (HoTTbinReaderD.buf[6] & 0x01) == 0) { // switch into text modus
