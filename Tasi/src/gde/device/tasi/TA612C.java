@@ -113,7 +113,12 @@ public class TA612C extends DeviceConfiguration implements IDevice {
         MenuItem item = new MenuItem(menu, SWT.PUSH);
         item.setData(Messages.getString(MessageIds.GDE_MSGT4102));
         item.setText(Messages.getString(MessageIds.GDE_MSGT4103));
-        item.addListener(SWT.Selection, event -> downloadRec());
+        item.addListener(SWT.Selection, event -> {
+          IDevice activeDevice = application.getActiveDevice();
+          if (activeDevice instanceof TA612C) {
+              ((TA612C) activeDevice).downloadRec();
+          }
+        });
     }
 
     /**
