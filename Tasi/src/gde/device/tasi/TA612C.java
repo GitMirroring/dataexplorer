@@ -238,18 +238,19 @@ public class TA612C extends DeviceConfiguration implements IDevice {
                     return;
                 }
                 GDE.display.syncExec(() -> {
+                	boolean isNewCreatedRecordSet = false;
                     if (gatherer.isStopRequested()) return;
                     if (application.getActiveDevice() != TA612C.this) {
                         gatherer.requestStop();
                         return;
                     }
-                    if (sample.validMask() != probeMask) {
-                        if (recordSet != null) {
+                    if (sample.validMask() != probeMask) { //new data occur with different probe mask
+                        if (recordSet != null) { //last update for the previous active recordset, may not required at this point
                             makeInActiveDisplayable(recordSet);
                             recordSet.updateVisibleAndDisplayableRecordsForTable();
                             application.updateStatisticsData();
                             application.updateDataTable(recordSet.getName(), false);
-                            recordSet = null;
+                            recordSet = null; //set recordset to null to make sure a new one gets created
                         }
                         probeMask = sample.validMask();
                         if (probeMask == 0) {
@@ -257,6 +258,7 @@ public class TA612C extends DeviceConfiguration implements IDevice {
                             application.updateAllTabs(false);
                             return;
                         }
+                        //prepare a new recordset for the new active probe mask
                         String presentProbes = TA612CRecImport.probeNames(probeMask);
                         String name = channel.getNextRecordSetNumber() + Messages.getString(MessageIds.GDE_MSGT4106, new String[] {presentProbes});
                         name = name.length() <= RecordSet.MAX_NAME_LENGTH ? name : name.substring(0, RecordSet.MAX_NAME_LENGTH);
@@ -271,16 +273,17 @@ public class TA612C extends DeviceConfiguration implements IDevice {
                         } else {
                             application.setStatusMessage(Messages.getString(MessageIds.GDE_MSGI4108, new Object[] {sample.presentProbes(), sample.openProbes()}));
                         }
+                        isNewCreatedRecordSet = true;
                     }
                     if (recordSet == null) return; // Consecutive all-open frames carry no temperature data.
-                    try {
+                    try { //append the sample data to the active recordset 
                         appendLiveSample(recordSet, sample, elapsedMs);
                     } catch (DataInconsitsentException e) {
                         throw new IllegalStateException(e);
                     }
                     updateVisibilityStatus(recordSet, true);
                     recordSet.updateVisibleAndDisplayableRecordsForTable();
-                    application.updateAllTabs(false);
+                    application.updateAllTabs(isNewCreatedRecordSet); // update all tabs and recognize the new created recordset with different probeMask
                 });
             }
 
