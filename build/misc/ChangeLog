@@ -4,6 +4,7 @@ Version 4.0.8 - xx yyy 2026
 Generic changes/fixes 
 	* correct the bold display of time line numbers while required
 	* add tab content update changing tabs using keyboard
+	* correct record average calculation, suppress zero values only for radio communication break 
 	
 Device specific changes/fixes
 	* ET5410 - fix energy calculation

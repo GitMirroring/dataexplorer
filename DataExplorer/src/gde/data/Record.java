@@ -2378,7 +2378,10 @@ public class Record extends AbstractRecord implements IRecord {
 						zeroCount++;
 					}
 				}
-				this.avgValue = (super.size() - zeroCount) != 0 ? Long.valueOf(sum / (super.size() - zeroCount)).intValue() : 0; // ET realSize corresponds to the looped elements
+				if (this.getUnit().toLowerCase().contains("dbm")) //special case during radio communication outage, all other cases must be handled using cut mechanism
+					this.avgValue = (super.size() - zeroCount) != 0 ? Long.valueOf(sum / (super.size() - zeroCount)).intValue() : 0; // ET realSize corresponds to the looped elements
+				else
+					this.avgValue = super.size() != 0 ? Long.valueOf(sum / super.size()).intValue() : 0; // ET realSize corresponds to the looped elements
 			}
 		}
 	}
