@@ -26,6 +26,7 @@ import gde.device.DataTypes;
 import gde.device.IDevice;
 import gde.exception.DataInconsitsentException;
 import gde.messages.Messages;
+import gde.ui.DataExplorer;
 import gde.utils.StringHelper;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -123,6 +124,7 @@ public final class TA612CRecImport {
 						device.makeInActiveDisplayable(records);
 						records.syncScaleOfSyncableRecords();
 						prepared.add(records);
+						DataExplorer.getInstance().updateAllTabs(true);
 					}
 					first = end;
 				}
