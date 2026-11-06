@@ -121,6 +121,9 @@ public final class TA612CRecDecoder {
             for (int i = 0; i < 4; ++i) if (raw[i] != TA612CFrameDecoder.OPEN_PROBE_RAW) mask |= 1 << i;
             return mask;
         }
+        /** Physical T1 through T4 columns for a nonempty recording segment. */
+        public int[] points() { return TA612CFrameDecoder.recordPoints(raw); }
+
         /** Returns thousandths Celsius for a present probe; rejects absent data. */
         public int point(int probe) {
             if ((validMask() & (1 << probe)) == 0) throw new IllegalStateException(Messages.getString(MessageIds.GDE_MSGE4121));

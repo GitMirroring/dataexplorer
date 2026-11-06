@@ -208,7 +208,7 @@ final class TA612CRecTests {
 			System.out.println("REC fixture: " + csv.getFileName() + ", " + result.samples().size() + " groups, " + sets.size() + " segments");
 		}
 		legacyOsdTests(fixtures);
-		malformedSparseOsdTests(device);
+		malformedOsdTests(device);
 		childLoaderCloseTest(jar);
 		portAndUiTests(device);
 		System.out.println("PASS: " + (assertions - startAssertions) + " REC import/OSD/fixture/UI assertions");
@@ -219,25 +219,31 @@ final class TA612CRecTests {
 		channel.clear();
 		long expectedPoints = result.samples().stream().mapToLong(s -> Integer.bitCount(s.validMask())).sum();
 		long actualPoints = 0;
+		int nextSample = 0;
 		for (RecordSet records : sets) {
 			check(records.getStartTimeStamp() == 0, "unknown absolute time, no download epoch");
 			check(records.getRecordSetDescription().contains(Messages.getString(MessageIds.GDE_MSGI4113)) && records.getRecordSetDescription().contains(Messages.getString(MessageIds.GDE_MSGI4114)), "timing/completion provenance");
+			while (result.samples().get(nextSample).validMask() == 0) ++nextSample;
+			int mask = result.samples().get(nextSample).validMask();
 			for (int i = 0; i < records.getRecordDataSize(true); ++i) {
-				int sample = (int) (records.getTime_ms(i) / intervalMs);
-				check(records.getTime_ms(i) == sample * intervalMs, "original sample timeline");
-				for (int p = 0; p < 4; ++p)
-					if ((result.samples().get(sample).validMask() & (1 << p)) != 0) {
-						check(TA612CRecImport.probe(records, p).realGet(i) == result.samples().get(sample).point(p), "present probe value retained");
-						++actualPoints;
-					}
-					else
-						check(TA612CRecImport.probe(records, p).realSize() == 0 && !TA612CRecImport.probe(records, p).isDisplayable(), "absent probe has no replacement points");
+				var sample = result.samples().get(nextSample++);
+				check(records.getTime_ms(i) == i * intervalMs && sample.validMask() == mask, "segment-relative time and original acquisition mask");
+				for (int p = 0; p < 4; ++p) {
+					boolean present = (mask & (1 << p)) != 0;
+					var probe = TA612CRecImport.probe(records, p);
+					check(probe.realSize() == records.getRecordDataSize(true) && probe.isDisplayable() == present
+							&& TA612CRecImport.isAbsent(probe) != present, "physical column and presence flag");
+					check(probe.realGet(i) == (present ? sample.point(p) : 0), "measured value or zero placeholder");
+					if (present) ++actualPoints;
+				}
 			}
-			check(records.get(0).realSize() == records.getRecordDataSize(true) && !TA612CRecImport.isAbsent(records.get(0)), "first present REC probe anchors UI row and graph indices");
-			check(records.get(0).isScaleVisible(), "first present REC probe supplies a visible graph scale");
+			check(Arrays.equals(records.getNoneCalculationRecordNames(), new String[] { "T1", "T2", "T3", "T4" }), "physical order on import");
 			channel.put(records.getName(), records);
 		}
 		check(actualPoints == expectedPoints, "every valid measurement preserved including partial rows");
+		// A saved curve selection is independent of the physical presence flag.
+		Record hidden = sets.get(0).getValues().stream().filter(r -> !TA612CRecImport.isAbsent(r)).findFirst().orElseThrow();
+		hidden.setVisible(false);
 		channel.setActiveRecordSet(sets.get(0).getName());
 		OsdReaderWriter.write(osd.toString(), channel, GDE.DATA_EXPLORER_FILE_VERSION_INT);
 		channel.clear();
@@ -259,11 +265,12 @@ final class TA612CRecTests {
 			}
 			for (int i = 0; i < source.getRecordDataSize(true); ++i)
 				check(restored.getTime_ms(i) == source.getTime_ms(i), "OSD inferred time exact");
-			check(restored.get(0).realSize() == restored.getRecordDataSize(true) && !TA612CRecImport.isAbsent(restored.get(0)), "reopened REC promotes a present UI row and graph anchor");
-			check(restored.get(0).isScaleVisible(), "reopened REC retains a visible present graph scale");
-			Record sourceT1 = TA612CRecImport.probe(source, 0);
-			Record restoredT1 = TA612CRecImport.probe(restored, 0);
-			check(!sourceT1.isDisplayable() || restoredT1.isDisplayable(), "OSD visibility");
+			for (int p = 0; p < 4; ++p) {
+				var probe = TA612CRecImport.probe(restored, p);
+				check(TA612CRecImport.isAbsent(probe) == TA612CRecImport.isAbsent(TA612CRecImport.probe(source, p)), "OSD presence retained");
+				check(probe.isDisplayable() != TA612CRecImport.isAbsent(probe), "OSD displayability");
+				check(probe.isVisible() == TA612CRecImport.probe(source, p).isVisible(), "OSD retains saved curve selection");
+			}
 		}
 		// Save the reopened file once more to catch missing custom-property restoration.
 		Path resaved = osd.resolveSibling("resaved-" + osd.getFileName());
@@ -309,13 +316,17 @@ final class TA612CRecTests {
 		}
 	}
 
-	private static void malformedSparseOsdTests(TA612C device) throws Exception {
+	private static void malformedOsdTests(TA612C device) throws Exception {
 		RecordSet empty = RecordSet.createRecordSet("sparse rejection", device, 1, true, false, false);
 		TA612CRecImport.configureMask(empty, 10);
-		byte[] payload = ByteBuffer.allocate(24).putInt(0).putInt(50000).putInt(-100).putInt(0).putInt(200).putInt(2800000).array();
+		byte[] payload = ByteBuffer.allocate(40).putInt(0).putInt(50000)
+				.putInt(0).putInt(-100).putInt(0).putInt(0).putInt(0).putInt(200).putInt(0).putInt(2800000).array();
 		expect(gde.exception.DataInconsitsentException.class, () -> device.addDataBufferAsRawDataPoints(empty, payload, 2, false), "sparse sentinel rejected atomically");
 		check(TA612CRecImport.probe(empty, 1).realSize() == 0 && TA612CRecImport.probe(empty, 3).realSize() == 0, "sparse bad tail does not append first row");
-		expect(gde.exception.DataInconsitsentException.class, () -> device.addDataBufferAsRawDataPoints(empty, Arrays.copyOf(payload, 23), 2, false), "sparse truncated OSD");
+		expect(gde.exception.DataInconsitsentException.class, () -> device.addDataBufferAsRawDataPoints(empty, Arrays.copyOf(payload, payload.length - 1), 2, false), "sparse truncated OSD");
+		ByteBuffer.wrap(payload).putInt(36, 0).putInt(32, 100);
+		expect(gde.exception.DataInconsitsentException.class, () -> device.addDataBufferAsRawDataPoints(empty, payload, 2, false), "nonzero placeholder rejected");
+		check(empty.getRecordDataSize(true) == 0, "malformed payload has no partial rows");
 		String[] properties = new String[4];
 		String[] orderedNames = empty.getRecordNames();
 		int absentProperty = -1;
@@ -324,8 +335,18 @@ final class TA612CRecTests {
 			if (TA612CRecImport.isAbsent(empty.get(orderedNames[i]))) absentProperty = i;
 		}
 		String[] incomplete = properties.clone();
-		incomplete[absentProperty] = incomplete[absentProperty].replace("ta612c_rec_present_BOOLEAN=false|", "");
+		incomplete[absentProperty] = incomplete[absentProperty].replace(TA612CRecImport.PRESENT + "_BOOLEAN=false|", "");
 		expect(IllegalArgumentException.class, () -> device.crossCheckMeasurements(incomplete, empty), "incomplete mask metadata rejected");
+		String[] legacy = Arrays.stream(properties).map(s -> s.replace(TA612CRecImport.PRESENT, "ta612c_rec_present")).toArray(String[]::new);
+		expect(IllegalArgumentException.class, () -> device.crossCheckMeasurements(legacy, empty), "older compact rows require their original reader");
+		String[] oldAllConnected = Arrays.stream(legacy).map(s -> s.replace("ta612c_rec_present_BOOLEAN=false", "ta612c_rec_present_BOOLEAN=true")).toArray(String[]::new);
+		expect(IllegalArgumentException.class, () -> device.crossCheckMeasurements(oldAllConnected, empty), "reject old marked layout at the first set, including all four connected");
+		String[] mixed = properties.clone();
+		mixed[0] = legacy[0];
+		expect(IllegalArgumentException.class, () -> device.crossCheckMeasurements(mixed, empty), "mixed storage formats rejected");
+		String[] duplicated = properties.clone();
+		duplicated[1] = properties[0];
+		expect(IllegalArgumentException.class, () -> device.crossCheckMeasurements(duplicated, empty), "duplicate physical column rejected");
 	}
 
 	private static void childLoaderCloseTest(Path jar) throws Exception {
@@ -391,7 +412,7 @@ final class TA612CRecTests {
 		Menu menu = new Menu(GDE.shell, SWT.POP_UP);
 		targetDevice.addRecMenu(menu); //add separator as well as menu item
 		targetDevice.addRecMenu(menu);
-		check(menu.getItemCount() == 4 && menu.getItem(1).getText().contains("REC"), "REC menu installed once");
+		check(menu.getItemCount() == 2 && "ta612c-rec".equals(menu.getItem(1).getData()), "REC menu installed once");
 		menu.dispose();
 		GDE.display.asyncExec(() -> {
 			Shell dialog = GDE.display.getActiveShell();

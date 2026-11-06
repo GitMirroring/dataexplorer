@@ -23,10 +23,8 @@ package gde.device.tasi;
 import gde.data.Record;
 import gde.data.RecordSet;
 import gde.device.DataTypes;
-import gde.device.IDevice;
 import gde.exception.DataInconsitsentException;
 import gde.messages.Messages;
-import gde.ui.DataExplorer;
 import gde.utils.StringHelper;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -34,17 +32,18 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Prepares REC data without publishing it and maintains the sparse RecordSet
- * representation shared with live acquisition. Each segment has a fixed probe
- * presence mask and retains all four physical probe definitions, but stores
- * points only for present probes. Missing readings never become temperatures.
+ * Prepares REC data before publication. Live and REC segments each store four
+ * physical columns. A per-probe flag distinguishes an open input's zero
+ * placeholder from a connected probe measuring zero degrees.
  * RecordSet operations belong to the caller's DataExplorer/UI context; this
  * class performs no transport operations.
  */
 public final class TA612CRecImport {
-    // Retain the historical REC name: persisted sparse live OSD files use it too.
-    public static final String PRESENT = "ta612c_rec_present";
-    /** Utility class: sparse storage has no independent instance state. */
+    // Older readers use the legacy key to infer a compact row width.
+    public static final String PRESENT = "ta612c_probe_present";
+    private static final String LEGACY_PRESENT = "ta612c_rec_present";
+    private static final int ALL_PROBES = 0x0F;
+
     private TA612CRecImport() { }
 
     /**
@@ -114,76 +113,40 @@ public final class TA612CRecImport {
 										result.emptyFrames(),
 										BigDecimal.valueOf(first * intervalMs, 3).stripTrailingZeros().toPlainString() }));
 						for (int i = first; i < end; ++i) {
-							int[] points = new int[Integer.bitCount(mask)];
-							int column = 0;
-							for (int p = 0; p < 4; ++p)
-								if ((mask & (1 << p)) != 0) points[column++] = samples.get(i).point(p);
-							records.addTimeStep_ms((i - first) * intervalMs);
-							records.addNoneCalculationRecordsPoints(points);
+							records.addNoneCalculationRecordsPoints(samples.get(i).points(), (i - first) * intervalMs);
 						}
 						device.makeInActiveDisplayable(records);
 						records.syncScaleOfSyncableRecords();
 						prepared.add(records);
-						DataExplorer.getInstance().updateAllTabs(true);
 					}
 					first = end;
 				}
         return List.copyOf(prepared);
     }
 
-    /**
-     * Configures a nonempty fixed-mask segment before points are appended or an
-     * OSD payload is sized. Stored columns remain in physical T1..T4 order even
-     * if the UI name order changes. Presence is persisted independently of user
-     * visibility; applying a different mask to populated data is not supported.
-     */
+    /** Sets physical storage and acquisition flags. Device XML supplies the scale references. */
     static void configureMask(RecordSet records, int mask) {
-        if (records.size() != 4 || mask < 1 || mask > 15) throw new IllegalArgumentException(Messages.getString(MessageIds.GDE_MSGE4128));
-        List<String> stored = new ArrayList<>();
-        for (int p = 0; p < 4; ++p) {
+        applyMask(records, mask, true);
+    }
+
+    private static void applyMask(RecordSet records, int mask, boolean newSegment) {
+        if (records.size() != 4 || mask < 1 || mask > ALL_PROBES) {
+            throw new IllegalArgumentException(Messages.getString(MessageIds.GDE_MSGE4128));
+        }
+        String[] stored = new String[4];
+        for (int p = 0; p < stored.length; ++p) {
             Record record = probe(records, p);
             boolean present = (mask & (1 << p)) != 0;
             if (record.getProperty(PRESENT) == null) record.createProperty(PRESENT, DataTypes.BOOLEAN, present);
             else record.getProperty(PRESENT).setValue(Boolean.toString(present));
             record.setActive(present);
             record.setDisplayable(present);
-            if (present) stored.add(record.getName());
+            // Templates can inherit the preceding segment's hidden curves.
+            // On reopen, retain the saved selection of the connected probes.
+            if (newSegment || !present) record.setVisible(present);
+            stored[p] = record.getName();
         }
-        records.setNoneCalculationRecordNames(stored.toArray(String[]::new));
-        promoteFirstPresentProbe(records, mask);
-        configureSparseScaleSync(records, mask);
-    }
-
-    /**
-     * DataExplorer 4.0.7 uses recordNames[0] as its row/time index and graph-time
-     * anchor. Keep all four probe records, but put a genuinely present probe first
-     * for sparse segments. Record ordinals and probe values are not changed.
-     */
-    static void promoteFirstPresentProbe(RecordSet records, int mask) {
-        int firstPresent = Integer.numberOfTrailingZeros(mask);
-        String firstName = probe(records, firstPresent).getName();
-        if (records.getRecordNames()[0].equals(firstName)) return;
-        for (String name : records.getRecordNames()) records.removeRecordName(name);
-        records.addRecordName(firstName);
-        for (int p = 0; p < 4; ++p) if (p != firstPresent) records.addRecordName(probe(records, p).getName());
-    }
-
-    /**
-     * Gives every sparse segment independent scales, avoiding an absent XML
-     * master T1. The integer -1 survives OSD serialization; an empty integer
-     * property cannot be read by the 4.0.7 loader. All-present sets keep the
-     * normal XML synchronization. Call before using a segment's graph scales.
-     */
-    static void configureSparseScaleSync(RecordSet records, int mask) {
-        if (mask == 15) return; // Preserve the device XML's normal all-probe scale synchronization.
-        for (int p = 0; p < 4; ++p) {
-            Record record = probe(records, p);
-            if (record.getProperty(IDevice.SYNC_ORDINAL) == null) {
-                record.createProperty(IDevice.SYNC_ORDINAL, DataTypes.INTEGER, -1);
-            } else {
-                record.getProperty(IDevice.SYNC_ORDINAL).setValue(-1);
-            }
-        }
+        records.setNoneCalculationRecordNames(stored);
     }
 
     /** Finds a physical zero-based probe ordinal regardless of UI name order. */
@@ -193,38 +156,40 @@ public final class TA612CRecImport {
     }
 
     /**
-     * Restores explicit storage presence before the core sizes a lazy OSD payload.
-     * Resolves properties by saved record name to preserve physical probe identity
-     * despite UI reordering, and returns names in incoming property order for the
-     * core loader. No markers means a legacy four-column file; partial, duplicate
-     * per-record or malformed markers are rejected. Visibility is never evidence
-     * of whether a measurement column exists on disk.
+     * Reads the saved flags by physical probe, before the core sizes the OSD payload.
+     * Unmarked four-column files use the standard reader path. Reject the older
+     * marked format even for an all-connected first set: a later set may be compact.
      */
     static String[] restoreMask(String[] properties, RecordSet records) {
         if (properties.length != 4 || records.size() != 4) throw new IllegalArgumentException(Messages.getString(MessageIds.GDE_MSGE4129));
-        int mask = 0, markers = 0;
         String[] recordKeys = new String[properties.length];
+        int seen = 0, current = 0, legacy = 0, present = 0;
         for (int i = 0; i < properties.length; ++i) {
             HashMap<String, String> standard = StringHelper.splitString(properties[i], Record.DELIMITER, Record.propertyKeys);
-            String recordKey = standard.get(Record.NAME);
-            Record record = records.get(recordKey);
-            if (record == null) throw new IllegalArgumentException(Messages.getString(MessageIds.GDE_MSGE4130, new String[] {recordKey}));
-            int p = record.getOrdinal();
-            recordKeys[i] = recordKey;
-            String value = null;
+            String name = standard.get(Record.NAME);
+            Record record = records.get(name);
+            if (record == null) throw new IllegalArgumentException(Messages.getString(MessageIds.GDE_MSGE4130, new String[] {name}));
+            int bit = 1 << record.getOrdinal();
+            if ((seen & bit) != 0) throw new IllegalArgumentException(Messages.getString(MessageIds.GDE_MSGE4131));
+            seen |= bit;
+            recordKeys[i] = name;
             for (String entry : properties[i].split("\\|")) {
-                if (entry.startsWith(PRESENT + "_")) {
-                    if (value != null) throw new IllegalArgumentException(Messages.getString(MessageIds.GDE_MSGE4131));
-                    // DataTypes.toString() is BOOLEAN in this version of the core.
-                    if (!entry.equals(PRESENT + "_BOOLEAN=true") && !entry.equals(PRESENT + "_BOOLEAN=false"))
-                        throw new IllegalArgumentException(Messages.getString(MessageIds.GDE_MSGE4132));
-                    value = entry.substring(entry.indexOf('=') + 1);
-                }
+                String key;
+                if (entry.startsWith(PRESENT + "_")) key = PRESENT;
+                else if (entry.startsWith(LEGACY_PRESENT + "_")) key = LEGACY_PRESENT;
+                else continue;
+
+                if (((current | legacy) & bit) != 0) throw new IllegalArgumentException(Messages.getString(MessageIds.GDE_MSGE4131));
+                if (entry.equals(key + "_BOOLEAN=true")) present |= bit;
+                else if (!entry.equals(key + "_BOOLEAN=false")) throw new IllegalArgumentException(Messages.getString(MessageIds.GDE_MSGE4132));
+                if (key.equals(PRESENT)) current |= bit;
+                else legacy |= bit;
             }
-            if (value != null) { ++markers; if (value.equals("true")) mask |= 1 << p; }
         }
-        if (markers != 0 && markers != 4) throw new IllegalArgumentException(Messages.getString(MessageIds.GDE_MSGE4133));
-        if (markers == 4) configureMask(records, mask);
+        if (current == 0 && legacy == 0) return recordKeys;
+        if (current != ALL_PROBES && legacy != ALL_PROBES) throw new IllegalArgumentException(Messages.getString(MessageIds.GDE_MSGE4133));
+        if (legacy == ALL_PROBES) throw new IllegalArgumentException(Messages.getString(MessageIds.GDE_MSGE4137));
+        applyMask(records, present, false);
         return recordKeys;
     }
 

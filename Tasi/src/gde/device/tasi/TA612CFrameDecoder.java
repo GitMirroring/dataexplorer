@@ -21,7 +21,6 @@
 package gde.device.tasi;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import gde.messages.Messages;
@@ -124,6 +123,15 @@ public final class TA612CFrameDecoder {
         return (sum & 0xFF) == (frame[FRAME_SIZE - 1] & 0xFF);
     }
 
+    /** Four DataExplorer columns in physical order. The independent mask identifies measured zeros. */
+    static int[] recordPoints(int[] raw) {
+        int[] points = new int[PROBE_COUNT];
+        for (int probe = 0; probe < PROBE_COUNT; ++probe) {
+            if (raw[probe] != OPEN_PROBE_RAW) points[probe] = raw[probe] * 100;
+        }
+        return points;
+    }
+
     /**
      * One decoded group in physical T1..T4 order, with zero-based probe indices.
      * Raw values include open-probe sentinels for diagnostics; point conversion
@@ -157,16 +165,9 @@ public final class TA612CFrameDecoder {
             return points;
         }
 
-        /**
-         * Converts to the legacy four-column point layout. Rejects open probes
-         * rather than storing the sentinel as a temperature; sparse acquisition
-         * uses {@link #presentPoints()} instead.
-         */
+        /** Returns T1 through T4 in thousandths of a degree, zero-filling open positions. */
         public int[] points() {
-            if (!allProbesConnected()) {
-                throw new IllegalStateException(Messages.getString(MessageIds.GDE_MSGE4110));
-            }
-            return Arrays.stream(raw).map(value -> value * 100).toArray();
+            return recordPoints(raw);
         }
 
         /** Formats absent probe names for status messages without altering data. */

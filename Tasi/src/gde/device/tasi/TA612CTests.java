@@ -119,7 +119,7 @@ public final class TA612CTests {
 			check(!missing.presentProbes().contains("T" + (probe + 1)), "missing probe omitted from present names");
 			int[] expected = Arrays.stream(raw).filter(value -> value != 28000).map(value -> value * 100).toArray();
 			equal(missing.presentPoints(), expected, "only present probe values returned");
-			expect(IllegalStateException.class, missing::points, "missing probe cannot become temperature");
+			equal(missing.points(), Arrays.stream(raw).map(value -> value == 28000 ? 0 : value * 100).toArray(), "four storage columns retain physical order");
 		}
 		var sparse = TA612CFrameDecoder.decode(frame(28000, -10, 28000, 0));
 		check(sparse.validMask() == 0x0A && sparse.presentProbes().equals("T2, T4"), "multiple present probes retain wire order");
@@ -300,11 +300,14 @@ public final class TA612CTests {
 		TA612C.appendLiveSample(sparseLive, TA612CFrameDecoder.decode(frame(28000, 20, 28000, 30)), 500.0);
 		device.makeInActiveDisplayable(sparseLive);
 		check(sparseLive.getRecordDataSize(true) == 2, "sparse live rows stored");
-		check(TA612CRecImport.probe(sparseLive, 0).realSize() == 0 && TA612CRecImport.probe(sparseLive, 2).realSize() == 0, "open live probes remain empty");
-		check(sparseLive.get(0) == TA612CRecImport.probe(sparseLive, 1) && sparseLive.get(0).realSize() == sparseLive.getRecordDataSize(true), "first present live probe anchors UI row and graph indices");
-		sparseLive.syncScaleOfSyncableRecords();
-		check(sparseLive.get(0).isScaleVisible() && TA612CRecImport.probe(sparseLive, 3).isScaleVisible() && TA612CRecImport.probe(sparseLive, 1).getSyncMasterRecordOrdinal() == -1
-				&& TA612CRecImport.probe(sparseLive, 3).getSyncMasterRecordOrdinal() == -1, "present live probes use visible independent graph scales when T1 is absent");
+		for (int p : new int[] { 0, 2 }) {
+			var absent = TA612CRecImport.probe(sparseLive, p);
+			check(absent.realSize() == 2 && absent.realGet(0) == 0 && absent.realGet(1) == 0 && TA612CRecImport.isAbsent(absent), "open input stores flagged zeros");
+		}
+		check(Arrays.equals(sparseLive.getNoneCalculationRecordNames(), new String[] { "T1", "T2", "T3", "T4" }), "physical storage order");
+		check(sparseLive.get(0).getOrdinal() == 0, "T1 remains the XML scale reference");
+		for (int p = 1; p < 4; ++p)
+			check(TA612CRecImport.probe(sparseLive, p).getSyncMasterRecordOrdinal() == 0, "XML scale references retained without T1");
 		check(TA612CRecImport.probe(sparseLive, 1).realGet(0) == -1000 && TA612CRecImport.probe(sparseLive, 3).realGet(0) == 0, "present live probes retain signed and zero values");
 		check(TA612CRecImport.probe(sparseLive, 1).realGet(1) == 2000 && TA612CRecImport.probe(sparseLive, 3).realGet(1) == 3000, "later sparse live values are stored at a new index");
 		check(!TA612CRecImport.probe(sparseLive, 0).isDisplayable() && !TA612CRecImport.probe(sparseLive, 2).isDisplayable(), "open live probes are hidden");

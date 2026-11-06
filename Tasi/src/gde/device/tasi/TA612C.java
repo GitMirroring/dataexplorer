@@ -171,9 +171,7 @@ public class TA612C extends DeviceConfiguration implements IDevice {
 									RecordSet first = prepared.get(0);
 									channel.setActiveRecordSet(first.getName());
 									application.getMenuToolBar().updateRecordSetSelectCombo();
-									application.updateAllTabs(false);
-									application.updateStatisticsData();
-									application.updateDataTable(first.getName(), false);
+									application.updateAllTabs(true);
 								}
 								String message = Messages.getString(MessageIds.GDE_MSGI4100, new Object[] { result.samples().size(), prepared.size() });
 								if (prepared.isEmpty()) message += Messages.getString(MessageIds.GDE_MSGI4101);
@@ -319,10 +317,8 @@ public class TA612C extends DeviceConfiguration implements IDevice {
     }
 
     /**
-     * Sets variable host time and sparse storage on a new segment after template
-     * basics are applied. Every segment retains the first decoded frame's epoch,
-     * including when that first frame was all-open; elapsed offsets are not reset
-     * by a presence change, preserving periods with no temperature points.
+     * Sets the segment's own first-sample epoch and fixed physical columns
+     * after template basics have been applied.
      */
     static void configureLiveSegment(RecordSet recordSet, int probeMask, long firstSampleEpochMs) {
         if (probeMask < 1 || probeMask > 0x0F) throw new IllegalArgumentException(Messages.getString(MessageIds.GDE_MSGE4102));
@@ -336,28 +332,24 @@ public class TA612C extends DeviceConfiguration implements IDevice {
     }
 
     /**
-     * Appends only present temperatures with acquisition-relative milliseconds.
-     * Checks both count and physical column identity before mutation: T1-only and
-     * T2-only samples have equal widths but must not share the same segment.
+     * Checks the fixed probe mask before appending a row, even if two segments
+     * have the same number of connected probes.
      */
     static void appendLiveSample(RecordSet records, TA612CFrameDecoder.Sample sample, double elapsedMs)
             throws DataInconsitsentException {
-        String[] stored = records.getNoneCalculationRecordNames();
-        if (stored.length != Integer.bitCount(sample.validMask())) {
-            throw new IllegalArgumentException(Messages.getString(MessageIds.GDE_MSGE4103));
-        }
-        int column = 0;
-        for (int probe = 0; probe < TA612CFrameDecoder.PROBE_COUNT; ++probe) {
-            if (sample.isValid(probe) && !stored[column++].equals(TA612CRecImport.probe(records, probe).getName())) {
+        for (int p = 0; p < TA612CFrameDecoder.PROBE_COUNT; ++p) {
+            Record record = TA612CRecImport.probe(records, p);
+            boolean expectedPresent = !TA612CRecImport.isAbsent(record);
+            if (record.getProperty(TA612CRecImport.PRESENT) == null || sample.isValid(p) != expectedPresent) {
                 throw new IllegalArgumentException(Messages.getString(MessageIds.GDE_MSGE4103));
             }
         }
-        records.addNoneCalculationRecordsPoints(sample.presentPoints(), elapsedMs);
+        records.addNoneCalculationRecordsPoints(sample.points(), elapsedMs);
     }
 
     /**
      * Implements the core's four-column conversion hook for one validated live
-     * frame. Requires all probes; sparse live acquisition uses appendLiveSample.
+     * frame. Open positions use the same zero filling as live and REC segments.
      * The caller's point array is changed only after decoding succeeds.
      */
     @Override
@@ -369,14 +361,13 @@ public class TA612C extends DeviceConfiguration implements IDevice {
     }
 
     /**
-     * Restores native OSD data after the stored-column mask has been reconstructed.
+     * Restores four-column native OSD data after the availability flags have been read.
      * OSD uses big-endian int32 thousandths Celsius, not the wire format. For
      * variable time, a block of count timestamps in 0.1 ms precedes the row-major
      * measurement block; fixed-step legacy files have no timestamp block.
      *
      * <p>Validates the entire length, timestamp order and absence of open-probe
-     * sentinels before appending anything. The selected stored columns support
-     * legacy four-probe OSD and newer sparse REC/live OSD through the same path.
+     * sentinels before appending anything. A column marked absent contains only zeros.
      */
     @Override
     public void addDataBufferAsRawDataPoints(RecordSet records, byte[] buffer, int count, boolean showProgress)
@@ -384,13 +375,17 @@ public class TA612C extends DeviceConfiguration implements IDevice {
         boolean variable = !records.isTimeStepConstant();
         String[] stored = records.getNoneCalculationRecordNames();
         long expected = (long) count * (stored.length * Integer.BYTES + (variable ? Integer.BYTES : 0));
-        if (count < 0 || records.size() != 4 || stored.length < 1 || stored.length > 4
+        if (count < 0 || records.size() != 4 || stored.length != 4
                 || expected != buffer.length) {
             throw new DataInconsitsentException(Messages.getString(MessageIds.GDE_MSGE4105));
         }
         ByteBuffer data = ByteBuffer.wrap(buffer).order(ByteOrder.BIG_ENDIAN);
         int timestampBytes = variable ? count * Integer.BYTES : 0;
         // Validate the entire buffer before modifying records, so malformed input is atomic.
+        int absentMask = 0;
+        for (int p = 0; p < stored.length; ++p) {
+            if (TA612CRecImport.isAbsent(records.get(stored[p]))) absentMask |= 1 << p;
+        }
         int previousTime = -1;
         for (int i = 0; i < count; ++i) {
             if (variable) {
@@ -402,6 +397,9 @@ public class TA612C extends DeviceConfiguration implements IDevice {
             }
             for (int probe = 0; probe < stored.length; ++probe) {
                 int point = data.getInt(timestampBytes + (i * stored.length + probe) * Integer.BYTES);
+                if ((absentMask & (1 << probe)) != 0 && point != 0) {
+                    throw new DataInconsitsentException(Messages.getString(MessageIds.GDE_MSGE4138));
+                }
                 if (point == TA612CFrameDecoder.OPEN_PROBE_RAW * 100) {
                     throw new DataInconsitsentException(Messages.getString(MessageIds.GDE_MSGE4107));
                 }
@@ -424,7 +422,7 @@ public class TA612C extends DeviceConfiguration implements IDevice {
         if (showProgress && application != null) application.setProgress(100, threadId);
     }
 
-    /** Restores sparse storage before the core sizes or lazy-loads the OSD payload. */
+    /** Restores probe flags and checks the layout before the core sizes the OSD payload. */
     @Override
     public String[] crossCheckMeasurements(String[] properties, RecordSet records) {
         return TA612CRecImport.restoreMask(properties, records);
