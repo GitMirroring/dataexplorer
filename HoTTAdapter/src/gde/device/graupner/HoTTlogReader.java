@@ -636,7 +636,8 @@ public class HoTTlogReader extends HoTTbinReader {
 			this.tmpTemperatureRx = (buf[14] & 0xFF);
 			if (isPointsValid()) {
 				this.points[1] = (buf[16] & 0xFF) * 1000;
-				this.points[2] = (convertRxDbm2Strength(buf[9] & 0xFF)) * 1000;
+				int strength = convertRxDbm2Strength(buf[9] & 0xFF);
+				this.points[2] = strength == -1 ? this.points[2] : strength * 1000;
 				this.points[3] = DataParser.parse2Short(buf, 18) * 1000;
 				this.points[4] = buf[8] * -1000;
 				this.points[5] = buf[9] * -1000;

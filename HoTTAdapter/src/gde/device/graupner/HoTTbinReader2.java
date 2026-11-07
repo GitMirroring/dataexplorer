@@ -848,7 +848,8 @@ public class HoTTbinReader2 extends HoTTbinReader {
 			this.points[1] = (this._buf[38] & 0xFF) * 1000;
 			this.points[3] = DataParser.parse2Short(this._buf, 40) * 1000;
 			if (isPointsValid()) {
-				this.points[2] = (convertRxDbm2Strength(this._buf[4] & 0xFF)) * 1000;
+				int strength = convertRxDbm2Strength(_buf[4] & 0xFF);
+				this.points[2] = strength == -1 ? this.points[2] : strength * 1000;
 				this.points[4] = (this._buf[3] & 0xFF) * -1000;
 				this.points[5] = (this._buf[4] & 0xFF) * -1000;
 				this.points[6] = this.tmpVoltageRx * 1000;
@@ -1460,7 +1461,8 @@ public class HoTTbinReader2 extends HoTTbinReader {
 			// 87=Ch 1, 88=Ch 2, 89=Ch 3 .. 102=Ch 16, 103=Ch17 ... 118=Ch32  119=PowerOff, 120=BatterieLow, 121=Reset, 122=reserve
 			this.points[4] = (this._buf[3] & 0xFF) * -1000;
 			this.points[5] = (this._buf[4] & 0xFF) * -1000;
-			this.points[2] = (convertRxDbm2Strength(_buf[4] & 0xFF)) * 1000;
+			int strength = convertRxDbm2Strength(_buf[4] & 0xFF);
+			this.points[2] = strength == -1 ? this.points[2] : strength * 1000;
 
 			this.points[87] = (DataParser.parse2UnsignedShort(this._buf, 8) / 2) * 1000;
 			this.points[88] = (DataParser.parse2UnsignedShort(this._buf, 10) / 2) * 1000;

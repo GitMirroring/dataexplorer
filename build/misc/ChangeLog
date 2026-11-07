@@ -15,6 +15,7 @@ Device specific changes/fixes
 	* iCharger*DUO - disable program execution via dialog on selected channel due to sync cabling
 	* Cheali Charger - add initial support BC6 firmware replacement
 	* HoTTAdapter* - Channels configuration; skip first data blocks until block #0 reached
+	* HoTTAdapter* - update strength calculation during Tx == Rx == 0, back channel package loss
 
 Version 4.0.7 - 03 Aug 2026
 Generic changes/fixes 

@@ -609,8 +609,10 @@ public class HoTTbinReader {
 		if (inValue >= 40 && inValue < HoTTbinReader.lookup.length + 40) {
 			return HoTTbinReader.lookup[inValue - 40];
 		}
-		else if (inValue < 40)
+		else if (inValue < 40 && inValue != 0)
 			return 100;
+		else if (inValue == 0)
+			return -1; //Rx dbm == 0 back channel package loss
 		else
 			return 0;
 	}
@@ -1524,7 +1526,8 @@ public class HoTTbinReader {
 			this.points[1] = (_buf[38] & 0xFF) * 1000;
 			this.points[3] = DataParser.parse2Short(_buf, 40) * 1000;
 			if (isPointsValid()) {
-				this.points[2] = (convertRxDbm2Strength(_buf[4] & 0xFF)) * 1000;
+				int strength = convertRxDbm2Strength(_buf[4] & 0xFF);
+				this.points[2] = strength == -1 ? this.points[2] : strength * 1000;
 				this.points[4] = (_buf[3] & 0xFF) * -1000;
 				this.points[5] = (_buf[4] & 0xFF) * -1000;
 				this.points[6] = (_buf[35] & 0xFF) * 1000;
