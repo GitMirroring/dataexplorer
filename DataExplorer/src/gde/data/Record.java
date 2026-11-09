@@ -996,6 +996,10 @@ public class Record extends AbstractRecord implements IRecord {
 					mergeTriggerRanges(referencedMeasurementOrdinal, referencedSecondaryMeasurementOrdinal);
 			}
 			else this.triggerRanges = primaryTriggerRanges;
+			
+			if (this.triggerRanges == null) {//no ranges found for defined trigger
+				return this.getMaxValue();
+			}
 	
 			if (this.maxValueTriggered == Integer.MIN_VALUE) 
 				this.setMinMaxValueTriggered();
@@ -1032,6 +1036,10 @@ public class Record extends AbstractRecord implements IRecord {
 					mergeTriggerRanges(referencedMeasurementOrdinal, referencedSecondaryMeasurementOrdinal);
 			}
 			else this.triggerRanges = primaryTriggerRanges;
+			
+			if (this.triggerRanges == null) {//no ranges found for defined trigger
+				return this.getMinValue();
+			}
 	
 			if (this.minValueTriggered == Integer.MAX_VALUE) 
 				this.setMinMaxValueTriggered();
@@ -2357,6 +2365,10 @@ public class Record extends AbstractRecord implements IRecord {
 					mergeTriggerRanges(referencedMeasurementOrdinal, referencedSecondaryMeasurementOrdinal);
 			}
 			else this.triggerRanges = primaryTriggerRanges;
+			
+			if (this.triggerRanges == null) {//no ranges found for defined trigger
+				return this.getAvgValue();
+			}
 	
 			this.setAvgValueTriggered();
 			return this.avgValueTriggered;
@@ -2489,6 +2501,10 @@ public class Record extends AbstractRecord implements IRecord {
 					mergeTriggerRanges(referencedMeasurementOrdinal, referencedSecondaryMeasurementOrdinal);
 			}
 			else this.triggerRanges = primaryTriggerRanges;
+			
+			if (this.triggerRanges == null) {//no ranges found for defined trigger
+				return this.getSigmaValue();
+			}
 	
 			if (this.sigmaValueTriggered == Integer.MIN_VALUE) this.setSigmaValueTriggered();
 			return this.sigmaValueTriggered;
@@ -2561,6 +2577,22 @@ public class Record extends AbstractRecord implements IRecord {
 	}
 
 	/**
+	 * get/calculate count of values by configured trigger
+	 * @param referencedMeasurementOrdinal
+	 * @param referencedSecondaryMeasurementOrdinal
+	 * @return count according trigger range specification of referenced measurement
+	 */
+	public synchronized int getCountTriggeredRange(int referencedMeasurementOrdinal, int referencedSecondaryMeasurementOrdinal) {
+		if (this.triggerRanges == null)
+			this.getTriggerRanges();
+		
+		if (this.triggerRanges != null && !this.isTriggerRangesMerged() && this.getTriggerRanges().size() != 0) {
+			mergeTriggerRanges(referencedMeasurementOrdinal, referencedSecondaryMeasurementOrdinal);
+		}
+		return this.getTriggerRanges().size();
+	}
+
+	/**
 	 * merge primary and secondary trigger ranges
 	 * if primary range is defined as greater values above a level and secondary range is defined as greater values as well logical OR ranges
 	 * if primary range is defined as greater values above a level and secondary range is defined as lower values below a level logical AND ranges
@@ -2586,7 +2618,8 @@ public class Record extends AbstractRecord implements IRecord {
 				log.log(Level.INFO, sb.toString());
 			}
 			this.triggerRanges = new Vector<TriggerRange>();
-			boolean isGreaterSecondary = this.parent.get(referencedSecondaryMeasurementOrdinal).getTriggerIsGreater();
+			//TODO it should be independent of greaterThan or lowerThan how trigger ranges get merged, actual exception VPack merge using AND
+			boolean isGreaterSecondary = this.parent.get(referencedSecondaryMeasurementOrdinal).getTriggerIsGreater() && !this.name.equals("VPack");
 			//use primary trigger ranges as master and logical OR ranges if isGreaterSecondary is true, else logical AND ranges
 			Iterator<TriggerRange> primaryIterator = primaryTriggerRanges.iterator();
 			TriggerRange primaryRange, secondaryRange;
@@ -2617,6 +2650,7 @@ public class Record extends AbstractRecord implements IRecord {
 							break;
 						}
 						if (primaryRange.in >= secondaryRange.out) {
+							//this.triggerRanges.add(new TriggerRange(primaryRange.in, secondaryRange.out));
 							continue;
 						}
 						else if ((secondaryRange.in >= primaryRange.in 
@@ -2810,14 +2844,14 @@ public class Record extends AbstractRecord implements IRecord {
 					this.tmpTriggerRange.setOut(this.realSize() - 1);
 					this.triggerRanges.add(this.tmpTriggerRange);
 				}
-				if (log.isLoggable(Level.FINE)) {
+				if (log.isLoggable(Level.INFO)) {
 					if (this.triggerRanges != null) {
 						for (TriggerRange range : this.triggerRanges) {
-							log.log(Level.FINE, this.name + " trigger range = " + range.in + "(" + TimeLine.getFomatedTime(this.getTime_ms(range.in)) + "), " + range.out + "(" //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
+							log.log(Level.INFO, this.name + " trigger range = " + range.in + "(" + TimeLine.getFomatedTime(this.getTime_ms(range.in)) + "), " + range.out + "(" //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
 									+ TimeLine.getFomatedTime(this.getTime_ms(range.out)) + ")"); //$NON-NLS-1$
 						}
 					} else
-						log.log(Level.FINE, this.name + " triggerRanges = null or size = 0"); //$NON-NLS-1$
+						log.log(Level.INFO, this.name + " triggerRanges = null or size = 0"); //$NON-NLS-1$
 				}
 
 				if (this.triggerRanges != null && this.triggerRanges.size() > 0) {
@@ -2845,15 +2879,15 @@ public class Record extends AbstractRecord implements IRecord {
 						if (rangeLast == null) 
 							rangeLast = range;
 					}
-					if (log.isLoggable(Level.FINE)) {
+					if (log.isLoggable(Level.INFO)) {
 						if (this.triggerRanges != null) {
-							log.log(Level.FINE, this.name + " evaluate trigger ranges to meet minTimeSec requirement");
+							log.log(Level.INFO, this.name + " evaluate trigger ranges to meet minTimeSec requirement");
 							for (TriggerRange range : this.triggerRanges) {
-								log.log(Level.FINE, this.name + " trigger range = " + range.in + " to " + range.out + " = " //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+								log.log(Level.INFO, this.name + " trigger range = " + range.in + " to " + range.out + " = " //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 										+ TimeLine.getFomatedTime( this.getTime_ms(range.out) - this.getTime_ms(range.in) ) + " sec"); //$NON-NLS-1$
 							}
 						} else
-							log.log(Level.FINE, this.name + " triggerRanges = null"); //$NON-NLS-1$
+							log.log(Level.INFO, this.name + " triggerRanges = null"); //$NON-NLS-1$
 					}
 				}
 			}

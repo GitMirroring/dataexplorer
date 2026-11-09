@@ -374,8 +374,14 @@ public class StatisticsWindow extends CTabItem {
 
 							// counted trigger events fulfilling the level and time constrains 
 							if (measurementStatistics.isCountByTrigger() != null) {
-								sb.append(xmlResource.getReplacement(measurementStatistics.getCountTriggerText())).append(" = ") //$NON-NLS-1$
-										.append(record.getTriggerRanges() != null ? record.getTriggerRanges().size() : 0).append("; "); //$NON-NLS-1$
+								if (triggerRefOrdinal >= 0 && triggerSecondaryRefOrdinal >= 0) { //secondary trigger reference
+									sb.append(xmlResource.getReplacement(measurementStatistics.getCountTriggerText())).append(" = ") //$NON-NLS-1$
+										.append(record.getTriggerRanges() != null ? record.getCountTriggeredRange(triggerRefOrdinal, triggerSecondaryRefOrdinal) : 0).append("; "); //$NON-NLS-1$
+								}
+								else {
+									sb.append(xmlResource.getReplacement(measurementStatistics.getCountTriggerText())).append(" = ") //$NON-NLS-1$
+											.append(record.getTriggerRanges() != null ? record.getTriggerRanges().size() : 0).append("; "); //$NON-NLS-1$
+								}
 							}
 
 							// evaluate sum value within trigger range

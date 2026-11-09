@@ -16,6 +16,7 @@ Device specific changes/fixes
 	* Cheali Charger - add initial support BC6 firmware replacement
 	* HoTTAdapter* - Channels configuration; skip first data blocks until block #0 reached
 	* HoTTAdapter* - update strength calculation during Tx == Rx == 0, back channel package loss
+	* HoTTAdapter2 - enable statistical calculation weak telemetry and possible Fail-Safe events for configuration channels
 
 Version 4.0.7 - 03 Aug 2026
 Generic changes/fixes 

@@ -45,6 +45,12 @@
 				<symbol></symbol>
 				<unit>%</unit>
 				<active>true</active>
+				<statistics min="false" max="false" avg="false" sigma="false"
+					countByTrigger="true"
+					countTriggerText="text_trigger_count_telemetry">
+					<trigger level="90000" isGreater="true" minTimeSec="1"
+						comment="comment_trigger_gt_def" isSecondary="true" />
+				</statistics>
 				<trailDisplay discloseAll="false">
 					<disclosed trail="real_avg" />
 					<disclosed trail="real_max" />
@@ -72,7 +78,14 @@
 				<symbol></symbol>
 				<unit>ms</unit>
 				<active>true</active>
-				<statistics min="true" max="true" avg="false" sigma="false" />
+				<statistics min="false" max="true" avg="false" sigma="false"
+					triggerRefOrdinal="3" triggerSecondaryRefOrdinal="0"
+					countByTrigger="true"
+					countTriggerText="text_trigger_count_fail_safe"
+					comment="comment_trigger_ref">
+					<trigger level="250000" isGreater="true" minTimeSec="0"
+						comment="comment_trigger_gt_def" isSecondary="false" />
+				</statistics>
 				<trailDisplay discloseAll="true" defaultTrail="last" />
 				<label>label_vpack</label>
 			</Measurement>
