@@ -1,6 +1,6 @@
 Development history / change log, please read from bottom up
 
-Version 4.0.8 - xx yyy 2026
+Version 4.0.8 - 15 Nov 2026
 Generic changes/fixes 
 	* correct the bold display of time line numbers while required
 	* add tab content update changing tabs using keyboard
@@ -11,7 +11,7 @@ Device specific changes/fixes
 	* HoTTAdapter2 - fix climb 1 value setting if dedicated sensor GPS, GAM or EAM is set
 	* Spektrum-Telemetry - fix minor coding issues
 	* Schulze isl 6-330d - add initial support
-	* Tasi TA612C - add initial support
+	* Tasi TA612C - add initial support, created and tested by Jyri and Codex 
 	* iCharger*DUO - disable program execution via dialog on selected channel due to sync cabling
 	* Cheali Charger - add initial support BC6 firmware replacement
 	* HoTTAdapter* - Channels configuration; skip first data blocks until block #0 reached

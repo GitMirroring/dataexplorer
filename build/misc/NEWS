@@ -1,28 +1,35 @@
-GNU DataExplorer - News - comes with Version 4.0.7 - 03 Aug 2026
+GNU DataExplorer - News - comes with Version 4.0.8 - 15 Nov 2026
 
 Generic changes/fixes 
-	* elevation web-service failing show "error" instead of "0"
-	* if elevation web-service failing, a different elevation web-service get called
-	* elevation service doesn't get called if correction value set to -1 for relative2ground
-	* correct raw CSV export integer to float
-	* update close button of KMZ Export-Configuration in context of usage scenario 
-	* display time line with absolute time, if time format absolute hh:mm:ss.SSS is set
+	* correct the bold display of time line numbers while required
+	* add tab content update changing tabs using keyboard
+	* correct record average calculation, suppress zero values only for radio communication break 
 	
 Device specific changes/fixes
-	* HoTTAdapter* - synchronize filter GPS parser
-	* ET5410 - initial support
-	* HoTTAdpter2 - fix min/max reset with single GPS as sensor
-
+	* ET5410 - fix energy calculation
+	* HoTTAdapter2 - fix climb 1 value setting if dedicated sensor GPS, GAM or EAM is set
+	* Spektrum-Telemetry - fix minor coding issues
+	* Schulze isl 6-330d - add initial support
+	* Tasi TA612C - add initial support, created and tested by Jyri and Codex 
+	* iCharger*DUO - disable program execution via dialog on selected channel due to sync cabling
+	* Cheali Charger - add initial support BC6 firmware replacement
+	* HoTTAdapter* - Channels configuration; skip first data blocks until block #0 reached
+	* HoTTAdapter* - update strength calculation during Tx == Rx == 0, back channel package loss
+	* HoTTAdapter2 - enable statistical calculation weak telemetry and possible Fail-Safe events for configuration channels
 			
 Allgemeine Änderungen/Korrekturen
-	* der Web-Service zur Höhenabfrage zeigt  Fehler anstatt 0
-	* der Web-Service zur Höhenabfrage versucht im Fehlerfall einen weiteren Web-Service
-	* der Web-Service zur Höhenabfrage wird nicht aufgerufen, wenn der Korrekturwert auf -1 gesetzt wird (relative2ground)
-	* CSV export, raw, zu Gleitkommazahl geändert
-	* der KMZ Export-Konfiguration zeigt in Abhängigkeit des Nutzungs-Scenarios entsprechenden Text
-	* bei Anzeige der Zeitlinie mit absoluter Zeit entsprechend der Konfiguration, auch beim Zoom
+	* Korrektur zur Anzeige der fett geschriebenen Zeiten der Zeitlinie
+	* Beim Wechseln der Tabulator über Tastenkombination gibt es jetzt einen Update
+	* Korrektur der Mittelwertberechnung, Nullwerte werden aktuell nur noch für Funkunterbrechungen verwendet
 
 Gerätespezifische Änderungen
-	* HoTTAdapter* - GPS-Parser Filte synchronisiert 
-	* ET5410 - initiale Unterstützung
-	* HoTTAdpter2 - Rücksetzen von min/max bei einzig angeschlossenem GPS Sensor korrigiert
+	* ET5410 - Korrektur der Energieberechnung
+	* HoTTAdapter2 - Korrektur für den Steigen1 Wert, bei fester Auswahl eines Sensors dafür
+	* Spektrum-Telemetry - Korrektur eines unkritischem Coding-Fehlers
+	* Schulze isl 6-330d - Initiale Unterstützung
+	* Tasi TA612C - Initiale Unterstützung, erzeugt und getestet von Jyri und Codex 
+	* iCharger*DUO - Programmstart über den Dialog wird nicht mehr bei synchronisierten Ausgängen unterstützt
+	* Cheali Charger - Initiale Unterstützung für alternative BC6 Firmware
+	* HoTTAdapter2 - Kanäle Konfiguration überspringt jetzt die ersten Daten-Blöcke bis Block #0, daher keine Verfälschung der Statistik SpannungRx
+	* HoTTAdapter2 - Sendestärkenberechnung modifiziert während Tx == Rx == 0 Rückkanalunterbrechung
+	* HoTTAdapter2 - Kanäle Konfiguration: statistische Berechnung von schlechtem Rückkanal und möglichem Fail-Safe
